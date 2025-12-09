@@ -10,10 +10,14 @@
   "_source": [
     "key_url",
     "key_source",
-    "key_ticker",
     "text_headline",
-    "text_summary",
+    "text_summary"
+    {{#include_key_ticker}},
+    "key_ticker"
+    {{/include_key_ticker}}
+    {{#include_obj_images}},
     "obj_images"
+    {{/include_obj_images}}
   ],
   "sort": [
     {
