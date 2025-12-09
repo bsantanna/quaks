@@ -1,0 +1,25 @@
+{
+  "size": {{size}},
+  "query": {
+    "term": {
+      "key_ticker": {
+        "value": "{{key_ticker}}"
+      }
+    }
+  },
+  "_source": [
+    "key_url",
+    "key_source",
+    "key_ticker",
+    "text_headline",
+    "text_summary",
+    "obj_images"
+  ],
+  "sort": [
+    {
+      "date_reference": {
+        "order": "desc"
+      }
+    }
+  ]
+}
