@@ -1,103 +1,176 @@
 from typing_extensions import Optional
 from elasticsearch import Elasticsearch
 
+
 class MarketsStatsService:
 
     def __init__(self, es: Elasticsearch) -> None:
         self.es = es
 
-    async def get_stats_close(self, index_name: str, key_ticker: str, close_date:Optional[str]) -> dict:
-
-        if close_date is not None:
-            filter_query = {
-                "bool": {
-                    "must": [
-                        {
-                            "term": {
-                                "key_ticker": {
-                                    "value": key_ticker
-                                }
-                            }
-                        },
-                        {
-                            "range": {
-                                "date_reference": {
-                                    "lte": close_date
-                                }
-                            }
-                        }
-                    ]
-                }
-            }
-        else:
-            filter_query = {
-                "term": {
-                    "key_ticker": {
-                        "value": key_ticker
-                    }
-                }
-            }
-
-        search_query = {
-            "size": 0,
-            "query": filter_query,
-            "aggs": {
-                "recent_stats": {
-                    "scripted_metric": {
-                        "init_script": "state.entries = new ArrayList();",
-                        "map_script": """
-                                if (doc.containsKey('val_close') && doc['val_close'].size() > 0 && doc['val_close'].value != null &&
-                                    doc.containsKey('date_reference') && doc['date_reference'].size() > 0) {
-                                    def entry = [
-                                        'date': doc['date_reference'].value.millis,
-                                        'close': doc['val_close'].value
-                                    ];
-                                    if (doc.containsKey('val_open') && doc['val_open'].size() > 0) {
-                                        entry['open'] = doc['val_open'].value;
-                                    }
-                                    if (doc.containsKey('val_high') && doc['val_high'].size() > 0) {
-                                        entry['high'] = doc['val_high'].value;
-                                    }
-                                    if (doc.containsKey('val_low') && doc['val_low'].size() > 0) {
-                                        entry['low'] = doc['val_low'].value;
-                                    }
-                                    if (doc.containsKey('val_volume') && doc['val_volume'].size() > 0) {
-                                        entry['volume'] = doc['val_volume'].value;
-                                    }
-                                    state.entries.add(entry);
-                                }
-                            """,
-                        "combine_script": "return state.entries;",
-                        "reduce_script": """
-                                def all = [];
-                                for (s in states) { if (s != null) all.addAll(s); }
-                                if (all.isEmpty()) return null;
-
-                                all.sort((a,b) -> Long.compare(b.date, a.date));  // descending by date
-
-                                if (all.size() < 2) return null;
-
-                                def latest = all[0];
-                                def prev   = all[1].close;
-                                def variance = prev == 0 ? 0 : ((latest.close - prev) / prev) * 100;
-
-                                def formatter = DateTimeFormatter.ofPattern('yyyy-MM-dd').withZone(ZoneId.of('UTC'));
-                                def date_str = formatter.format(Instant.ofEpochMilli(latest.date));
-
-                                return [
-                                    'most_recent_open': latest.containsKey('open') ? latest.open : null,
-                                    'most_recent_high': latest.containsKey('high') ? latest.high : null,
-                                    'most_recent_low': latest.containsKey('low') ? latest.low : null,
-                                    'most_recent_close': latest.close,
-                                    'most_recent_volume': latest.containsKey('volume') ? latest.volume : null,
-                                    'most_recent_date' : date_str,
-                                    'percent_variance' : Math.round(variance * 100.0) / 100.0   // round to 2 decimals
-                                ];
-                            """
-                    }
-                }
+    async def get_stats_close(self, index_name: str, key_ticker: str, close_date: Optional[str]) -> dict:
+        search_params = {
+            "id": "get_stats_close_template",
+            "params": {
+                "key_ticker": key_ticker,
+                "close_date": close_date,
             }
         }
 
-        response = self.es.search(index=index_name, body=search_query)
+        response = self.es.search_template(index=index_name, body=search_params)
         return response['aggregations']['recent_stats']['value']
+
+    async def get_indicator_ad(self, index_name: str, key_ticker: str, start_date: str, end_date: str) -> dict:
+        search_params = {
+            "id": "get_eod_indicator_ad_template",
+            "params": {
+                "key_ticker": key_ticker,
+                "date_gte": start_date,
+                "date_lte": end_date,
+            }
+        }
+        response = self.es.search_template(index=index_name, body=search_params)
+        return response['aggregations']['ad_stats']['value']
+
+    async def get_indicator_adx(
+            self,
+            index_name: str,
+            key_ticker: str,
+            start_date: str,
+            end_date: str,
+            period: int
+    ) -> dict:
+        search_params = {
+            "id": "get_eod_indicator_adx_template",
+            "params": {
+                "key_ticker": key_ticker,
+                "date_gte": start_date,
+                "date_lte": end_date,
+                "period": period,
+            }
+        }
+        response = self.es.search_template(index=index_name, body=search_params)
+        return response['aggregations']['adx_stats']['value']
+
+    async def get_indicator_cci(
+            self,
+            index_name: str,
+            key_ticker: str,
+            start_date: str,
+            end_date: str,
+            period: int,
+            constant: float
+    ) -> dict:
+        search_params = {
+            "id": "get_eod_indicator_cci_template",
+            "params": {
+                "key_ticker": key_ticker,
+                "date_gte": start_date,
+                "date_lte": end_date,
+                "period": period,
+                "constant": constant,
+            }
+        }
+        response = self.es.search_template(index=index_name, body=search_params)
+        return response['aggregations']['cci_stats']['value']
+
+    async def get_indicator_ema(
+            self,
+            index_name: str,
+            key_ticker: str,
+            start_date: str,
+            end_date: str,
+            short_window: int,
+            long_window: int
+    ) -> dict:
+        search_params = {
+            "id": "get_eod_indicator_ema_template",
+            "params": {
+                "key_ticker": key_ticker,
+                "date_gte": start_date,
+                "date_lte": end_date,
+                "short_window": short_window,
+                "long_window": long_window,
+            }
+        }
+        response = self.es.search_template(index=index_name, body=search_params)
+        return response['aggregations']['ema_stats']['value']
+
+    async def get_indicator_macd(
+            self,
+            index_name: str,
+            key_ticker: str,
+            start_date: str,
+            end_date: str,
+            short_window: int,
+            long_window: int,
+            signal_window: int
+    ) -> dict:
+        search_params = {
+            "id": "get_eod_indicator_macd_template",
+            "params": {
+                "key_ticker": key_ticker,
+                "date_gte": start_date,
+                "date_lte": end_date,
+                "short_window": short_window,
+                "long_window": long_window,
+                "signal_window": signal_window,
+            }
+        }
+        response = self.es.search_template(index=index_name, body=search_params)
+        return response['aggregations']['macd_stats']['value']
+
+    async def get_indicator_obv(self, index_name: str, key_ticker: str, start_date: str, end_date: str) -> dict:
+        search_params = {
+            "id": "get_eod_indicator_obv_template",
+            "params": {
+                "key_ticker": key_ticker,
+                "date_gte": start_date,
+                "date_lte": end_date,
+            }
+        }
+        response = self.es.search_template(index=index_name, body=search_params)
+        return response['aggregations']['obv_stats']['value']
+
+    async def get_indicator_rsi(
+            self,
+            index_name: str,
+            key_ticker: str,
+            start_date: str,
+            end_date: str,
+            period: int
+    ) -> dict:
+        search_params = {
+            "id": "get_eod_indicator_rsi_template",
+            "params": {
+                "key_ticker": key_ticker,
+                "date_gte": start_date,
+                "date_lte": end_date,
+                "period": period,
+            }
+        }
+        response = self.es.search_template(index=index_name, body=search_params)
+        return response['aggregations']['rsi_stats']['value']
+
+    async def get_indicator_stoch(
+            self,
+            index_name: str,
+            key_ticker: str,
+            start_date: str,
+            end_date: str,
+            lookback: int,
+            smooth_k: int,
+            smooth_d: int
+    ) -> dict:
+        search_params = {
+            "id": "get_eod_indicator_stoch_template",
+            "params": {
+                "key_ticker": key_ticker,
+                "date_gte": start_date,
+                "date_lte": end_date,
+                "lookback": lookback,
+                "smooth_k": smooth_k,
+                "smooth_d": smooth_d,
+            }
+        }
+        response = self.es.search_template(index=index_name, body=search_params)
+        return response['aggregations']['stoch_stats']['value']

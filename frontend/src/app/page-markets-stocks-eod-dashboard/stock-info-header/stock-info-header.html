@@ -33,7 +33,7 @@
 
             <div class="flex flex-wrap items-baseline justify-between w-full">
                 <dt class="text-sm/6 font-medium text-gray-400 px-8 sm:px-4">Volume:</dt>
-                <dd class="text-md font-medium text-gray-200 px-8 sm:px-4">{{ statsClose().most_recent_volume | number : '1.0-0' }}</dd>
+                <dd class="text-sm font-medium text-gray-200 px-8 sm:px-4">{{ statsClose().most_recent_volume | number : '1.0-0' }}</dd>
             </div>
         </div>
 
@@ -43,18 +43,18 @@
             <div class="flex flex-wrap items-baseline justify-between w-full">
                 <dt class="text-sm/6 font-medium text-gray-400 px-8 sm:px-4">Start:</dt>
                 @if (useIntervalInDates()) {
-                    <dd class="text-md font-medium text-gray-200 px-8 sm:px-4">{{ intervalInDates().split('_')[0] }}</dd>
+                    <dd class="text-sm font-medium text-gray-200 px-8 sm:px-4">{{ intervalInDates().split('_')[0] }}</dd>
                 } @else {
-                    <dd class="text-md font-medium text-gray-200 px-8 sm:px-4">{{ getPastDateInDays(intervalInDays()) }}</dd>
+                    <dd class="text-sm font-medium text-gray-200 px-8 sm:px-4">{{ getPastDateInDays(intervalInDays()) }}</dd>
                 }
             </div>
 
             <div class="flex flex-wrap items-baseline justify-between w-full">
                 <dt class="text-sm/6 font-medium text-gray-400 px-8 sm:px-4">End:</dt>
                 @if (useIntervalInDates()) {
-                    <dd class="text-md font-medium text-gray-200 px-8 sm:px-4">{{ intervalInDates().split('_')[1] }}</dd>
+                    <dd class="text-sm font-medium text-gray-200 px-8 sm:px-4">{{ intervalInDates().split('_')[1] }}</dd>
                 } @else {
-                    <dd class="text-md font-medium text-gray-200 px-8 sm:px-4">{{ getPastDateInDays(1) }}</dd>
+                    <dd class="text-sm font-medium text-gray-200 px-8 sm:px-4">{{ getPastDateInDays(1) }}</dd>
                 }
             </div>
 

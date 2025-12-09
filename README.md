@@ -8,7 +8,7 @@
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=bsantanna_quant-agents&metric=coverage)](https://sonarcloud.io/component_measures?metric=coverage&selected=bsantanna_quant-agents%3Aapp&id=bsantanna_quant-agents)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-009485.svg?logo=fastapi&logoColor=white)](#key-features)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](doc/LICENSE.md)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](doc/LICENSE.md)
 
 </div>
 
@@ -16,4 +16,4 @@
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](doc/LICENSE.md) file for details.
+This project is licensed under the GPLv3 License. See the [LICENSE](doc/LICENSE.md) file for details.
