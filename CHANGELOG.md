@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.3.5 (2025-12-09)
+
+### Bug Fixes
+
+- Adjusts dags news processing ([#25](https://github.com/bsantanna/quant-agents/pull/25),
+  [`3c5bf2d`](https://github.com/bsantanna/quant-agents/commit/3c5bf2d6de18ca4178c8f63e5ade131bd1cfe9c6))
+
+
 ## v1.3.4 (2025-12-09)
 
 ### Bug Fixes
