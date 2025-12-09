@@ -2,6 +2,50 @@
 
 <!-- version list -->
 
+## v1.3.4 (2025-12-09)
+
+### Bug Fixes
+
+- Adjusts cache control for api endpoint ([#24](https://github.com/bsantanna/quant-agents/pull/24),
+  [`e6935d3`](https://github.com/bsantanna/quant-agents/commit/e6935d34f69e4f1288dba595f63434b5999b3106))
+
+- Adjusts otlp on dev env and introduces terraform managed search templates
+  ([#24](https://github.com/bsantanna/quant-agents/pull/24),
+  [`e6935d3`](https://github.com/bsantanna/quant-agents/commit/e6935d34f69e4f1288dba595f63434b5999b3106))
+
+- Get stats close service query updates ([#24](https://github.com/bsantanna/quant-agents/pull/24),
+  [`e6935d3`](https://github.com/bsantanna/quant-agents/commit/e6935d34f69e4f1288dba595f63434b5999b3106))
+
+- News data ingestion ([#24](https://github.com/bsantanna/quant-agents/pull/24),
+  [`e6935d3`](https://github.com/bsantanna/quant-agents/commit/e6935d34f69e4f1288dba595f63434b5999b3106))
+
+- News data ingestion dag ([#24](https://github.com/bsantanna/quant-agents/pull/24),
+  [`e6935d3`](https://github.com/bsantanna/quant-agents/commit/e6935d34f69e4f1288dba595f63434b5999b3106))
+
+- News index template ([#24](https://github.com/bsantanna/quant-agents/pull/24),
+  [`e6935d3`](https://github.com/bsantanna/quant-agents/commit/e6935d34f69e4f1288dba595f63434b5999b3106))
+
+- Prototypes column layout for stock analysis dashboard
+  ([#24](https://github.com/bsantanna/quant-agents/pull/24),
+  [`e6935d3`](https://github.com/bsantanna/quant-agents/commit/e6935d34f69e4f1288dba595f63434b5999b3106))
+
+- Search templates for ad, adx, obv, rsi, stoch
+  ([#24](https://github.com/bsantanna/quant-agents/pull/24),
+  [`e6935d3`](https://github.com/bsantanna/quant-agents/commit/e6935d34f69e4f1288dba595f63434b5999b3106))
+
+- Search templates for cci ([#24](https://github.com/bsantanna/quant-agents/pull/24),
+  [`e6935d3`](https://github.com/bsantanna/quant-agents/commit/e6935d34f69e4f1288dba595f63434b5999b3106))
+
+- Search templates for macd ema ohlcv ([#24](https://github.com/bsantanna/quant-agents/pull/24),
+  [`e6935d3`](https://github.com/bsantanna/quant-agents/commit/e6935d34f69e4f1288dba595f63434b5999b3106))
+
+- Service indicator calls (1) ([#24](https://github.com/bsantanna/quant-agents/pull/24),
+  [`e6935d3`](https://github.com/bsantanna/quant-agents/commit/e6935d34f69e4f1288dba595f63434b5999b3106))
+
+- Service indicator calls (2) ([#24](https://github.com/bsantanna/quant-agents/pull/24),
+  [`e6935d3`](https://github.com/bsantanna/quant-agents/commit/e6935d34f69e4f1288dba595f63434b5999b3106))
+
+
 ## v1.3.3 (2025-12-04)
 
 ### Bug Fixes
