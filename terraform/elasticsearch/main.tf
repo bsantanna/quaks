@@ -14,6 +14,28 @@ provider "elasticstack" {
   }
 }
 
+locals {
+  search_templates = {
+    get_eod_ohlcv_template = "get_eod_ohlcv.mustache"
+    get_eod_indicator_ad_template = "get_eod_indicator_ad.mustache"
+    get_eod_indicator_adx_template = "get_eod_indicator_adx.mustache"
+    get_eod_indicator_cci_template = "get_eod_indicator_cci.mustache"
+    get_eod_indicator_ema_template = "get_eod_indicator_ema.mustache"
+    get_eod_indicator_macd_template = "get_eod_indicator_macd.mustache"
+    get_eod_indicator_obv_template = "get_eod_indicator_obv.mustache"
+    get_eod_indicator_rsi_template = "get_eod_indicator_rsi.mustache"
+    get_eod_indicator_stoch_template = "get_eod_indicator_stoch.mustache"
+    get_stats_close_template = "get_stats_close.mustache"
+  }
+}
+
+resource "elasticstack_elasticsearch_script" "search_templates" {
+  for_each = local.search_templates
+  script_id = each.key
+  lang      = "mustache"
+  source    = file("${path.module}/search_templates/${each.value}")
+}
+
 resource "elasticstack_elasticsearch_index_lifecycle" "quant-agents_policy" {
   name = "quant-agents_policy"
 
@@ -45,6 +67,39 @@ resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-eod_te
         val_high       = { type = "double" }
         val_low        = { type = "double" }
         val_volume     = { type = "double" }
+      }
+    })
+
+    settings = jsonencode({
+      number_of_shards   = 1
+      number_of_replicas = 1
+
+      lifecycle = {
+        name = elasticstack_elasticsearch_index_lifecycle.quant-agents_policy.name
+      }
+    })
+  }
+}
+
+resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-news_template" {
+  name = "quant-agents_stocks-news_template"
+
+  index_patterns = ["quant-agents_stocks-news_*"]
+
+  template {
+    mappings = jsonencode({
+      dynamic = "strict"
+      properties = {
+        key_ticker      = { type = "keyword" }
+        text_headline   = { type = "text" }
+        text_author     = { type = "text" }
+        date_created_at = { type = "date", format = "yyyy-MM-dd" }
+        date_updated_at = { type = "date", format = "yyyy-MM-dd" }
+        text_summary    = { type = "text" }
+        text_content    = { type = "text" }
+        text_source     = { type = "text" }
+        key_url         = { type = "keyword" }
+        obj_images      = { type = "object" }
       }
     })
 
@@ -395,28 +450,6 @@ resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-fundam
       }
     })
   }
-}
-
-locals {
-  search_templates = {
-    get_eod_ohlcv_template = "get_eod_ohlcv.mustache"
-    get_eod_indicator_ad_template = "get_eod_indicator_ad.mustache"
-    get_eod_indicator_adx_template = "get_eod_indicator_adx.mustache"
-    get_eod_indicator_cci_template = "get_eod_indicator_cci.mustache"
-    get_eod_indicator_ema_template = "get_eod_indicator_ema.mustache"
-    get_eod_indicator_macd_template = "get_eod_indicator_macd.mustache"
-    get_eod_indicator_obv_template = "get_eod_indicator_obv.mustache"
-    get_eod_indicator_rsi_template = "get_eod_indicator_rsi.mustache"
-    get_eod_indicator_stoch_template = "get_eod_indicator_stoch.mustache"
-    get_stats_close_template = "get_stats_close.mustache"
-  }
-}
-
-resource "elasticstack_elasticsearch_script" "search_templates" {
-  for_each = local.search_templates
-  script_id = each.key
-  lang      = "mustache"
-  source    = file("${path.module}/search_templates/${each.value}")
 }
 
 # resource "elasticstack_elasticsearch_index" "nasdaq" {
