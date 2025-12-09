@@ -1,31 +1,6 @@
-
 <div class="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
 
-<!--    <div class="lg:col-start-3 lg:row-end-1 mt-4">-->
-<!--        <div>-->
-<!--            <div class="grid grid-cols-1 sm:hidden">-->
-<!--                <select aria-label="Select a tab"-->
-<!--                        class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white/5 py-2 pr-8 pl-3 text-base text-gray-100 outline-1 -outline-offset-1 outline-white/10 *:bg-gray-800 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500">-->
-<!--                    <option selected>Smart Analysis</option>-->
-<!--                    <option>News</option>-->
-<!--                </select>-->
-<!--                <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-400">-->
-<!--                    <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />-->
-<!--                </svg>-->
-<!--            </div>-->
-<!--            <div class="hidden sm:block">-->
-<!--                <div class="border-b border-white/10">-->
-<!--                    <nav aria-label="Tabs" class="-mb-px flex space-x-8">-->
-<!--                        &lt;!&ndash; Current: "border-indigo-400 text-indigo-400", Default: "border-transparent text-gray-400 hover:border-white/20 hover:text-gray-200" &ndash;&gt;-->
-<!--                        <a href="#" aria-current="page" class="border-b-2 border-indigo-400 px-1 py-4 text-sm font-medium whitespace-nowrap text-indigo-400">Smart Analysis</a>-->
-<!--                        <a href="#" class="border-b-2 border-transparent px-1 py-4 text-sm font-medium whitespace-nowrap text-gray-400 hover:border-white/20 hover:text-gray-200">News</a>-->
-<!--                    </nav>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-
-    <div class="lg:col-start-3 lg:row-end-1 mt-4">
+    <div class="lg:col-start-3 lg:row-end-1 mt-6">
         <h2 class="sr-only">Summary</h2>
         <div class="rounded-lg bg-gray-800/50 outline-1 -outline-offset-1 outline-white/10 sticky">
             <app-stock-info-header
@@ -35,59 +10,6 @@
                     [intervalInDates]="intervalInDates()"
                     [useIntervalInDates]="useIntervalInDates()"
             ></app-stock-info-header>
-<!--            -->
-<!--            <dl class="flex flex-wrap">-->
-<!--                <div class="flex-auto pt-6 pl-6">-->
-<!--                    <dt class="text-sm/6 font-semibold text-white">Amount</dt>-->
-<!--                    <dd class="mt-1 text-base font-semibold text-white">$10,560.00</dd>-->
-<!--                </div>-->
-<!--                <div class="flex-none self-end px-6 pt-4">-->
-<!--                    <dt class="sr-only">Status</dt>-->
-<!--                    <dd class="rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-500 ring-1 ring-green-500/30 ring-inset">-->
-<!--                        Paid-->
-<!--                    </dd>-->
-<!--                </div>-->
-<!--                <div class="mt-6 flex w-full flex-none gap-x-4 border-t border-white/10 px-6 pt-6">-->
-<!--                    <dt class="flex-none">-->
-<!--                        <span class="sr-only">Client</span>-->
-<!--                        <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true"-->
-<!--                             class="h-6 w-5 text-gray-500">-->
-<!--                            <path d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-5.5-2.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0ZM10 12a5.99 5.99 0 0 0-4.793 2.39A6.483 6.483 0 0 0 10 16.5a6.483 6.483 0 0 0 4.793-2.11A5.99 5.99 0 0 0 10 12Z"-->
-<!--                                  clip-rule="evenodd" fill-rule="evenodd"/>-->
-<!--                        </svg>-->
-<!--                    </dt>-->
-<!--                    <dd class="text-sm/6 font-medium text-white">Alex Curren</dd>-->
-<!--                </div>-->
-<!--                <div class="mt-4 flex w-full flex-none gap-x-4 px-6">-->
-<!--                    <dt class="flex-none">-->
-<!--                        <span class="sr-only">Due date</span>-->
-<!--                        <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true"-->
-<!--                             class="h-6 w-5 text-gray-500">-->
-<!--                            <path d="M5.25 12a.75.75 0 0 1 .75-.75h.01a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75H6a.75.75 0 0 1-.75-.75V12ZM6 13.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V14a.75.75 0 0 0-.75-.75H6ZM7.25 12a.75.75 0 0 1 .75-.75h.01a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75H8a.75.75 0 0 1-.75-.75V12ZM8 13.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V14a.75.75 0 0 0-.75-.75H8ZM9.25 10a.75.75 0 0 1 .75-.75h.01a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75H10a.75.75 0 0 1-.75-.75V10ZM10 11.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V12a.75.75 0 0 0-.75-.75H10ZM9.25 14a.75.75 0 0 1 .75-.75h.01a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75H10a.75.75 0 0 1-.75-.75V14ZM12 9.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V10a.75.75 0 0 0-.75-.75H12ZM11.25 12a.75.75 0 0 1 .75-.75h.01a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75H12a.75.75 0 0 1-.75-.75V12ZM12 13.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V14a.75.75 0 0 0-.75-.75H12ZM13.25 10a.75.75 0 0 1 .75-.75h.01a.75.75 0 0 1 .75.75v.01a.75.75 0 0 1-.75.75H14a.75.75 0 0 1-.75-.75V10ZM14 11.25a.75.75 0 0 0-.75.75v.01c0 .414.336.75.75.75h.01a.75.75 0 0 0 .75-.75V12a.75.75 0 0 0-.75-.75H14Z"/>-->
-<!--                            <path d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z"-->
-<!--                                  clip-rule="evenodd" fill-rule="evenodd"/>-->
-<!--                        </svg>-->
-<!--                    </dt>-->
-<!--                    <dd class="text-sm/6 text-gray-400">-->
-<!--                        <time datetime="2023-01-31">January 31, 2023</time>-->
-<!--                    </dd>-->
-<!--                </div>-->
-<!--                <div class="mt-4 flex w-full flex-none gap-x-4 px-6">-->
-<!--                    <dt class="flex-none">-->
-<!--                        <span class="sr-only">Status</span>-->
-<!--                        <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true"-->
-<!--                             class="h-6 w-5 text-gray-500">-->
-<!--                            <path d="M2.5 4A1.5 1.5 0 0 0 1 5.5V6h18v-.5A1.5 1.5 0 0 0 17.5 4h-15ZM19 8.5H1v6A1.5 1.5 0 0 0 2.5 16h15a1.5 1.5 0 0 0 1.5-1.5v-6ZM3 13.25a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5a.75.75 0 0 1-.75-.75Zm4.75-.75a.75.75 0 0 0 0 1.5h3.5a.75.75 0 0 0 0-1.5h-3.5Z"-->
-<!--                                  clip-rule="evenodd" fill-rule="evenodd"/>-->
-<!--                        </svg>-->
-<!--                    </dt>-->
-<!--                    <dd class="text-sm/6 text-gray-400">Paid with MasterCard</dd>-->
-<!--                </div>-->
-<!--            </dl>-->
-<!--            <div class="mt-6 border-t border-white/10 px-6 py-6">-->
-<!--                <a href="#" class="text-sm/6 font-semibold text-white">Download receipt <span-->
-<!--                        aria-hidden="true">&rarr;</span></a>-->
-<!--            </div>-->
         </div>
     </div>
 
@@ -97,88 +19,117 @@
         }
     </div>
 
-<!--    <div class="lg:col-start-3 mt-10">-->
-<!--        &lt;!&ndash; Activity feed &ndash;&gt;-->
-<!--        <h2 class="text-sm/6 font-semibold text-white">Activity</h2>-->
-<!--        <ul role="list" class="mt-6 space-y-6">-->
-<!--            <li class="relative flex gap-x-4">-->
-<!--                <div class="absolute top-0 -bottom-6 left-0 flex w-6 justify-center">-->
-<!--                    <div class="w-px bg-white/10"></div>-->
-<!--                </div>-->
-<!--                <div class="relative flex size-6 flex-none items-center justify-center bg-gray-900">-->
-<!--                    <div class="size-1.5 rounded-full bg-white/10 ring-1 ring-white/20"></div>-->
-<!--                </div>-->
-<!--                <p class="flex-auto py-0.5 text-xs/5 text-gray-400"><span-->
-<!--                        class="font-medium text-white">Chelsea Hagon</span> created the invoice.</p>-->
-<!--                <time datetime="2023-01-23T10:32" class="flex-none py-0.5 text-xs/5 text-gray-400">7d ago</time>-->
-<!--            </li>-->
-<!--            <li class="relative flex gap-x-4">-->
-<!--                <div class="absolute top-0 -bottom-6 left-0 flex w-6 justify-center">-->
-<!--                    <div class="w-px bg-white/10"></div>-->
-<!--                </div>-->
-<!--                <div class="relative flex size-6 flex-none items-center justify-center bg-gray-900">-->
-<!--                    <div class="size-1.5 rounded-full bg-white/10 ring-1 ring-white/20"></div>-->
-<!--                </div>-->
-<!--                <p class="flex-auto py-0.5 text-xs/5 text-gray-400"><span-->
-<!--                        class="font-medium text-white">Chelsea Hagon</span> edited the invoice.</p>-->
-<!--                <time datetime="2023-01-23T11:03" class="flex-none py-0.5 text-xs/5 text-gray-400">6d ago</time>-->
-<!--            </li>-->
-<!--            <li class="relative flex gap-x-4">-->
-<!--                <div class="absolute top-0 -bottom-6 left-0 flex w-6 justify-center">-->
-<!--                    <div class="w-px bg-white/10"></div>-->
-<!--                </div>-->
-<!--                <div class="relative flex size-6 flex-none items-center justify-center bg-gray-900">-->
-<!--                    <div class="size-1.5 rounded-full bg-white/10 ring-1 ring-white/20"></div>-->
-<!--                </div>-->
-<!--                <p class="flex-auto py-0.5 text-xs/5 text-gray-400"><span-->
-<!--                        class="font-medium text-white">Chelsea Hagon</span> sent the invoice.</p>-->
-<!--                <time datetime="2023-01-23T11:24" class="flex-none py-0.5 text-xs/5 text-gray-400">6d ago</time>-->
-<!--            </li>-->
-<!--            <li class="relative flex gap-x-4">-->
-<!--                <div class="absolute top-0 -bottom-6 left-0 flex w-6 justify-center">-->
-<!--                    <div class="w-px bg-white/10"></div>-->
-<!--                </div>-->
-<!--                <img src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"-->
-<!--                     alt=""-->
-<!--                     class="relative mt-3 size-6 flex-none rounded-full bg-gray-800 outline -outline-offset-1 outline-white/10"/>-->
-<!--                <div class="flex-auto rounded-md p-3 ring-1 ring-white/10 ring-inset">-->
-<!--                    <div class="flex justify-between gap-x-4">-->
-<!--                        <div class="py-0.5 text-xs/5 text-gray-400"><span-->
-<!--                                class="font-medium text-white">Chelsea Hagon</span> commented-->
-<!--                        </div>-->
-<!--                        <time datetime="2023-01-23T15:56" class="flex-none py-0.5 text-xs/5 text-gray-400">3d ago</time>-->
-<!--                    </div>-->
-<!--                    <p class="text-sm/6 text-gray-400">Called client, they reassured me the invoice would be paid by the-->
-<!--                        25th.</p>-->
-<!--                </div>-->
-<!--            </li>-->
-<!--            <li class="relative flex gap-x-4">-->
-<!--                <div class="absolute top-0 -bottom-6 left-0 flex w-6 justify-center">-->
-<!--                    <div class="w-px bg-white/10"></div>-->
-<!--                </div>-->
-<!--                <div class="relative flex size-6 flex-none items-center justify-center bg-gray-900">-->
-<!--                    <div class="size-1.5 rounded-full bg-white/10 ring-1 ring-white/20"></div>-->
-<!--                </div>-->
-<!--                <p class="flex-auto py-0.5 text-xs/5 text-gray-400"><span-->
-<!--                        class="font-medium text-white">Alex Curren</span> viewed the invoice.</p>-->
-<!--                <time datetime="2023-01-24T09:12" class="flex-none py-0.5 text-xs/5 text-gray-400">2d ago</time>-->
-<!--            </li>-->
-<!--            <li class="relative flex gap-x-4">-->
-<!--                <div class="absolute top-0 left-0 flex h-6 w-6 justify-center">-->
-<!--                    <div class="w-px bg-white/10"></div>-->
-<!--                </div>-->
-<!--                <div class="relative flex size-6 flex-none items-center justify-center bg-gray-900">-->
-<!--                    <svg viewBox="0 0 24 24" fill="currentColor" data-slot="icon" aria-hidden="true"-->
-<!--                         class="size-6 text-indigo-500">-->
-<!--                        <path d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"-->
-<!--                              clip-rule="evenodd" fill-rule="evenodd"/>-->
-<!--                    </svg>-->
-<!--                </div>-->
-<!--                <p class="flex-auto py-0.5 text-xs/5 text-gray-400"><span-->
-<!--                        class="font-medium text-white">Alex Curren</span> paid the invoice.</p>-->
-<!--                <time datetime="2023-01-24T09:20" class="flex-none py-0.5 text-xs/5 text-gray-400">1d ago</time>-->
-<!--            </li>-->
-<!--        </ul>-->
+    <div class="lg:col-start-3">
+        <div class="grid grid-cols-1 sm:hidden">
+            <select aria-label="Select a tab"
+                    class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white/5 py-2 pr-8 pl-3 text-base text-gray-100 outline-1 -outline-offset-1 outline-white/10 *:bg-gray-800 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500">
+                <option selected>News</option>
+                <option>Agent Expert Panel</option>
+            </select>
+            <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true"
+                 class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-400">
+                <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
+                      clip-rule="evenodd" fill-rule="evenodd"/>
+            </svg>
+        </div>
+        <div class="hidden sm:block">
+            <div class="border-b border-white/10">
+                <nav aria-label="Tabs" class="-mb-px flex space-x-8">
+                    <button
+                       class="border-b-2 border-indigo-400 px-1 py-4 text-sm font-medium whitespace-nowrap text-indigo-400">
+                        News
+                    </button>
+                    <button
+                       class="border-b-2 border-transparent px-1 py-4 text-sm font-medium whitespace-nowrap text-gray-400 hover:border-white/20 hover:text-gray-200">
+                        Agent Expert Panel
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </div>
 
-<!--    </div>-->
+    <!--    <div class="lg:col-start-3 mt-10">-->
+    <!--        &lt;!&ndash; Activity feed &ndash;&gt;-->
+    <!--        <h2 class="text-sm/6 font-semibold text-white">Activity</h2>-->
+    <!--        <ul role="list" class="mt-6 space-y-6">-->
+    <!--            <li class="relative flex gap-x-4">-->
+    <!--                <div class="absolute top-0 -bottom-6 left-0 flex w-6 justify-center">-->
+    <!--                    <div class="w-px bg-white/10"></div>-->
+    <!--                </div>-->
+    <!--                <div class="relative flex size-6 flex-none items-center justify-center bg-gray-900">-->
+    <!--                    <div class="size-1.5 rounded-full bg-white/10 ring-1 ring-white/20"></div>-->
+    <!--                </div>-->
+    <!--                <p class="flex-auto py-0.5 text-xs/5 text-gray-400"><span-->
+    <!--                        class="font-medium text-white">Chelsea Hagon</span> created the invoice.</p>-->
+    <!--                <time datetime="2023-01-23T10:32" class="flex-none py-0.5 text-xs/5 text-gray-400">7d ago</time>-->
+    <!--            </li>-->
+    <!--            <li class="relative flex gap-x-4">-->
+    <!--                <div class="absolute top-0 -bottom-6 left-0 flex w-6 justify-center">-->
+    <!--                    <div class="w-px bg-white/10"></div>-->
+    <!--                </div>-->
+    <!--                <div class="relative flex size-6 flex-none items-center justify-center bg-gray-900">-->
+    <!--                    <div class="size-1.5 rounded-full bg-white/10 ring-1 ring-white/20"></div>-->
+    <!--                </div>-->
+    <!--                <p class="flex-auto py-0.5 text-xs/5 text-gray-400"><span-->
+    <!--                        class="font-medium text-white">Chelsea Hagon</span> edited the invoice.</p>-->
+    <!--                <time datetime="2023-01-23T11:03" class="flex-none py-0.5 text-xs/5 text-gray-400">6d ago</time>-->
+    <!--            </li>-->
+    <!--            <li class="relative flex gap-x-4">-->
+    <!--                <div class="absolute top-0 -bottom-6 left-0 flex w-6 justify-center">-->
+    <!--                    <div class="w-px bg-white/10"></div>-->
+    <!--                </div>-->
+    <!--                <div class="relative flex size-6 flex-none items-center justify-center bg-gray-900">-->
+    <!--                    <div class="size-1.5 rounded-full bg-white/10 ring-1 ring-white/20"></div>-->
+    <!--                </div>-->
+    <!--                <p class="flex-auto py-0.5 text-xs/5 text-gray-400"><span-->
+    <!--                        class="font-medium text-white">Chelsea Hagon</span> sent the invoice.</p>-->
+    <!--                <time datetime="2023-01-23T11:24" class="flex-none py-0.5 text-xs/5 text-gray-400">6d ago</time>-->
+    <!--            </li>-->
+    <!--            <li class="relative flex gap-x-4">-->
+    <!--                <div class="absolute top-0 -bottom-6 left-0 flex w-6 justify-center">-->
+    <!--                    <div class="w-px bg-white/10"></div>-->
+    <!--                </div>-->
+    <!--                <img src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"-->
+    <!--                     alt=""-->
+    <!--                     class="relative mt-3 size-6 flex-none rounded-full bg-gray-800 outline -outline-offset-1 outline-white/10"/>-->
+    <!--                <div class="flex-auto rounded-md p-3 ring-1 ring-white/10 ring-inset">-->
+    <!--                    <div class="flex justify-between gap-x-4">-->
+    <!--                        <div class="py-0.5 text-xs/5 text-gray-400"><span-->
+    <!--                                class="font-medium text-white">Chelsea Hagon</span> commented-->
+    <!--                        </div>-->
+    <!--                        <time datetime="2023-01-23T15:56" class="flex-none py-0.5 text-xs/5 text-gray-400">3d ago</time>-->
+    <!--                    </div>-->
+    <!--                    <p class="text-sm/6 text-gray-400">Called client, they reassured me the invoice would be paid by the-->
+    <!--                        25th.</p>-->
+    <!--                </div>-->
+    <!--            </li>-->
+    <!--            <li class="relative flex gap-x-4">-->
+    <!--                <div class="absolute top-0 -bottom-6 left-0 flex w-6 justify-center">-->
+    <!--                    <div class="w-px bg-white/10"></div>-->
+    <!--                </div>-->
+    <!--                <div class="relative flex size-6 flex-none items-center justify-center bg-gray-900">-->
+    <!--                    <div class="size-1.5 rounded-full bg-white/10 ring-1 ring-white/20"></div>-->
+    <!--                </div>-->
+    <!--                <p class="flex-auto py-0.5 text-xs/5 text-gray-400"><span-->
+    <!--                        class="font-medium text-white">Alex Curren</span> viewed the invoice.</p>-->
+    <!--                <time datetime="2023-01-24T09:12" class="flex-none py-0.5 text-xs/5 text-gray-400">2d ago</time>-->
+    <!--            </li>-->
+    <!--            <li class="relative flex gap-x-4">-->
+    <!--                <div class="absolute top-0 left-0 flex h-6 w-6 justify-center">-->
+    <!--                    <div class="w-px bg-white/10"></div>-->
+    <!--                </div>-->
+    <!--                <div class="relative flex size-6 flex-none items-center justify-center bg-gray-900">-->
+    <!--                    <svg viewBox="0 0 24 24" fill="currentColor" data-slot="icon" aria-hidden="true"-->
+    <!--                         class="size-6 text-indigo-500">-->
+    <!--                        <path d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"-->
+    <!--                              clip-rule="evenodd" fill-rule="evenodd"/>-->
+    <!--                    </svg>-->
+    <!--                </div>-->
+    <!--                <p class="flex-auto py-0.5 text-xs/5 text-gray-400"><span-->
+    <!--                        class="font-medium text-white">Alex Curren</span> paid the invoice.</p>-->
+    <!--                <time datetime="2023-01-24T09:20" class="flex-none py-0.5 text-xs/5 text-gray-400">1d ago</time>-->
+    <!--            </li>-->
+    <!--        </ul>-->
+    <!--    </div>-->
+
 </div>
