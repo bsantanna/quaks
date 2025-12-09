@@ -51,6 +51,38 @@ resource "elasticstack_elasticsearch_index_lifecycle" "quant-agents_policy" {
   }
 }
 
+resource "elasticstack_elasticsearch_index_template" "quant-agents_markets-news_template" {
+  name = "quant-agents_markets-news_template"
+
+  index_patterns = ["quant-agents_markets-news_*"]
+
+  template {
+    mappings = jsonencode({
+      dynamic = "strict"
+      properties = {
+        key_ticker     = { type = "keyword" }
+        key_url        = { type = "keyword" }
+        key_source     = { type = "keyword" }
+        date_reference = { type = "date", format = "yyyy-MM-dd" }
+        obj_images     = { type = "object", dynamic="true" }
+        text_headline  = { type = "text" }
+        text_author    = { type = "text" }
+        text_summary   = { type = "text" }
+        text_content   = { type = "text" }
+      }
+    })
+
+    settings = jsonencode({
+      number_of_shards   = 1
+      number_of_replicas = 1
+
+      lifecycle = {
+        name = elasticstack_elasticsearch_index_lifecycle.quant-agents_policy.name
+      }
+    })
+  }
+}
+
 resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-eod_template" {
   name = "quant-agents_stocks-eod_template"
 
@@ -67,39 +99,6 @@ resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-eod_te
         val_high       = { type = "double" }
         val_low        = { type = "double" }
         val_volume     = { type = "double" }
-      }
-    })
-
-    settings = jsonencode({
-      number_of_shards   = 1
-      number_of_replicas = 1
-
-      lifecycle = {
-        name = elasticstack_elasticsearch_index_lifecycle.quant-agents_policy.name
-      }
-    })
-  }
-}
-
-resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-news_template" {
-  name = "quant-agents_stocks-news_template"
-
-  index_patterns = ["quant-agents_stocks-news_*"]
-
-  template {
-    mappings = jsonencode({
-      dynamic = "strict"
-      properties = {
-        key_ticker      = { type = "keyword" }
-        text_headline   = { type = "text" }
-        text_author     = { type = "text" }
-        date_created_at = { type = "date", format = "yyyy-MM-dd" }
-        date_updated_at = { type = "date", format = "yyyy-MM-dd" }
-        text_summary    = { type = "text" }
-        text_content    = { type = "text" }
-        text_source     = { type = "text" }
-        key_url         = { type = "keyword" }
-        obj_images      = { type = "object" }
       }
     })
 
@@ -452,7 +451,7 @@ resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-fundam
   }
 }
 
-# resource "elasticstack_elasticsearch_index" "nasdaq" {
+# resource "elasticstack_elasticsearch_index" "stocks_eod_nasdaq" {
 #   name = "quant-agents_stocks-eod_nasdaq_100"
 #   alias {
 #     name = "quant-agents_stocks-eod_latest"
@@ -460,10 +459,10 @@ resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-fundam
 #   depends_on = [elasticstack_elasticsearch_index_template.quant-agents_stocks-eod_template]
 # }
 #
-# resource "elasticstack_elasticsearch_index" "sp500" {
-#   name = "quant-agents_stocks-eod_sp_500"
+# resource "elasticstack_elasticsearch_index" "markets_news_nasdaq" {
+#   name = "quant-agents_markets-news_nasdaq_100"
 #   alias {
-#     name = "quant-agents_stocks-eod_latest"
+#     name = "quant-agents_markets-news_latest"
 #   }
-#   depends_on = [elasticstack_elasticsearch_index_template.quant-agents_stocks-eod_template]
+#   depends_on = [elasticstack_elasticsearch_index_template.quant-agents_markets-news_template]
 # }
