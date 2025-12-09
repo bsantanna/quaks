@@ -2,8 +2,6 @@ from airflow.sdk import DAG, task
 from airflow.providers.cncf.kubernetes.secret import Secret
 from datetime import datetime
 
-from app.utils.data_ingestion_utils import ingest_markets_news
-
 default_args = {
     "owner": "airflow",
     "depends_on_past": False,
