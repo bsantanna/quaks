@@ -11,8 +11,6 @@ class NewsItem(BaseModel):
     source: str
     headline: str
     summary: str
-    key_ticker: Optional[list[str]] = None
-    images: Optional[dict] = None
 
 
 class StatsClose(BaseModel):
