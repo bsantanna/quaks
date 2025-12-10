@@ -2,6 +2,83 @@
 
 <!-- version list -->
 
+## v1.3.6 (2025-12-10)
+
+### Bug Fixes
+
+- Adjusts cookie service security context ([#26](https://github.com/bsantanna/quant-agents/pull/26),
+  [`3144808`](https://github.com/bsantanna/quant-agents/commit/314480884de6b824ae8462dd72cee77ceff4fc30))
+
+- Adjusts layout info header ([#26](https://github.com/bsantanna/quant-agents/pull/26),
+  [`3144808`](https://github.com/bsantanna/quant-agents/commit/314480884de6b824ae8462dd72cee77ceff4fc30))
+
+- Get news endpoint (3) ([#26](https://github.com/bsantanna/quant-agents/pull/26),
+  [`3144808`](https://github.com/bsantanna/quant-agents/commit/314480884de6b824ae8462dd72cee77ceff4fc30))
+
+- Get news endpoint (4) ([#26](https://github.com/bsantanna/quant-agents/pull/26),
+  [`3144808`](https://github.com/bsantanna/quant-agents/commit/314480884de6b824ae8462dd72cee77ceff4fc30))
+
+- Get news endpoint (5) ([#26](https://github.com/bsantanna/quant-agents/pull/26),
+  [`3144808`](https://github.com/bsantanna/quant-agents/commit/314480884de6b824ae8462dd72cee77ceff4fc30))
+
+- Get news related endpoint ([#26](https://github.com/bsantanna/quant-agents/pull/26),
+  [`3144808`](https://github.com/bsantanna/quant-agents/commit/314480884de6b824ae8462dd72cee77ceff4fc30))
+
+- Get related news endpoint (1) ([#26](https://github.com/bsantanna/quant-agents/pull/26),
+  [`3144808`](https://github.com/bsantanna/quant-agents/commit/314480884de6b824ae8462dd72cee77ceff4fc30))
+
+- Get related news endpoint (2) ([#26](https://github.com/bsantanna/quant-agents/pull/26),
+  [`3144808`](https://github.com/bsantanna/quant-agents/commit/314480884de6b824ae8462dd72cee77ceff4fc30))
+
+- Indexed key ticker service, company name on stock info
+  ([#26](https://github.com/bsantanna/quant-agents/pull/26),
+  [`3144808`](https://github.com/bsantanna/quant-agents/commit/314480884de6b824ae8462dd72cee77ceff4fc30))
+
+- Layout adjusts for md, lg and xl screens
+  ([#26](https://github.com/bsantanna/quant-agents/pull/26),
+  [`3144808`](https://github.com/bsantanna/quant-agents/commit/314480884de6b824ae8462dd72cee77ceff4fc30))
+
+- Layout adjusts for md, lg and xl screens (2)
+  ([#26](https://github.com/bsantanna/quant-agents/pull/26),
+  [`3144808`](https://github.com/bsantanna/quant-agents/commit/314480884de6b824ae8462dd72cee77ceff4fc30))
+
+- Layout adjusts for md, lg and xl screens (3)
+  ([#26](https://github.com/bsantanna/quant-agents/pull/26),
+  [`3144808`](https://github.com/bsantanna/quant-agents/commit/314480884de6b824ae8462dd72cee77ceff4fc30))
+
+- Layout adjusts for md, lg and xl screens (4)
+  ([#26](https://github.com/bsantanna/quant-agents/pull/26),
+  [`3144808`](https://github.com/bsantanna/quant-agents/commit/314480884de6b824ae8462dd72cee77ceff4fc30))
+
+- Layout adjusts for md, lg and xl screens (5)
+  ([#26](https://github.com/bsantanna/quant-agents/pull/26),
+  [`3144808`](https://github.com/bsantanna/quant-agents/commit/314480884de6b824ae8462dd72cee77ceff4fc30))
+
+- Layout adjusts xs (1) ([#26](https://github.com/bsantanna/quant-agents/pull/26),
+  [`3144808`](https://github.com/bsantanna/quant-agents/commit/314480884de6b824ae8462dd72cee77ceff4fc30))
+
+- Layout adjusts xs (2) ([#26](https://github.com/bsantanna/quant-agents/pull/26),
+  [`3144808`](https://github.com/bsantanna/quant-agents/commit/314480884de6b824ae8462dd72cee77ceff4fc30))
+
+- Layout adjusts xs (3) ([#26](https://github.com/bsantanna/quant-agents/pull/26),
+  [`3144808`](https://github.com/bsantanna/quant-agents/commit/314480884de6b824ae8462dd72cee77ceff4fc30))
+
+- Layout adjusts xs (4) ([#26](https://github.com/bsantanna/quant-agents/pull/26),
+  [`3144808`](https://github.com/bsantanna/quant-agents/commit/314480884de6b824ae8462dd72cee77ceff4fc30))
+
+- Markets news dag adjusts ([#26](https://github.com/bsantanna/quant-agents/pull/26),
+  [`3144808`](https://github.com/bsantanna/quant-agents/commit/314480884de6b824ae8462dd72cee77ceff4fc30))
+
+- Markets news support ([#26](https://github.com/bsantanna/quant-agents/pull/26),
+  [`3144808`](https://github.com/bsantanna/quant-agents/commit/314480884de6b824ae8462dd72cee77ceff4fc30))
+
+- Markets news support (2) ([#26](https://github.com/bsantanna/quant-agents/pull/26),
+  [`3144808`](https://github.com/bsantanna/quant-agents/commit/314480884de6b824ae8462dd72cee77ceff4fc30))
+
+- Tabs for side panel ([#26](https://github.com/bsantanna/quant-agents/pull/26),
+  [`3144808`](https://github.com/bsantanna/quant-agents/commit/314480884de6b824ae8462dd72cee77ceff4fc30))
+
+
 ## v1.3.5 (2025-12-09)
 
 ### Bug Fixes
