@@ -42,7 +42,7 @@ async def get_most_recent_close(
 @router.get(
     path="/news/{index_name}",
     response_model=NewsList,
-    operation_id="news_related",
+    operation_id="markets_news",
     summary="Get markets news"
 )
 @inject
