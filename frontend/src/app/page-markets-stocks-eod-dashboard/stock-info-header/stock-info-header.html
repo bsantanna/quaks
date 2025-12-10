@@ -157,29 +157,29 @@
             <div>
                 <p class="text-sm text-gray-400">Start Date</p>
                 @if (useIntervalInDates()) {
-                    <p class="text-base font-medium">{{ intervalInDates().split('_')[0] }}</p>
+                    <p class="text-sm font-medium">{{ intervalInDates().split('_')[0] }}</p>
                 } @else {
-                    <p class="text-base font-medium">{{ getPastDateInDays(intervalInDays()) }}</p>
+                    <p class="text-sm font-medium">{{ getPastDateInDays(intervalInDays()) }}</p>
                 }
             </div>
             <div>
                 <p class="text-sm text-gray-400">End Date</p>
                 @if (useIntervalInDates()) {
-                    <p class="text-base font-medium">{{ intervalInDates().split('_')[1] }}</p>
+                    <p class="text-sm font-medium">{{ intervalInDates().split('_')[1] }}</p>
                 } @else {
-                    <p class="text-base font-medium">{{ getPastDateInDays(1) }}</p>
+                    <p class="text-sm font-medium">{{ getPastDateInDays(1) }}</p>
                 }
             </div>
             @if (!useIntervalInDates()) {
 
-                <div class="col-span-2 mt-2 ml-4">
+                <div class="col-span-2 mt-2">
 
                     <button
                             type="button"
                             (click)="setIntervalInDays(30)"
                             [class.bg-white/20]="intervalInDays() === 30"
                             [class.bg-white/10]="intervalInDays() !== 30"
-                            class="relative inline-flex items-center rounded-l-md px-3 py-2 text-sm lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                            class="relative inline-flex items-center rounded-l-md px-3 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
                         1M
                     </button>
                     <button
@@ -187,7 +187,7 @@
                             (click)="setIntervalInDays(90)"
                             [class.bg-white/20]="intervalInDays() === 90"
                             [class.bg-white/10]="intervalInDays() !== 90"
-                            class="relative -ml-px inline-flex items-center px-3 py-2 text-sm lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                            class="relative -ml-px inline-flex items-center px-3 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
                         3M
                     </button>
                     <button
@@ -195,7 +195,7 @@
                             (click)="setIntervalInDays(180)"
                             [class.bg-white/20]="intervalInDays() === 180"
                             [class.bg-white/10]="intervalInDays() !== 180"
-                            class="relative -ml-px inline-flex items-center px-3 py-2 text-sm lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                            class="relative -ml-px inline-flex items-center px-3 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
                         6M
                     </button>
                     <button
@@ -203,7 +203,7 @@
                             (click)="setIntervalInDays(365)"
                             [class.bg-white/20]="intervalInDays() === 365"
                             [class.bg-white/10]="intervalInDays() !== 365"
-                            class="relative -ml-px inline-flex items-center rounded-r-md px-3 py-2 text-sm lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                            class="relative -ml-px inline-flex items-center rounded-r-md px-3 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
                         1Y
                     </button>
                 </div>

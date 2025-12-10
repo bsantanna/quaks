@@ -1,11 +1,19 @@
 {
   "size": {{size}},
+  {{#search_after}}
+  "search_after": {{#toJson}}search_after{{/toJson}},
+  {{/search_after}}
   "query": {
+    {{#key_ticker}}
     "term": {
       "key_ticker": {
         "value": "{{key_ticker}}"
       }
     }
+    {{/key_ticker}}
+    {{^key_ticker}}
+    "match_all": {}
+    {{/key_ticker}}
   },
   "_source": [
     "date_reference",
@@ -13,6 +21,9 @@
     "key_source",
     "text_headline",
     "text_summary"
+    {{#include_text_content}},
+    "text_content"
+    {{/include_text_content}}
     {{#include_key_ticker}},
     "key_ticker"
     {{/include_key_ticker}}
