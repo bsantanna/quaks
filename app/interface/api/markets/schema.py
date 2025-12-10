@@ -8,6 +8,7 @@ from app.domain.exceptions.base import InvalidFieldError
 
 class NewsItem(BaseModel):
     url: str
+    date: str
     source: str
     headline: str
     summary: str

@@ -59,7 +59,8 @@ async def get_news_related(
             url=item.get("key_url"),
             source=item.get("key_source"),
             headline=item.get("text_headline"),
-            summary=item.get("text_summary")
+            summary=item.get("text_summary"),
+            date=item.get("date_reference"),
         ))
 
     return response
