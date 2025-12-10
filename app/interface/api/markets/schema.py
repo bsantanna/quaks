@@ -1,9 +1,37 @@
-from datetime import datetime, date
+from datetime import datetime
 from typing_extensions import Optional
-
 from pydantic import BaseModel, field_validator
-
 from app.domain.exceptions.base import InvalidFieldError
+
+
+class NewsImage(BaseModel):
+    url: str
+    size: str
+
+
+class NewsItem(BaseModel):
+    url: str
+    date: str
+    source: str
+    headline: str
+    summary: str
+    content: Optional[str]
+    images: Optional[list[NewsImage]]
+    key_ticker: Optional[list[str]]
+
+
+class NewsList(BaseModel):
+    items: list[NewsItem]
+    cursor: str
+
+
+class NewsListRequest(BaseModel):
+    key_ticker:Optional[str] = None
+    size: int
+    cursor: Optional[str] = None
+    include_text_content: Optional[bool] = None
+    include_key_ticker: Optional[bool] = None
+    include_obj_images: Optional[bool] = None
 
 
 class StatsClose(BaseModel):

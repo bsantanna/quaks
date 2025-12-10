@@ -37,6 +37,7 @@ from app.services.auth import AuthService
 from app.services.integrations import IntegrationService
 from app.services.language_model_settings import LanguageModelSettingService
 from app.services.language_models import LanguageModelService
+from app.services.markets_news import MarketsNewsService
 from app.services.markets_stats import MarketsStatsService
 from app.services.messages import MessageService
 from app.services.tasks import TaskNotificationService
@@ -120,6 +121,11 @@ class Container(containers.DeclarativeContainer):
         realm=config.auth.realm,
         client_id=config.auth.client_id,
         client_secret=config.auth.client_secret,
+    )
+
+    markets_news_service = providers.Factory(
+        MarketsNewsService,
+        es=es,
     )
 
     markets_stats_service = providers.Factory(
