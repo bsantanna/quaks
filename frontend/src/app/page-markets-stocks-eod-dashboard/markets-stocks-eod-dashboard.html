@@ -1,4 +1,4 @@
-<div class="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+<div class="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-2 xl:grid-cols-3 ">
 
     <div class="lg:col-start-3 lg:row-end-1 mt-6">
         <h2 class="sr-only">Summary</h2>
@@ -20,117 +20,33 @@
         }
     </div>
 
-    <div class="lg:col-start-3">
-        <div class="grid grid-cols-1 sm:hidden">
-            <select aria-label="Select a tab"
-                    class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white/5 py-2 pr-8 pl-3 text-base text-gray-100 outline-1 -outline-offset-1 outline-white/10 *:bg-gray-800 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500">
-                <option selected>News</option>
-                <option>Agent Expert Panel</option>
-            </select>
-            <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true"
-                 class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-400">
-                <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
-                      clip-rule="evenodd" fill-rule="evenodd"/>
-            </svg>
-        </div>
-        <div class="hidden sm:block">
-            <div class="border-b border-white/10">
-                <nav aria-label="Tabs" class="-mb-px flex space-x-8">
-                    <button
-                       class="border-b-2 border-indigo-400 px-1 py-4 text-sm font-medium whitespace-nowrap text-indigo-400">
-                        News
-                    </button>
-                    <button
-                       class="border-b-2 border-transparent px-1 py-4 text-sm font-medium whitespace-nowrap text-gray-400 hover:border-white/20 hover:text-gray-200">
-                        Agent Expert Panel
-                    </button>
-                </nav>
-            </div>
-        </div>
-    </div>
-
-    <!--    <div class="lg:col-start-3 mt-10">-->
-    <!--        &lt;!&ndash; Activity feed &ndash;&gt;-->
-    <!--        <h2 class="text-sm/6 font-semibold text-white">Activity</h2>-->
-    <!--        <ul role="list" class="mt-6 space-y-6">-->
-    <!--            <li class="relative flex gap-x-4">-->
-    <!--                <div class="absolute top-0 -bottom-6 left-0 flex w-6 justify-center">-->
-    <!--                    <div class="w-px bg-white/10"></div>-->
-    <!--                </div>-->
-    <!--                <div class="relative flex size-6 flex-none items-center justify-center bg-gray-900">-->
-    <!--                    <div class="size-1.5 rounded-full bg-white/10 ring-1 ring-white/20"></div>-->
-    <!--                </div>-->
-    <!--                <p class="flex-auto py-0.5 text-xs/5 text-gray-400"><span-->
-    <!--                        class="font-medium text-white">Chelsea Hagon</span> created the invoice.</p>-->
-    <!--                <time datetime="2023-01-23T10:32" class="flex-none py-0.5 text-xs/5 text-gray-400">7d ago</time>-->
-    <!--            </li>-->
-    <!--            <li class="relative flex gap-x-4">-->
-    <!--                <div class="absolute top-0 -bottom-6 left-0 flex w-6 justify-center">-->
-    <!--                    <div class="w-px bg-white/10"></div>-->
-    <!--                </div>-->
-    <!--                <div class="relative flex size-6 flex-none items-center justify-center bg-gray-900">-->
-    <!--                    <div class="size-1.5 rounded-full bg-white/10 ring-1 ring-white/20"></div>-->
-    <!--                </div>-->
-    <!--                <p class="flex-auto py-0.5 text-xs/5 text-gray-400"><span-->
-    <!--                        class="font-medium text-white">Chelsea Hagon</span> edited the invoice.</p>-->
-    <!--                <time datetime="2023-01-23T11:03" class="flex-none py-0.5 text-xs/5 text-gray-400">6d ago</time>-->
-    <!--            </li>-->
-    <!--            <li class="relative flex gap-x-4">-->
-    <!--                <div class="absolute top-0 -bottom-6 left-0 flex w-6 justify-center">-->
-    <!--                    <div class="w-px bg-white/10"></div>-->
-    <!--                </div>-->
-    <!--                <div class="relative flex size-6 flex-none items-center justify-center bg-gray-900">-->
-    <!--                    <div class="size-1.5 rounded-full bg-white/10 ring-1 ring-white/20"></div>-->
-    <!--                </div>-->
-    <!--                <p class="flex-auto py-0.5 text-xs/5 text-gray-400"><span-->
-    <!--                        class="font-medium text-white">Chelsea Hagon</span> sent the invoice.</p>-->
-    <!--                <time datetime="2023-01-23T11:24" class="flex-none py-0.5 text-xs/5 text-gray-400">6d ago</time>-->
-    <!--            </li>-->
-    <!--            <li class="relative flex gap-x-4">-->
-    <!--                <div class="absolute top-0 -bottom-6 left-0 flex w-6 justify-center">-->
-    <!--                    <div class="w-px bg-white/10"></div>-->
-    <!--                </div>-->
-    <!--                <img src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"-->
-    <!--                     alt=""-->
-    <!--                     class="relative mt-3 size-6 flex-none rounded-full bg-gray-800 outline -outline-offset-1 outline-white/10"/>-->
-    <!--                <div class="flex-auto rounded-md p-3 ring-1 ring-white/10 ring-inset">-->
-    <!--                    <div class="flex justify-between gap-x-4">-->
-    <!--                        <div class="py-0.5 text-xs/5 text-gray-400"><span-->
-    <!--                                class="font-medium text-white">Chelsea Hagon</span> commented-->
-    <!--                        </div>-->
-    <!--                        <time datetime="2023-01-23T15:56" class="flex-none py-0.5 text-xs/5 text-gray-400">3d ago</time>-->
-    <!--                    </div>-->
-    <!--                    <p class="text-sm/6 text-gray-400">Called client, they reassured me the invoice would be paid by the-->
-    <!--                        25th.</p>-->
-    <!--                </div>-->
-    <!--            </li>-->
-    <!--            <li class="relative flex gap-x-4">-->
-    <!--                <div class="absolute top-0 -bottom-6 left-0 flex w-6 justify-center">-->
-    <!--                    <div class="w-px bg-white/10"></div>-->
-    <!--                </div>-->
-    <!--                <div class="relative flex size-6 flex-none items-center justify-center bg-gray-900">-->
-    <!--                    <div class="size-1.5 rounded-full bg-white/10 ring-1 ring-white/20"></div>-->
-    <!--                </div>-->
-    <!--                <p class="flex-auto py-0.5 text-xs/5 text-gray-400"><span-->
-    <!--                        class="font-medium text-white">Alex Curren</span> viewed the invoice.</p>-->
-    <!--                <time datetime="2023-01-24T09:12" class="flex-none py-0.5 text-xs/5 text-gray-400">2d ago</time>-->
-    <!--            </li>-->
-    <!--            <li class="relative flex gap-x-4">-->
-    <!--                <div class="absolute top-0 left-0 flex h-6 w-6 justify-center">-->
-    <!--                    <div class="w-px bg-white/10"></div>-->
-    <!--                </div>-->
-    <!--                <div class="relative flex size-6 flex-none items-center justify-center bg-gray-900">-->
-    <!--                    <svg viewBox="0 0 24 24" fill="currentColor" data-slot="icon" aria-hidden="true"-->
-    <!--                         class="size-6 text-indigo-500">-->
-    <!--                        <path d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"-->
-    <!--                              clip-rule="evenodd" fill-rule="evenodd"/>-->
-    <!--                    </svg>-->
-    <!--                </div>-->
-    <!--                <p class="flex-auto py-0.5 text-xs/5 text-gray-400"><span-->
-    <!--                        class="font-medium text-white">Alex Curren</span> paid the invoice.</p>-->
-    <!--                <time datetime="2023-01-24T09:20" class="flex-none py-0.5 text-xs/5 text-gray-400">1d ago</time>-->
-    <!--            </li>-->
-    <!--        </ul>-->
-    <!--    </div>-->
+<!--    <div class="lg:col-start-3">-->
+<!--        <div class="grid grid-cols-1 sm:hidden">-->
+<!--            <select aria-label="Select a tab"-->
+<!--                    class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white/5 py-2 pr-8 pl-3 text-base text-gray-100 outline-1 -outline-offset-1 outline-white/10 *:bg-gray-800 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500">-->
+<!--                <option selected>News</option>-->
+<!--                <option>Agent Expert Panel</option>-->
+<!--            </select>-->
+<!--            <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true"-->
+<!--                 class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-400">-->
+<!--                <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"-->
+<!--                      clip-rule="evenodd" fill-rule="evenodd"/>-->
+<!--            </svg>-->
+<!--        </div>-->
+<!--        <div class="hidden sm:block">-->
+<!--            <div class="border-b border-white/10">-->
+<!--                <nav aria-label="Tabs" class="-mb-px flex space-x-8">-->
+<!--                    <button-->
+<!--                       class="border-b-2 border-indigo-400 px-1 py-4 text-sm font-medium whitespace-nowrap text-indigo-400">-->
+<!--                        News-->
+<!--                    </button>-->
+<!--                    <button-->
+<!--                       class="border-b-2 border-transparent px-1 py-4 text-sm font-medium whitespace-nowrap text-gray-400 hover:border-white/20 hover:text-gray-200">-->
+<!--                        Agent Expert Panel-->
+<!--                    </button>-->
+<!--                </nav>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
 
 </div>
