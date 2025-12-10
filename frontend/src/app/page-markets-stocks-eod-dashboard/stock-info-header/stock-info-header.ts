@@ -19,6 +19,7 @@ export class StockInfoHeader {
 
   indexName = input.required<string>();
   keyTicker = input.required<string>();
+  companyName = input.required<string>();
   intervalInDates = input.required<string>();
   useIntervalInDates = input.required<boolean>();
 
