@@ -6,6 +6,15 @@ from pydantic import BaseModel, field_validator
 from app.domain.exceptions.base import InvalidFieldError
 
 
+class NewsItem(BaseModel):
+    url: str
+    source: str
+    headline: str
+    summary: str
+    key_ticker: Optional[list[str]] = None
+    images: Optional[dict] = None
+
+
 class StatsClose(BaseModel):
     key_ticker: str
     most_recent_close: float

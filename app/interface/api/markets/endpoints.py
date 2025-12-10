@@ -3,7 +3,8 @@ from fastapi import APIRouter, Depends
 
 from app.core.container import Container
 from app.interface.api.cache_control import cache_control
-from app.interface.api.markets.schema import StatsClose, StatsCloseRequest
+from app.interface.api.markets.schema import StatsClose, StatsCloseRequest, NewsItem
+from app.services.markets_news import MarketsNewsService
 from app.services.markets_stats import MarketsStatsService
 
 router = APIRouter()
@@ -21,8 +22,7 @@ async def get_most_recent_close(
         key_ticker: str,
         markets_stats_service: MarketsStatsService = Depends(Provide[Container.markets_stats_service]),
         request: StatsCloseRequest = Depends(),
-        _ = cache_control(3600)
-
+        _=cache_control(3600)
 ):
     result = await markets_stats_service.get_stats_close(index_name, key_ticker, request.close_date)
     response = StatsClose(
@@ -38,3 +38,28 @@ async def get_most_recent_close(
 
     return response
 
+
+@router.get(
+    path="/news_related/{index_name}/{key_ticker}",
+    response_model=list[NewsItem],
+    operation_id="news_related",
+    summary="Get news related to a given ticker"
+)
+@inject
+async def get_news_related(
+        index_name: str,
+        key_ticker: str,
+        markets_news_service: MarketsNewsService = Depends(Provide[Container.markets_news_service]),
+        _=cache_control(3600)
+):
+    response = []
+    result = await markets_news_service.get_news_related(index_name, key_ticker)
+    for item in result:
+        response.append(NewsItem(
+            url=item.get("key_url"),
+            source=item.get("key_source"),
+            headline=item.get("text_headline"),
+            summary=item.get("text_summary")
+        ))
+
+    return response

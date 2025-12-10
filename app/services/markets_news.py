@@ -6,7 +6,7 @@ class MarketsNewsService:
     def __init__(self, es: Elasticsearch) -> None:
         self.es = es
 
-    async def get_markets_news_related(
+    async def get_news_related(
             self,
             index_name: str,
             key_ticker: str,
