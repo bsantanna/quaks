@@ -70,13 +70,11 @@ def load_markets_news():
 
         now = datetime.now()
         yesterday = now.replace(day=now.day - 1)
-        alpaca_api_key = os.environ.get('APCA-API-KEY-ID')
-        alpaca_api_secret = os.environ.get('APCA-API-SECRET-KEY')
         alpaca_time_series_url = f"https://data.alpaca.markets/v1beta1/news?start={yesterday.strftime('%Y-%m-%d')}&symbols={ticker}&limit={limit}&include_content=true&exclude_contentless=true"
         response = requests.get(alpaca_time_series_url, headers={
             "accept": "application/json",
-            "APCA-API-KEY-ID": alpaca_api_key,
-            "APCA-API-SECRET-KEY": alpaca_api_secret
+            "APCA-API-KEY-ID": os.environ.get('APCA-API-KEY-ID'),
+            "APCA-API-SECRET-KEY": os.environ.get('APCA-API-SECRET-KEY')
         })
         ticker_news_series = pd.json_normalize(response.json().get('news'))
 
@@ -93,7 +91,7 @@ def load_markets_news():
     indexed_key_ticker_list = requests.get(f"{api_endpoint}/json/indexed_key_ticker_list.json").json()
 
     for company in indexed_key_ticker_list:
-        stocks_eod_response = ingest_markets_news(company["key_ticker"],  company["index"])
+        stocks_eod_response = ingest_markets_news(company["key_ticker"], limit=20, index_suffix=company["index"])
         print(f"Ingestion complete market news for {company["key_ticker"]}, index {company["index"]}: {stocks_eod_response.json()}")
 
 with dag:

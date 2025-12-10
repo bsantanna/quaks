@@ -19,7 +19,7 @@ class MarketsStatsService:
         response = self.es.search_template(index=index_name, body=search_params)
         return response['aggregations']['recent_stats']['value']
 
-    async def get_indicator_ad(self, index_name: str, key_ticker: str, start_date: str, end_date: str) -> dict:
+    async def get_indicator_ad(self, index_name: str, key_ticker: str, start_date: str, end_date: str) -> list[dict]:
         search_params = {
             "id": "get_eod_indicator_ad_template",
             "params": {
@@ -38,7 +38,7 @@ class MarketsStatsService:
             start_date: str,
             end_date: str,
             period: int
-    ) -> dict:
+    ) -> list[dict]:
         search_params = {
             "id": "get_eod_indicator_adx_template",
             "params": {
@@ -59,7 +59,7 @@ class MarketsStatsService:
             end_date: str,
             period: int,
             constant: float
-    ) -> dict:
+    ) -> list[dict]:
         search_params = {
             "id": "get_eod_indicator_cci_template",
             "params": {
@@ -81,7 +81,7 @@ class MarketsStatsService:
             end_date: str,
             short_window: int,
             long_window: int
-    ) -> dict:
+    ) -> list[dict]:
         search_params = {
             "id": "get_eod_indicator_ema_template",
             "params": {
@@ -104,7 +104,7 @@ class MarketsStatsService:
             short_window: int,
             long_window: int,
             signal_window: int
-    ) -> dict:
+    ) -> list[dict]:
         search_params = {
             "id": "get_eod_indicator_macd_template",
             "params": {
@@ -119,7 +119,7 @@ class MarketsStatsService:
         response = self.es.search_template(index=index_name, body=search_params)
         return response['aggregations']['macd_stats']['value']
 
-    async def get_indicator_obv(self, index_name: str, key_ticker: str, start_date: str, end_date: str) -> dict:
+    async def get_indicator_obv(self, index_name: str, key_ticker: str, start_date: str, end_date: str) -> list[dict]:
         search_params = {
             "id": "get_eod_indicator_obv_template",
             "params": {
@@ -138,7 +138,7 @@ class MarketsStatsService:
             start_date: str,
             end_date: str,
             period: int
-    ) -> dict:
+    ) -> list[dict]:
         search_params = {
             "id": "get_eod_indicator_rsi_template",
             "params": {
@@ -160,7 +160,7 @@ class MarketsStatsService:
             lookback: int,
             smooth_k: int,
             smooth_d: int
-    ) -> dict:
+    ) -> list[dict]:
         search_params = {
             "id": "get_eod_indicator_stoch_template",
             "params": {

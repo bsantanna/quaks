@@ -5,6 +5,7 @@ import {HttpClient} from '@angular/common/http';
 import {IndexedKeyTicker} from '../../models/markets.model';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {STOCK_MARKETS} from '../../constants';
+import {IndexedKeyTickerService} from '../../services/indexed-key-ticker.service';
 
 
 @Component({
@@ -15,11 +16,10 @@ import {STOCK_MARKETS} from '../../constants';
   styleUrl: './stock-autocomplete.scss',
 })
 export class StockAutocompleteComponent {
-  private readonly httpClient = inject(HttpClient);
 
+  readonly indexedKeyTickerService = inject(IndexedKeyTickerService);
   readonly searchQuery = signal('');
   readonly isOpen = signal(false);
-  readonly indexedKeyTickers!: Signal<IndexedKeyTicker[]>;
 
   // Filtered stocks based on search query
   filteredStocks = computed(() => {
@@ -29,7 +29,7 @@ export class StockAutocompleteComponent {
       return [];
     }
 
-    return this.indexedKeyTickers().filter(
+    return this.indexedKeyTickerService.indexedKeyTickers().filter(
       (stock) =>
         (stock.key_ticker.toLowerCase().includes(query) || stock.name.toLowerCase().includes(query))
         && STOCK_MARKETS.filter(market=> market === stock.index)
@@ -39,11 +39,6 @@ export class StockAutocompleteComponent {
 
   // Output event for when a stock is selected
   stockSelected = output<IndexedKeyTicker>();
-
-  constructor() {
-    const indexedKeyTickers$ = this.httpClient.get<IndexedKeyTicker[]>('/json/indexed_key_ticker_list.json');
-    this.indexedKeyTickers = toSignal(indexedKeyTickers$, {initialValue: []});
-  }
 
   onSearch(event: Event): void {
     const target = event.target as HTMLInputElement;

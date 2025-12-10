@@ -3,7 +3,8 @@ from fastapi import APIRouter, Depends
 
 from app.core.container import Container
 from app.interface.api.cache_control import cache_control
-from app.interface.api.markets.schema import StatsClose, StatsCloseRequest
+from app.interface.api.markets.schema import StatsClose, StatsCloseRequest, NewsItem, NewsList, NewsListRequest
+from app.services.markets_news import MarketsNewsService
 from app.services.markets_stats import MarketsStatsService
 
 router = APIRouter()
@@ -21,8 +22,7 @@ async def get_most_recent_close(
         key_ticker: str,
         markets_stats_service: MarketsStatsService = Depends(Provide[Container.markets_stats_service]),
         request: StatsCloseRequest = Depends(),
-        _ = cache_control(3600)
-
+        _=cache_control(3600)
 ):
     result = await markets_stats_service.get_stats_close(index_name, key_ticker, request.close_date)
     response = StatsClose(
@@ -38,3 +38,46 @@ async def get_most_recent_close(
 
     return response
 
+
+@router.get(
+    path="/news/{index_name}",
+    response_model=NewsList,
+    operation_id="markets_news",
+    summary="Get markets news"
+)
+@inject
+async def get_news(
+        index_name: str,
+        markets_news_service: MarketsNewsService = Depends(Provide[Container.markets_news_service]),
+        request: NewsListRequest = Depends(),
+        _=cache_control(3600)):
+
+    result, sort = await markets_news_service.get_news(
+        index_name=index_name,
+        key_ticker=request.key_ticker,
+        size=request.size,
+        cursor=request.cursor,
+        include_text_content=request.include_text_content,
+        include_key_ticker=request.include_key_ticker,
+        include_obj_images=request.include_obj_images,
+    )
+
+    news_items = []
+    for item in result:
+        news_items.append(NewsItem(
+            url=item.get("key_url"),
+            source=item.get("key_source"),
+            headline=item.get("text_headline"),
+            summary=item.get("text_summary"),
+            content=item.get("text_content"),
+            date=item.get("date_reference"),
+            images=item.get("obj_images"),
+            key_ticker=item.get("key_ticker"),
+        ))
+
+    response = NewsList(
+        items=news_items,
+        cursor=sort
+    )
+
+    return response

@@ -4,6 +4,7 @@ import {toSignal} from '@angular/core/rxjs-interop';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import { StockInfoHeader } from './stock-info-header/stock-info-header';
 import {ShareUrlService} from '../services/share-url.service';
+import {IndexedKeyTickerService} from '../services/indexed-key-ticker.service';
 
 
 @Component({
@@ -16,10 +17,12 @@ export class MarketsStocksEodDashboard implements OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly shareUrlService = inject(ShareUrlService);
+  private readonly indexedKeyTickerService = inject(IndexedKeyTickerService);
 
   private readonly paramMap = toSignal<ParamMap>(this.route.paramMap);
   private readonly queryParams = toSignal<Params>(this.route.queryParams);
   readonly keyTicker = computed(() => this.paramMap()?.get('keyTicker') ?? '');
+  readonly companyName = computed(() => this.indexedKeyTickerService.findKeyTicker(this.keyTicker())?.name ?? '');
   readonly intervalInDates = computed<string>(()=> this.queryParams()?.['interval'] ?? '');
   readonly intervalInDays: WritableSignal<number> = signal<number>(90);
   readonly useIntervalInDates = computed<boolean>(() => this.intervalInDates().trim().length > 0);
