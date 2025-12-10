@@ -21,22 +21,22 @@
         </div>
 
         <!-- Detailed stats: O, H, L, V -->
-        <div class="grid grid-cols-4 gap-2 text-center mb-3 text-sm">
+        <div class="grid grid-cols-4 gap-1 text-center mb-3">
             <div>
                 <p class="text-xs text-gray-400">Open</p>
-                <p class="font-mono">{{ statsClose().most_recent_open | number : '1.2-2' }}</p>
+                <p class="font-mono text-xs truncate">{{ statsClose().most_recent_open | number : '1.2-2' }}</p>
             </div>
             <div>
                 <p class="text-xs text-gray-400">High</p>
-                <p class="font-mono">{{ statsClose().most_recent_high | number : '1.2-2' }}</p>
+                <p class="font-mono text-xs truncate">{{ statsClose().most_recent_high | number : '1.2-2' }}</p>
             </div>
             <div>
                 <p class="text-xs text-gray-400">Low</p>
-                <p class="font-mono">{{ statsClose().most_recent_low | number : '1.2-2' }}</p>
+                <p class="font-mono text-xs truncate">{{ statsClose().most_recent_low | number : '1.2-2' }}</p>
             </div>
             <div>
                 <p class="text-xs text-gray-400">Volume</p>
-                <p class="font-mono truncate max-w-20">{{ statsClose().most_recent_volume | number : '1.0-0' }}</p>
+                <p class="font-mono text-xs truncate">{{ statsClose().most_recent_volume | number : '1.0-0' }}</p>
             </div>
         </div>
 
