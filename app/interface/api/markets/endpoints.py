@@ -43,7 +43,7 @@ async def get_most_recent_close(
     path="/news/{index_name}",
     response_model=NewsList,
     operation_id="news_related",
-    summary="Get news related to a given ticker"
+    summary="Get markets news"
 )
 @inject
 async def get_news(
