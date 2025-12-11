@@ -14,7 +14,7 @@
         </div>
     </div>
 
-    <div class="-mx-4 sm:mx-0 sm:rounded-lg lg:col-span-2 lg:row-span-2 lg:row-end-2">
+    <div class="-mx-4 sm:mx-0 sm:rounded-lg lg:col-span-2 lg:row-span-2 lg:row-end-2 rounded mt-6 mb-6 p-2 border-2 border-gray-800" id="dashboard">
         @if (kibanaUrl()) {
             <iframe [src]="kibanaUrl()" class="w-full border-none"></iframe>
         }
