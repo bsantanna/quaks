@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, input} from '@angular/core';
 
 @Component({
   selector: 'app-stock-eod-insights',
@@ -7,5 +7,7 @@ import { Component } from '@angular/core';
   styleUrl: './stock-eod-insights.scss',
 })
 export class StockEodInsights {
+
+  readonly keyTicker = input.required<string>();
 
 }

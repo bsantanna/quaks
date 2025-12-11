@@ -55,9 +55,13 @@
         </div>
 
         @if (selectedTab() == 'insights') {
-            <app-stock-eod-insights>/</app-stock-eod-insights>
+            <app-stock-eod-insights
+                    [keyTicker]="keyTicker()">
+            </app-stock-eod-insights>
         } @else if (selectedTab() == 'tools') {
-            <app-stock-eod-tools></app-stock-eod-tools>
+            <app-stock-eod-tools
+                    [keyTicker]="keyTicker()">
+            </app-stock-eod-tools>
         }
 
     </div>
