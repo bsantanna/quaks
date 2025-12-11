@@ -1,10 +1,9 @@
-import {Component, inject, Input, input, Signal, WritableSignal} from '@angular/core';
+import {Component, computed, effect, inject, input, model, Signal, signal, WritableSignal} from '@angular/core';
 import {MarketsStatsService} from '../../services/markets-stats.service';
 import {StatsClose} from '../../models/markets.model';
-import {toObservable, toSignal} from '@angular/core/rxjs-interop';
-import {combineLatest, switchMap, tap} from 'rxjs';
 import {DecimalPipe} from '@angular/common';
 import {ShareUrlService} from '../../services/share-url.service';
+import {take} from 'rxjs';
 
 @Component({
   selector: 'app-stock-info-header',
@@ -17,32 +16,32 @@ export class StockInfoHeader {
   private readonly marketsStatsService = inject(MarketsStatsService);
   private readonly shareUrlService = inject(ShareUrlService);
 
-  indexName = input.required<string>();
-  keyTicker = input.required<string>();
-  companyName = input.required<string>();
-  intervalInDates = input.required<string>();
-  useIntervalInDates = input.required<boolean>();
+  readonly indexName = input.required<string>();
+  readonly keyTicker = input.required<string>();
+  readonly companyName = input.required<string>();
+  readonly intervalInDates = input.required<string>();
+  readonly useIntervalInDates = input.required<boolean>();
+  readonly intervalInDays = model.required<number>();
 
-  @Input() intervalInDays!: WritableSignal<number>;
+  private readonly interval: Signal<string> = computed(() => {
+    if (this.useIntervalInDates()) {
+      return this.intervalInDates();
+    }
+    return `${this.getPastDateInDays(this.intervalInDays())}_${this.getPastDateInDays(1)}`;
+  });
 
-  statsClose!: Signal<StatsClose>;
+  readonly statsClose: WritableSignal<StatsClose> = signal(MarketsStatsService.INITIAL_STATS_CLOSE);
 
   constructor() {
-
-    const stats$ = combineLatest([
-      toObservable(this.indexName),
-      toObservable(this.keyTicker),
-      toObservable(this.intervalInDates)
-    ]).pipe(
-      switchMap(
-        ([index, ticker, intervalInDates]) => this.marketsStatsService.getStatsClose(index, ticker, intervalInDates)
-      )
-    );
-
-    this.statsClose = toSignal(stats$, {
-      initialValue: MarketsStatsService.INITIAL_STATS_CLOSE
+    effect(() => {
+      this.marketsStatsService.getStatsClose(
+        this.indexName(),
+        this.keyTicker(),
+        this.interval()
+      ).pipe(take(1)).subscribe(stats => {
+        this.statsClose.set(stats);
+      });
     });
-
   }
 
   setIntervalInDays(days: number): void {

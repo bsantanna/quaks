@@ -14,7 +14,7 @@ router = APIRouter()
     path="/stats_close/{index_name}/{key_ticker}",
     response_model=StatsClose,
     operation_id="stats_close",
-    summary="Get most recent close stats for a given ticker"
+    summary="Get most close stats performance for a given date range"
 )
 @inject
 async def get_most_recent_close(
@@ -24,7 +24,12 @@ async def get_most_recent_close(
         request: StatsCloseRequest = Depends(),
         _=cache_control(3600)
 ):
-    result = await markets_stats_service.get_stats_close(index_name, key_ticker, request.close_date)
+    result = await markets_stats_service.get_stats_close(
+        index_name=index_name,
+        key_ticker=key_ticker,
+        start_date=request.start_date,
+        end_date=request.end_date,
+    )
     response = StatsClose(
         key_ticker=key_ticker,
         most_recent_close=result.get('most_recent_close'),
