@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing_extensions import Optional
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, model_validator
 from app.domain.exceptions.base import InvalidFieldError
 
 
@@ -46,9 +46,10 @@ class StatsClose(BaseModel):
 
 
 class StatsCloseRequest(BaseModel):
-    close_date: Optional[str] = None
+    end_date: Optional[str] = None
+    start_date: Optional[str] = None
 
-    @field_validator('close_date')
+    @field_validator('end_date', 'start_date')
     @classmethod
     def validate_date_format(cls, v: Optional[str]) -> Optional[str]:
         if v is None:
@@ -59,5 +60,14 @@ class StatsCloseRequest(BaseModel):
             datetime.strptime(v, '%Y-%m-%d')
             return v
         except ValueError:
-            raise InvalidFieldError('close_date', 'Date must be in yyyy-mm-dd format')
+            raise InvalidFieldError('start_date, end_date', 'Date must be in yyyy-mm-dd format')
+
+    @model_validator(mode='after')
+    def validate_dates_order(self):
+        if self.start_date and self.end_date:
+            start = datetime.strptime(self.start_date, '%Y-%m-%d')
+            end = datetime.strptime(self.end_date, '%Y-%m-%d')
+            if start >= end:
+                raise InvalidFieldError('start_date, end_date', 'Start date must be before end date')
+        return self
 
