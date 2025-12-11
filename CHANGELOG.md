@@ -2,6 +2,30 @@
 
 <!-- version list -->
 
+## v1.3.7 (2025-12-11)
+
+### Bug Fixes
+
+- Adjusts css class selection logic ([#27](https://github.com/bsantanna/quant-agents/pull/27),
+  [`d368d52`](https://github.com/bsantanna/quant-agents/commit/d368d5239aeacad500155bc1df3adf4a7ddb124c))
+
+- Close stats calculation from initial date not from yesterday
+  ([#27](https://github.com/bsantanna/quant-agents/pull/27),
+  [`d368d52`](https://github.com/bsantanna/quant-agents/commit/d368d5239aeacad500155bc1df3adf4a7ddb124c))
+
+- Layout container adjusts for dashboard page
+  ([#27](https://github.com/bsantanna/quant-agents/pull/27),
+  [`d368d52`](https://github.com/bsantanna/quant-agents/commit/d368d5239aeacad500155bc1df3adf4a7ddb124c))
+
+- Prototypes action panel for stocks eod dashboard
+  ([#27](https://github.com/bsantanna/quant-agents/pull/27),
+  [`d368d52`](https://github.com/bsantanna/quant-agents/commit/d368d5239aeacad500155bc1df3adf4a7ddb124c))
+
+- Prototypes routes and links for dashboard
+  ([#27](https://github.com/bsantanna/quant-agents/pull/27),
+  [`d368d52`](https://github.com/bsantanna/quant-agents/commit/d368d5239aeacad500155bc1df3adf4a7ddb124c))
+
+
 ## v1.3.6 (2025-12-10)
 
 ### Bug Fixes
