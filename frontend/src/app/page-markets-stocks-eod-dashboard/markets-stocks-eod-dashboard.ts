@@ -26,6 +26,7 @@ export class MarketsStocksEodDashboard implements OnDestroy {
   readonly intervalInDates = computed<string>(()=> this.queryParams()?.['interval'] ?? '');
   readonly intervalInDays: WritableSignal<number> = signal<number>(90);
   readonly useIntervalInDates = computed<boolean>(() => this.intervalInDates().trim().length > 0);
+  readonly selectedTab: WritableSignal<string> = signal<string>('news');
   readonly kibanaUrl = computed<SafeResourceUrl>(() => {
     const symbol = encodeURIComponent(this.keyTicker());
     const baseUrl = 'https://kibana.quaks.ai/app/dashboards';
@@ -69,7 +70,7 @@ export class MarketsStocksEodDashboard implements OnDestroy {
           url: `${window.location.href.split('?')[0]}?interval=${this.shareUrlService.getPastDateInDays(this.intervalInDays())}_${this.shareUrlService.getPastDateInDays(1)}`
         });
       }
-    })
+    });
   }
 
   ngOnDestroy(): void {
