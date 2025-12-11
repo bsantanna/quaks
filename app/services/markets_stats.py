@@ -7,12 +7,19 @@ class MarketsStatsService:
     def __init__(self, es: Elasticsearch) -> None:
         self.es = es
 
-    async def get_stats_close(self, index_name: str, key_ticker: str, close_date: Optional[str]) -> dict:
+    async def get_stats_close(
+            self,
+            index_name: str,
+            key_ticker: str,
+            start_date: str,
+            end_date: Optional[str]
+    ) -> dict:
         search_params = {
             "id": "get_stats_close_template",
             "params": {
                 "key_ticker": key_ticker,
-                "close_date": close_date,
+                "date_gte": start_date,
+                "date_lte": end_date,
             }
         }
 

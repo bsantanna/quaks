@@ -2,14 +2,16 @@ import {Component, computed, effect, inject, OnDestroy, signal, WritableSignal} 
 import {ActivatedRoute, ParamMap, Params} from '@angular/router';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
-import { StockInfoHeader } from './stock-info-header/stock-info-header';
+import {StockInfoHeader} from './stock-info-header/stock-info-header';
 import {ShareUrlService} from '../services/share-url.service';
 import {IndexedKeyTickerService} from '../services/indexed-key-ticker.service';
+import {StockEodTools} from './stock-eod-tools/stock-eod-tools';
+import {StockEodInsights} from './stock-eod-insights/stock-eod-insights';
 
 
 @Component({
   selector: 'app-markets-stocks-eod-dashboard',
-  imports: [StockInfoHeader],
+  imports: [StockInfoHeader, StockEodTools, StockEodInsights],
   templateUrl: './markets-stocks-eod-dashboard.html',
   styleUrl: './markets-stocks-eod-dashboard.scss',
 })
@@ -23,16 +25,17 @@ export class MarketsStocksEodDashboard implements OnDestroy {
   private readonly queryParams = toSignal<Params>(this.route.queryParams);
   readonly keyTicker = computed(() => this.paramMap()?.get('keyTicker') ?? '');
   readonly companyName = computed(() => this.indexedKeyTickerService.findKeyTicker(this.keyTicker())?.name ?? '');
-  readonly intervalInDates = computed<string>(()=> this.queryParams()?.['interval'] ?? '');
+  readonly intervalInDates = computed<string>(() => this.queryParams()?.['interval'] ?? '');
   readonly intervalInDays: WritableSignal<number> = signal<number>(90);
   readonly useIntervalInDates = computed<boolean>(() => this.intervalInDates().trim().length > 0);
+  readonly selectedTab: WritableSignal<string> = signal<string>('insights');
   readonly kibanaUrl = computed<SafeResourceUrl>(() => {
     const symbol = encodeURIComponent(this.keyTicker());
     const baseUrl = 'https://kibana.quaks.ai/app/dashboards';
 
     const dashboardId = (this.intervalInDays() > 30 || this.useIntervalInDates())
-    ? '16c3228b-0831-442d-ae18-3a2cf4700792'
-    : 'f24f0eea-d8e5-4721-9057-9395daf7c931';
+      ? '16c3228b-0831-442d-ae18-3a2cf4700792'
+      : 'f24f0eea-d8e5-4721-9057-9395daf7c931';
 
     const timeRange = this.useIntervalInDates()
       ? `time:(from:'${this.intervalInDates().split('_')[0]}',to:'${this.intervalInDates().split('_')[1]}')`
@@ -51,7 +54,7 @@ export class MarketsStocksEodDashboard implements OnDestroy {
   });
 
 
-  constructor(){
+  constructor() {
     effect(() => {
       const ticker = this.keyTicker();
       const dates = this.intervalInDates();
@@ -69,7 +72,7 @@ export class MarketsStocksEodDashboard implements OnDestroy {
           url: `${window.location.href.split('?')[0]}?interval=${this.shareUrlService.getPastDateInDays(this.intervalInDays())}_${this.shareUrlService.getPastDateInDays(1)}`
         });
       }
-    })
+    });
   }
 
   ngOnDestroy(): void {

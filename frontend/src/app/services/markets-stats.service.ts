@@ -34,9 +34,8 @@ export class MarketsStatsService {
 
     const url = `${this.marketsStatsCloseUrl}/${encodeURIComponent(indexName)}/${encodeURIComponent(ticker)}`;
     const params = {};
-    if (intervalInDates && intervalInDates.trim().length > 0) {
-      Object.assign(params, {close_date: intervalInDates.split('_')[1]});
-    }
+    Object.assign(params, {start_date: intervalInDates.split('_')[0]});
+    Object.assign(params, {end_date: intervalInDates.split('_')[1]});
 
     return this.http.get<StatsClose>(url, {params}).pipe(
       timeout(requestTimeoutMs),
