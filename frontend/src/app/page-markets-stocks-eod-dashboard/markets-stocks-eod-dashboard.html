@@ -14,7 +14,7 @@
         </div>
     </div>
 
-    <div class="-mx-4 sm:mx-0 sm:rounded-lg lg:col-span-2 lg:row-span-2 lg:row-end-2 rounded mt-6 mb-6 p-2 border-2 border-gray-800"
+    <div class="-mx-4 sm:mx-0 sm:rounded-lg lg:col-span-2 lg:row-span-2 lg:row-end-2 md:rounded md:mt-6 md:mb-6 md:p-2 md:border-2 md:border-gray-800"
          id="dashboard">
         @if (kibanaUrl()) {
             <iframe [src]="kibanaUrl()" class="w-full border-none"></iframe>
@@ -24,9 +24,10 @@
     <div class="lg:col-start-3">
         <div class="grid grid-cols-1 sm:hidden">
             <select aria-label="Select a tab"
+                    (change)="selectedTab.set($any($event.target).value)"
                     class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white/5 py-2 pr-8 pl-3 text-base text-gray-100 outline-1 -outline-offset-1 outline-white/10 *:bg-gray-800 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500">
-                <option selected>News</option>
-                <option>Agent Expert Panel</option>
+                <option [selected]="selectedTab() === 'insights'" value="insights">Insights</option>
+                <option [selected]="selectedTab() === 'tools'" value="tools">Tools</option>
             </select>
             <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true"
                  class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-400">
@@ -37,27 +38,28 @@
         <div class="hidden sm:block">
             <div class="border-b border-white/10">
                 <nav aria-label="Tabs" class="-mb-px flex space-x-8">
-<!--                    <button (click)="selectedTab.set('insights')"-->
-<!--                            class="border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap"-->
-<!--                            [class]="selectedTab() === 'quaks-insights' ? 'border-blue-800 text-blue-500' : 'hover:border-white/20 hover:text-gray-200 border-transparent text-gray-400'">-->
+                    <button (click)="selectedTab.set('insights')"
+                            class="border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer"
+                            [class]="selectedTab() === 'insights' ? 'border-blue-800 text-blue-500' : 'hover:border-white/20 hover:text-gray-200 border-transparent text-gray-400'">
 
-<!--                        Quaks Insights-->
-<!--                    </button>-->
-                    <button (click)="selectedTab.set('news')"
-                            class="border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap"
-                            [class]="selectedTab() === 'news' ? 'border-blue-800 text-blue-500' : 'hover:border-white/20 hover:text-gray-200 border-transparent text-gray-400'">
-                        News
+                        Insights
+                    </button>
+                    <button (click)="selectedTab.set('tools')"
+                            class="border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer"
+                            [class]="selectedTab() === 'tools' ? 'border-blue-800 text-blue-500' : 'hover:border-white/20 hover:text-gray-200 border-transparent text-gray-400'">
+                        Tools
                     </button>
                 </nav>
             </div>
 
-            @if (selectedTab() == 'insights') {
-
-            } @else if (selectedTab() == 'news'){
-
-            }
-
         </div>
+
+        @if (selectedTab() == 'insights') {
+            <app-stock-eod-insights>/</app-stock-eod-insights>
+        } @else if (selectedTab() == 'tools') {
+            <app-stock-eod-tools></app-stock-eod-tools>
+        }
+
     </div>
 
 </div>
