@@ -2,6 +2,33 @@
 
 <!-- version list -->
 
+## v1.3.8 (2025-12-12)
+
+### Bug Fixes
+
+- CSS style for iframe dashboards ([#28](https://github.com/bsantanna/quant-agents/pull/28),
+  [`09863e4`](https://github.com/bsantanna/quant-agents/commit/09863e446d1c91c9e27811bc13bd4dda1519a7fb))
+
+- Iframe dashboards refactoring (1) ([#28](https://github.com/bsantanna/quant-agents/pull/28),
+  [`09863e4`](https://github.com/bsantanna/quant-agents/commit/09863e446d1c91c9e27811bc13bd4dda1519a7fb))
+
+- Iframe dashboards refactoring (2) ([#28](https://github.com/bsantanna/quant-agents/pull/28),
+  [`09863e4`](https://github.com/bsantanna/quant-agents/commit/09863e446d1c91c9e27811bc13bd4dda1519a7fb))
+
+- Iframe dashboards refactoring (3) ([#28](https://github.com/bsantanna/quant-agents/pull/28),
+  [`09863e4`](https://github.com/bsantanna/quant-agents/commit/09863e446d1c91c9e27811bc13bd4dda1519a7fb))
+
+- Iframe dashboards refactoring (4) ([#28](https://github.com/bsantanna/quant-agents/pull/28),
+  [`09863e4`](https://github.com/bsantanna/quant-agents/commit/09863e446d1c91c9e27811bc13bd4dda1519a7fb))
+
+- Iframe dashboards refactoring (5) ([#28](https://github.com/bsantanna/quant-agents/pull/28),
+  [`09863e4`](https://github.com/bsantanna/quant-agents/commit/09863e446d1c91c9e27811bc13bd4dda1519a7fb))
+
+- Updates kibana terraform dashboard object
+  ([#28](https://github.com/bsantanna/quant-agents/pull/28),
+  [`09863e4`](https://github.com/bsantanna/quant-agents/commit/09863e446d1c91c9e27811bc13bd4dda1519a7fb))
+
+
 ## v1.3.7 (2025-12-11)
 
 ### Bug Fixes
