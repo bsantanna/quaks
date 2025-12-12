@@ -15,54 +15,18 @@
     </div>
 
     <div class="-mx-4 sm:mx-0 sm:rounded-lg lg:col-span-2 lg:row-span-2 lg:row-end-2">
-        @if (kibanaUrl()) {
-            <iframe #dashboardIframe (load)="onIframeLoad(dashboardIframe)" [src]="kibanaUrl()" class="w-full border-none"></iframe>
-        }
+        <app-stock-eod-charts
+                [keyTicker]="keyTicker()"
+                [intervalInDays]="intervalInDays()"
+                [intervalInDates]="intervalInDates()"
+                [useIntervalInDates]="useIntervalInDates()">
+        </app-stock-eod-charts>
     </div>
 
     <div class="lg:col-start-3">
-        <div class="grid grid-cols-1 sm:hidden">
-            <select aria-label="Select a tab"
-                    (change)="selectedTab.set($any($event.target).value)"
-                    class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white/5 py-2 pr-8 pl-3 text-base text-gray-100 outline-1 -outline-offset-1 outline-white/10 *:bg-gray-800 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500">
-                <option [selected]="selectedTab() === 'insights'" value="insights">Insights</option>
-                <option [selected]="selectedTab() === 'tools'" value="tools">Tools</option>
-            </select>
-            <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true"
-                 class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-400">
-                <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
-                      clip-rule="evenodd" fill-rule="evenodd"/>
-            </svg>
-        </div>
-        <div class="hidden sm:block">
-            <div class="border-b border-white/10">
-                <nav aria-label="Tabs" class="-mb-px flex space-x-8">
-                    <button (click)="selectedTab.set('insights')"
-                            class="border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer"
-                            [class]="selectedTab() === 'insights' ? 'border-blue-800 text-blue-500' : 'hover:border-white/20 hover:text-gray-200 border-transparent text-gray-400'">
-
-                        Insights
-                    </button>
-                    <button (click)="selectedTab.set('tools')"
-                            class="border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer"
-                            [class]="selectedTab() === 'tools' ? 'border-blue-800 text-blue-500' : 'hover:border-white/20 hover:text-gray-200 border-transparent text-gray-400'">
-                        Tools
-                    </button>
-                </nav>
-            </div>
-
-        </div>
-
-        @if (selectedTab() == 'insights') {
-            <app-stock-eod-insights
-                    [keyTicker]="keyTicker()">
-            </app-stock-eod-insights>
-        } @else if (selectedTab() == 'tools') {
-            <app-stock-eod-tools
-                    [keyTicker]="keyTicker()">
-            </app-stock-eod-tools>
-        }
-
+        <app-stock-eod-actions
+                [keyTicker]="keyTicker()">
+        </app-stock-eod-actions>
     </div>
 
 </div>

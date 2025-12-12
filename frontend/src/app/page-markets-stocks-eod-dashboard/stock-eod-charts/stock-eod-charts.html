@@ -1,0 +1,7 @@
+@if (kibanaUrl()) {
+    <iframe #dashboardIframe
+            (load)="onIframeLoad(dashboardIframe)"
+            [src]="kibanaUrl()"
+            class="w-full border-none">
+    </iframe>
+}
