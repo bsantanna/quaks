@@ -1,6 +1,6 @@
 import {Component, computed, effect, inject, input, model, signal, WritableSignal} from '@angular/core';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
-import {DASHBOARD_IDS, IFRAME_STYLE} from '../../constants';
+import {DASHBOARDS_IDS, IFRAME_STYLE, DASHBOARDS_ENDPOINT} from '../../constants';
 
 @Component({
   selector: 'app-stock-eod-charts',
@@ -20,13 +20,27 @@ export class StockEodCharts {
 
   readonly kibanaUrl = computed<SafeResourceUrl>(() => {
     const symbol = encodeURIComponent(this.keyTicker());
-    const baseUrl = 'https://kibana.quaks.ai/app/dashboards';
+
 
     let dashboardId = '';
-    if (this.selectedTab() === 'stock_price') {
-      dashboardId = DASHBOARD_IDS.stocks_eod_ohlcv;
-    } else if(this.selectedTab() === 'indicator_ema'){
-      dashboardId = DASHBOARD_IDS.stocks_eod_indicator_ema;
+    if (this.selectedTab() === 'indicator_ema') {
+      dashboardId = DASHBOARDS_IDS.stocks_eod_indicator_ema;
+    } else if (this.selectedTab() === 'indicator_ad') {
+      dashboardId = DASHBOARDS_IDS.stocks_eod_indicator_ad;
+    } else if (this.selectedTab() === 'indicator_adx') {
+      dashboardId = DASHBOARDS_IDS.stocks_eod_indicator_adx;
+    } else if (this.selectedTab() === 'indicator_cci') {
+      dashboardId = DASHBOARDS_IDS.stocks_eod_indicator_cci;
+    } else if (this.selectedTab() === 'indicator_macd') {
+      dashboardId = DASHBOARDS_IDS.stocks_eod_indicator_macd;
+    } else if (this.selectedTab() === 'indicator_obv') {
+      dashboardId = DASHBOARDS_IDS.stocks_eod_indicator_obv;
+    } else if (this.selectedTab() === 'indicator_rsi') {
+      dashboardId = DASHBOARDS_IDS.stocks_eod_indicator_rsi;
+    } else if (this.selectedTab() === 'indicator_stoch') {
+      dashboardId = DASHBOARDS_IDS.stocks_eod_indicator_stoch;
+    } else {
+      dashboardId = DASHBOARDS_IDS.stocks_eod_ohlcv;
     }
 
     const timeRange = this.useIntervalInDates()
@@ -41,7 +55,7 @@ export class StockEodCharts {
       '_a': `(query:(language:kuery,query:'key_ticker:${symbol}'))`
     });
 
-    const fullUrl = `${baseUrl}?auth_provider_hint=anonymous1#/view/${dashboardId}?${embedParams.toString()}`;
+    const fullUrl = `${DASHBOARDS_ENDPOINT}?auth_provider_hint=anonymous1#/view/${dashboardId}?${embedParams.toString()}`;
     return this.sanitizer.bypassSecurityTrustResourceUrl(fullUrl);
   });
 
