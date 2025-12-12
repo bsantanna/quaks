@@ -1,0 +1,80 @@
+<div class="grid grid-cols-1 sm:hidden mx-4 mb-4">
+    <select aria-label="Select a tab"
+            (change)="selectedTab.set($any($event.target).value)"
+            class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white/5 py-2 pr-8 pl-3 text-base text-gray-100 outline-1 -outline-offset-1 outline-white/10 *:bg-gray-800 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500">
+        <option [selected]="selectedTab() === 'stock_price'" value="stock_price">Stock Price</option>
+        <option [selected]="selectedTab() === 'indicator_ema'" value="indicator_ema">EMA</option>
+        <option [selected]="selectedTab() === 'indicator_macd'" value="indicator_macd">MACD</option>
+        <option [selected]="selectedTab() === 'indicator_adx'" value="indicator_adx">ADX</option>
+        <option [selected]="selectedTab() === 'indicator_rsi'" value="indicator_rsi">RSI</option>
+        <option [selected]="selectedTab() === 'indicator_cci'" value="indicator_cci">CCI</option>
+        <option [selected]="selectedTab() === 'indicator_stoch'" value="indicator_stoch">STOCH</option>
+        <option [selected]="selectedTab() === 'indicator_ad'" value="indicator_ad">AD</option>
+        <option [selected]="selectedTab() === 'indicator_obv'" value="indicator_obv">OBV</option>
+    </select>
+    <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true"
+         class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-400">
+        <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
+              clip-rule="evenodd" fill-rule="evenodd"/>
+    </svg>
+</div>
+<div class="hidden sm:block">
+    <div class="border-b border-white/10">
+        <nav aria-label="Tabs" class="-mb-px flex space-x-8">
+            <button (click)="selectedTab.set('stock_price')"
+                    class="border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer"
+                    [class]="selectedTab() === 'stock_price' ? 'border-blue-800 text-blue-500' : 'hover:border-white/20 hover:text-gray-200 border-transparent text-gray-400'">
+                Stock Price
+            </button>
+            <button (click)="selectedTab.set('indicator_ema')"
+                    class="border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer"
+                    [class]="selectedTab() === 'indicator_ema' ? 'border-blue-800 text-blue-500' : 'hover:border-white/20 hover:text-gray-200 border-transparent text-gray-400'">
+                EMA
+            </button>
+            <button (click)="selectedTab.set('indicator_macd')"
+                    class="border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer"
+                    [class]="selectedTab() === 'indicator_macd' ? 'border-blue-800 text-blue-500' : 'hover:border-white/20 hover:text-gray-200 border-transparent text-gray-400'">
+                MACD
+            </button>
+            <button (click)="selectedTab.set('indicator_adx')"
+                    class="border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer"
+                    [class]="selectedTab() === 'indicator_adx' ? 'border-blue-800 text-blue-500' : 'hover:border-white/20 hover:text-gray-200 border-transparent text-gray-400'">
+                ADX
+            </button>
+            <button (click)="selectedTab.set('indicator_rsi')"
+                    class="border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer"
+                    [class]="selectedTab() === 'indicator_rsi' ? 'border-blue-800 text-blue-500' : 'hover:border-white/20 hover:text-gray-200 border-transparent text-gray-400'">
+                RSI
+            </button>
+            <button (click)="selectedTab.set('indicator_cci')"
+                    class="border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer"
+                    [class]="selectedTab() === 'indicator_cci' ? 'border-blue-800 text-blue-500' : 'hover:border-white/20 hover:text-gray-200 border-transparent text-gray-400'">
+                CCI
+            </button>
+            <button (click)="selectedTab.set('indicator_stoch')"
+                    class="border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer"
+                    [class]="selectedTab() === 'indicator_stoch' ? 'border-blue-800 text-blue-500' : 'hover:border-white/20 hover:text-gray-200 border-transparent text-gray-400'">
+                STOCH
+            </button>
+            <button (click)="selectedTab.set('indicator_ad')"
+                    class="border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer"
+                    [class]="selectedTab() === 'indicator_ad' ? 'border-blue-800 text-blue-500' : 'hover:border-white/20 hover:text-gray-200 border-transparent text-gray-400'">
+                AD
+            </button>
+            <button (click)="selectedTab.set('indicator_obv')"
+                    class="border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer"
+                    [class]="selectedTab() === 'indicator_obv' ? 'border-blue-800 text-blue-500' : 'hover:border-white/20 hover:text-gray-200 border-transparent text-gray-400'">
+                OBV
+            </button>
+
+        </nav>
+    </div>
+
+</div>
+
+<iframe #dashboardIframe
+        [class]="selectedTab()"
+        (load)="onIframeLoad(dashboardIframe)"
+        [src]="kibanaUrl()"
+        class="w-full border-none iframe_adjusted_height">
+</iframe>
