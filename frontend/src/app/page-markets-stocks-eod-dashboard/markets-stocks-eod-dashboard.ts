@@ -7,6 +7,7 @@ import {ShareUrlService} from '../services/share-url.service';
 import {IndexedKeyTickerService} from '../services/indexed-key-ticker.service';
 import {StockEodTools} from './stock-eod-tools/stock-eod-tools';
 import {StockEodInsights} from './stock-eod-insights/stock-eod-insights';
+import {DASHBOARD_IDS, IFRAME_STYLE} from '../constants';
 
 
 @Component({
@@ -34,8 +35,8 @@ export class MarketsStocksEodDashboard implements OnDestroy {
     const baseUrl = 'https://kibana.quaks.ai/app/dashboards';
 
     const dashboardId = (this.intervalInDays() > 30 || this.useIntervalInDates())
-      ? '16c3228b-0831-442d-ae18-3a2cf4700792'
-      : 'f24f0eea-d8e5-4721-9057-9395daf7c931';
+      ? DASHBOARD_IDS.stocks_eod_ohlcv_long
+      : DASHBOARD_IDS.stocks_eod_ohlcv_short;
 
     const timeRange = this.useIntervalInDates()
       ? `time:(from:'${this.intervalInDates().split('_')[0]}',to:'${this.intervalInDates().split('_')[1]}')`
@@ -73,6 +74,19 @@ export class MarketsStocksEodDashboard implements OnDestroy {
         });
       }
     });
+  }
+
+  onIframeLoad(iframe: HTMLIFrameElement) {
+    try {
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+      if (iframeDoc) {
+        const style = iframeDoc.createElement('style');
+        style.innerHTML = IFRAME_STYLE;
+        iframeDoc.head.appendChild(style);
+      }
+    } catch (e) {
+      console.error('Error injecting styles into iframe', e);
+    }
   }
 
   ngOnDestroy(): void {
