@@ -1,3 +1,89 @@
-iframe {
+.iframe_adjusted_height {
   height: 80vh;
+}
+
+
+// IPhone 14 Pro Max Portrait
+@media (max-width: 430px) {
+  .stock_price,
+  .indicator_ema {
+    height: 68vh;
+  }
+  .indicator_ad,
+  .indicator_adx,
+  .indicator_cci,
+  .indicator_macd,
+  .indicator_obv,
+  .indicator_rsi,
+  .indicator_stoch {
+    height: 135vh;
+  }
+}
+
+// IPhone XR Portrait
+@media (max-width: 415px) {
+  .stock_price,
+  .indicator_ema {
+    height: 71vh;
+  }
+  .indicator_ad,
+  .indicator_adx,
+  .indicator_cci,
+  .indicator_macd,
+  .indicator_obv,
+  .indicator_rsi,
+  .indicator_stoch {
+    height: 140vh;
+  }
+}
+
+// IPhone 12 Pro
+@media (max-width: 400px) {
+  .stock_price,
+  .indicator_ema {
+    height: 75vh;
+  }
+  .indicator_ad,
+  .indicator_adx,
+  .indicator_cci,
+  .indicator_macd,
+  .indicator_obv,
+  .indicator_rsi,
+  .indicator_stoch {
+    height: 150vh;
+  }
+}
+
+// IPhone SE Portrait
+@media (max-width: 375px) {
+  .stock_price,
+  .indicator_ema {
+    height: 95vh;
+  }
+  .indicator_ad,
+  .indicator_adx,
+  .indicator_cci,
+  .indicator_macd,
+  .indicator_obv,
+  .indicator_rsi,
+  .indicator_stoch {
+    height: 190vh;
+  }
+}
+
+// Galaxy S8 Portrait
+@media (max-width: 360px) {
+  .stock_price,
+  .indicator_ema {
+    height: 86vh;
+  }
+  .indicator_ad,
+  .indicator_adx,
+  .indicator_cci,
+  .indicator_macd,
+  .indicator_obv,
+  .indicator_rsi,
+  .indicator_stoch {
+    height: 170vh;
+  }
 }

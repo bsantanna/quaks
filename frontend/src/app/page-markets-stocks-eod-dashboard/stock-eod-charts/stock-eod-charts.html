@@ -1,4 +1,4 @@
-<div class="grid grid-cols-1 sm:hidden">
+<div class="grid grid-cols-1 sm:hidden mx-4 mb-4">
     <select aria-label="Select a tab"
             (change)="selectedTab.set($any($event.target).value)"
             class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white/5 py-2 pr-8 pl-3 text-base text-gray-100 outline-1 -outline-offset-1 outline-white/10 *:bg-gray-800 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500">
@@ -11,9 +11,6 @@
         <option [selected]="selectedTab() === 'indicator_stoch'" value="indicator_stoch">STOCH</option>
         <option [selected]="selectedTab() === 'indicator_ad'" value="indicator_ad">AD</option>
         <option [selected]="selectedTab() === 'indicator_obv'" value="indicator_obv">OBV</option>
-
-
-
     </select>
     <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true"
          class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-400">
@@ -76,7 +73,8 @@
 </div>
 
 <iframe #dashboardIframe
+        [class]="selectedTab()"
         (load)="onIframeLoad(dashboardIframe)"
         [src]="kibanaUrl()"
-        class="w-full border-none">
+        class="w-full border-none iframe_adjusted_height">
 </iframe>
