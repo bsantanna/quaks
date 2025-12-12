@@ -68,16 +68,9 @@
                 <div class="isolate inline-flex rounded-md shadow-sm mt-2">
                     <button
                             type="button"
-                            (click)="setIntervalInDays(30)"
-                            [class]="intervalInDays() === 30 ? 'bg-white/20' : 'bg-white/10'"
-                            class="relative inline-flex items-center rounded-l-md px-2 py-1 font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
-                        1M
-                    </button>
-                    <button
-                            type="button"
                             (click)="setIntervalInDays(90)"
                             [class]="intervalInDays() === 90 ? 'bg-white/20' : 'bg-white/10'"
-                            class="relative -ml-px inline-flex items-center px-2 py-1 font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                            class="relative inline-flex items-center rounded-l-md px-2 py-1 font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
                         3M
                     </button>
                     <button
@@ -86,6 +79,13 @@
                             [class]="intervalInDays() === 180 ? 'bg-white/20' : 'bg-white/10'"
                             class="relative -ml-px inline-flex items-center px-2 py-1 font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
                         6M
+                    </button>
+                    <button
+                            type="button"
+                            (click)="setIntervalInDays(270)"
+                            [class]="intervalInDays() === 270 ? 'bg-white/20' : 'bg-white/10'"
+                            class="relative -ml-px inline-flex items-center px-2 py-1 font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                        9M
                     </button>
                     <button
                             type="button"
@@ -173,16 +173,9 @@
 
                     <button
                             type="button"
-                            (click)="setIntervalInDays(30)"
-                            [class]="intervalInDays() === 30 ? 'bg-white/20' : 'bg-white/10'"
-                            class="relative inline-flex items-center rounded-l-md px-3 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
-                        1M
-                    </button>
-                    <button
-                            type="button"
                             (click)="setIntervalInDays(90)"
                             [class]="intervalInDays() === 90 ? 'bg-white/20' : 'bg-white/10'"
-                            class="relative -ml-px inline-flex items-center px-3 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                            class="relative inline-flex items-center rounded-l-md px-3 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
                         3M
                     </button>
                     <button
@@ -191,6 +184,13 @@
                             [class]="intervalInDays() === 180 ? 'bg-white/20' : 'bg-white/10'"
                             class="relative -ml-px inline-flex items-center px-3 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
                         6M
+                    </button>
+                    <button
+                            type="button"
+                            (click)="setIntervalInDays(270)"
+                            [class]="intervalInDays() === 270 ? 'bg-white/20' : 'bg-white/10'"
+                            class="relative -ml-px inline-flex items-center px-3 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                        9M
                     </button>
                     <button
                             type="button"

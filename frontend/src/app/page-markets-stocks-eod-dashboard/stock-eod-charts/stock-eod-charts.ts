@@ -1,4 +1,4 @@
-import {Component, computed, effect, inject, input, model} from '@angular/core';
+import {Component, computed, effect, inject, input, model, signal, WritableSignal} from '@angular/core';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import {DASHBOARD_IDS, IFRAME_STYLE} from '../../constants';
 
@@ -16,14 +16,18 @@ export class StockEodCharts {
   readonly intervalInDates = input.required<string>();
   readonly useIntervalInDates = input.required<boolean>();
   readonly intervalInDays = model.required<number>();
+  readonly selectedTab: WritableSignal<string> = signal<string>('stock_price');
 
   readonly kibanaUrl = computed<SafeResourceUrl>(() => {
     const symbol = encodeURIComponent(this.keyTicker());
     const baseUrl = 'https://kibana.quaks.ai/app/dashboards';
 
-    const dashboardId = (this.intervalInDays() > 30 || this.useIntervalInDates())
-      ? DASHBOARD_IDS.stocks_eod_ohlcv_long
-      : DASHBOARD_IDS.stocks_eod_ohlcv_short;
+    let dashboardId = '';
+    if (this.selectedTab() === 'stock_price') {
+      dashboardId = DASHBOARD_IDS.stocks_eod_ohlcv;
+    } else if(this.selectedTab() === 'indicator_ema'){
+      dashboardId = DASHBOARD_IDS.stocks_eod_indicator_ema;
+    }
 
     const timeRange = this.useIntervalInDates()
       ? `time:(from:'${this.intervalInDates().split('_')[0]}',to:'${this.intervalInDates().split('_')[1]}')`

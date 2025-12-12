@@ -4,12 +4,11 @@ export const STOCK_MARKETS = [
   INDEX_NASDAQ_100,
 ];
 
-const DASHBOARD_ID_STOCKS_EOD_OHLCV_LONG = '52b71b15-6c0b-4de6-ada0-a32e7efd9d95';
-const DASHBOARD_ID_STOCKS_EOD_OHLCV_SHORT = '84384148-8c80-4f99-8e4d-417a3e1ff9f9';
-
+const DASHBOARD_ID_STOCKS_EOD_OHLCV = '827cced8-7899-40de-93c0-0515755f221b';
+const DASHBOARD_ID_STOCKS_EOD_INDICATOR_EMA = '33ff269e-ace7-4d90-aeb1-976c5e76fedb';
 export const DASHBOARD_IDS = {
-  'stocks_eod_ohlcv_long': DASHBOARD_ID_STOCKS_EOD_OHLCV_LONG,
-  'stocks_eod_ohlcv_short': DASHBOARD_ID_STOCKS_EOD_OHLCV_SHORT
+  'stocks_eod_ohlcv': DASHBOARD_ID_STOCKS_EOD_OHLCV,
+  'stocks_eod_indicator_ema': DASHBOARD_ID_STOCKS_EOD_INDICATOR_EMA,
 }
 
 export const IFRAME_STYLE = `
