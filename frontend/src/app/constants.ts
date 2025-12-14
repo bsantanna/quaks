@@ -1,4 +1,4 @@
-export const DASHBOARDS_ENDPOINT = 'https://kibana.quaks.ai/app/dashboards';
+export const DASHBOARDS_ENDPOINT = 'https://kibana.quaks.ai/dashboards/app/dashboards';
 
 export const DASHBOARDS_IDS = {
   'stocks_eod_ohlcv': '827cced8-7899-40de-93c0-0515755f221b',
