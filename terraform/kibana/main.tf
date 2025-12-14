@@ -1,3 +1,5 @@
+# reference https://www.elastic.co/blog/how-to-embed-kibana-dashboards#basic-embedding-with-html-iframe
+
 terraform {
   required_providers {
     elasticstack = {
