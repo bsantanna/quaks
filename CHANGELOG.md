@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.3.10 (2025-12-15)
+
+### Bug Fixes
+
+- Adjusts docker build for dags ([#30](https://github.com/bsantanna/quaks/pull/30),
+  [`71ecede`](https://github.com/bsantanna/quaks/commit/71ecede8b5e77ebd27814e02412a6c77fca28e93))
+
+
 ## v1.3.9 (2025-12-15)
 
 ### Bug Fixes
