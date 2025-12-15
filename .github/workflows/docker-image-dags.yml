@@ -44,7 +44,7 @@ jobs:
         id: docker_meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKER_USERNAME }}/quant-agents-dags
+          images: ${{ secrets.DOCKER_USERNAME }}/quaks-dags
           tags: type=sha,format=long
 
       - name: Get the version
@@ -60,7 +60,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            bsantanna/quant-agents-dags:${{ env.VERSION }}
+            bsantanna/quaks-dags:${{ env.VERSION }}
 
       - name: Sign and verify the images with GitHub OIDC Token
         env:
@@ -72,7 +72,7 @@ jobs:
           cosign initialize
 
           # Build image references
-          images="bsantanna/quant-agents-dags:${{ needs.docker_image.outputs.version }}@${DIGEST}"
+          images="bsantanna/quaks-dags:${{ needs.docker_image.outputs.version }}@${DIGEST}"
 
           cosign sign --yes ${images}
 
