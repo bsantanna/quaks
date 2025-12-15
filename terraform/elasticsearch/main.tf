@@ -452,18 +452,18 @@ resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-fundam
   }
 }
 
-# resource "elasticstack_elasticsearch_index" "stocks_eod_nasdaq" {
-#   name = "quant-agents_stocks-eod_nasdaq_100"
-#   alias {
-#     name = "quant-agents_stocks-eod_latest"
-#   }
-#   depends_on = [elasticstack_elasticsearch_index_template.quant-agents_stocks-eod_template]
-# }
-#
-# resource "elasticstack_elasticsearch_index" "markets_news_nasdaq" {
-#   name = "quant-agents_markets-news_nasdaq_100"
-#   alias {
-#     name = "quant-agents_markets-news_latest"
-#   }
-#   depends_on = [elasticstack_elasticsearch_index_template.quant-agents_markets-news_template]
-# }
+resource "elasticstack_elasticsearch_index" "stocks_eod_nasdaq" {
+  name = "quant-agents_stocks-eod_nasdaq_100"
+  alias = [{
+    name = "quant-agents_stocks-eod_latest"
+  }]
+  depends_on = [elasticstack_elasticsearch_index_template.quant-agents_stocks-eod_template]
+}
+
+resource "elasticstack_elasticsearch_index" "markets_news_nasdaq" {
+  name = "quant-agents_markets-news_nasdaq_100"
+  alias = [{
+    name = "quant-agents_markets-news_latest"
+  }]
+  depends_on = [elasticstack_elasticsearch_index_template.quant-agents_markets-news_template]
+}

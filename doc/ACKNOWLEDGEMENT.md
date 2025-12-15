@@ -1,4 +1,4 @@
-<h2 align="center"><a href="https://github.com/bsantanna/quant-agents">Quant-Agents | 🤖📈</a></h2>
+<h2 align="center"><a href="https://github.com/bsantanna/quaks">Quant-Agents | 🤖📈</a></h2>
 <h3 align="center">Acknowledgement</h3>
 
 ---
