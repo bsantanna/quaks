@@ -2,6 +2,33 @@
 
 <!-- version list -->
 
+## v1.3.9 (2025-12-15)
+
+### Bug Fixes
+
+- Adjusts dashboards endpoint to use reverse proxy version
+  ([#29](https://github.com/bsantanna/quaks/pull/29),
+  [`13b6028`](https://github.com/bsantanna/quaks/commit/13b6028c3e387bf18b279d9c350f8759bc992b6a))
+
+- Adjusts elasticsearch deployment ([#29](https://github.com/bsantanna/quaks/pull/29),
+  [`13b6028`](https://github.com/bsantanna/quaks/commit/13b6028c3e387bf18b279d9c350f8759bc992b6a))
+
+- Adjusts elasticsearch deployment (2) ([#29](https://github.com/bsantanna/quaks/pull/29),
+  [`13b6028`](https://github.com/bsantanna/quaks/commit/13b6028c3e387bf18b279d9c350f8759bc992b6a))
+
+- Docker image names update to quaks ([#29](https://github.com/bsantanna/quaks/pull/29),
+  [`13b6028`](https://github.com/bsantanna/quaks/commit/13b6028c3e387bf18b279d9c350f8759bc992b6a))
+
+- Repo rename to quaks ([#29](https://github.com/bsantanna/quaks/pull/29),
+  [`13b6028`](https://github.com/bsantanna/quaks/commit/13b6028c3e387bf18b279d9c350f8759bc992b6a))
+
+- Service name ([#29](https://github.com/bsantanna/quaks/pull/29),
+  [`13b6028`](https://github.com/bsantanna/quaks/commit/13b6028c3e387bf18b279d9c350f8759bc992b6a))
+
+- Tailwind installation ([#29](https://github.com/bsantanna/quaks/pull/29),
+  [`13b6028`](https://github.com/bsantanna/quaks/commit/13b6028c3e387bf18b279d9c350f8759bc992b6a))
+
+
 ## v1.3.8 (2025-12-12)
 
 ### Bug Fixes
