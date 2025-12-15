@@ -90,7 +90,7 @@ def setup_mcp(container: Container, application: FastAPI):
     if config["auth"]["enabled"] == "True":
         mcp = FastApiMCP(
             application,
-            name=os.getenv("SERVICE_NAME", "Quant-Agents"),
+            name=os.getenv("SERVICE_NAME", "Quaks"),
             include_operations=["get_agent_list", "get_message_list", "post_message"],
             describe_all_responses=True,
             describe_full_response_schema=True,
