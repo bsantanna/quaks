@@ -32,7 +32,7 @@ def create_app():
     container = Container()
 
     application = FastAPI(
-        title=os.getenv("SERVICE_NAME", "Quant-Agents"),
+        title=os.getenv("SERVICE_NAME", "Quaks"),
         version=os.getenv("SERVICE_VERSION", "snapshot"),
         dependencies=[],
     )
@@ -101,7 +101,7 @@ def setup_mcp(container: Container, application: FastAPI):
     else:
         mcp = FastApiMCP(
             application,
-            name=os.getenv("SERVICE_NAME", "Quant-Agents"),
+            name=os.getenv("SERVICE_NAME", "Quaks"),
             include_operations=["get_agent_list", "get_message_list", "post_message"],
             describe_all_responses=True,
             describe_full_response_schema=True,
