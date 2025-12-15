@@ -1,5 +1,4 @@
 <h2 align="center"><a href="https://github.com/bsantanna/quaks">Quaks</a></h2>
-<h3 align="center">Code behind <a href="https://quaks.ai">Quaks AI</a></h3>
 
 <div align="center">
 

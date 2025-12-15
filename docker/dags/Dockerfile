@@ -10,8 +10,8 @@ RUN apt update -qq && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN cd /tmp/ && \
-    git clone https://github.com/bsantanna/quaks.git && \
-    cd /tmp/quant-agents && chown airflow:root /tmp/quant-agents/ && \
-    cp -a /tmp/quant-agents/dags ${AIRFLOW_HOME}/dags/
+    git clone https://github.com/bsantanna/quaks.git quaks && \
+    cd /tmp/quaks && chown airflow:root /tmp/quaks/ && \
+    cp -a /tmp/quaks/dags ${AIRFLOW_HOME}/dags/
 
 USER airflow
