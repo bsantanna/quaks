@@ -6,15 +6,16 @@ import {ShareUrlService} from '../shared/services/share-url.service';
 import {IndexedKeyTickerService} from '../shared/services/indexed-key-ticker.service';
 import {StockEodActions} from '../shared/components/stock-eod-actions/stock-eod-actions';
 import {StockEodCharts} from './stock-eod-charts/stock-eod-charts';
+import {PathReactiveComponent} from '../shared/components/path-reactive.component';
 
 
 @Component({
   selector: 'app-markets-stocks-eod-dashboard',
   imports: [StockInfoHeader, StockEodActions, StockEodCharts],
-  templateUrl: './markets-stocks-eod-dashboard.html',
-  styleUrl: './markets-stocks-eod-dashboard.scss',
+  templateUrl: './markets-stocks-dashboard.component.html',
+  styleUrl: './markets-stocks-dashboard.component.scss',
 })
-export class MarketsStocksEodDashboard implements OnDestroy {
+export class MarketsStocksDashboard extends PathReactiveComponent implements OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly shareUrlService = inject(ShareUrlService);
   private readonly indexedKeyTickerService = inject(IndexedKeyTickerService);
@@ -28,20 +29,21 @@ export class MarketsStocksEodDashboard implements OnDestroy {
   readonly useIntervalInDates = computed<boolean>(() => this.intervalInDates().trim().length > 0);
 
   constructor() {
+    super();
     effect(() => {
       const ticker = this.keyTicker();
       const dates = this.intervalInDates();
 
-      const title = `Stock Analysis ${ticker}`;
+      const linkTitle = `${this.title()} ${ticker}`;
 
       if (dates) {
         this.shareUrlService.update({
-          title,
+          title: linkTitle,
           url: window.location.href
         });
       } else {
         this.shareUrlService.update({
-          title,
+          title: linkTitle,
           url: `${window.location.href.split('?')[0]}?interval=${this.shareUrlService.getPastDateInDays(this.intervalInDays())}_${this.shareUrlService.getPastDateInDays(1)}`
         });
       }
