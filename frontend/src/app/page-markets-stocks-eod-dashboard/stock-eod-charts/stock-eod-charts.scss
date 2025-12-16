@@ -4,7 +4,7 @@
   height: 80vh;
 }
 
-@media (max-height: 500px) {
+@media (max-height: 599px) {
   .minimum-screen-height {
     display: none;
   }
@@ -17,7 +17,7 @@
 ) {
 
   @if $max-width != none and $height_a != none and $height_b != none {
-    @media (max-width: $max-width) and (orientation: portrait) {
+    @media (max-width: $max-width) {
       .stock_price,
       .indicator_ema {
         height: $height_a;
@@ -35,6 +35,15 @@
   }
 
 }
+
+// Surface Duo
+@include responsive_stock_charts(1115px, 95vh, 175vh);
+
+// Nest Hub
+@include responsive_stock_charts(1025px, 110vh, 210vh);
+
+// Surface Pro 7 Portrait
+@include responsive_stock_charts(915px, 50vh, 95vh);
 
 // Asus Zenbook Continuous
 @include responsive_stock_charts(855px, 50vh, 100vh);
