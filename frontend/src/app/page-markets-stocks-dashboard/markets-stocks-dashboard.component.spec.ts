@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MarketsStocksEodDashboard } from './markets-stocks-eod-dashboard';
+import { MarketsStocksDashboard } from './markets-stocks-dashboard.component';
 
 describe('MarketsStocksEodDashboard', () => {
-  let component: MarketsStocksEodDashboard;
-  let fixture: ComponentFixture<MarketsStocksEodDashboard>;
+  let component: MarketsStocksDashboard;
+  let fixture: ComponentFixture<MarketsStocksDashboard>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MarketsStocksEodDashboard]
+      imports: [MarketsStocksDashboard]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(MarketsStocksEodDashboard);
+    fixture = TestBed.createComponent(MarketsStocksDashboard);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

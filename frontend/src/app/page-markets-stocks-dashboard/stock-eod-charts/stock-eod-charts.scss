@@ -1,0 +1,82 @@
+@use 'sass:math';
+
+.iframe_adjusted_height {
+  height: 80vh;
+}
+
+@media (max-height: 599px) {
+  .minimum-screen-height {
+    display: none;
+  }
+}
+
+@mixin responsive_stock_charts(
+  $max-width: none,
+  $height_a: none,
+  $height_b: none,
+) {
+  @if $max-width != none and $height_a != none and $height_b != none {
+    @media (max-width: $max-width) {
+      .stock_price,
+      .indicator_ema {
+        height: $height_a;
+      }
+      .indicator_ad,
+      .indicator_adx,
+      .indicator_cci,
+      .indicator_macd,
+      .indicator_obv,
+      .indicator_rsi,
+      .indicator_stoch {
+        height: $height_b;
+      }
+    }
+  }
+}
+
+// WEB ( >SM screen, < LG screen)
+@include responsive_stock_charts(1280px, 95vh, 175vh);
+
+// Surface Duo
+@include responsive_stock_charts(1115px, 95vh, 175vh);
+
+// Nest Hub
+@include responsive_stock_charts(1025px, 110vh, 210vh);
+
+// Surface Pro 7 Portrait
+@include responsive_stock_charts(915px, 50vh, 95vh);
+
+// Asus Zenbook Continuous
+@include responsive_stock_charts(855px, 50vh, 100vh);
+
+// IPad Air Portrait
+@include responsive_stock_charts(820px, 55vh, 110vh);
+
+// IPad Mini Portrait
+@include responsive_stock_charts(768px, 65vh, 125vh);
+
+// Galaxy Z Folded
+@include responsive_stock_charts(690px, 80vh, 160vh);
+
+// Surface Duo Folded
+@include responsive_stock_charts(540px, 90vh, 175vh);
+
+// IPhone 14 Pro Max Portrait
+@include responsive_stock_charts(430px, 70vh, 140vh);
+
+// IPhone XR Portrait
+@include responsive_stock_charts(415px, 75vh, 145vh);
+
+// IPhone 12 Pro Portrait
+@include responsive_stock_charts(400px, 80vh, 160vh);
+
+// IPhone SE Portrait
+@include responsive_stock_charts(375px, 95vh, 190vh);
+
+// Galaxy S8 Portrait
+@include responsive_stock_charts(360px, 90vh, 170vh);
+
+// Galaxy Z Continuous
+@include responsive_stock_charts(345px, 75vh, 145vh);
+
+

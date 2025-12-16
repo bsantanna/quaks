@@ -13,7 +13,6 @@ router = APIRouter()
 @router.get(
     path="/stats_close/{index_name}/{key_ticker}",
     response_model=StatsClose,
-    operation_id="stats_close",
     summary="Get most close stats performance for a given date range"
 )
 @inject
@@ -43,11 +42,9 @@ async def get_most_recent_close(
 
     return response
 
-
 @router.get(
     path="/news/{index_name}",
     response_model=NewsList,
-    operation_id="markets_news",
     summary="Get markets news"
 )
 @inject
@@ -86,3 +83,5 @@ async def get_news(
     )
 
     return response
+
+
