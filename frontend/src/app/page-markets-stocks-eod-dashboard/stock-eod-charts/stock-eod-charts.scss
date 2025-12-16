@@ -15,7 +15,6 @@
   $height_a: none,
   $height_b: none,
 ) {
-
   @if $max-width != none and $height_a != none and $height_b != none {
     @media (max-width: $max-width) {
       .stock_price,
@@ -33,8 +32,10 @@
       }
     }
   }
-
 }
+
+// WEB ( >SM screen, < LG screen)
+@include responsive_stock_charts(1280px, 95vh, 175vh);
 
 // Surface Duo
 @include responsive_stock_charts(1115px, 95vh, 175vh);
