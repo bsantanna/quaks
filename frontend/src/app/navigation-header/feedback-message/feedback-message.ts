@@ -1,5 +1,5 @@
 import {Component, inject} from '@angular/core';
-import {FeedbackMessageService} from '../../services/feedback-message.service';
+import {FeedbackMessageService} from '../../shared/services/feedback-message.service';
 
 @Component({
   selector: 'app-feedback-message',

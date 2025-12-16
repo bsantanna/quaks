@@ -3,7 +3,7 @@ import {toSignal} from '@angular/core/rxjs-interop';
 import {filter, map} from 'rxjs';
 import {NavigationEnd, Router} from '@angular/router';
 import {StockAutocompleteComponent} from './stock-autocomplete/stock-autocomplete';
-import {IndexedKeyTicker} from '../models/markets.model';
+import {IndexedKeyTicker} from '../shared/models/markets.model';
 import {STOCK_MARKETS} from '../constants';
 import {ShareButtonComponent} from './share-button/share-button';
 import {FeedbackMessageComponent} from './feedback-message/feedback-message';

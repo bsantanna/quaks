@@ -42,7 +42,6 @@ async def get_most_recent_close(
 
     return response
 
-
 @router.get(
     path="/news/{index_name}",
     response_model=NewsList,

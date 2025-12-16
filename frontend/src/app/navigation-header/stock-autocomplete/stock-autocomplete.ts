@@ -1,11 +1,9 @@
-import {Component, signal, computed, inject, output, Signal} from '@angular/core';
+import {Component, computed, inject, output, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {HttpClient} from '@angular/common/http';
-import {IndexedKeyTicker} from '../../models/markets.model';
-import {toSignal} from '@angular/core/rxjs-interop';
+import {IndexedKeyTicker} from '../../shared/models/markets.model';
 import {STOCK_MARKETS} from '../../constants';
-import {IndexedKeyTickerService} from '../../services/indexed-key-ticker.service';
+import {IndexedKeyTickerService} from '../../shared/services/indexed-key-ticker.service';
 
 
 @Component({
@@ -32,7 +30,7 @@ export class StockAutocompleteComponent {
     return this.indexedKeyTickerService.indexedKeyTickers().filter(
       (stock) =>
         (stock.key_ticker.toLowerCase().includes(query) || stock.name.toLowerCase().includes(query))
-        && STOCK_MARKETS.filter(market=> market === stock.index)
+        && STOCK_MARKETS.filter(market => market === stock.index)
     );
 
   });
