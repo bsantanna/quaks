@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import {MarketsStocksEodDashboard} from './page-markets-stocks-eod-dashboard/markets-stocks-eod-dashboard';
+import {MarketsStocksDashboard} from './page-markets-stocks-dashboard/markets-stocks-dashboard.component';
 import { PageTerms } from './page-terms/page-terms';
 import {MarketsNewsRelated} from './page-markets-news-related/markets-news-related';
 import {MarketsPerformanceComparison} from './page-markets-performance-comparison/markets-performance-comparison';
@@ -34,7 +34,7 @@ export const routes: Routes = [
       {
         title: 'Stock Dashboard',
         path: 'stocks/:keyTicker',
-        component: MarketsStocksEodDashboard
+        component: MarketsStocksDashboard
       }
     ]
   },

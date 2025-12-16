@@ -1,7 +1,6 @@
-import {Component, computed, input, signal, WritableSignal} from '@angular/core';
-import {StockEodInsights} from '../stock-eod-insights/stock-eod-insights';
-import {StockEodTools} from '../stock-eod-tools/stock-eod-tools';
-import {SafeResourceUrl} from '@angular/platform-browser';
+import {Component, input, signal, WritableSignal} from '@angular/core';
+import {StockEodInsights} from './stock-eod-insights/stock-eod-insights';
+import {StockEodTools} from './stock-eod-tools/stock-eod-tools';
 
 @Component({
   selector: 'app-stock-eod-actions',

@@ -1,1 +1,27 @@
-<p>markets-news-related works!</p>
+<div class="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-2 xl:grid-cols-3">
+
+    <div class="lg:col-start-3 lg:row-end-1 mt-6">
+        <h2 class="sr-only">Summary</h2>
+        <div class="rounded-lg bg-gray-800/50 outline-1 -outline-offset-1 outline-white/10 sticky">
+            <app-stock-info-header
+                    [indexName]="'quant-agents_stocks-eod_latest'"
+                    [keyTicker]="keyTicker()"
+                    [companyName]="companyName()"
+                    [(intervalInDays)]="intervalInDays"
+                    [intervalInDates]="intervalInDates()"
+                    [useIntervalInDates]="useIntervalInDates()"
+            ></app-stock-info-header>
+        </div>
+    </div>
+
+    <div class="-mx-4 lg:col-span-2 lg:row-span-2 lg:row-end-2">
+        News list here
+    </div>
+
+    <div class="lg:col-start-3">
+        <app-stock-eod-actions
+                [keyTicker]="keyTicker()">
+        </app-stock-eod-actions>
+    </div>
+
+</div>

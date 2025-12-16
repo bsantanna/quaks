@@ -1,6 +1,6 @@
 import {Component, HostListener, inject, signal} from '@angular/core';
-import {ShareUrlService} from '../../services/share-url.service';
-import {FeedbackMessageService} from '../../services/feedback-message.service';
+import {ShareUrlService} from '../../shared/services/share-url.service';
+import {FeedbackMessageService} from '../../shared/services/feedback-message.service';
 
 @Component({
   selector: 'app-share-button',

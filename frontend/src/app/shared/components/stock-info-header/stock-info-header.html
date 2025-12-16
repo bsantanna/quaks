@@ -1,0 +1,213 @@
+<div class="sm:hidden">
+    <div class="text-white p-4">
+
+        <!-- Top section: Symbol, Name, Close, % Change -->
+        <div class="flex justify-between items-start mb-3">
+            <div>
+                <p class="text-2xl font-bold leading-none">{{ keyTicker() }}</p>
+                <p class="text-xs text-gray-400 truncate max-w-40">{{ companyName() }}</p>
+            </div>
+            <div class="text-right flex-shrink-0">
+                <p class="text-2xl font-bold leading-none">{{ statsClose().most_recent_close | number : '1.2-2' }}</p>
+                <div class="flex items-center justify-end gap-x-1">
+                    <p class="text-sm"
+                       [class.text-green-400]="statsClose().percent_variance > 0"
+                       [class.text-rose-400]="statsClose().percent_variance <= 0">
+                        {{ statsClose().percent_variance > 0 ? '+' : '' }}{{ statsClose().percent_variance | number : '1.2-2' }}
+                        %
+                    </p>
+                    <p class="text-xs text-gray-400">({{ statsClose().most_recent_date }})</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed stats: O, H, L, V -->
+        <div class="grid grid-cols-4 gap-1 text-center mb-3">
+            <div>
+                <p class="text-xs text-gray-400">Open</p>
+                <p class="font-mono text-xs truncate">{{ statsClose().most_recent_open | number : '1.2-2' }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-400">High</p>
+                <p class="font-mono text-xs truncate">{{ statsClose().most_recent_high | number : '1.2-2' }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-400">Low</p>
+                <p class="font-mono text-xs truncate">{{ statsClose().most_recent_low | number : '1.2-2' }}</p>
+            </div>
+            <div>
+                <p class="text-xs text-gray-400">Volume</p>
+                <p class="font-mono text-xs truncate">{{ statsClose().most_recent_volume | number : '1.0-0' }}</p>
+            </div>
+        </div>
+
+        <!-- Date Range Selection (visible on stocks dashboard) -->
+        @if (path().indexOf('stocks') > -1) {
+            <div aria-hidden="true" class="w-full border-t border-white/10 my-3"></div>
+
+            <div class="flex justify-between items-center text-xs">
+                <div class="flex gap-x-4">
+                    <div>
+                        <p class="text-gray-400">Start</p>
+                        @if (useIntervalInDates()) {
+                            <p>{{ intervalInDates().split('_')[0] }}</p>
+                        } @else {
+                            <p>{{ getPastDateInDays(intervalInDays()) }}</p>
+                        }
+                    </div>
+                    <div>
+                        <p class="text-gray-400">End</p>
+                        @if (useIntervalInDates()) {
+                            <p>{{ intervalInDates().split('_')[1] }}</p>
+                        } @else {
+                            <p>{{ getPastDateInDays(1) }}</p>
+                        }
+                    </div>
+                </div>
+
+                @if (!useIntervalInDates()) {
+                    <div class="isolate inline-flex rounded-md shadow-sm mt-2">
+                        <button
+                                type="button"
+                                (click)="setIntervalInDays(90)"
+                                [class]="intervalInDays() === 90 ? 'bg-white/20' : 'bg-white/10'"
+                                class="relative inline-flex items-center rounded-l-md px-2 py-1 font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                            3M
+                        </button>
+                        <button
+                                type="button"
+                                (click)="setIntervalInDays(180)"
+                                [class]="intervalInDays() === 180 ? 'bg-white/20' : 'bg-white/10'"
+                                class="relative -ml-px inline-flex items-center px-2 py-1 font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                            6M
+                        </button>
+                        <button
+                                type="button"
+                                (click)="setIntervalInDays(270)"
+                                [class]="intervalInDays() === 270 ? 'bg-white/20' : 'bg-white/10'"
+                                class="relative -ml-px inline-flex items-center px-2 py-1 font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                            9M
+                        </button>
+                        <button
+                                type="button"
+                                (click)="setIntervalInDays(365)"
+                                [class]="intervalInDays() === 365 ? 'bg-white/20' : 'bg-white/10'"
+                                class="relative -ml-px inline-flex items-center rounded-r-md px-2 py-1 font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                            1Y
+                        </button>
+                    </div>
+                }
+            </div>
+
+        }
+    </div>
+</div>
+
+<div class="hidden sm:block mt-14">
+    <div class="text-white p-6 rounded-lg shadow-lg">
+
+        <!-- Date Range Selection (visible on stocks dashboard) -->
+        @if (path().indexOf('stocks') > -1) {
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pb-8">
+                <div>
+                    <p class="text-sm text-gray-400">Start Date</p>
+                    @if (useIntervalInDates()) {
+                        <p class="text-sm font-medium">{{ intervalInDates().split('_')[0] }}</p>
+                    } @else {
+                        <p class="text-sm font-medium">{{ getPastDateInDays(intervalInDays()) }}</p>
+                    }
+                </div>
+                <div>
+                    <p class="text-sm text-gray-400">End Date</p>
+                    @if (useIntervalInDates()) {
+                        <p class="text-sm font-medium">{{ intervalInDates().split('_')[1] }}</p>
+                    } @else {
+                        <p class="text-sm font-medium">{{ getPastDateInDays(1) }}</p>
+                    }
+                </div>
+                @if (!useIntervalInDates()) {
+
+                    <div class="col-span-2 mt-2">
+
+                        <button
+                                type="button"
+                                (click)="setIntervalInDays(90)"
+                                [class]="intervalInDays() === 90 ? 'bg-white/20' : 'bg-white/10'"
+                                class="relative inline-flex items-center rounded-l-md px-2 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                            3M
+                        </button>
+                        <button
+                                type="button"
+                                (click)="setIntervalInDays(180)"
+                                [class]="intervalInDays() === 180 ? 'bg-white/20' : 'bg-white/10'"
+                                class="relative -ml-px inline-flex items-center px-2 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                            6M
+                        </button>
+                        <button
+                                type="button"
+                                (click)="setIntervalInDays(270)"
+                                [class]="intervalInDays() === 270 ? 'bg-white/20' : 'bg-white/10'"
+                                class="relative -ml-px inline-flex items-center px-2 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                            9M
+                        </button>
+                        <button
+                                type="button"
+                                (click)="setIntervalInDays(365)"
+                                [class]="intervalInDays() === 365 ? 'bg-white/20' : 'bg-white/10'"
+                                class="relative -ml-px inline-flex items-center rounded-r-md px-2 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                            1Y
+                        </button>
+                    </div>
+                }
+            </div>
+
+            <div aria-hidden="true" class="w-full border-t border-white/15 py-4"></div>
+        }
+
+        <!-- Top section with Symbol and Close Price -->
+        <div class="flex justify-between items-start mb-4">
+            <div>
+                <p class="text-sm text-gray-400">Symbol</p>
+                <p class="text-3xl font-bold">{{ keyTicker() }}</p>
+                <p class="text-sm truncate max-w-64">{{ companyName() }}</p>
+            </div>
+            <div class="text-right">
+                <p class="text-sm text-gray-400">Close</p>
+                <p class="text-3xl font-bold">
+                    {{ statsClose().most_recent_close | number : '1.2-2' }}
+                </p>
+                <div class="flex items-center justify-end gap-x-2">
+                    <p class="text-base"
+                       [class.text-green-400]="statsClose().percent_variance > 0"
+                       [class.text-rose-400]="statsClose().percent_variance <= 0">
+                        {{ statsClose().percent_variance > 0 ? '+' : '' }}{{ statsClose().percent_variance | number : '1.2-2' }}
+                        %
+                    </p>
+                    <p class="text-sm text-gray-400">on {{ statsClose().most_recent_date }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed stats section -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 py-4">
+            <div>
+                <p class="text-sm text-gray-400">Open</p>
+                <p class="text-md font-medium">{{ statsClose().most_recent_open | number : '1.2-2' }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-400">High</p>
+                <p class="text-md font-medium">{{ statsClose().most_recent_high | number : '1.2-2' }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-400">Low</p>
+                <p class="text-md font-medium">{{ statsClose().most_recent_low | number : '1.2-2' }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-400">Volume</p>
+                <p class="text-md font-medium">{{ statsClose().most_recent_volume | number : '1.0-0' }}</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+

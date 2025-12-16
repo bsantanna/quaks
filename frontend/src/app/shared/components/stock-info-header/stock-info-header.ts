@@ -4,6 +4,7 @@ import {StatsClose} from '../../models/markets.model';
 import {DecimalPipe} from '@angular/common';
 import {ShareUrlService} from '../../services/share-url.service';
 import {take} from 'rxjs';
+import {PathReactiveComponent} from '../path-reactive.component';
 
 @Component({
   selector: 'app-stock-info-header',
@@ -11,7 +12,7 @@ import {take} from 'rxjs';
   templateUrl: './stock-info-header.html',
   styleUrl: './stock-info-header.scss',
 })
-export class StockInfoHeader {
+export class StockInfoHeader extends PathReactiveComponent {
 
   private readonly marketsStatsService = inject(MarketsStatsService);
   private readonly shareUrlService = inject(ShareUrlService);
@@ -33,6 +34,7 @@ export class StockInfoHeader {
   readonly statsClose: WritableSignal<StatsClose> = signal(MarketsStatsService.INITIAL_STATS_CLOSE);
 
   constructor() {
+    super();
     effect(() => {
       this.marketsStatsService.getStatsClose(
         this.indexName(),
