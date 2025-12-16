@@ -4,28 +4,23 @@
   height: 80vh;
 }
 
-
-@function get_chart_heights($width, $orientation: portrait) {
-  $ar: 1.8;
-  $effective_width: if($orientation == landscape, $width / $ar, $width);
-  $w: $effective_width / 1px;
-  $a: -0.000251 * math.pow($w, 2) + 0.245 * $w + 24;
-  $b: -0.000464 * math.pow($w, 2) + 0.452 * $w + 53;
-  @return ($a, $b);
+@media (max-height: 500px) {
+  .minimum-screen-height {
+    display: none;
+  }
 }
 
 @mixin responsive_stock_charts(
   $max-width: none,
-  $orientation: portrait
+  $height_a: none,
+  $height_b: none,
 ) {
-  @if $max-width != none {
-    @media (max-width: $max-width) and (orientation: $orientation) {
 
-      $heights: get_chart_heights($max-width, $orientation);
-
+  @if $max-width != none and $height_a != none and $height_b != none {
+    @media (max-width: $max-width) and (orientation: portrait) {
       .stock_price,
       .indicator_ema {
-        height: nth($heights, 1) + vh;
+        height: $height_a;
       }
       .indicator_ad,
       .indicator_adx,
@@ -34,44 +29,44 @@
       .indicator_obv,
       .indicator_rsi,
       .indicator_stoch {
-        height: nth($heights, 2) + vh;
+        height: $height_b;
       }
     }
-  } @else {
-    @warn "The max-width argument is required for the responsive_stock_charts mixin."
   }
+
 }
 
 // Asus Zenbook Continuous
-@include responsive_stock_charts(855px, portrait);
+@include responsive_stock_charts(855px, 50vh, 100vh);
 
 // IPad Air Portrait
-@include responsive_stock_charts(820px, portrait);
+@include responsive_stock_charts(820px, 55vh, 110vh);
 
 // IPad Mini Portrait
-@include responsive_stock_charts(768px, portrait);
+@include responsive_stock_charts(768px, 65vh, 125vh);
 
 // Galaxy Z Folded
-@include responsive_stock_charts(690px, portrait);
+@include responsive_stock_charts(690px, 80vh, 160vh);
 
 // Surface Duo Folded
-@include responsive_stock_charts(540px, portrait);
+@include responsive_stock_charts(540px, 90vh, 175vh);
 
 // IPhone 14 Pro Max Portrait
-@include responsive_stock_charts(430px, portrait);
+@include responsive_stock_charts(430px, 70vh, 140vh);
 
 // IPhone XR Portrait
-@include responsive_stock_charts(415px, portrait);
+@include responsive_stock_charts(415px, 75vh, 145vh);
 
 // IPhone 12 Pro Portrait
-@include responsive_stock_charts(400px, portrait);
+@include responsive_stock_charts(400px, 80vh, 160vh);
 
 // IPhone SE Portrait
-@include responsive_stock_charts(375px, portrait);
+@include responsive_stock_charts(375px, 95vh, 190vh);
 
 // Galaxy S8 Portrait
-@include responsive_stock_charts(360px, portrait);
+@include responsive_stock_charts(360px, 90vh, 170vh);
 
 // Galaxy Z Continuous
-@include responsive_stock_charts(345px, portrait);
+@include responsive_stock_charts(345px, 75vh, 145vh);
+
 
