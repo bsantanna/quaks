@@ -2,6 +2,35 @@
 
 <!-- version list -->
 
+## v1.3.11 (2025-12-16)
+
+### Bug Fixes
+
+- Adjusts screen layout for mobile devices ([#31](https://github.com/bsantanna/quaks/pull/31),
+  [`c5b16f1`](https://github.com/bsantanna/quaks/commit/c5b16f1f2208d4404f82cd15b31c57a3600e6daf))
+
+- Adjusts screen layout for mobile devices (2) ([#31](https://github.com/bsantanna/quaks/pull/31),
+  [`c5b16f1`](https://github.com/bsantanna/quaks/commit/c5b16f1f2208d4404f82cd15b31c57a3600e6daf))
+
+- Adjusts screen layout for mobile devices (3) ([#31](https://github.com/bsantanna/quaks/pull/31),
+  [`c5b16f1`](https://github.com/bsantanna/quaks/commit/c5b16f1f2208d4404f82cd15b31c57a3600e6daf))
+
+- Adjusts screen layout for mobile devices (4) ([#31](https://github.com/bsantanna/quaks/pull/31),
+  [`c5b16f1`](https://github.com/bsantanna/quaks/commit/c5b16f1f2208d4404f82cd15b31c57a3600e6daf))
+
+- Adjusts screen layout for mobile devices (5) ([#31](https://github.com/bsantanna/quaks/pull/31),
+  [`c5b16f1`](https://github.com/bsantanna/quaks/commit/c5b16f1f2208d4404f82cd15b31c57a3600e6daf))
+
+- Quaks service name ([#31](https://github.com/bsantanna/quaks/pull/31),
+  [`c5b16f1`](https://github.com/bsantanna/quaks/commit/c5b16f1f2208d4404f82cd15b31c57a3600e6daf))
+
+- Reusable components refactoring (1) ([#31](https://github.com/bsantanna/quaks/pull/31),
+  [`c5b16f1`](https://github.com/bsantanna/quaks/commit/c5b16f1f2208d4404f82cd15b31c57a3600e6daf))
+
+- Reusable components refactoring (2) ([#31](https://github.com/bsantanna/quaks/pull/31),
+  [`c5b16f1`](https://github.com/bsantanna/quaks/commit/c5b16f1f2208d4404f82cd15b31c57a3600e6daf))
+
+
 ## v1.3.10 (2025-12-15)
 
 ### Bug Fixes

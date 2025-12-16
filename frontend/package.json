@@ -1,6 +1,6 @@
 {
   "name": "quaks",
-  "version": "1.3.10",
+  "version": "1.3.11",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0",
