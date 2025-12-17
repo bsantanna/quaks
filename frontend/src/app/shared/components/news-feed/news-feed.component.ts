@@ -1,19 +1,17 @@
 import {Component, computed, effect, inject, input} from '@angular/core';
-import {NewsItem} from '../../shared/models/markets.model';
-import {DatePipe} from '@angular/common';
-import {MarketsNewsService} from '../../shared/services/markets-news.service';
+import {MarketsNewsService} from '../../services/markets-news.service';
 import {take} from 'rxjs';
+import {NewsMediaCards} from './news-media-cards/news-media-cards';
 
 @Component({
-  selector: 'app-related-news-feed',
+  selector: 'app-news-feed',
   imports: [
-    DatePipe
+    NewsMediaCards
   ],
-  templateUrl: './related-news-feed.html',
-  styleUrl: './related-news-feed.scss',
+  templateUrl: './news-feed.html',
+  styleUrl: './news-feed.scss',
 })
-export class RelatedNewsFeed {
-
+export class NewsFeed {
   private readonly marketsNewsService = inject(MarketsNewsService);
 
   readonly indexName = input.required<string>();
@@ -34,5 +32,4 @@ export class RelatedNewsFeed {
       });
     });
   }
-
 }

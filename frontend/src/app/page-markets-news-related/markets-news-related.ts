@@ -5,14 +5,14 @@ import {ShareUrlService} from '../shared/services/share-url.service';
 import {StockEodActions} from '../shared/components/stock-eod-actions/stock-eod-actions';
 import {StockInfoHeader} from '../shared/components/stock-info-header/stock-info-header';
 import {IndexedKeyTickerService} from '../shared/services/indexed-key-ticker.service';
-import {RelatedNewsFeed} from './related-news-feed/related-news-feed';
+import {NewsFeed} from '../shared/components/news-feed/news-feed.component';
 
 @Component({
   selector: 'app-markets-news-related',
   imports: [
     StockEodActions,
     StockInfoHeader,
-    RelatedNewsFeed
+    NewsFeed
   ],
   templateUrl: './markets-news-related.html',
   styleUrl: './markets-news-related.scss',
