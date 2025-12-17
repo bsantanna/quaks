@@ -3,6 +3,14 @@
   {{#search_after}}
   "search_after": {{#toJson}}search_after{{/toJson}},
   {{/search_after}}
+  {{#id}}
+  "query":{
+    "ids": {
+      "values": ["{{id}}"]
+    }
+  }
+  {{/id}}
+  {{^id}}
   "query": {
     {{#key_ticker}}
     "term": {
@@ -14,7 +22,8 @@
     {{^key_ticker}}
     "match_all": {}
     {{/key_ticker}}
-  },
+  }
+  {{/id}},
   "_source": [
     "date_reference",
     "key_url",
