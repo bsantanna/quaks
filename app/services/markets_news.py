@@ -33,7 +33,7 @@ class MarketsNewsService:
         results = []
         cursor = ""
         for hit in response['hits']['hits']:
-            results.append(hit['_source'])
+            results.append(hit)
             cursor = base64.urlsafe_b64encode(json.dumps(hit['sort']).encode()).decode()
 
         return results, cursor

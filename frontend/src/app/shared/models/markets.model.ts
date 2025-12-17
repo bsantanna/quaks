@@ -21,7 +21,7 @@ export interface NewsImage {
 }
 
 export interface NewsItem {
-  url: string
+  id: string
   date: string
   source: string
   headline: string

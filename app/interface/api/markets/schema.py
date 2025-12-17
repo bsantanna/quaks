@@ -10,7 +10,7 @@ class NewsImage(BaseModel):
 
 
 class NewsItem(BaseModel):
-    url: str
+    id: str
     date: str
     source: str
     headline: str

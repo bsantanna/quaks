@@ -4,6 +4,7 @@ import { PageTerms } from './page-terms/page-terms';
 import {MarketsNewsRelated} from './page-markets-news-related/markets-news-related';
 import {MarketsPerformanceComparison} from './page-markets-performance-comparison/markets-performance-comparison';
 import {InsightsQuaksStocksExpert} from './page-insights-quaks-stocks-expert/insights-quaks-stocks-expert';
+import {MarketsNewsItem} from './page-markets-news-item/markets-news-item.component';
 
 export const routes: Routes = [
   {
@@ -25,6 +26,11 @@ export const routes: Routes = [
         title: 'Performance comparison',
         path: 'performance/:keyTicker',
         component: MarketsPerformanceComparison
+      },
+      {
+        title: '',
+        path: 'news/item/:newsItemId',
+        component: MarketsNewsItem
       },
       {
         title: 'News feed',

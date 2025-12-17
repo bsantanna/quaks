@@ -54,7 +54,7 @@ async def get_news(
         request: NewsListRequest = Depends(),
         _=cache_control(3600)):
 
-    result, sort = await markets_news_service.get_news(
+    results, sort = await markets_news_service.get_news(
         index_name=index_name,
         key_ticker=request.key_ticker,
         size=request.size,
@@ -65,16 +65,16 @@ async def get_news(
     )
 
     news_items = []
-    for item in result:
+    for item in results:
         news_items.append(NewsItem(
-            url=item.get("key_url"),
-            source=item.get("key_source"),
-            headline=item.get("text_headline"),
-            summary=item.get("text_summary"),
-            content=item.get("text_content"),
-            date=item.get("date_reference"),
-            images=item.get("obj_images"),
-            key_ticker=item.get("key_ticker"),
+            id=item.get("_id"),
+            source=item.get('_source').get("key_source"),
+            headline=item.get('_source').get("text_headline"),
+            summary=item.get('_source').get("text_summary"),
+            content=item.get('_source').get("text_content"),
+            date=item.get('_source').get("date_reference"),
+            images=item.get('_source').get("obj_images"),
+            key_ticker=item.get('_source').get("key_ticker"),
         ))
 
     response = NewsList(
