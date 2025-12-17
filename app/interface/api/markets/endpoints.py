@@ -42,6 +42,7 @@ async def get_most_recent_close(
 
     return response
 
+
 @router.get(
     path="/news/{index_name}",
     response_model=NewsList,
@@ -53,9 +54,9 @@ async def get_news(
         markets_news_service: MarketsNewsService = Depends(Provide[Container.markets_news_service]),
         request: NewsListRequest = Depends(),
         _=cache_control(3600)):
-
     results, sort = await markets_news_service.get_news(
         index_name=index_name,
+        id=request.id,
         key_ticker=request.key_ticker,
         size=request.size,
         cursor=request.cursor,
@@ -83,5 +84,3 @@ async def get_news(
     )
 
     return response
-
-

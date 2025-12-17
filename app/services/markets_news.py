@@ -1,5 +1,6 @@
 import base64
 import json
+
 from elasticsearch import Elasticsearch
 
 
@@ -11,6 +12,7 @@ class MarketsNewsService:
     async def get_news(
             self,
             index_name: str,
+            id: str = None,
             key_ticker: str = None,
             size=10,
             cursor: str = None,
@@ -20,6 +22,7 @@ class MarketsNewsService:
         search_params = {
             "id": "get_markets_news_template",
             "params": {
+                "id": id,
                 "key_ticker": key_ticker,
                 "size": size,
                 "include_text_content": include_text_content,
