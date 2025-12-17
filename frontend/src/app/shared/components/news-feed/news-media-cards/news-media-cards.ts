@@ -13,5 +13,6 @@ import {NewsItem} from '../../../models/markets.model';
 export class NewsMediaCards {
 
   readonly newsItems =  input.required<NewsItem[]>();
+  readonly indexName = input.required<string>();
 
 }

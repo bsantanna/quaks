@@ -31,12 +31,9 @@ export class MarketsStocksDashboard extends PathReactiveComponent implements OnD
   constructor() {
     super();
     effect(() => {
-      const ticker = this.keyTicker();
-      const dates = this.intervalInDates();
+      const linkTitle = `${this.title()} ${this.keyTicker()}`;
 
-      const linkTitle = `${this.title()} ${ticker}`;
-
-      if (dates) {
+      if (this.useIntervalInDates()) {
         this.shareUrlService.update({
           title: linkTitle,
           url: window.location.href

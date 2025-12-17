@@ -35,22 +35,11 @@ export class MarketsNewsRelated extends PathReactiveComponent implements OnDestr
   constructor() {
     super();
     effect(() => {
-      const ticker = this.keyTicker();
-      const dates = this.intervalInDates();
-
-      const linkTitle = `${this.title()} ${ticker}`;
-
-      if (dates) {
-        this.shareUrlService.update({
-          title: linkTitle,
-          url: window.location.href
-        });
-      } else {
-        this.shareUrlService.update({
-          title: linkTitle,
-          url: `${window.location.href.split('?')[0]}`
-        });
-      }
+      const linkTitle = `${this.title()} - ${this.keyTicker()}`;
+      this.shareUrlService.update({
+        title: linkTitle,
+        url: `${window.location.href.split('?')[0]}`
+      });
     });
   }
 

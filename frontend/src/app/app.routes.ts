@@ -23,29 +23,29 @@ export const routes: Routes = [
     path: 'markets',
     children: [
       {
-        title: 'Performance comparison',
+        title: 'Quaks - Performance comparison',
         path: 'performance/:keyTicker',
         component: MarketsPerformanceComparison
       },
       {
-        title: '',
-        path: 'news/item/:newsItemId',
+        title: 'Quaks - News',
+        path: 'news/item/:indexName/:newsItemId',
         component: MarketsNewsItem
       },
       {
-        title: 'News feed',
+        title: 'Quaks - News feed',
         path: 'news/related/:keyTicker',
         component: MarketsNewsRelated
       },
       {
-        title: 'Stock Dashboard',
+        title: 'Quaks - Stock Dashboard',
         path: 'stocks/:keyTicker',
         component: MarketsStocksDashboard
       }
     ]
   },
   {
-    title: '',
+    title: 'Quaks - Terms of Service',
     path: 'terms',
     component: PageTerms
   },

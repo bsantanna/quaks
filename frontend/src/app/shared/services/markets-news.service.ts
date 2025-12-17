@@ -21,6 +21,28 @@ export class MarketsNewsService {
 
   readonly newsList: WritableSignal<NewsList> = signal(MarketsNewsService.INITIAL_NEWS_LIST);
 
+  getNewsItem(
+    indexName: string,
+    id: string
+  ): Observable<NewsList> {
+    const url = `${this.marketsNewsUrl}/${encodeURIComponent(indexName)}`;
+    const params = {
+      id,
+      size: 1,
+      include_text_content: true,
+      include_obj_images: true
+    };
+
+    return this.httpClient.get<NewsList>(url, {params}).pipe(
+      timeout(REQUEST_TIMEOUT),
+      catchError((error) => {
+        console.error(`Failed to fetch news for ${id} @ ${indexName}`, error);
+        return of(MarketsNewsService.INITIAL_NEWS_LIST);
+      })
+    );
+
+  }
+
   getNewsList(
     indexName: string,
     ticker: string,
