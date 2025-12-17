@@ -15,7 +15,10 @@
     </div>
 
     <div class="-mx-4 lg:col-span-2 lg:row-span-2 lg:row-end-2">
-        News list here
+        <app-related-news-feed
+                [indexName]="'quant-agents_markets-news_latest'"
+                [keyTicker]="keyTicker()"
+        ></app-related-news-feed>
     </div>
 
     <div class="lg:col-start-3">

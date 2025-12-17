@@ -26,12 +26,19 @@ class NewsList(BaseModel):
 
 
 class NewsListRequest(BaseModel):
-    key_ticker:Optional[str] = None
     size: int
+    key_ticker:Optional[str] = None
     cursor: Optional[str] = None
     include_text_content: Optional[bool] = None
     include_key_ticker: Optional[bool] = None
     include_obj_images: Optional[bool] = None
+
+    @field_validator('cursor')
+    @classmethod
+    def validate_cursor_format(cls, v: str) -> Optional[str]:
+        if v == '':
+            return None
+        return v
 
 
 class StatsClose(BaseModel):

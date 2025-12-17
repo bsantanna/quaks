@@ -31,7 +31,7 @@ class MarketsNewsService:
 
         response = self.es.search_template(index=index_name, body=search_params)
         results = []
-        cursor = None
+        cursor = ""
         for hit in response['hits']['hits']:
             results.append(hit['_source'])
             cursor = base64.urlsafe_b64encode(json.dumps(hit['sort']).encode()).decode()
