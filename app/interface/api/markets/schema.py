@@ -1,6 +1,8 @@
 from datetime import datetime
-from typing_extensions import Optional
+
 from pydantic import BaseModel, field_validator, model_validator
+from typing_extensions import Optional
+
 from app.domain.exceptions.base import InvalidFieldError
 
 
@@ -10,7 +12,7 @@ class NewsImage(BaseModel):
 
 
 class NewsItem(BaseModel):
-    url: str
+    id: str
     date: str
     source: str
     headline: str
@@ -26,12 +28,20 @@ class NewsList(BaseModel):
 
 
 class NewsListRequest(BaseModel):
-    key_ticker:Optional[str] = None
     size: int
+    id: Optional[str] = None
+    key_ticker: Optional[str] = None
     cursor: Optional[str] = None
     include_text_content: Optional[bool] = None
     include_key_ticker: Optional[bool] = None
     include_obj_images: Optional[bool] = None
+
+    @field_validator('id', 'key_ticker', 'cursor')
+    @classmethod
+    def validate_empty_format(cls, v: str) -> Optional[str]:
+        if v == '':
+            return None
+        return v
 
 
 class StatsClose(BaseModel):
@@ -70,4 +80,3 @@ class StatsCloseRequest(BaseModel):
             if start >= end:
                 raise InvalidFieldError('start_date, end_date', 'Start date must be before end date')
         return self
-

@@ -31,7 +31,7 @@ export class StockInfoHeader extends PathReactiveComponent {
     return `${this.getPastDateInDays(this.intervalInDays())}_${this.getPastDateInDays(1)}`;
   });
 
-  readonly statsClose: WritableSignal<StatsClose> = signal(MarketsStatsService.INITIAL_STATS_CLOSE);
+  readonly statsClose = this.marketsStatsService.statsClose;
 
   constructor() {
     super();
@@ -41,7 +41,7 @@ export class StockInfoHeader extends PathReactiveComponent {
         this.keyTicker(),
         this.interval()
       ).pipe(take(1)).subscribe(stats => {
-        this.statsClose.set(stats);
+        this.marketsStatsService.statsClose.set(stats);
       });
     });
   }

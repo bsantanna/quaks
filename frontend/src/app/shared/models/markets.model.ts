@@ -14,3 +14,24 @@ export interface StatsClose {
   most_recent_open:number;
   percent_variance: number;
 }
+
+export interface NewsImage {
+  url: string
+  size: string
+}
+
+export interface NewsItem {
+  id: string
+  date: string
+  source: string
+  headline: string
+  summary: string
+  content: string
+  images: NewsImage[]
+  key_ticker: string[]
+}
+
+export interface NewsList {
+  items: NewsItem[]
+  cursor: string
+}

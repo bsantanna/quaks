@@ -36,3 +36,5 @@ export const IFRAME_STYLE = `
 export const STOCK_MARKETS = [
   'nasdaq_100',
 ];
+
+export const REQUEST_TIMEOUT = 10000;
