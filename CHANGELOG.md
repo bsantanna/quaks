@@ -2,6 +2,26 @@
 
 <!-- version list -->
 
+## v1.3.12 (2025-12-17)
+
+### Bug Fixes
+
+- News feed prototype (1) ([#32](https://github.com/bsantanna/quaks/pull/32),
+  [`ceeb5ad`](https://github.com/bsantanna/quaks/commit/ceeb5ad9553b3c85d1b50193a645f10a42e888ab))
+
+- News feed prototype (2) ([#32](https://github.com/bsantanna/quaks/pull/32),
+  [`ceeb5ad`](https://github.com/bsantanna/quaks/commit/ceeb5ad9553b3c85d1b50193a645f10a42e888ab))
+
+- News feed prototype (3) ([#32](https://github.com/bsantanna/quaks/pull/32),
+  [`ceeb5ad`](https://github.com/bsantanna/quaks/commit/ceeb5ad9553b3c85d1b50193a645f10a42e888ab))
+
+- News feed prototype (4) ([#32](https://github.com/bsantanna/quaks/pull/32),
+  [`ceeb5ad`](https://github.com/bsantanna/quaks/commit/ceeb5ad9553b3c85d1b50193a645f10a42e888ab))
+
+- News feed prototype (5) ([#32](https://github.com/bsantanna/quaks/pull/32),
+  [`ceeb5ad`](https://github.com/bsantanna/quaks/commit/ceeb5ad9553b3c85d1b50193a645f10a42e888ab))
+
+
 ## v1.3.11 (2025-12-16)
 
 ### Bug Fixes
