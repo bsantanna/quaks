@@ -51,7 +51,7 @@ def create_app():
 
 def setup_auth(container, application):
     config = container.config()
-    if config["auth"]["enabled"] == "True":
+    if config["auth"]["enabled"]:
         keycloak_config = KeycloakConfiguration(
             url=config["auth"]["url"],
             realm=config["auth"]["realm"],
@@ -87,7 +87,7 @@ def setup_auth(container, application):
 
 def setup_mcp(container: Container, application: FastAPI):
     config = container.config()
-    if config["auth"]["enabled"] == "True":
+    if config["auth"]["enabled"]:
         mcp = FastApiMCP(
             application,
             name=os.getenv("SERVICE_NAME", "Quaks"),
@@ -113,7 +113,7 @@ def setup_mcp(container: Container, application: FastAPI):
 
 def setup_routers(container: Container, application: FastAPI):
     config = container.config()
-    if config["auth"]["enabled"] == "True":
+    if config["auth"]["enabled"]:
         application.include_router(auth_router, prefix="/auth", tags=["auth"])
 
     application.include_router(agents_router, prefix="/agents", tags=["agents"])
