@@ -42,7 +42,7 @@ The platform ingests end-of-day market data, financial statements, insider trade
               |           Workflows    (Claude, GPT,
          Agent Types         |         Ollama, Grok)
               |              |
-   +----------+----------+  |
+   +----------+----------+   |
    |          |           |  |
 Adaptive  Coordinator  React |
   RAG     Planner-     RAG   |
