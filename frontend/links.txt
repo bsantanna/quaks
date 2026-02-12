@@ -1,0 +1,4 @@
+https://heroicons.com
+https://lobehub.com/icons?q=
+https://tailwindcss.com/plus/ui-blocks/application-ui/navigation/command-palettes
+

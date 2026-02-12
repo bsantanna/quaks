@@ -1,10 +1,11 @@
 from io import BytesIO
 
 from dependency_injector.wiring import Provide, inject
-from fastapi import APIRouter, File, Depends, Body, Path
+from fastapi import APIRouter, File, Depends, Body, Path, UploadFile
 from fastapi.security import HTTPBearer
 from fastapi_keycloak_middleware import get_user
 from starlette import status
+from typing_extensions import Annotated
 from starlette.responses import StreamingResponse
 
 from app.core.container import Container
@@ -24,20 +25,18 @@ bearer_scheme = HTTPBearer()
     response_model=Attachment,
     summary="Upload a file attachment",
     description="""
-    Upload a file attachment to the system.
+    Uploads a file to the system for later use with agents.
 
-    This endpoint accepts any file type and stores it in the system for later use.
-    The file is processed and metadata is extracted and stored along with the file content.
+    The file is processed, its content is extracted and stored as metadata.
+    Maximum upload size is 10 MB per file.
 
-    **Upload size limit is set to 10 MB per file.**
+    Supported file types include documents (PDF, DOC, DOCX, TXT),
+    images (JPG, PNG), and audio files (MP3, WAV, OGG, WEBM).
 
-    **Example file types:**
-    - Documents (PDF, DOC, DOCX, TXT)
-    - Images (JPG, PNG, GIF, BMP)
-    - Archives (ZIP, RAR, TAR)
-
+    Parameters (multipart form):
+    - `file`: The file to upload.
     """,
-    response_description="Successfully uploaded attachment with metadata",
+    response_description="The uploaded attachment with metadata",
     responses={
         201: {
             "description": "Attachment successfully uploaded",
@@ -46,19 +45,20 @@ bearer_scheme = HTTPBearer()
                     "example": {
                         "id": "att_123456789",
                         "is_active": True,
-                        "file_name": "document.pdf",
                         "created_at": "2024-01-15T10:30:00Z",
-                        "parsed_content": "Extracted text content from the document",
+                        "file_name": "document.pdf",
+                        "parsed_content": "Extracted text content from the document...",
+                        "embeddings_collection": None,
                     }
                 }
             },
         },
         413: {
-            "description": "Payload too large",
+            "description": "File too large",
             "content": {
                 "application/json": {
                     "example": {
-                        "detail": "File size 1234 exceeds the maximum allowed size of 123 bytes"
+                        "detail": "File size 15728640 exceeds the maximum allowed size of 10485760 bytes"
                     }
                 }
             },
@@ -73,18 +73,14 @@ bearer_scheme = HTTPBearer()
 )
 @inject
 async def upload_attachment(
-    file=File(..., description="The file to upload.", example="document.pdf"),
-    attachment_service: AttachmentService = Depends(
-        Provide[Container.attachment_service]
-    ),
-    user: User = Depends(get_user),
+    file: Annotated[
+        UploadFile, File(..., description="The file to upload.", example="document.pdf")
+    ],
+    attachment_service: Annotated[
+        AttachmentService, Depends(Provide[Container.attachment_service])
+    ],
+    user: Annotated[User, Depends(get_user)],
 ):
-    """
-    Upload a file attachment to the system.
-
-    This endpoint processes the uploaded file, extracts metadata,
-    and stores it securely in the system for later retrieval.
-    """
     schema = user.id.replace("-", "_") if user is not None else "public"
     # validate file size
     file.file.seek(0, 2)
@@ -105,17 +101,15 @@ async def upload_attachment(
     dependencies=[Depends(bearer_scheme)],
     status_code=status.HTTP_200_OK,
     response_class=StreamingResponse,
-    summary="Download an attachment by ID",
+    summary="Download an attachment",
     description="""
-    Download a previously uploaded attachment by its unique identifier.
+    Downloads a previously uploaded attachment by its ID.
 
-    This endpoint streams the file content directly to the client with appropriate
-    headers for file download. The original filename and content type are preserved.
+    The file is streamed with its original filename and content type preserved
+    in the response headers.
 
-    **Usage:**
-    - Use the attachment ID obtained from the upload endpoint
-    - The file will be downloaded with its original filename
-    - Content-Type header will match the original file type
+    Parameters:
+    - `attachment_id` (path): The unique identifier of the attachment to download.
     """,
     response_description="File content streamed as attachment",
     responses={
@@ -146,24 +140,21 @@ async def upload_attachment(
 )
 @inject
 async def download_attachment(
-    attachment_id: str = Path(
-        ...,
-        description="Unique identifier of the attachment to download",
-        example="att_123456789",
-        min_length=1,
-        max_length=50,
-    ),
-    attachment_service: AttachmentService = Depends(
-        Provide[Container.attachment_service]
-    ),
-    user: User = Depends(get_user),
+    attachment_id: Annotated[
+        str,
+        Path(
+            ...,
+            description="Unique identifier of the attachment to download",
+            example="att_123456789",
+            min_length=1,
+            max_length=50,
+        ),
+    ],
+    attachment_service: Annotated[
+        AttachmentService, Depends(Provide[Container.attachment_service])
+    ],
+    user: Annotated[User, Depends(get_user)],
 ):
-    """
-    Download an attachment by its unique identifier.
-
-    Returns the file content as a streaming response with appropriate
-    headers for file download.
-    """
     schema = user.id.replace("-", "_") if user is not None else "public"
     attachment = attachment_service.get_attachment_by_id(attachment_id, schema)
     response = StreamingResponse(
@@ -183,33 +174,17 @@ async def download_attachment(
     response_model=Attachment,
     summary="Generate embeddings for an attachment",
     description="""
-    Generate vector embeddings for a previously uploaded attachment.
+    Generates vector embeddings from the content of a previously uploaded attachment.
 
-    This endpoint processes the content of an attachment and generates vector embeddings
-    using the specified language model. These embeddings can be used for:
+    The text is extracted, split into chunks, and embedded using the specified language model.
+    Embeddings are stored in the given collection for later similarity search by RAG agents.
 
-    - **Semantic search**: Find similar content based on meaning
-    - **Content analysis**: Analyze document themes and topics
-    - **Recommendation systems**: Suggest related documents
-    - **Classification**: Categorize content automatically
-
-    **Process:**
-    1. Extract text content from the attachment
-    2. Process text using the specified language model
-    3. Generate vector embeddings
-    4. Store embeddings in the specified collection
-
-    **Supported file types for embedding generation:**
-    - Text documents (TXT, MD, RTF)
-    - PDF documents
-    - Word documents (DOC, DOCX)
-    - HTML files
-    - CSV files
-    - JSON files
-    - Images (JPG, PNG)
-    - Audio files (WAV, MP3, OGG, WEBM)
+    Parameters (JSON body):
+    - `attachment_id`: ID of the attachment to generate embeddings for.
+    - `language_model_id`: ID of the language model to use for embedding generation.
+    - `collection_name`: Name of the vector collection to store embeddings in.
     """,
-    response_description="Attachment updated with embedding information",
+    response_description="Attachment updated with embedding collection reference",
     responses={
         201: {
             "description": "Embeddings successfully generated",
@@ -218,9 +193,9 @@ async def download_attachment(
                     "example": {
                         "id": "att_123456789",
                         "is_active": True,
-                        "file_name": "document.pdf",
                         "created_at": "2024-01-15T10:30:00Z",
-                        "parsed_content": "Extracted text content from the document",
+                        "file_name": "document.pdf",
+                        "parsed_content": "Extracted text content from the document...",
                         "embeddings_collection": "my_documents",
                     }
                 }
@@ -250,26 +225,23 @@ async def download_attachment(
 )
 @inject
 async def create_embeddings(
-    embeddings: EmbeddingsRequest = Body(
-        ...,
-        description="Configuration for embedding generation",
-        example={
-            "attachment_id": "att_123456789",
-            "language_model_id": "llm_id_987654321",
-            "collection_name": "my_documents",
-        },
-    ),
-    attachment_service: AttachmentService = Depends(
-        Provide[Container.attachment_service]
-    ),
-    user: User = Depends(get_user),
+    embeddings: Annotated[
+        EmbeddingsRequest,
+        Body(
+            ...,
+            description="Configuration for embedding generation",
+            example={
+                "attachment_id": "att_123456789",
+                "language_model_id": "lm_abc123",
+                "collection_name": "my_documents",
+            },
+        ),
+    ],
+    attachment_service: Annotated[
+        AttachmentService, Depends(Provide[Container.attachment_service])
+    ],
+    user: Annotated[User, Depends(get_user)],
 ):
-    """
-    Generate vector embeddings for an attachment.
-
-    This endpoint processes the attachment content and generates
-    vector embeddings using the specified language model.
-    """
     schema = user.id.replace("-", "_") if user is not None else "public"
     attachment = await attachment_service.create_embeddings(
         attachment_id=embeddings.attachment_id,
