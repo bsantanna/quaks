@@ -7,7 +7,7 @@ from fastapi.security import HTTPBearer
 from fastapi_keycloak_middleware import KeycloakConfiguration, setup_keycloak_middleware
 from fastapi_mcp import FastApiMCP, AuthConfig
 from starlette.middleware.cors import CORSMiddleware
-from starlette.responses import JSONResponse, FileResponse
+from starlette.responses import JSONResponse
 from starlette.staticfiles import StaticFiles
 
 from app.core.container import Container
@@ -75,8 +75,7 @@ def setup_auth(container, application):
                 "/*.ico",
                 "/*.svg",
                 "/*.json",
-                "/#/*",
-                "/",
+                "/#/*"
             ],
             user_mapper=map_user,
         )
@@ -153,14 +152,14 @@ def setup_tracing(container: Container, application: FastAPI):
 
 def setup_middleware(application: FastAPI):
     application.add_middleware(
+        LoggingMiddleware,
+    )
+    application.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
-    )
-    application.add_middleware(
-        LoggingMiddleware,
     )
 
 def setup_static_files(application: FastAPI):
