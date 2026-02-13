@@ -75,7 +75,8 @@ def setup_auth(container, application):
                 "/*.ico",
                 "/*.svg",
                 "/*.json",
-                "/#/*"
+                "/#/*",
+                "/"
             ],
             user_mapper=map_user,
         )
