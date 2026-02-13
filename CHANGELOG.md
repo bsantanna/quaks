@@ -2,6 +2,29 @@
 
 <!-- version list -->
 
+## v1.3.13 (2026-02-13)
+
+### Bug Fixes
+
+- Readme update ([#34](https://github.com/bsantanna/quaks/pull/34),
+  [`5143598`](https://github.com/bsantanna/quaks/commit/5143598ac0d42ebeecfa9a08238221432a48de2a))
+
+- Readme update 2 ([#34](https://github.com/bsantanna/quaks/pull/34),
+  [`5143598`](https://github.com/bsantanna/quaks/commit/5143598ac0d42ebeecfa9a08238221432a48de2a))
+
+- Terraform setup 2 ([#34](https://github.com/bsantanna/quaks/pull/34),
+  [`5143598`](https://github.com/bsantanna/quaks/commit/5143598ac0d42ebeecfa9a08238221432a48de2a))
+
+- Terraform setup refactoring 1 ([#34](https://github.com/bsantanna/quaks/pull/34),
+  [`5143598`](https://github.com/bsantanna/quaks/commit/5143598ac0d42ebeecfa9a08238221432a48de2a))
+
+- Terraform setup refactoring 2 ([#34](https://github.com/bsantanna/quaks/pull/34),
+  [`5143598`](https://github.com/bsantanna/quaks/commit/5143598ac0d42ebeecfa9a08238221432a48de2a))
+
+- Terraform setup refactoring 3 ([#34](https://github.com/bsantanna/quaks/pull/34),
+  [`5143598`](https://github.com/bsantanna/quaks/commit/5143598ac0d42ebeecfa9a08238221432a48de2a))
+
+
 ## v1.3.12 (2025-12-17)
 
 ### Bug Fixes
