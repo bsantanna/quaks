@@ -7,14 +7,11 @@ services:
       - agent-lab
     ports:
       - "18000:8000"
+    env_file:
+      - .env
     environment:
-      DOCKER: True
-      ELASTICSEARCH_URL: ${ELASTICSEARCH_URL}
-      ELASTICSEARCH_API_KEY: ${ELASTICSEARCH_API_KEY}
-#      LANGWATCH_API_KEY: ${LANGWATCH_API_KEY}
-#      LANGWATCH_ENDPOINT: ${LANGWATCH_ENDPOINT}
+      DOCKER: 1
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318"
-      OLLAMA_ENDPOINT: ${OLLAMA_ENDPOINT}
     depends_on:
       otel-collector:
         condition: service_started
