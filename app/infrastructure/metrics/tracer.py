@@ -25,7 +25,7 @@ import langwatch
 from opentelemetry.trace import SpanKind, TraceState, Link
 from typing_extensions import Optional, Sequence
 
-service_name = os.getenv("SERVICE_NAME", "Agent-Lab")
+service_name = os.getenv("SERVICE_NAME", "Quaks")
 service_version = os.getenv("SERVICE_VERSION", "snapshot")
 collector_endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
 resource = Resource(attributes={SERVICE_NAME: service_name})
