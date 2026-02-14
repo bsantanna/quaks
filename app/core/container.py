@@ -69,9 +69,13 @@ class Container(containers.DeclarativeContainer):
     else:
         vault_url = os.getenv("VAULT_URL")
         vault_token = os.getenv("VAULT_TOKEN")
+        vault_engine_path = os.getenv("VAULT_ENGINE_PATH", "secret")
+        vault_secret_path = os.getenv("VAULT_SECRET_PATH", "app_secrets")
         vault_client = hvac.Client(url=vault_url, token=vault_token, verify=False)
         app_secrets = vault_client.secrets.kv.read_secret_version(
-            raise_on_deleted_version=False, path="app_secrets"
+            raise_on_deleted_version=False,
+            path=vault_secret_path,
+            mount_point=vault_engine_path,
         )
 
         config = providers.Configuration()
