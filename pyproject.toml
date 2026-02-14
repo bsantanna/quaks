@@ -2,5 +2,4 @@
 version_variables = [
   "docker/app/Dockerfile:SERVICE_VERSION",
   "frontend/package.json:version",
-  "terraform/05_quaks-instance/variables.tf:default"
 ]
