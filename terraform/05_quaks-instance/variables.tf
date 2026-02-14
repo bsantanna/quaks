@@ -7,7 +7,7 @@ variable "quaks_namespace" {
 variable "agent_lab_chart_version" {
   description = "Helm chart version for Quaks"
   type        = string
-  default     = "1.3.13"
+  default     = "1.5.3"
 }
 
 variable "quaks_image_tag" {
