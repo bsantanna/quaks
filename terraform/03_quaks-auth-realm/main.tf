@@ -114,7 +114,7 @@ resource "keycloak_user" "service_account" {
 resource "kubernetes_secret_v1" "quaks_auth" {
   metadata {
     name      = "quaks-auth"
-    namespace = var.quaks_namespace
+    namespace = kubernetes_namespace_v1.quaks.metadata[0].name
   }
 
   data = {
