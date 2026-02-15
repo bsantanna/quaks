@@ -95,6 +95,8 @@ class Container(containers.DeclarativeContainer):
 
         # dependencies environment variables
         os.environ["TAVILY_API_KEY"] = app_secrets["data"]["data"]["tavily_api_key"]
+        os.environ["ELASTICSEARCH_URL"] = app_secrets["data"]["data"]["elasticsearch_url"]
+        os.environ["ELASTICSEARCH_API_KEY"] = app_secrets["data"]["data"]["elasticsearch_api_key"]
 
     db = providers.Singleton(Database, db_url=config.db.url)
 
