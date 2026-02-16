@@ -10,7 +10,7 @@ default_args = {
 }
 
 dag = DAG(
-    "quant_agents_markets_news",
+    "quaks_markets_news",
     default_args=default_args,
     schedule="0 * * * *",
     catchup=False,
@@ -18,7 +18,7 @@ dag = DAG(
 
 @task.kubernetes(
     image="bsantanna/java-python-dev",
-    namespace="quant-agents",
+    namespace="airflow",
     secrets=[Secret('env', None, 'quaks-dags-secrets')],
 )
 def load_markets_news():
@@ -30,7 +30,7 @@ def load_markets_news():
     from datetime import datetime
 
     def format_bulk_markets_news(df: pd.DataFrame, index_suffix: str) -> bytes:
-        index_name = f"quant-agents_markets-news_{index_suffix}"
+        index_name = f"quaks_markets-news_{index_suffix}"
         lines = []
 
         for _, row in df.iterrows():
