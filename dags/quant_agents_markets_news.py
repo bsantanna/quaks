@@ -19,7 +19,7 @@ dag = DAG(
 @task.kubernetes(
     image="bsantanna/java-python-dev",
     namespace="quant-agents",
-    secrets=[Secret('env', None, 'quant-agents-secrets')],
+    secrets=[Secret('env', None, 'quaks-dags-secrets')],
 )
 def load_markets_news():
     import hashlib

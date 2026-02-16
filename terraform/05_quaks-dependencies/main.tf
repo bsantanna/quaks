@@ -221,6 +221,10 @@ resource "vault_kv_secret_v2" "app_secrets" {
 
     # Tavily API KEY
     tavily_api_key = var.vault_secret_value_tavily_api_key
+
+    # Elasticsearch
+    elasticsearch_url = var.vault_secret_value_es_url
+    elasticsearch_api_key = var.vault_secret_value_es_api_key
   })
 
   depends_on = [
