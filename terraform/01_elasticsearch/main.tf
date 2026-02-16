@@ -37,8 +37,8 @@ resource "elasticstack_elasticsearch_script" "search_templates" {
   source    = file("${path.module}/search_templates/${each.value}")
 }
 
-resource "elasticstack_elasticsearch_index_lifecycle" "quant-agents_policy" {
-  name = "quant-agents_policy"
+resource "elasticstack_elasticsearch_index_lifecycle" "quaks_policy" {
+  name = "quaks_policy"
 
   hot {
     set_priority {
@@ -52,10 +52,10 @@ resource "elasticstack_elasticsearch_index_lifecycle" "quant-agents_policy" {
   }
 }
 
-resource "elasticstack_elasticsearch_index_template" "quant-agents_markets-news_template" {
-  name = "quant-agents_markets-news_template"
+resource "elasticstack_elasticsearch_index_template" "quaks_markets-news_template" {
+  name = "quaks_markets-news_template"
 
-  index_patterns = ["quant-agents_markets-news_*"]
+  index_patterns = ["quaks_markets-news_*"]
 
   template {
     mappings = jsonencode({
@@ -78,16 +78,16 @@ resource "elasticstack_elasticsearch_index_template" "quant-agents_markets-news_
       number_of_replicas = 1
 
       lifecycle = {
-        name = elasticstack_elasticsearch_index_lifecycle.quant-agents_policy.name
+        name = elasticstack_elasticsearch_index_lifecycle.quaks_policy.name
       }
     })
   }
 }
 
-resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-eod_template" {
-  name = "quant-agents_stocks-eod_template"
+resource "elasticstack_elasticsearch_index_template" "quaks_stocks-eod_template" {
+  name = "quaks_stocks-eod_template"
 
-  index_patterns = ["quant-agents_stocks-eod_*"]
+  index_patterns = ["quaks_stocks-eod_*"]
 
   template {
     mappings = jsonencode({
@@ -108,16 +108,16 @@ resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-eod_te
       number_of_replicas = 1
 
       lifecycle = {
-        name = elasticstack_elasticsearch_index_lifecycle.quant-agents_policy.name
+        name = elasticstack_elasticsearch_index_lifecycle.quaks_policy.name
       }
     })
   }
 }
 
-resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-insider-trades_template" {
-  name = "quant-agents_stocks-insider-trades_template"
+resource "elasticstack_elasticsearch_index_template" "quaks_stocks-insider-trades_template" {
+  name = "quaks_stocks-insider-trades_template"
 
-  index_patterns = ["quant-agents_stocks-insider-trades_*"]
+  index_patterns = ["quaks_stocks-insider-trades_*"]
 
   template {
     mappings = jsonencode({
@@ -138,16 +138,16 @@ resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-inside
       number_of_replicas = 1
 
       lifecycle = {
-        name = elasticstack_elasticsearch_index_lifecycle.quant-agents_policy.name
+        name = elasticstack_elasticsearch_index_lifecycle.quaks_policy.name
       }
     })
   }
 }
 
-resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-metadata_template" {
-  name = "quant-agents_stocks-metadata_template"
+resource "elasticstack_elasticsearch_index_template" "quaks_stocks-metadata_template" {
+  name = "quaks_stocks-metadata_template"
 
-  index_patterns = ["quant-agents_stocks-metadata_*"]
+  index_patterns = ["quaks_stocks-metadata_*"]
 
   template {
     mappings = jsonencode({
@@ -224,16 +224,16 @@ resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-metada
       number_of_replicas = 1
 
       lifecycle = {
-        name = elasticstack_elasticsearch_index_lifecycle.quant-agents_policy.name
+        name = elasticstack_elasticsearch_index_lifecycle.quaks_policy.name
       }
     })
   }
 }
 
-resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-fundamental-income-statement_template" {
-  name = "quant-agents_stocks-fundamental-income-statement_template"
+resource "elasticstack_elasticsearch_index_template" "quaks_stocks-fundamental-income-statement_template" {
+  name = "quaks_stocks-fundamental-income-statement_template"
 
-  index_patterns = ["quant-agents_stocks-fundamental-income-statement_*"]
+  index_patterns = ["quaks_stocks-fundamental-income-statement_*"]
 
   template {
     mappings = jsonencode({
@@ -281,16 +281,16 @@ resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-fundam
       number_of_replicas = 1
 
       lifecycle = {
-        name = elasticstack_elasticsearch_index_lifecycle.quant-agents_policy.name
+        name = elasticstack_elasticsearch_index_lifecycle.quaks_policy.name
       }
     })
   }
 }
 
-resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-fundamental-balance-sheet_template" {
-  name = "quant-agents_stocks-fundamental-balance-sheet_template"
+resource "elasticstack_elasticsearch_index_template" "quaks_stocks-fundamental-balance-sheet_template" {
+  name = "quaks_stocks-fundamental-balance-sheet_template"
 
-  index_patterns = ["quant-agents_stocks-fundamental-balance-sheet_*"]
+  index_patterns = ["quaks_stocks-fundamental-balance-sheet_*"]
 
   template {
     mappings = jsonencode({
@@ -346,17 +346,17 @@ resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-fundam
       number_of_replicas = 1
 
       lifecycle = {
-        name = elasticstack_elasticsearch_index_lifecycle.quant-agents_policy.name
+        name = elasticstack_elasticsearch_index_lifecycle.quaks_policy.name
       }
     })
   }
 }
 
 
-resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-fundamental-cash-flow_template" {
-  name = "quant-agents_stocks-fundamental-cash-flow_template"
+resource "elasticstack_elasticsearch_index_template" "quaks_stocks-fundamental-cash-flow_template" {
+  name = "quaks_stocks-fundamental-cash-flow_template"
 
-  index_patterns = ["quant-agents_stocks-fundamental-cash-flow_*"]
+  index_patterns = ["quaks_stocks-fundamental-cash-flow_*"]
 
   template {
     mappings = jsonencode({
@@ -401,7 +401,7 @@ resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-fundam
       number_of_replicas = 1
 
       lifecycle = {
-        name = elasticstack_elasticsearch_index_lifecycle.quant-agents_policy.name
+        name = elasticstack_elasticsearch_index_lifecycle.quaks_policy.name
       }
     })
   }
@@ -409,10 +409,10 @@ resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-fundam
 
 
 
-resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-fundamental-estimated-earnings_template" {
-  name = "quant-agents_stocks-fundamental-estimated-earnings_template"
+resource "elasticstack_elasticsearch_index_template" "quaks_stocks-fundamental-estimated-earnings_template" {
+  name = "quaks_stocks-fundamental-estimated-earnings_template"
 
-  index_patterns = ["quant-agents_stocks-fundamental-estimated-earnings_*"]
+  index_patterns = ["quaks_stocks-fundamental-estimated-earnings_*"]
 
   template {
     mappings = jsonencode({
@@ -446,24 +446,26 @@ resource "elasticstack_elasticsearch_index_template" "quant-agents_stocks-fundam
       number_of_replicas = 1
 
       lifecycle = {
-        name = elasticstack_elasticsearch_index_lifecycle.quant-agents_policy.name
+        name = elasticstack_elasticsearch_index_lifecycle.quaks_policy.name
       }
     })
   }
 }
 
 resource "elasticstack_elasticsearch_index" "stocks_eod_nasdaq" {
-  name = "quant-agents_stocks-eod_nasdaq_100"
+  name = "quaks_stocks-eod_nasdaq_100"
   alias = [{
-    name = "quant-agents_stocks-eod_latest"
+    name = "quaks_stocks-eod_latest"
   }]
-  depends_on = [elasticstack_elasticsearch_index_template.quant-agents_stocks-eod_template]
+  deletion_protection = false
+  depends_on = [elasticstack_elasticsearch_index_template.quaks_stocks-eod_template]
 }
 
 resource "elasticstack_elasticsearch_index" "markets_news_nasdaq" {
-  name = "quant-agents_markets-news_nasdaq_100"
+  name = "quaks_markets-news_nasdaq_100"
   alias = [{
-    name = "quant-agents_markets-news_latest"
+    name = "quaks_markets-news_latest"
   }]
-  depends_on = [elasticstack_elasticsearch_index_template.quant-agents_markets-news_template]
+  deletion_protection = false
+  depends_on = [elasticstack_elasticsearch_index_template.quaks_markets-news_template]
 }

@@ -12,7 +12,7 @@ variable "airflow_fqdn" {
 variable "quaks_dags_image_tag" {
   description = "Docker image tag for quaks-dags"
   type        = string
-  default     = "v1.3.14"
+  default     = "v1.3.15"
 }
 
 variable "airflow_admin_username" {
@@ -23,6 +23,30 @@ variable "airflow_admin_username" {
 
 variable "airflow_admin_password" {
   description = "Password for the Airflow admin user"
+  type        = string
+  sensitive   = true
+}
+
+variable "es_url" {
+  description = "Elasticsearch endpoint URL used by DAGs"
+  type        = string
+  sensitive   = true
+}
+
+variable "es_api_key" {
+  description = "Elasticsearch API key used by DAGs"
+  type        = string
+  sensitive   = true
+}
+
+variable "alpaca_api_key_id" {
+  description = "Alpaca Markets API key ID (APCA-API-KEY-ID)"
+  type        = string
+  sensitive   = true
+}
+
+variable "alpaca_api_secret_key" {
+  description = "Alpaca Markets API secret key (APCA-API-SECRET-KEY)"
   type        = string
   sensitive   = true
 }

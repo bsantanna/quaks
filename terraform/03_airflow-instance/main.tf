@@ -99,6 +99,27 @@ resource "time_sleep" "wait_for_redis_dags" {
   ]
 }
 
+
+resource "kubernetes_secret_v1" "quaks_dags_secrets" {
+  metadata {
+    name      = "quaks-dags-secrets"
+    namespace = var.airflow_namespace
+  }
+
+  data = {
+    ELASTICSEARCH_URL     = var.es_url
+    ELASTICSEARCH_API_KEY = var.es_api_key
+    "APCA-API-KEY-ID"     = var.alpaca_api_key_id
+    "APCA-API-SECRET-KEY" = var.alpaca_api_secret_key
+  }
+
+  type = "Opaque"
+
+  depends_on = [
+    kubernetes_namespace_v1.airflow
+  ]
+}
+
 resource "helm_release" "airflow" {
   name       = "quaks-airflow"
   repository = "https://airflow.apache.org"
