@@ -50,8 +50,8 @@ variable "kb_version" {
   default     = "9.2.0"
 }
 
-variable "kb_fqdn" {
-  description = "Fully qualified domain name for Kibana ingress"
+variable "quaks_fqdn" {
+  description = "Fully qualified domain name for Quaks ingress (shared with Kibana)"
   type        = string
-  default     = "kibana.quaks.ai"
+  default     = "quaks.ai"
 }

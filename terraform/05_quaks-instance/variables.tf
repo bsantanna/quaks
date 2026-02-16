@@ -25,6 +25,7 @@ variable "quaks_image_repository" {
 variable "quaks_fqdn" {
   description = "Fully qualified domain name for Quaks ingress"
   type        = string
+  default     = "quaks.ai"
 }
 
 variable "telemetry_endpoint" {

@@ -58,7 +58,7 @@ resource "helm_release" "kibana" {
 
       config = {
         server = {
-          publicBaseUrl   = "https://${var.kb_fqdn}/dashboards"
+          publicBaseUrl   = "https://${var.quaks_fqdn}/dashboards"
           basePath        = "/dashboards"
           rewriteBasePath = true
         }
@@ -105,16 +105,14 @@ resource "helm_release" "kibana" {
         enabled   = true
         className = "traefik"
         pathType  = "Prefix"
-        annotations = {
-          # "cert-manager.io/cluster-issuer" = "letsencrypt-prod"
-        }
+        annotations = {}
         hosts = [{
-          host = var.kb_fqdn
+          host = var.quaks_fqdn
           path = "/dashboards"
         }]
         tls = {
           enabled    = true
-          secretName = "kibana-tls"
+          secretName = "quaks-tls"
         }
       }
     })
