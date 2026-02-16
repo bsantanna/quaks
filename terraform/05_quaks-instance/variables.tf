@@ -13,7 +13,7 @@ variable "agent_lab_chart_version" {
 variable "quaks_image_tag" {
   description = "Docker image tag for Quaks application"
   type        = string
-  default     = "v1.3.16"
+  default     = "v1.3.17"
 }
 
 variable "quaks_image_repository" {
@@ -25,6 +25,7 @@ variable "quaks_image_repository" {
 variable "quaks_fqdn" {
   description = "Fully qualified domain name for Quaks ingress"
   type        = string
+  default     = "quaks.ai"
 }
 
 variable "telemetry_endpoint" {

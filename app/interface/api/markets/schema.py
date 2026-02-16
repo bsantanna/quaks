@@ -113,42 +113,27 @@ class _DateRangeRequest(BaseModel):
         return self
 
 
-class IndicatorADRequest(_DateRangeRequest):
-    pass
+class IndicatorRequest(BaseModel):
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+    period: Optional[int] = None
+    constant: Optional[float] = None
+    short_window: Optional[int] = None
+    long_window: Optional[int] = None
+    signal_window: Optional[int] = None
+    lookback: Optional[int] = None
+    smooth_k: Optional[int] = None
+    smooth_d: Optional[int] = None
 
+    @field_validator("start_date", "end_date")
+    @classmethod
+    def validate_date_format(cls, v: Optional[str]) -> Optional[str]:
+        return _validate_date_format(v)
 
-class IndicatorOBVRequest(_DateRangeRequest):
-    pass
-
-
-class IndicatorADXRequest(_DateRangeRequest):
-    period: int = 14
-
-
-class IndicatorRSIRequest(_DateRangeRequest):
-    period: int = 14
-
-
-class IndicatorCCIRequest(_DateRangeRequest):
-    period: int = 20
-    constant: float = 0.015
-
-
-class IndicatorEMARequest(_DateRangeRequest):
-    short_window: int = 12
-    long_window: int = 26
-
-
-class IndicatorMACDRequest(_DateRangeRequest):
-    short_window: int = 12
-    long_window: int = 26
-    signal_window: int = 9
-
-
-class IndicatorStochRequest(_DateRangeRequest):
-    lookback: int = 14
-    smooth_k: int = 3
-    smooth_d: int = 3
+    @model_validator(mode="after")
+    def validate_dates_order(self):
+        _validate_date_order(self.start_date, self.end_date)
+        return self
 
 
 class IndicatorResponse(BaseModel):
