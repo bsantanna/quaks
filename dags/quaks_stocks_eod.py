@@ -10,7 +10,7 @@ default_args = {
 }
 
 dag = DAG(
-    "quant_agents_stocks_eod",
+    "quaks_stocks_eod",
     default_args=default_args,
     schedule="0 10,22 * * *",
     catchup=False,
@@ -18,7 +18,7 @@ dag = DAG(
 
 @task.kubernetes(
     image="bsantanna/java-python-dev",
-    namespace="quant-agents",
+    namespace="airflow",
     secrets=[Secret('env', None, 'quaks-dags-secrets')],
 )
 def load_stocks_eod():
@@ -29,7 +29,7 @@ def load_stocks_eod():
     from datetime import datetime
 
     def format_bulk_stocks_eod(ticker: str, df: pd.DataFrame, index_suffix: str) -> bytes:
-        index_name = f"quant-agents_stocks-eod_{index_suffix}"
+        index_name = f"quaks_stocks-eod_{index_suffix}"
         lines = []
 
         for _, row in df.iterrows():
