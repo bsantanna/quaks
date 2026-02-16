@@ -1,3 +1,6 @@
+import re
+from datetime import datetime, timedelta
+
 from dependency_injector.wiring import inject, Provide
 from fastapi import APIRouter, Depends
 from typing_extensions import Annotated
@@ -19,6 +22,16 @@ from app.services.markets_stats import MarketsStatsService
 
 router = APIRouter()
 
+_INDEX_NAME_PATTERN = re.compile(r"^[a-z0-9\-_]+$")
+
+
+def _validate_index_name(index_name: str):
+    if not _INDEX_NAME_PATTERN.match(index_name):
+        raise InvalidFieldError(
+            "index_name",
+            "Must contain only lowercase letters, numbers, hyphens, or underscores",
+        )
+
 
 @router.get(
     path="/stats_close/{index_name}/{key_ticker}",
@@ -35,8 +48,8 @@ router = APIRouter()
     Parameters:
     - `index_name` (path): The Elasticsearch index to query (e.g. `stocks-eod`).
     - `key_ticker` (path): The ticker symbol (e.g. `AAPL`, `MSFT`).
-    - `start_date` (query, optional): Start of the date range in `yyyy-mm-dd` format.
-    - `end_date` (query, optional): End of the date range in `yyyy-mm-dd` format.
+    - `start_date` (query, optional): Start of the date range in `yyyy-mm-dd` format. Defaults to 90 days ago.
+    - `end_date` (query, optional): End of the date range in `yyyy-mm-dd` format. Defaults to today.
     """,
     response_description="Close price statistics for the ticker",
     responses={
@@ -79,11 +92,15 @@ async def get_stats_close(
     ],
     request: Annotated[StatsCloseRequest, Depends()],
 ):
+    _validate_index_name(index_name)
+    today = datetime.now()
+    end_date = request.end_date or today.strftime("%Y-%m-%d")
+    start_date = request.start_date or (today - timedelta(days=90)).strftime("%Y-%m-%d")
     result = await markets_stats_service.get_stats_close(
         index_name=index_name,
         key_ticker=key_ticker,
-        start_date=request.start_date,
-        end_date=request.end_date,
+        start_date=start_date,
+        end_date=end_date,
     )
     return StatsClose(
         key_ticker=key_ticker,
@@ -164,6 +181,7 @@ async def get_news(
     ],
     request: Annotated[NewsListRequest, Depends()],
 ):
+    _validate_index_name(index_name)
     results, sort = await markets_news_service.get_news(
         index_name=index_name,
         id=request.id,
@@ -196,6 +214,23 @@ async def get_news(
     )
 
 
+# Indicator configuration: maps indicator name to its service method suffix
+# and the extra query parameters it accepts with their defaults.
+# All indicators share the base params: index_name, key_ticker, start_date, end_date.
+INDICATOR_CONFIG = {
+    "ad": {},
+    "adx": {"period": 14},
+    "cci": {"period": 20, "constant": 0.015},
+    "ema": {"short_window": 12, "long_window": 26},
+    "macd": {"short_window": 12, "long_window": 26, "signal_window": 9},
+    "obv": {},
+    "rsi": {"period": 14},
+    "stoch": {"lookback": 14, "smooth_k": 3, "smooth_d": 3},
+}
+
+SUPPORTED_INDICATORS = ", ".join(sorted(INDICATOR_CONFIG.keys()))
+
+
 @router.get(
     path="/indicator/{indicator_name}/{index_name}/{key_ticker}",
     response_model=IndicatorResponse,
@@ -204,22 +239,31 @@ async def get_news(
     description="""
     Returns technical indicator values for a ticker over a date range.
 
-    Supported indicators:
-    - `ad` — Accumulation/Distribution: measures cumulative money flow volume.
-    - `adx` — Average Directional Index: measures trend strength (extra param: `period`, default 14).
-    - `cci` — Commodity Channel Index: measures price deviation from mean (extra params: `period` default 20, `constant` default 0.015).
-    - `ema` — Exponential Moving Average crossover (extra params: `short_window` default 12, `long_window` default 26).
-    - `macd` — Moving Average Convergence/Divergence (extra params: `short_window` default 12, `long_window` default 26, `signal_window` default 9).
-    - `obv` — On-Balance Volume: measures buying/selling pressure via cumulative volume.
-    - `rsi` — Relative Strength Index: momentum on 0-100 scale (extra param: `period`, default 14).
-    - `stoch` — Stochastic Oscillator: compares close to price range (extra params: `lookback` default 14, `smooth_k` default 3, `smooth_d` default 3).
+    Dates are optional: `start_date` defaults to 90 days ago and `end_date`
+    defaults to today. Each indicator accepts specific extra query parameters
+    listed below; any unrelated parameters are ignored.
 
-    Parameters:
-    - `indicator_name` (path): One of `ad`, `adx`, `cci`, `ema`, `macd`, `obv`, `rsi`, `stoch`.
-    - `index_name` (path): The Elasticsearch index (e.g. `stocks-eod`).
-    - `key_ticker` (path): The ticker symbol (e.g. `AAPL`).
-    - `start_date` (query): Start of date range in `yyyy-mm-dd` format.
-    - `end_date` (query): End of date range in `yyyy-mm-dd` format.
+    **Supported indicators and their query parameters:**
+
+    | Indicator | Description | Extra params (defaults) |
+    |-----------|-------------|------------------------|
+    | `ad` | Accumulation/Distribution — cumulative money flow volume | — |
+    | `adx` | Average Directional Index — trend strength | `period` (14) |
+    | `cci` | Commodity Channel Index — price deviation from mean | `period` (20), `constant` (0.015) |
+    | `ema` | Exponential Moving Average — crossover detection | `short_window` (12), `long_window` (26) |
+    | `macd` | Moving Average Convergence/Divergence — trend momentum | `short_window` (12), `long_window` (26), `signal_window` (9) |
+    | `obv` | On-Balance Volume — buying/selling pressure | — |
+    | `rsi` | Relative Strength Index — momentum 0-100 scale | `period` (14) |
+    | `stoch` | Stochastic Oscillator — close vs price range | `lookback` (14), `smooth_k` (3), `smooth_d` (3) |
+
+    **Path parameters:**
+    - `indicator_name`: One of `ad`, `adx`, `cci`, `ema`, `macd`, `obv`, `rsi`, `stoch`.
+    - `index_name`: The Elasticsearch index (e.g. `stocks-eod`).
+    - `key_ticker`: The ticker symbol (e.g. `AAPL`).
+
+    **Common query parameters:**
+    - `start_date` (optional): Start of date range in `yyyy-mm-dd` format. Defaults to 90 days ago.
+    - `end_date` (optional): End of date range in `yyyy-mm-dd` format. Defaults to today.
     """,
     response_description="Indicator time series data",
     responses={
@@ -231,6 +275,18 @@ async def get_news(
                         "key_ticker": "AAPL",
                         "indicator": "rsi",
                         "data": [{"date": "2025-01-10", "value": 62.35}],
+                    }
+                }
+            },
+        },
+        400: {
+            "description": "Invalid indicator name or parameter",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Field indicator_name is invalid, reason: "
+                        "Unknown indicator 'xyz'. "
+                        "Supported: ad, adx, cci, ema, macd, obv, rsi, stoch"
                     }
                 }
             },
@@ -248,57 +304,31 @@ async def get_indicator(
     ],
     request: Annotated[IndicatorRequest, Depends()],
 ):
-    base_kwargs = dict(
-        index_name=index_name,
-        key_ticker=key_ticker,
-        start_date=request.start_date,
-        end_date=request.end_date,
-    )
+    _validate_index_name(index_name)
 
-    if indicator_name == "ad":
-        data = await markets_stats_service.get_indicator_ad(**base_kwargs)
-    elif indicator_name == "adx":
-        data = await markets_stats_service.get_indicator_adx(
-            **base_kwargs, period=request.period or 14
-        )
-    elif indicator_name == "cci":
-        data = await markets_stats_service.get_indicator_cci(
-            **base_kwargs,
-            period=request.period or 20,
-            constant=request.constant or 0.015,
-        )
-    elif indicator_name == "ema":
-        data = await markets_stats_service.get_indicator_ema(
-            **base_kwargs,
-            short_window=request.short_window or 12,
-            long_window=request.long_window or 26,
-        )
-    elif indicator_name == "macd":
-        data = await markets_stats_service.get_indicator_macd(
-            **base_kwargs,
-            short_window=request.short_window or 12,
-            long_window=request.long_window or 26,
-            signal_window=request.signal_window or 9,
-        )
-    elif indicator_name == "obv":
-        data = await markets_stats_service.get_indicator_obv(**base_kwargs)
-    elif indicator_name == "rsi":
-        data = await markets_stats_service.get_indicator_rsi(
-            **base_kwargs, period=request.period or 14
-        )
-    elif indicator_name == "stoch":
-        data = await markets_stats_service.get_indicator_stoch(
-            **base_kwargs,
-            lookback=request.lookback or 14,
-            smooth_k=request.smooth_k or 3,
-            smooth_d=request.smooth_d or 3,
-        )
-    else:
+    if indicator_name not in INDICATOR_CONFIG:
         raise InvalidFieldError(
             "indicator_name",
             f"Unknown indicator '{indicator_name}'. "
-            f"Supported: ad, adx, cci, ema, macd, obv, rsi, stoch",
+            f"Supported: {SUPPORTED_INDICATORS}",
         )
+
+    today = datetime.now()
+    end_date = request.end_date or today.strftime("%Y-%m-%d")
+    start_date = request.start_date or (today - timedelta(days=90)).strftime("%Y-%m-%d")
+
+    extra_params = INDICATOR_CONFIG[indicator_name]
+    kwargs = dict(
+        index_name=index_name,
+        key_ticker=key_ticker,
+        start_date=start_date,
+        end_date=end_date,
+    )
+    for param, default in extra_params.items():
+        kwargs[param] = getattr(request, param) or default
+
+    method = getattr(markets_stats_service, f"get_indicator_{indicator_name}")
+    data = await method(**kwargs)
 
     return IndicatorResponse(
         key_ticker=key_ticker, indicator=indicator_name, data=data
