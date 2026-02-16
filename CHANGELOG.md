@@ -2,6 +2,32 @@
 
 <!-- version list -->
 
+## v1.3.17 (2026-02-16)
+
+### Bug Fixes
+
+- Dummy auth config for containers dev env ([#43](https://github.com/bsantanna/quaks/pull/43),
+  [`3423c4c`](https://github.com/bsantanna/quaks/commit/3423c4ca98566bf604d67684a2598fa9a810fe4d))
+
+- Indicators endpoint refactoring 1 ([#43](https://github.com/bsantanna/quaks/pull/43),
+  [`3423c4c`](https://github.com/bsantanna/quaks/commit/3423c4ca98566bf604d67684a2598fa9a810fe4d))
+
+- Indicators endpoint refactoring 2 ([#43](https://github.com/bsantanna/quaks/pull/43),
+  [`3423c4c`](https://github.com/bsantanna/quaks/commit/3423c4ca98566bf604d67684a2598fa9a810fe4d))
+
+- Kibana deployment 1 ([#43](https://github.com/bsantanna/quaks/pull/43),
+  [`3423c4c`](https://github.com/bsantanna/quaks/commit/3423c4ca98566bf604d67684a2598fa9a810fe4d))
+
+- Kibana deployment 2 ([#43](https://github.com/bsantanna/quaks/pull/43),
+  [`3423c4c`](https://github.com/bsantanna/quaks/commit/3423c4ca98566bf604d67684a2598fa9a810fe4d))
+
+- Terraform setup 5 ([#43](https://github.com/bsantanna/quaks/pull/43),
+  [`3423c4c`](https://github.com/bsantanna/quaks/commit/3423c4ca98566bf604d67684a2598fa9a810fe4d))
+
+- Updates versions in tf files ([#43](https://github.com/bsantanna/quaks/pull/43),
+  [`3423c4c`](https://github.com/bsantanna/quaks/commit/3423c4ca98566bf604d67684a2598fa9a810fe4d))
+
+
 ## v1.3.16 (2026-02-16)
 
 ### Bug Fixes
