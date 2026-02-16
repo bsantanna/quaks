@@ -2,6 +2,20 @@
 
 <!-- version list -->
 
+## v1.3.16 (2026-02-16)
+
+### Bug Fixes
+
+- Dependencies adjusts ([#42](https://github.com/bsantanna/quaks/pull/42),
+  [`6034b42`](https://github.com/bsantanna/quaks/commit/6034b42ffe4c6b3824d8145305193d6ea90330a1))
+
+- Terraform setup 4 ([#42](https://github.com/bsantanna/quaks/pull/42),
+  [`6034b42`](https://github.com/bsantanna/quaks/commit/6034b42ffe4c6b3824d8145305193d6ea90330a1))
+
+- Terraform setup refactoring 9 ([#42](https://github.com/bsantanna/quaks/pull/42),
+  [`6034b42`](https://github.com/bsantanna/quaks/commit/6034b42ffe4c6b3824d8145305193d6ea90330a1))
+
+
 ## v1.3.15 (2026-02-16)
 
 ### Bug Fixes
