@@ -25,3 +25,33 @@ variable "kb_anonymous_password" {
   type        = string
   sensitive   = true
 }
+
+variable "quaks_namespace" {
+  description = "Kubernetes namespace for Kibana deployment"
+  type        = string
+  default     = "quaks"
+}
+
+variable "es_namespace" {
+  description = "Kubernetes namespace where Elasticsearch is deployed"
+  type        = string
+  default     = "elastic"
+}
+
+variable "es_cluster_name" {
+  description = "Name of the ECK Elasticsearch cluster resource"
+  type        = string
+  default     = "elasticsearch"
+}
+
+variable "kb_version" {
+  description = "Kibana version to deploy"
+  type        = string
+  default     = "9.2.0"
+}
+
+variable "kb_fqdn" {
+  description = "Fully qualified domain name for Kibana ingress"
+  type        = string
+  default     = "kibana.quaks.ai"
+}
