@@ -9,11 +9,11 @@ describe('StockEodActions', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StockEodActions]
-    })
-    .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(StockEodActions);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('keyTicker', 'AAPL');
     fixture.detectChanges();
   });
 

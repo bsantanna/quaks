@@ -9,11 +9,14 @@ describe('StockEodCharts', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StockEodCharts]
-    })
-    .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(StockEodCharts);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('keyTicker', 'AAPL');
+    fixture.componentRef.setInput('intervalInDates', '2024-01-01,2024-12-31');
+    fixture.componentRef.setInput('useIntervalInDates', false);
+    fixture.componentRef.setInput('intervalInDays', 30);
     fixture.detectChanges();
   });
 
