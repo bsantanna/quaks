@@ -30,7 +30,7 @@
     @if (searchQuery().length > 0) {
       <button
         (click)="onClearSearch()"
-        class="absolute right-3 inline-flex items-center justify-center rounded-full p-0.5 text-white/50 hover:text-white hover:bg-slate-600/50 transition-all duration-150"
+        class="absolute right-3 inline-flex items-center justify-center rounded-full p-0.5 text-white/50 hover:text-white hover:bg-slate-600/50 transition-all duration-150 cursor-pointer"
         aria-label="Clear search"
       >
         <svg class="size-4" viewBox="0 0 20 20" fill="currentColor">
@@ -50,7 +50,7 @@
       @for (stock of filteredStocks(); track stock.key_ticker) {
         <button
           (click)="onSelectStock(stock)"
-          class="block w-full px-4 py-2.5 text-left text-sm text-white hover:bg-slate-700/75 focus:bg-slate-700/75 focus:outline-none transition-colors duration-100 first:rounded-t-md last:rounded-b-md border-b border-slate-700/50 last:border-b-0"
+          class="block w-full px-4 py-2.5 text-left text-sm text-white hover:bg-slate-700/75 focus:bg-slate-700/75 focus:outline-none transition-colors duration-100 first:rounded-t-md last:rounded-b-md border-b border-slate-700/50 last:border-b-0 cursor-pointer"
         >
           <div class="flex items-center justify-between">
             <div class="flex flex-col">

@@ -34,7 +34,7 @@
                         @if (stickyVisible()) {
                             @if (path().indexOf('stocks') > -1) {
                                 <app-stock-autocomplete
-                                        [inputPlaceholder]="'Search stocks symbols'"
+                                        [inputPlaceholder]="'Search stock symbols'"
                                         (stockSelected)="onKeyTickerSelected($event)">
                                 </app-stock-autocomplete>
                             }
