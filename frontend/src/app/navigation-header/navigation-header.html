@@ -18,7 +18,15 @@
                         </div>
                     </div>
 
-                    <div class="absolute left-1/2 -translate-x-1/2 hidden lg:block">
+                    <div class="absolute left-1/2 -translate-x-1/2 hidden lg:flex items-center gap-2">
+                        <app-nav-button
+                                [buttonLabel]="'Stocks'"
+                                [navigationPath]="'/markets/stocks'"
+                        ></app-nav-button>
+                        <app-nav-button
+                                [buttonLabel]="'News'"
+                                [navigationPath]="'/markets/news'"
+                        ></app-nav-button>
                         <app-share-button></app-share-button>
                     </div>
 

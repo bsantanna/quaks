@@ -3,12 +3,13 @@ import {StockAutocompleteComponent} from './stock-autocomplete/stock-autocomplet
 import {IndexedKeyTicker} from '../shared/models/markets.model';
 import {STOCK_MARKETS} from '../constants';
 import {ShareButtonComponent} from './share-button/share-button';
+import {NavButtonComponent} from './nav-button/nav-button';
 import {FeedbackMessageComponent} from './feedback-message/feedback-message';
 import {PathReactiveComponent} from '../shared/components/path-reactive.component';
 
 @Component({
   selector: 'app-navigation-header',
-  imports: [StockAutocompleteComponent, ShareButtonComponent, FeedbackMessageComponent],
+  imports: [StockAutocompleteComponent, ShareButtonComponent, NavButtonComponent, FeedbackMessageComponent],
   templateUrl: './navigation-header.html',
   styleUrl: './navigation-header.scss',
 })
