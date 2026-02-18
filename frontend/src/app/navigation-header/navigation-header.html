@@ -11,7 +11,7 @@
                                 <img src="/logo.svg" alt="Quaks Logo" class="block size-12"/>
                             </a>
                         </div>
-                        <div class="flex items-center gap-4 ml-4 transition-opacity duration-200">
+                        <div class="hidden lg:flex items-center gap-4 ml-4 transition-opacity duration-200">
                             @if (stickyVisible()) {
                                 <h1 class="text-sm font-bold text-white truncate max-w-48">{{ title() }}</h1>
                             }
@@ -40,7 +40,12 @@
                                         (stockSelected)="onKeyTickerSelected($event)">
                                 </app-stock-autocomplete>
                             }
+                        } @else {
+                            <div class="sm:hidden">
+                                <h1 class="text-sm font-bold text-white truncate max-w-48">{{ title() }}</h1>
+                            </div>
                         }
+
                     </div>
 
                 </div>
