@@ -1,11 +1,13 @@
-import {AfterViewInit, Component, ElementRef, OnDestroy, signal, viewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, inject, OnDestroy, signal, Signal, viewChild} from '@angular/core';
 import {StockAutocompleteComponent} from './stock-autocomplete/stock-autocomplete';
 import {IndexedKeyTicker} from '../shared/models/markets.model';
 import {STOCK_MARKETS} from '../constants';
 import {ShareButtonComponent} from './share-button/share-button';
 import {NavButtonComponent} from './nav-button/nav-button';
 import {FeedbackMessageComponent} from './feedback-message/feedback-message';
-import {PathReactiveComponent} from '../shared/components/path-reactive.component';
+import {NavigationEnd, Router} from '@angular/router';
+import {toSignal} from '@angular/core/rxjs-interop';
+import {filter, map, startWith} from 'rxjs';
 
 @Component({
   selector: 'app-navigation-header',
@@ -13,10 +15,30 @@ import {PathReactiveComponent} from '../shared/components/path-reactive.componen
   templateUrl: './navigation-header.html',
   styleUrl: './navigation-header.scss',
 })
-export class NavigationHeader extends PathReactiveComponent implements AfterViewInit, OnDestroy {
+export class NavigationHeader implements AfterViewInit, OnDestroy {
+  private readonly router = inject(Router);
   readonly subHeader = viewChild<ElementRef>('subHeader');
   readonly stickyVisible = signal(false);
   private observer: IntersectionObserver | null = null;
+
+  private readonly routeInfo: Signal<{ path: string; title: string }> = toSignal(
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      startWith(null),
+      map(() => {
+        let route = this.router.routerState.root;
+        while (route.firstChild) route = route.firstChild!;
+        return {
+          path: route.snapshot.url.join('/') || '',
+          title: (route.snapshot.title as string) || '',
+        };
+      })
+    ),
+    {initialValue: {path: this.router.url, title: ''}}
+  );
+
+  readonly path = () => this.routeInfo().path;
+  readonly title = () => this.routeInfo().title;
 
   onKeyTickerSelected(indexedKeyTicker: IndexedKeyTicker): void {
     if (STOCK_MARKETS.filter(market => market === indexedKeyTicker.index)) {

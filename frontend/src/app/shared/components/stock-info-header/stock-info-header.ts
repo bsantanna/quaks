@@ -4,7 +4,7 @@ import {StatsClose} from '../../models/markets.model';
 import {DecimalPipe} from '@angular/common';
 import {ShareUrlService} from '../../services/share-url.service';
 import {take} from 'rxjs';
-import {PathReactiveComponent} from '../path-reactive.component';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-stock-info-header',
@@ -12,10 +12,12 @@ import {PathReactiveComponent} from '../path-reactive.component';
   templateUrl: './stock-info-header.html',
   styleUrl: './stock-info-header.scss',
 })
-export class StockInfoHeader extends PathReactiveComponent {
+export class StockInfoHeader {
 
+  private readonly router = inject(Router);
   private readonly marketsStatsService = inject(MarketsStatsService);
   private readonly shareUrlService = inject(ShareUrlService);
+  readonly isStocksRoute = this.router.url.includes('/markets/stocks/');
 
   readonly indexName = input.required<string>();
   readonly keyTicker = input.required<string>();
@@ -34,7 +36,6 @@ export class StockInfoHeader extends PathReactiveComponent {
   readonly statsClose = this.marketsStatsService.statsClose;
 
   constructor() {
-    super();
     effect(() => {
       this.marketsStatsService.getStatsClose(
         this.indexName(),

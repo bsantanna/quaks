@@ -6,7 +6,6 @@ import {ShareUrlService} from '../shared/services/share-url.service';
 import {IndexedKeyTickerService} from '../shared/services/indexed-key-ticker.service';
 import {StockEodActions} from '../shared/components/stock-eod-actions/stock-eod-actions';
 import {StockEodCharts} from './stock-eod-charts/stock-eod-charts';
-import {PathReactiveComponent} from '../shared/components/path-reactive.component';
 import {environment} from '../../environments/environment';
 
 
@@ -16,7 +15,7 @@ import {environment} from '../../environments/environment';
   templateUrl: './markets-stocks-dashboard.component.html',
   styleUrl: './markets-stocks-dashboard.component.scss',
 })
-export class MarketsStocksDashboard extends PathReactiveComponent implements OnDestroy {
+export class MarketsStocksDashboard implements OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly shareUrlService = inject(ShareUrlService);
   private readonly indexedKeyTickerService = inject(IndexedKeyTickerService);
@@ -29,11 +28,11 @@ export class MarketsStocksDashboard extends PathReactiveComponent implements OnD
   readonly intervalInDays: WritableSignal<number> = signal<number>(90);
   readonly useIntervalInDates = computed<boolean>(() => this.intervalInDates().trim().length > 0);
   readonly isProduction = environment.production;
+  private readonly routeTitle = this.route.snapshot.title ?? '';
 
   constructor() {
-    super();
     effect(() => {
-      const linkTitle = `${this.title()} ${this.keyTicker()}`;
+      const linkTitle = `${this.routeTitle} ${this.keyTicker()}`;
 
       if (this.useIntervalInDates()) {
         this.shareUrlService.update({
