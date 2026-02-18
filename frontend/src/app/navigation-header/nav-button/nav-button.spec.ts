@@ -15,6 +15,7 @@ describe('NavButton', () => {
 
     fixture = TestBed.createComponent(NavButtonComponent);
     fixture.componentRef.setInput('buttonLabel', 'Test');
+    fixture.componentRef.setInput('buttonIcon', '/svg/icon-test.svg');
     fixture.componentRef.setInput('navigationPath', '/test');
     component = fixture.componentInstance;
     fixture.detectChanges();
