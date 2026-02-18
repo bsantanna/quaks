@@ -7,6 +7,7 @@ import {IndexedKeyTickerService} from '../shared/services/indexed-key-ticker.ser
 import {StockEodActions} from '../shared/components/stock-eod-actions/stock-eod-actions';
 import {StockEodCharts} from './stock-eod-charts/stock-eod-charts';
 import {PathReactiveComponent} from '../shared/components/path-reactive.component';
+import {environment} from '../../environments/environment';
 
 
 @Component({
@@ -27,6 +28,7 @@ export class MarketsStocksDashboard extends PathReactiveComponent implements OnD
   readonly intervalInDates = computed<string>(() => this.queryParams()?.['interval'] ?? '');
   readonly intervalInDays: WritableSignal<number> = signal<number>(90);
   readonly useIntervalInDates = computed<boolean>(() => this.intervalInDates().trim().length > 0);
+  readonly isProduction = environment.production;
 
   constructor() {
     super();

@@ -14,14 +14,23 @@
         </div>
     </div>
 
+
     <div class="-mx-4 lg:col-span-2 lg:row-span-2 lg:row-end-2">
-        <app-stock-eod-charts
-                [keyTicker]="keyTicker()"
-                [intervalInDays]="intervalInDays()"
-                [intervalInDates]="intervalInDates()"
-                [useIntervalInDates]="useIntervalInDates()">
-        </app-stock-eod-charts>
+        @if (isProduction) {
+            <app-stock-eod-charts
+                    [keyTicker]="keyTicker()"
+                    [intervalInDays]="intervalInDays()"
+                    [intervalInDates]="intervalInDates()"
+                    [useIntervalInDates]="useIntervalInDates()">
+            </app-stock-eod-charts>
+        } @else {
+            <p class="text-white">
+                This is not available on development environment.
+                Cross domain issues prevent the charts from loading.
+            </p>
+        }
     </div>
+
 
     <div class="lg:col-start-3">
         <app-stock-eod-actions
