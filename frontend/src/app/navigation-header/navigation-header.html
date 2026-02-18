@@ -12,21 +12,41 @@
                             </a>
                         </div>
 
+                        <div class="flex items-center gap-4 ml-4 transition-opacity duration-200">
+                            @if (stickyVisible()) {
+                                <h1 class="text-sm font-bold text-white truncate max-w-48">{{ title() }}</h1>
+                            }
+                        </div>
+
+
                         <div class="hidden lg:ml-10 lg:block">
                             <div class="flex space-x-4">
                                 <app-share-button></app-share-button>
                             </div>
                         </div>
 
-                        <app-feedback-message></app-feedback-message>
+                        @if (stickyVisible()) {
+                            <div class="flex items-center gap-4 ml-4 transition-opacity duration-200">
+                                @if (path().indexOf('stocks') > -1) {
+                                    <app-stock-autocomplete
+                                            (stockSelected)="onKeyTickerSelected($event)">
+                                    </app-stock-autocomplete>
+                                }
+                            </div>
+                        }
+
                     </div>
 
                 </div>
             </div>
         </nav>
+
+        <div class="fixed top-2 left-1/2 -translate-x-1/2 z-[60]">
+            <app-feedback-message></app-feedback-message>
+        </div>
     }
 
-    <div class="mt-16 py-4">
+    <div #subHeader class="mt-16 py-4">
         <div class="mx-auto px-4 sm:px-6 lg:px-8">
             <div class="md:flex md:items-center md:justify-between">
                 <div class="min-w-0 flex-1 hidden sm:block">

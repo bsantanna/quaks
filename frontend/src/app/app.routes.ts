@@ -12,7 +12,7 @@ export const routes: Routes = [
     path: 'insights',
     children: [
       {
-        title: 'Quaks Stocks Experts',
+        title: 'AI Stocks Experts',
         path: 'qse/:keyTicker',
         component: InsightsQuaksStocksExpert
       },
@@ -23,29 +23,29 @@ export const routes: Routes = [
     path: 'markets',
     children: [
       {
-        title: 'Quaks - Performance comparison',
+        title: 'Performance comparison',
         path: 'performance/:keyTicker',
         component: MarketsPerformanceComparison
       },
       {
-        title: 'Quaks - News',
+        title: 'News',
         path: 'news/item/:indexName/:newsItemId',
         component: MarketsNewsItem
       },
       {
-        title: 'Quaks - News feed',
+        title: 'News feed',
         path: 'news/related/:keyTicker',
         component: MarketsNewsRelated
       },
       {
-        title: 'Quaks - Stock Dashboard',
+        title: 'Stocks Dashboard',
         path: 'stocks/:keyTicker',
         component: MarketsStocksDashboard
       }
     ]
   },
   {
-    title: 'Quaks - Terms of Service',
+    title: 'Terms of Service',
     path: 'terms',
     component: PageTerms
   },
