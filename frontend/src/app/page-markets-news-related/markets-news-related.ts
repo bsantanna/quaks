@@ -1,11 +1,7 @@
 import {Component, computed, effect, inject, OnDestroy, signal, WritableSignal} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {ActivatedRoute, ParamMap, Params} from '@angular/router';
-import {ShareUrlService} from '../shared/services/share-url.service';
-import {StockEodActions} from '../shared/components/stock-eod-actions/stock-eod-actions';
-import {StockInfoHeader} from '../shared/components/stock-info-header/stock-info-header';
-import {IndexedKeyTickerService} from '../shared/services/indexed-key-ticker.service';
-import {NewsFeed} from '../shared/components/news-feed/news-feed.component';
+import {ShareUrlService, StockEodActions, StockInfoHeader, IndexedKeyTickerService, NewsFeed} from '../shared';
 
 @Component({
   selector: 'app-markets-news-related',

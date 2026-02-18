@@ -1,5 +1,5 @@
 import {Component, inject} from '@angular/core';
-import {CookieService} from '../../shared/services/cookie.service';
+import {CookieService} from '../../shared';
 
 @Component({
   selector: 'app-cookie-consent-dialog',

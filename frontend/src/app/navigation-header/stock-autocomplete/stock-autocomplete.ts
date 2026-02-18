@@ -1,9 +1,8 @@
 import {Component, computed, inject, input, output, signal} from '@angular/core';
 
 import {FormsModule} from '@angular/forms';
-import {IndexedKeyTicker} from '../../shared/models/markets.model';
+import {IndexedKeyTicker, IndexedKeyTickerService} from '../../shared';
 import {STOCK_MARKETS} from '../../constants';
-import {IndexedKeyTickerService} from '../../shared/services/indexed-key-ticker.service';
 
 
 @Component({

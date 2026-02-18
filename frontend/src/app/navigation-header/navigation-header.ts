@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, ElementRef, inject, OnDestroy, signal, Signal, viewChild} from '@angular/core';
 import {StockAutocompleteComponent} from './stock-autocomplete/stock-autocomplete';
-import {IndexedKeyTicker} from '../shared/models/markets.model';
+import {IndexedKeyTicker} from '../shared';
 import {STOCK_MARKETS} from '../constants';
 import {ShareButtonComponent} from './share-button/share-button';
 import {NavButtonComponent} from './nav-button/nav-button';

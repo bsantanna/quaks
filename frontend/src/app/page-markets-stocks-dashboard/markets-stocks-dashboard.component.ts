@@ -1,10 +1,7 @@
 import {Component, computed, effect, inject, OnDestroy, signal, WritableSignal} from '@angular/core';
 import {ActivatedRoute, ParamMap, Params} from '@angular/router';
 import {toSignal} from '@angular/core/rxjs-interop';
-import {StockInfoHeader} from '../shared/components/stock-info-header/stock-info-header';
-import {ShareUrlService} from '../shared/services/share-url.service';
-import {IndexedKeyTickerService} from '../shared/services/indexed-key-ticker.service';
-import {StockEodActions} from '../shared/components/stock-eod-actions/stock-eod-actions';
+import {StockInfoHeader, ShareUrlService, IndexedKeyTickerService, StockEodActions} from '../shared';
 import {StockEodCharts} from './stock-eod-charts/stock-eod-charts';
 import {environment} from '../../environments/environment';
 
