@@ -26,6 +26,7 @@
                         @if (stickyVisible()) {
                             @if (path().indexOf('stocks') > -1) {
                                 <app-stock-autocomplete
+                                        [inputPlaceholder]="'Search stocks symbols'"
                                         (stockSelected)="onKeyTickerSelected($event)">
                                 </app-stock-autocomplete>
                             }
@@ -52,6 +53,7 @@
                     <!-- Show on stocks page -->
                     @if (path().indexOf('stocks') >-1) {
                         <app-stock-autocomplete
+                                [inputPlaceholder]="'Search stocks (e.g., NVDA, GOOG)'"
                                 (stockSelected)="onKeyTickerSelected($event)">
                         </app-stock-autocomplete>
                     }

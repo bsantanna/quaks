@@ -1,4 +1,4 @@
-import {Component, computed, inject, output, signal} from '@angular/core';
+import {Component, computed, inject, input, output, signal} from '@angular/core';
 
 import {FormsModule} from '@angular/forms';
 import {IndexedKeyTicker} from '../../shared/models/markets.model';
@@ -15,6 +15,7 @@ import {IndexedKeyTickerService} from '../../shared/services/indexed-key-ticker.
 })
 export class StockAutocompleteComponent {
 
+  readonly inputPlaceholder = input('Search stocks (e.g., NVDA, GOOG)');
   readonly indexedKeyTickerService = inject(IndexedKeyTickerService);
   readonly searchQuery = signal('');
   readonly isOpen = signal(false);

@@ -22,7 +22,7 @@
       (input)="onSearch($event)"
       (focus)="onInputFocus()"
       (blur)="onInputBlur()"
-      placeholder="Search stocks (e.g., NVDA, GOOG)"
+      [placeholder]="inputPlaceholder()"
       class="block w-full rounded-md bg-slate-700/50 py-1.5 pr-10 pl-10 text-base text-white outline-1 -outline-offset-1 outline-slate-400/25 placeholder:text-white/50 focus:outline-2 focus:-outline-offset-2 focus:outline-white sm:text-sm/6 transition-all duration-150"
     />
 
