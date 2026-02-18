@@ -2,6 +2,85 @@
 
 <!-- version list -->
 
+## v1.3.18 (2026-02-18)
+
+### Bug Fixes
+
+- Adjusts indices names ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+- Adjusts indices names (2) ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+- Adjusts navigation bar (2) ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+- Adjusts navigation bar (3) ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+- Adjusts navigation bar z index and dev env iframe loading
+  ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+- Adjusts stock info header ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+- Cleanup pre upgrade angular ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+- Dependency tree ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+- Frontend imports ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+- Frontend update 1 ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+- Header adjusts for mobile version ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+- Header buttons with icons ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+- Header buttons with icons 2 ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+- Input cursor adjusts ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+- Nav button component ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+- Navigation header autocomplete placeholder text
+  ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+- Package bundle ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+- Parent pages placeholder components ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+- Svg refactoring ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+- Tools menenu refactoring 2 ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+- Tools menu refactoring ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+- Unit tests (1) ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+- Unit tests (2) ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+- Upgrade angular v21 ([#44](https://github.com/bsantanna/quaks/pull/44),
+  [`9bb3b4c`](https://github.com/bsantanna/quaks/commit/9bb3b4c570b163cb0714794c8798d6546a340eb2))
+
+
 ## v1.3.17 (2026-02-16)
 
 ### Bug Fixes
