@@ -1,20 +1,20 @@
-import {Component, computed, inject, output, signal} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import {Component, computed, inject, input, output, signal} from '@angular/core';
+
 import {FormsModule} from '@angular/forms';
-import {IndexedKeyTicker} from '../../shared/models/markets.model';
+import {IndexedKeyTicker, IndexedKeyTickerService} from '../../shared';
 import {STOCK_MARKETS} from '../../constants';
-import {IndexedKeyTickerService} from '../../shared/services/indexed-key-ticker.service';
 
 
 @Component({
   selector: 'app-stock-autocomplete',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './stock-autocomplete.html',
   styleUrl: './stock-autocomplete.scss',
 })
 export class StockAutocompleteComponent {
 
+  readonly inputPlaceholder = input('Search stocks (e.g., NVDA, GOOG)');
   readonly indexedKeyTickerService = inject(IndexedKeyTickerService);
   readonly searchQuery = signal('');
   readonly isOpen = signal(false);

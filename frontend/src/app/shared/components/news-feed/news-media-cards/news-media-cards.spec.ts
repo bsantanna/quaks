@@ -9,11 +9,12 @@ describe('NewsMediaCards', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [NewsMediaCards]
-    })
-    .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(NewsMediaCards);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('newsItems', []);
+    fixture.componentRef.setInput('indexName', 'test-index');
     fixture.detectChanges();
   });
 

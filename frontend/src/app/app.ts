@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import {NavigationHeader} from './navigation-header/navigation-header';
-import {NavigationFooter} from './navigation-footer/navigation-footer';
+import {NavigationHeader} from './navigation-header';
+import {NavigationFooter} from './navigation-footer';
 
 @Component({
   selector: 'app-root',

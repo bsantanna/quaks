@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { StockEodInsights } from './stock-eod-insights';
 
@@ -8,12 +9,13 @@ describe('StockEodInsights', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [StockEodInsights]
-    })
-    .compileComponents();
+      imports: [StockEodInsights],
+      providers: [provideRouter([])]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(StockEodInsights);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('keyTicker', 'AAPL');
     fixture.detectChanges();
   });
 

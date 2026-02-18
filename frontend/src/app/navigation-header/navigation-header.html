@@ -1,32 +1,63 @@
 <div class="bg-slate-800 pb-32">
 
     @if (path() !== '') {
-        <nav class="fixed top-0 w-full bg-slate-800">
+        <nav class="fixed top-0 w-full bg-slate-800 z-50">
             <div class="mx-auto px-2 sm:px-4 lg:px-8">
                 <div class="relative flex h-16 items-center justify-between">
-                    <div class="flex items-center px-2 lg:px-0">
 
+                    <div class="flex items-center px-2 lg:px-0">
                         <div class="shrink-0">
                             <a href="#/">
                                 <img src="/logo.svg" alt="Quaks Logo" class="block size-12"/>
                             </a>
                         </div>
-
-                        <div class="hidden lg:ml-10 lg:block">
-                            <div class="flex space-x-4">
-                                <app-share-button></app-share-button>
-                            </div>
+                        <div class="hidden lg:flex items-center gap-4 ml-4 transition-opacity duration-200">
+                            @if (stickyVisible()) {
+                                <h1 class="text-sm font-bold text-white truncate max-w-48">{{ title() }}</h1>
+                            }
                         </div>
+                    </div>
 
-                        <app-feedback-message></app-feedback-message>
+                    <div class="absolute left-1/2 -translate-x-1/2 hidden lg:flex items-center gap-2">
+                        <app-nav-button
+                                [buttonLabel]="'Stocks'"
+                                [buttonIcon]="'/svg/icon-bar-chart.svg'"
+                                [navigationPath]="'/markets/stocks'"
+                        ></app-nav-button>
+                        <app-nav-button
+                                [buttonLabel]="'News'"
+                                [buttonIcon]="'/svg/icon-document.svg'"
+                                [navigationPath]="'/markets/news'"
+                        ></app-nav-button>
+                        <app-share-button></app-share-button>
+                    </div>
+
+                    <div class="flex items-center px-2 lg:px-0">
+                        @if (stickyVisible()) {
+                            @if (path().indexOf('stocks') > -1) {
+                                <app-stock-autocomplete
+                                        [inputPlaceholder]="'Search stock symbols'"
+                                        (stockSelected)="onKeyTickerSelected($event)">
+                                </app-stock-autocomplete>
+                            }
+                        } @else {
+                            <div class="sm:hidden">
+                                <h1 class="text-sm font-bold text-white truncate max-w-48">{{ title() }}</h1>
+                            </div>
+                        }
+
                     </div>
 
                 </div>
             </div>
         </nav>
+
+        <div class="fixed top-2 left-1/2 -translate-x-1/2 z-[60]">
+            <app-feedback-message></app-feedback-message>
+        </div>
     }
 
-    <div class="mt-16 py-4">
+    <div #subHeader class="mt-16 py-4">
         <div class="mx-auto px-4 sm:px-6 lg:px-8">
             <div class="md:flex md:items-center md:justify-between">
                 <div class="min-w-0 flex-1 hidden sm:block">
@@ -37,6 +68,7 @@
                     <!-- Show on stocks page -->
                     @if (path().indexOf('stocks') >-1) {
                         <app-stock-autocomplete
+                                [inputPlaceholder]="'Search stocks (e.g., NVDA, GOOG)'"
                                 (stockSelected)="onKeyTickerSelected($event)">
                         </app-stock-autocomplete>
                     }
