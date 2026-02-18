@@ -5,6 +5,8 @@ import {MarketsNewsRelated} from './page-markets-news-related/markets-news-relat
 import {MarketsPerformanceComparison} from './page-markets-performance-comparison/markets-performance-comparison';
 import {InsightsQuaksStocksExpert} from './page-insights-quaks-stocks-expert/insights-quaks-stocks-expert';
 import {MarketsNewsItem} from './page-markets-news-item/markets-news-item.component';
+import {MarketsStocks} from './page-markets-stocks/markets-stocks';
+import {MarketsNews} from './page-markets-news/markets-news';
 
 export const routes: Routes = [
   {
@@ -29,6 +31,11 @@ export const routes: Routes = [
       },
       {
         title: 'News',
+        path: 'news',
+        component: MarketsNews
+      },
+      {
+        title: 'Article',
         path: 'news/item/:indexName/:newsItemId',
         component: MarketsNewsItem
       },
@@ -36,6 +43,11 @@ export const routes: Routes = [
         title: 'News feed',
         path: 'news/related/:keyTicker',
         component: MarketsNewsRelated
+      },
+      {
+        title: 'Stocks',
+        path: 'stocks',
+        component: MarketsStocks
       },
       {
         title: 'Stocks Dashboard',
