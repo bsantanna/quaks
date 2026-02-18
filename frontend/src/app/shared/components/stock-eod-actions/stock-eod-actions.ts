@@ -13,7 +13,7 @@ import {StockEodTools} from './stock-eod-tools/stock-eod-tools';
 })
 export class StockEodActions {
 
-  readonly selectedTab: WritableSignal<string> = signal<string>('insights');
+  readonly selectedTab: WritableSignal<string> = signal<string>('tools');
 
   readonly keyTicker = input.required<string>();
 
