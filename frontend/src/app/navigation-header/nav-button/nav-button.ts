@@ -11,6 +11,7 @@ export class NavButtonComponent {
 
   private readonly router = inject(Router);
   readonly buttonLabel = input.required<string>();
+  readonly buttonIcon = input.required<string>();
   readonly navigationPath = input.required<string>();
 
   navigate(): void {
