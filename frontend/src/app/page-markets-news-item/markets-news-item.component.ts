@@ -1,10 +1,8 @@
 import {Component, computed, effect, inject, OnDestroy} from '@angular/core';
 import {ActivatedRoute, ParamMap} from '@angular/router';
-import {ShareUrlService} from '../shared/services/share-url.service';
+import {ShareUrlService, MarketsNewsService, NewsItem} from '../shared';
 import {toSignal} from '@angular/core/rxjs-interop';
-import {MarketsNewsService} from '../shared/services/markets-news.service';
 import {take} from 'rxjs';
-import {NewsItem} from '../shared/models/markets.model';
 import {DatePipe} from '@angular/common';
 
 @Component({

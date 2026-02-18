@@ -1,10 +1,12 @@
 import { Routes } from '@angular/router';
-import {MarketsStocksDashboard} from './page-markets-stocks-dashboard/markets-stocks-dashboard.component';
-import { PageTerms } from './page-terms/page-terms';
-import {MarketsNewsRelated} from './page-markets-news-related/markets-news-related';
-import {MarketsPerformanceComparison} from './page-markets-performance-comparison/markets-performance-comparison';
-import {InsightsQuaksStocksExpert} from './page-insights-quaks-stocks-expert/insights-quaks-stocks-expert';
-import {MarketsNewsItem} from './page-markets-news-item/markets-news-item.component';
+import {MarketsStocksDashboard} from './page-markets-stocks-dashboard';
+import {PageTerms} from './page-terms';
+import {MarketsNewsRelated} from './page-markets-news-related';
+import {MarketsPerformanceComparison} from './page-markets-performance-comparison';
+import {InsightsQuaksStocksExpert} from './page-insights-quaks-stocks-expert';
+import {MarketsNewsItem} from './page-markets-news-item';
+import {MarketsStocks} from './page-markets-stocks';
+import {MarketsNews} from './page-markets-news';
 
 export const routes: Routes = [
   {
@@ -12,7 +14,7 @@ export const routes: Routes = [
     path: 'insights',
     children: [
       {
-        title: 'Quaks Stocks Experts',
+        title: 'AI Stocks Experts',
         path: 'qse/:keyTicker',
         component: InsightsQuaksStocksExpert
       },
@@ -23,29 +25,39 @@ export const routes: Routes = [
     path: 'markets',
     children: [
       {
-        title: 'Quaks - Performance comparison',
+        title: 'Performance comparison',
         path: 'performance/:keyTicker',
         component: MarketsPerformanceComparison
       },
       {
-        title: 'Quaks - News',
+        title: 'News',
+        path: 'news',
+        component: MarketsNews
+      },
+      {
+        title: 'Article',
         path: 'news/item/:indexName/:newsItemId',
         component: MarketsNewsItem
       },
       {
-        title: 'Quaks - News feed',
+        title: 'News feed',
         path: 'news/related/:keyTicker',
         component: MarketsNewsRelated
       },
       {
-        title: 'Quaks - Stock Dashboard',
+        title: 'Stocks',
+        path: 'stocks',
+        component: MarketsStocks
+      },
+      {
+        title: 'Stocks Dashboard',
         path: 'stocks/:keyTicker',
         component: MarketsStocksDashboard
       }
     ]
   },
   {
-    title: 'Quaks - Terms of Service',
+    title: 'Terms of Service',
     path: 'terms',
     component: PageTerms
   },

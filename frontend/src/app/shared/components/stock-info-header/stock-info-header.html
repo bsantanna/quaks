@@ -11,7 +11,7 @@
                 <p class="text-2xl font-bold leading-none">{{ statsClose().most_recent_close | number : '1.2-2' }}</p>
                 <div class="flex items-center justify-end gap-x-1">
                     <!-- Percent variance (visible on stocks dashboard) -->
-                    @if (path().indexOf('stocks') > -1) {
+                    @if (isStocksRoute) {
                         <p class="text-sm"
                            [class.text-green-400]="statsClose().percent_variance > 0"
                            [class.text-rose-400]="statsClose().percent_variance <= 0">
@@ -45,7 +45,7 @@
         </div>
 
         <!-- Date Range Selection (visible on stocks dashboard) -->
-        @if (path().indexOf('stocks') > -1) {
+        @if (isStocksRoute) {
             <div aria-hidden="true" class="w-full border-t border-white/10 my-3"></div>
 
             <div class="flex justify-between items-center text-xs">
@@ -69,33 +69,33 @@
                 </div>
 
                 @if (!useIntervalInDates()) {
-                    <div class="isolate inline-flex rounded-md shadow-sm mt-2">
+                    <div class="isolate inline-flex rounded-md shadow-sm mt-2 mx-auto">
                         <button
                                 type="button"
                                 (click)="setIntervalInDays(90)"
                                 [class]="intervalInDays() === 90 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative inline-flex items-center rounded-l-md px-2 py-1 font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                                class="relative inline-flex items-center rounded-l-md px-2 py-1 font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
                             3M
                         </button>
                         <button
                                 type="button"
                                 (click)="setIntervalInDays(180)"
                                 [class]="intervalInDays() === 180 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative -ml-px inline-flex items-center px-2 py-1 font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                                class="relative -ml-px inline-flex items-center px-2 py-1 font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
                             6M
                         </button>
                         <button
                                 type="button"
                                 (click)="setIntervalInDays(270)"
                                 [class]="intervalInDays() === 270 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative -ml-px inline-flex items-center px-2 py-1 font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                                class="relative -ml-px inline-flex items-center px-2 py-1 font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
                             9M
                         </button>
                         <button
                                 type="button"
                                 (click)="setIntervalInDays(365)"
                                 [class]="intervalInDays() === 365 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative -ml-px inline-flex items-center rounded-r-md px-2 py-1 font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                                class="relative -ml-px inline-flex items-center rounded-r-md px-2 py-1 font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
                             1Y
                         </button>
                     </div>
@@ -106,12 +106,12 @@
     </div>
 </div>
 
-<div [class]="path().indexOf('stocks') > -1? 'mt-14' : 'mt-8'"
+<div [class]="isStocksRoute? 'mt-14' : 'mt-8'"
      class="hidden sm:block">
     <div class="text-white p-6 rounded-lg shadow-lg">
 
         <!-- Date Range Selection (visible on stocks dashboard) -->
-        @if (path().indexOf('stocks') > -1) {
+        @if (isStocksRoute) {
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pb-8">
                 <div>
                     <p class="text-sm text-gray-400">Start Date</p>
@@ -131,34 +131,34 @@
                 </div>
                 @if (!useIntervalInDates()) {
 
-                    <div class="col-span-2 mt-2">
+                    <div class="col-span-2 mt-2 flex justify-center items-center">
 
                         <button
                                 type="button"
                                 (click)="setIntervalInDays(90)"
                                 [class]="intervalInDays() === 90 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative inline-flex items-center rounded-l-md px-2 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                                class="relative inline-flex items-center rounded-l-md px-2 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
                             3M
                         </button>
                         <button
                                 type="button"
                                 (click)="setIntervalInDays(180)"
                                 [class]="intervalInDays() === 180 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative -ml-px inline-flex items-center px-2 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                                class="relative -ml-px inline-flex items-center px-2 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
                             6M
                         </button>
                         <button
                                 type="button"
                                 (click)="setIntervalInDays(270)"
                                 [class]="intervalInDays() === 270 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative -ml-px inline-flex items-center px-2 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                                class="relative -ml-px inline-flex items-center px-2 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
                             9M
                         </button>
                         <button
                                 type="button"
                                 (click)="setIntervalInDays(365)"
                                 [class]="intervalInDays() === 365 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative -ml-px inline-flex items-center rounded-r-md px-2 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10">
+                                class="relative -ml-px inline-flex items-center rounded-r-md px-2 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
                             1Y
                         </button>
                     </div>
@@ -182,7 +182,7 @@
                 </p>
                 <div class="flex items-center justify-end gap-x-2">
                     <!-- Percent variance (visible on stocks dashboard) -->
-                    @if (path().indexOf('stocks') > -1) {
+                    @if (isStocksRoute) {
                         <p class="text-base"
                            [class.text-green-400]="statsClose().percent_variance > 0"
                            [class.text-rose-400]="statsClose().percent_variance <= 0">

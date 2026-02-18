@@ -1,12 +1,7 @@
 import {Component, computed, effect, inject, OnDestroy, signal, WritableSignal} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {ActivatedRoute, ParamMap, Params} from '@angular/router';
-import {ShareUrlService} from '../shared/services/share-url.service';
-import {StockEodActions} from '../shared/components/stock-eod-actions/stock-eod-actions';
-import {StockInfoHeader} from '../shared/components/stock-info-header/stock-info-header';
-import {IndexedKeyTickerService} from '../shared/services/indexed-key-ticker.service';
-import {NewsFeed} from '../shared/components/news-feed/news-feed.component';
-import {PathReactiveComponent} from '../shared/components/path-reactive.component';
+import {ShareUrlService, StockEodActions, StockInfoHeader, IndexedKeyTickerService, NewsFeed} from '../shared';
 
 @Component({
   selector: 'app-markets-news-related',
@@ -18,7 +13,7 @@ import {PathReactiveComponent} from '../shared/components/path-reactive.componen
   templateUrl: './markets-news-related.html',
   styleUrl: './markets-news-related.scss',
 })
-export class MarketsNewsRelated extends PathReactiveComponent implements OnDestroy {
+export class MarketsNewsRelated implements OnDestroy {
 
   private readonly route = inject(ActivatedRoute);
   private readonly shareUrlService = inject(ShareUrlService);
@@ -31,11 +26,11 @@ export class MarketsNewsRelated extends PathReactiveComponent implements OnDestr
   readonly intervalInDates = computed<string>(() => this.queryParams()?.['interval'] ?? '');
   readonly intervalInDays: WritableSignal<number> = signal<number>(90);
   readonly useIntervalInDates = computed<boolean>(() => this.intervalInDates().trim().length > 0);
+  private readonly routeTitle = this.route.snapshot.title ?? '';
 
   constructor() {
-    super();
     effect(() => {
-      const linkTitle = `${this.title()} - ${this.keyTicker()}`;
+      const linkTitle = `${this.routeTitle} - ${this.keyTicker()}`;
       this.shareUrlService.update({
         title: linkTitle,
         url: `${window.location.href.split('?')[0]}`
