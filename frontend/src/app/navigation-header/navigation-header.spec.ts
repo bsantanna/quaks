@@ -2,6 +2,14 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NavigationHeader } from './navigation-header';
 
+beforeAll(() => {
+  global.IntersectionObserver = class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  } as any;
+});
+
 describe('NavigationHeader', () => {
   let component: NavigationHeader;
   let fixture: ComponentFixture<NavigationHeader>;
