@@ -4,37 +4,32 @@
         <nav class="fixed top-0 w-full bg-slate-800 z-50">
             <div class="mx-auto px-2 sm:px-4 lg:px-8">
                 <div class="relative flex h-16 items-center justify-between">
-                    <div class="flex items-center px-2 lg:px-0">
 
+                    <div class="flex items-center px-2 lg:px-0">
                         <div class="shrink-0">
                             <a href="#/">
                                 <img src="/logo.svg" alt="Quaks Logo" class="block size-12"/>
                             </a>
                         </div>
-
                         <div class="flex items-center gap-4 ml-4 transition-opacity duration-200">
                             @if (stickyVisible()) {
                                 <h1 class="text-sm font-bold text-white truncate max-w-48">{{ title() }}</h1>
                             }
                         </div>
+                    </div>
 
+                    <div class="absolute left-1/2 -translate-x-1/2 hidden lg:block">
+                        <app-share-button></app-share-button>
+                    </div>
 
-                        <div class="hidden lg:ml-10 lg:block">
-                            <div class="flex space-x-4">
-                                <app-share-button></app-share-button>
-                            </div>
-                        </div>
-
+                    <div class="flex items-center px-2 lg:px-0">
                         @if (stickyVisible()) {
-                            <div class="flex items-center gap-4 ml-4 transition-opacity duration-200">
-                                @if (path().indexOf('stocks') > -1) {
-                                    <app-stock-autocomplete
-                                            (stockSelected)="onKeyTickerSelected($event)">
-                                    </app-stock-autocomplete>
-                                }
-                            </div>
+                            @if (path().indexOf('stocks') > -1) {
+                                <app-stock-autocomplete
+                                        (stockSelected)="onKeyTickerSelected($event)">
+                                </app-stock-autocomplete>
+                            }
                         }
-
                     </div>
 
                 </div>
