@@ -16,7 +16,7 @@
 
 ## Overview
 
-**Quaks** (formerly *quant-agents*) is a multi-agent platform for quantitative finance built on top of [Agent-Lab](https://github.com/bsantanna/agent-lab). It extends Agent-Lab's cloud-native agent framework with a specialized financial data pipeline, market-aware agents, and infrastructure tailored for asset management workflows.
+**Quaks** is a multi-agent platform for quantitative finance built on top of [Agent-Lab](https://github.com/bsantanna/agent-lab). It extends Agent-Lab's cloud-native agent framework with a specialized financial data pipeline, market-aware agents, and infrastructure tailored for asset management workflows.
 
 The platform ingests end-of-day market data, financial statements, insider trades, news feeds, and technical indicators into Elasticsearch, then exposes that data to LLM-powered agents capable of research, analysis, and reporting.
 
@@ -32,7 +32,7 @@ The platform ingests end-of-day market data, financial statements, insider trade
 ## Architecture
 
 ```
-                      Angular 20 Frontend
+                      Angular 21 Frontend
                              |
                         FastAPI (REST / MCP)
                              |

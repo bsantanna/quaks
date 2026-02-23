@@ -46,7 +46,7 @@ class NewsItem(BaseModel):
 
 class NewsList(BaseModel):
     items: list[NewsItem]
-    cursor: str
+    cursor: Optional[str] = None
 
 
 class NewsListRequest(BaseModel):
