@@ -33,5 +33,5 @@ export interface NewsItem {
 
 export interface NewsList {
   items: NewsItem[]
-  cursor: string
+  cursor: string | null
 }
