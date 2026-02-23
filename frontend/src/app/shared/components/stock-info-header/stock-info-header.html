@@ -106,12 +106,70 @@
     </div>
 </div>
 
-<div class="hidden sm:block">
+<!-- Medium view: landscape phones / small tablets (sm to lg) — compact 2-line layout -->
+<div class="hidden sm:block lg:hidden mt-7">
+    <div class="text-white px-4 py-2">
+        <!-- Line 1: Ticker, Company, Close, Variance, Date -->
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-x-3">
+                <p class="text-lg font-bold">{{ keyTicker() }}</p>
+                <p class="text-xs text-gray-400 truncate max-w-32">{{ companyName() }}</p>
+            </div>
+            <div class="flex items-center gap-x-3">
+                <p class="text-lg font-bold">{{ statsClose().most_recent_close | number : '1.2-2' }}</p>
+                @if (isStocksRoute) {
+                    <p class="text-sm"
+                       [class.text-green-400]="statsClose().percent_variance > 0"
+                       [class.text-rose-400]="statsClose().percent_variance <= 0">
+                        {{ statsClose().percent_variance > 0 ? '+' : '' }}{{ statsClose().percent_variance | number : '1.2-2' }}%
+                    </p>
+                }
+                <p class="text-xs text-gray-400">({{ shortenDate(statsClose().most_recent_date) }})</p>
+            </div>
+        </div>
+        <!-- Line 2: O H L V + date range buttons -->
+        <div class="flex items-center justify-between mt-1">
+            <div class="flex items-center gap-x-3 text-[11px]">
+                <span><span class="text-gray-400">Open</span>&nbsp;<span class="font-mono">{{ statsClose().most_recent_open | number : '1.2-2' }}</span></span>
+                <span><span class="text-gray-400">High</span>&nbsp;<span class="font-mono">{{ statsClose().most_recent_high | number : '1.2-2' }}</span></span>
+                <span><span class="text-gray-400">Low</span>&nbsp;<span class="font-mono">{{ statsClose().most_recent_low | number : '1.2-2' }}</span></span>
+                <span><span class="text-gray-400">Volume</span>&nbsp;<span class="font-mono">{{ statsClose().most_recent_volume | number : '1.0-0' }}</span></span>
+            </div>
+            @if (isStocksRoute && !useIntervalInDates()) {
+                <div class="isolate inline-flex rounded-md shadow-sm">
+                    <button type="button" (click)="setIntervalInDays(90)"
+                            [class]="intervalInDays() === 90 ? 'bg-white/20' : 'bg-white/10'"
+                            class="relative inline-flex items-center rounded-l-md px-2 py-0.5 text-xs font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                        3M
+                    </button>
+                    <button type="button" (click)="setIntervalInDays(180)"
+                            [class]="intervalInDays() === 180 ? 'bg-white/20' : 'bg-white/10'"
+                            class="relative -ml-px inline-flex items-center px-2 py-0.5 text-xs font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                        6M
+                    </button>
+                    <button type="button" (click)="setIntervalInDays(270)"
+                            [class]="intervalInDays() === 270 ? 'bg-white/20' : 'bg-white/10'"
+                            class="relative -ml-px inline-flex items-center px-2 py-0.5 text-xs font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                        9M
+                    </button>
+                    <button type="button" (click)="setIntervalInDays(365)"
+                            [class]="intervalInDays() === 365 ? 'bg-white/20' : 'bg-white/10'"
+                            class="relative -ml-px inline-flex items-center rounded-r-md px-2 py-0.5 text-xs font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                        1Y
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Large view: desktop sidebar (lg+) -->
+<div class="hidden lg:block">
     <div class="text-white p-6 rounded-lg shadow-lg">
 
         <!-- Date Range Selection (visible on stocks dashboard) -->
         @if (isStocksRoute) {
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pb-8">
+            <div class="grid grid-cols-4 gap-4 pb-8">
                 <div>
                     <p class="text-sm text-gray-400">Start Date</p>
                     @if (useIntervalInDates()) {
@@ -136,28 +194,28 @@
                                 type="button"
                                 (click)="setIntervalInDays(90)"
                                 [class]="intervalInDays() === 90 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative inline-flex items-center rounded-l-md px-2 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                                class="relative inline-flex items-center rounded-l-md px-2 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
                             3M
                         </button>
                         <button
                                 type="button"
                                 (click)="setIntervalInDays(180)"
                                 [class]="intervalInDays() === 180 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative -ml-px inline-flex items-center px-2 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                                class="relative -ml-px inline-flex items-center px-2 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
                             6M
                         </button>
                         <button
                                 type="button"
                                 (click)="setIntervalInDays(270)"
                                 [class]="intervalInDays() === 270 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative -ml-px inline-flex items-center px-2 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                                class="relative -ml-px inline-flex items-center px-2 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
                             9M
                         </button>
                         <button
                                 type="button"
                                 (click)="setIntervalInDays(365)"
                                 [class]="intervalInDays() === 365 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative -ml-px inline-flex items-center rounded-r-md px-2 py-2 lg:text-sm md:text-xl font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                                class="relative -ml-px inline-flex items-center rounded-r-md px-2 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
                             1Y
                         </button>
                     </div>
@@ -195,7 +253,7 @@
         </div>
 
         <!-- Detailed stats section -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 py-4">
+        <div class="grid grid-cols-4 gap-4 py-4">
             <div>
                 <p class="text-sm text-gray-400">Open</p>
                 <p class="text-md font-medium">{{ statsClose().most_recent_open | number : '1.2-2' }}</p>
