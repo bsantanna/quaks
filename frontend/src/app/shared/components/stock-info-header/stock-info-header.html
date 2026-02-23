@@ -19,7 +19,7 @@
                             %
                         </p>
                     }
-                    <p class="text-xs text-gray-400">({{ statsClose().most_recent_date }})</p>
+                    <p class="text-xs text-gray-400">({{ shortenDate(statsClose().most_recent_date) }})</p>
                 </div>
             </div>
         </div>
@@ -53,17 +53,17 @@
                     <div>
                         <p class="text-gray-400">Start</p>
                         @if (useIntervalInDates()) {
-                            <p>{{ intervalInDates().split('_')[0] }}</p>
+                            <p>{{ shortenDate(intervalInDates().split('_')[0]) }}</p>
                         } @else {
-                            <p>{{ getPastDateInDays(intervalInDays()) }}</p>
+                            <p>{{ shortenDate(getPastDateInDays(intervalInDays())) }}</p>
                         }
                     </div>
                     <div>
                         <p class="text-gray-400">End</p>
                         @if (useIntervalInDates()) {
-                            <p>{{ intervalInDates().split('_')[1] }}</p>
+                            <p>{{ shortenDate(intervalInDates().split('_')[1]) }}</p>
                         } @else {
-                            <p>{{ getPastDateInDays(1) }}</p>
+                            <p>{{ shortenDate(getPastDateInDays(1)) }}</p>
                         }
                     </div>
                 </div>
