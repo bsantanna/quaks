@@ -1,6 +1,5 @@
-import {Component, computed, effect, inject, input, model, Signal, signal, WritableSignal} from '@angular/core';
+import {Component, computed, effect, inject, input, model, Signal} from '@angular/core';
 import {MarketsStatsService} from '../../services/markets-stats.service';
-import {StatsClose} from '../../models/markets.model';
 import {DecimalPipe} from '@angular/common';
 import {ShareUrlService} from '../../services/share-url.service';
 import {take} from 'rxjs';
