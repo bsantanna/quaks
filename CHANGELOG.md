@@ -2,6 +2,53 @@
 
 <!-- version list -->
 
+## v1.3.19 (2026-02-23)
+
+### Bug Fixes
+
+- Coverage tests ([#50](https://github.com/bsantanna/quaks/pull/50),
+  [`1e1c0df`](https://github.com/bsantanna/quaks/commit/1e1c0dff4c9c1282d0cb48304e931f8490540ce8))
+
+- Dependencies updates ([#50](https://github.com/bsantanna/quaks/pull/50),
+  [`1e1c0df`](https://github.com/bsantanna/quaks/commit/1e1c0dff4c9c1282d0cb48304e931f8490540ce8))
+
+- Frontend layout 3 ([#50](https://github.com/bsantanna/quaks/pull/50),
+  [`1e1c0df`](https://github.com/bsantanna/quaks/commit/1e1c0dff4c9c1282d0cb48304e931f8490540ce8))
+
+- Frontend layout 4 ([#50](https://github.com/bsantanna/quaks/pull/50),
+  [`1e1c0df`](https://github.com/bsantanna/quaks/commit/1e1c0dff4c9c1282d0cb48304e931f8490540ce8))
+
+- Frontend layout 5 ([#50](https://github.com/bsantanna/quaks/pull/50),
+  [`1e1c0df`](https://github.com/bsantanna/quaks/commit/1e1c0dff4c9c1282d0cb48304e931f8490540ce8))
+
+- Frontend layout 6 ([#50](https://github.com/bsantanna/quaks/pull/50),
+  [`1e1c0df`](https://github.com/bsantanna/quaks/commit/1e1c0dff4c9c1282d0cb48304e931f8490540ce8))
+
+- Frontend layout 7 ([#50](https://github.com/bsantanna/quaks/pull/50),
+  [`1e1c0df`](https://github.com/bsantanna/quaks/commit/1e1c0dff4c9c1282d0cb48304e931f8490540ce8))
+
+- Frontend layout 8 ([#50](https://github.com/bsantanna/quaks/pull/50),
+  [`1e1c0df`](https://github.com/bsantanna/quaks/commit/1e1c0dff4c9c1282d0cb48304e931f8490540ce8))
+
+- Frontend news feed layout 1 ([#50](https://github.com/bsantanna/quaks/pull/50),
+  [`1e1c0df`](https://github.com/bsantanna/quaks/commit/1e1c0dff4c9c1282d0cb48304e931f8490540ce8))
+
+- Frontend news feed layout 2 ([#50](https://github.com/bsantanna/quaks/pull/50),
+  [`1e1c0df`](https://github.com/bsantanna/quaks/commit/1e1c0dff4c9c1282d0cb48304e931f8490540ce8))
+
+- Frontend news feed layout 3 ([#50](https://github.com/bsantanna/quaks/pull/50),
+  [`1e1c0df`](https://github.com/bsantanna/quaks/commit/1e1c0dff4c9c1282d0cb48304e931f8490540ce8))
+
+- Frontend news feed pagination ([#50](https://github.com/bsantanna/quaks/pull/50),
+  [`1e1c0df`](https://github.com/bsantanna/quaks/commit/1e1c0dff4c9c1282d0cb48304e931f8490540ce8))
+
+- News pagination and layout adjusts ([#50](https://github.com/bsantanna/quaks/pull/50),
+  [`1e1c0df`](https://github.com/bsantanna/quaks/commit/1e1c0dff4c9c1282d0cb48304e931f8490540ce8))
+
+- Sonar fixes 1 ([#50](https://github.com/bsantanna/quaks/pull/50),
+  [`1e1c0df`](https://github.com/bsantanna/quaks/commit/1e1c0dff4c9c1282d0cb48304e931f8490540ce8))
+
+
 ## v1.3.18 (2026-02-18)
 
 ### Bug Fixes
