@@ -16,7 +16,7 @@ export class MarketsNewsService {
 
   static readonly INITIAL_NEWS_LIST: NewsList = {
     items: [],
-    cursor: ''
+    cursor: null
   }
 
   readonly newsList: WritableSignal<NewsList> = signal(MarketsNewsService.INITIAL_NEWS_LIST);
@@ -51,12 +51,14 @@ export class MarketsNewsService {
     cursor: string,
   ): Observable<NewsList> {
     const url = `${this.marketsNewsUrl}/${encodeURIComponent(indexName)}`;
-    const params = {
+    const params: Record<string, string | number | boolean> = {
       key_ticker: ticker,
       size,
-      cursor,
       include_obj_images: includeImages,
     };
+    if (cursor) {
+      params['cursor'] = cursor;
+    }
 
     return this.httpClient.get<NewsList>(url, {params}).pipe(
       timeout(REQUEST_TIMEOUT),
