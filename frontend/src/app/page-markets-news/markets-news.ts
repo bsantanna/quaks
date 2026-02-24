@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
-import { NewsFeed } from '../shared/components/news-feed/news-feed.component';
+import {Component, computed, inject} from '@angular/core';
+import {toSignal} from '@angular/core/rxjs-interop';
+import {ActivatedRoute, Params} from '@angular/router';
+import {NewsFeed} from '../shared/components/news-feed/news-feed.component';
 
 @Component({
   selector: 'app-markets-news',
@@ -8,5 +10,7 @@ import { NewsFeed } from '../shared/components/news-feed/news-feed.component';
   styleUrl: './markets-news.scss',
 })
 export class MarketsNews {
-
+  private readonly route = inject(ActivatedRoute);
+  private readonly queryParams = toSignal<Params>(this.route.queryParams);
+  readonly searchTerm = computed(() => this.queryParams()?.['search_term'] ?? '');
 }
