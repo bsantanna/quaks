@@ -17,20 +17,9 @@ from app.infrastructure.database.sql import Database
 from app.infrastructure.database.vectors import DocumentRepository
 from app.infrastructure.metrics.tracer import Tracer
 from app.services.agent_settings import AgentSettingService
-from app.services.agent_types.adaptive_rag.agent import AdaptiveRagAgent
 from app.services.agent_types.base import AgentUtils
-from app.services.agent_types.business.voice_memos.agent import (
-    VoiceMemosAgent,
-    AzureEntraIdVoiceMemosAgent,
-    FastVoiceMemosAgent,
-)
-from app.services.agent_types.coordinator_planner_supervisor.agent import (
-    CoordinatorPlannerSupervisorAgent,
-)
-from app.services.agent_types.react_rag.agent import ReactRagAgent
 from app.services.agent_types.registry import AgentRegistry
 from app.services.agent_types.test_echo.test_echo_agent import TestEchoAgent
-from app.services.agent_types.vision_document.agent import VisionDocumentAgent
 from app.services.agents import AgentService
 from app.services.attachments import AttachmentService
 from app.services.auth import AuthService
@@ -224,44 +213,11 @@ class Container(containers.DeclarativeContainer):
         task_notification_service=task_notification_service,
     )
 
-    adaptive_rag_agent = providers.Factory(AdaptiveRagAgent, agent_utils=agent_utils)
-
-    coordinator_planner_supervisor_agent = providers.Factory(
-        CoordinatorPlannerSupervisorAgent, agent_utils=agent_utils
-    )
-
-    react_rag_agent = providers.Factory(ReactRagAgent, agent_utils=agent_utils)
-
     test_echo_agent = providers.Factory(TestEchoAgent, agent_utils=agent_utils)
-
-    vision_document_agent = providers.Factory(
-        VisionDocumentAgent, agent_utils=agent_utils
-    )
-
-    voice_memos_agent = providers.Factory(
-        VoiceMemosAgent,
-        agent_utils=agent_utils,
-    )
-
-    azure_entra_id_voice_memos_agent = providers.Factory(
-        AzureEntraIdVoiceMemosAgent,
-        agent_utils=agent_utils,
-    )
-
-    fast_voice_memos_agent = providers.Factory(
-        FastVoiceMemosAgent, agent_utils=agent_utils
-    )
 
     agent_registry = providers.Singleton(
         AgentRegistry,
-        adaptive_rag_agent=adaptive_rag_agent,
-        coordinator_planner_supervisor_agent=coordinator_planner_supervisor_agent,
-        react_rag_agent=react_rag_agent,
         test_echo_agent=test_echo_agent,
-        vision_document_agent=vision_document_agent,
-        voice_memos_agent=voice_memos_agent,
-        azure_entra_id_voice_memos_agent=azure_entra_id_voice_memos_agent,
-        fast_voice_memos_agent=fast_voice_memos_agent,
     )
 
     tracer = providers.Singleton(Tracer)
