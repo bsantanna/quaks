@@ -2,6 +2,44 @@
 
 <!-- version list -->
 
+## v1.3.20 (2026-02-24)
+
+### Bug Fixes
+
+- Adjusts future version ([#51](https://github.com/bsantanna/quaks/pull/51),
+  [`37334b5`](https://github.com/bsantanna/quaks/commit/37334b5d10a3541360dbc5430e470d1a8e98db37))
+
+- Code cleanup 1 ([#51](https://github.com/bsantanna/quaks/pull/51),
+  [`37334b5`](https://github.com/bsantanna/quaks/commit/37334b5d10a3541360dbc5430e470d1a8e98db37))
+
+- Code cleanup 2 ([#51](https://github.com/bsantanna/quaks/pull/51),
+  [`37334b5`](https://github.com/bsantanna/quaks/commit/37334b5d10a3541360dbc5430e470d1a8e98db37))
+
+- News-autocomplete component ([#51](https://github.com/bsantanna/quaks/pull/51),
+  [`37334b5`](https://github.com/bsantanna/quaks/commit/37334b5d10a3541360dbc5430e470d1a8e98db37))
+
+- Quaks news refactor 1 ([#51](https://github.com/bsantanna/quaks/pull/51),
+  [`37334b5`](https://github.com/bsantanna/quaks/commit/37334b5d10a3541360dbc5430e470d1a8e98db37))
+
+- Release deployment ([#51](https://github.com/bsantanna/quaks/pull/51),
+  [`37334b5`](https://github.com/bsantanna/quaks/commit/37334b5d10a3541360dbc5430e470d1a8e98db37))
+
+- Reuse app-news-feed component ([#51](https://github.com/bsantanna/quaks/pull/51),
+  [`37334b5`](https://github.com/bsantanna/quaks/commit/37334b5d10a3541360dbc5430e470d1a8e98db37))
+
+- Reuse app-news-feed search filter 1 ([#51](https://github.com/bsantanna/quaks/pull/51),
+  [`37334b5`](https://github.com/bsantanna/quaks/commit/37334b5d10a3541360dbc5430e470d1a8e98db37))
+
+- Search_term query parameter for news page ([#51](https://github.com/bsantanna/quaks/pull/51),
+  [`37334b5`](https://github.com/bsantanna/quaks/commit/37334b5d10a3541360dbc5430e470d1a8e98db37))
+
+- Stocks-autocomplete component ([#51](https://github.com/bsantanna/quaks/pull/51),
+  [`37334b5`](https://github.com/bsantanna/quaks/commit/37334b5d10a3541360dbc5430e470d1a8e98db37))
+
+- Test coverage ([#51](https://github.com/bsantanna/quaks/pull/51),
+  [`37334b5`](https://github.com/bsantanna/quaks/commit/37334b5d10a3541360dbc5430e470d1a8e98db37))
+
+
 ## v1.3.19 (2026-02-23)
 
 ### Bug Fixes
