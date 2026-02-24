@@ -40,6 +40,11 @@
                                         (stockSelected)="onKeyTickerSelected($event)">
                                 </app-stock-autocomplete>
                             }
+                            @if (path().indexOf('news') > -1) {
+                                <app-news-autocomplete
+                                        [inputPlaceholder]="'Search news'">
+                                </app-news-autocomplete>
+                            }
                         } @else {
                             <div class="sm:hidden">
                                 <h1 class="text-sm font-bold text-white truncate max-w-48">{{ title() }}</h1>
@@ -71,6 +76,12 @@
                                 [inputPlaceholder]="'Search stocks (e.g., NVDA, GOOG)'"
                                 (stockSelected)="onKeyTickerSelected($event)">
                         </app-stock-autocomplete>
+                    }
+                    <!-- Show on news page -->
+                    @if (path().indexOf('news') > -1) {
+                        <app-news-autocomplete
+                                [inputPlaceholder]="'Search news (e.g., Tesla, earnings)'">
+                        </app-news-autocomplete>
                     }
                 </div>
 

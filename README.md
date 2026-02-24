@@ -24,8 +24,7 @@ The platform ingests end-of-day market data, financial statements, insider trade
 
 - **Market Data Ingestion** -- Airflow DAGs fetch stocks EOD (OHLCV), financial statements, insider trades, earnings estimates, and news headlines via the Alpaca Markets API on a scheduled cadence.
 - **Technical Indicator Queries** -- Elasticsearch search templates for RSI, MACD, EMA, ADX, OBV, Stochastic Oscillator, CCI, and Accumulation/Distribution.
-- **Multi-Agent Orchestration** -- Coordinator-Planner-Supervisor pattern delegates tasks across specialized roles (Researcher, Coder, Browser Reporter) using LangGraph state graphs.
-- **Adaptive RAG** -- Retrieval-Augmented Generation with query rewriting and answer/retrieval grading for high-quality responses grounded in indexed data.
+- **Multi-Agent Orchestration** -- LangGraph state graphs with pluggable agent types for research, analysis, and reporting workflows.
 - **Multi-LLM Support** -- Dynamically switch between Claude, GPT, Ollama, Grok/XAI per agent.
 - **Full Observability** -- OpenTelemetry instrumentation with Prometheus, Grafana, Loki, and Tempo.
 
@@ -42,11 +41,9 @@ The platform ingests end-of-day market data, financial statements, insider trade
               |           Workflows    (Claude, GPT,
          Agent Types         |         Ollama, Grok)
               |              |
-   +----------+----------+   |
-   |          |           |  |
-Adaptive  Coordinator  React |
-  RAG     Planner-     RAG   |
-          Supervisor         |
+   +----------+            |
+   |                       |
+ Agent Types               |
               |              |
      +--------+--------+----+----+
      |        |         |        |
@@ -74,12 +71,7 @@ Quaks adds the financial domain layer: market data pipelines, Elasticsearch inde
 
 | Agent | Description |
 |-------|-------------|
-| **Coordinator-Planner-Supervisor** | Multi-agent orchestration with plan-execute pattern. Delegates across Researcher, Coder, and Browser Reporter roles. |
-| **Adaptive RAG** | Retrieval-Augmented Generation with adaptive query rewriting and graded retrieval/answer quality. |
-| **ReAct RAG** | Lightweight ReAct (Reasoning + Acting) agent with tool use and RAG capabilities. |
-| **Vision Document** | Analyzes images and documents, extracting structured information from visual inputs. |
-| **Voice Memos** | Audio transcription and analysis with content analyst and reporter roles. |
-| **Azure Entra ID Voice Memos** | Enterprise variant with Azure Entra ID organization integration. |
+| **Test Echo** | Simple echo agent for testing and development purposes. |
 
 ## Market Data Pipeline
 

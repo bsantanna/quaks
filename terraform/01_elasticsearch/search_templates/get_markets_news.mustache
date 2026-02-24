@@ -20,7 +20,17 @@
     }
     {{/key_ticker}}
     {{^key_ticker}}
+    {{#search_term}}
+    "multi_match": {
+      "query": "{{search_term}}",
+      "fields": ["text_headline^3", "text_summary^2", "text_content"],
+      "type": "best_fields",
+      "operator": "or"
+    }
+    {{/search_term}}
+    {{^search_term}}
     "match_all": {}
+    {{/search_term}}
     {{/key_ticker}}
   }
   {{/id}},

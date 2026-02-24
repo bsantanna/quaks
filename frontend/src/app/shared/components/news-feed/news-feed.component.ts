@@ -16,7 +16,8 @@ export class NewsFeed {
   private readonly marketsNewsService = inject(MarketsNewsService);
 
   readonly indexName = input.required<string>();
-  readonly keyTicker = input.required<string>();
+  readonly keyTicker = input<string>('');
+  readonly searchTerm = input<string>('');
 
   readonly newsItems = signal<NewsItem[]>([]);
   readonly cursor = signal<string | null>(null);
@@ -27,26 +28,28 @@ export class NewsFeed {
     effect(() => {
       const indexName = this.indexName();
       const keyTicker = this.keyTicker();
+      const searchTerm = this.searchTerm();
       this.newsItems.set([]);
       this.cursor.set(null);
-      this.fetchNews(indexName, keyTicker, '');
+      this.fetchNews(indexName, keyTicker, '', searchTerm);
     });
   }
 
   loadMore(): void {
     const currentCursor = this.cursor();
     if (currentCursor === null || this.loading()) return;
-    this.fetchNews(this.indexName(), this.keyTicker(), currentCursor);
+    this.fetchNews(this.indexName(), this.keyTicker(), currentCursor, this.searchTerm());
   }
 
-  private fetchNews(indexName: string, keyTicker: string, cursor: string): void {
+  private fetchNews(indexName: string, keyTicker: string, cursor: string, searchTerm: string = ''): void {
     this.loading.set(true);
     this.marketsNewsService.getNewsList(
       indexName,
       keyTicker,
-      10,
+      7,
       true,
-      cursor
+      cursor,
+      searchTerm
     ).pipe(take(1)).subscribe(newsList => {
       this.newsItems.update(current => [...current, ...newsList.items]);
       this.cursor.set(newsList.cursor);

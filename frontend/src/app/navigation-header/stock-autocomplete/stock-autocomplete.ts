@@ -18,6 +18,7 @@ export class StockAutocompleteComponent {
   readonly indexedKeyTickerService = inject(IndexedKeyTickerService);
   readonly searchQuery = signal('');
   readonly isOpen = signal(false);
+  readonly highlightedIndex = signal(-1);
 
   // Filtered stocks based on search query
   filteredStocks = computed(() => {
@@ -42,6 +43,7 @@ export class StockAutocompleteComponent {
     const target = event.target as HTMLInputElement;
     this.searchQuery.set(target.value);
     this.isOpen.set(target.value.length > 0);
+    this.highlightedIndex.set(-1);
   }
 
   onInputFocus(): void {
@@ -54,18 +56,41 @@ export class StockAutocompleteComponent {
     // Delay to allow click on dropdown item to register
     setTimeout(() => {
       this.isOpen.set(false);
+      this.highlightedIndex.set(-1);
     }, 200);
+  }
+
+  onKeyDown(event: KeyboardEvent): void {
+    const stocks = this.filteredStocks();
+    if (!this.isOpen() || stocks.length === 0) return;
+
+    const current = this.highlightedIndex();
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      this.highlightedIndex.set(current < stocks.length - 1 ? current + 1 : 0);
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      this.highlightedIndex.set(current > 0 ? current - 1 : stocks.length - 1);
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      if (current >= 0 && current < stocks.length) {
+        this.onSelectStock(stocks[current]);
+      }
+    }
   }
 
   onSelectStock(stock: IndexedKeyTicker): void {
     this.searchQuery.set('');
     this.isOpen.set(false);
+    this.highlightedIndex.set(-1);
     this.stockSelected.emit(stock);
   }
 
   onClearSearch(): void {
     this.searchQuery.set('');
     this.isOpen.set(false);
+    this.highlightedIndex.set(-1);
   }
 
 }

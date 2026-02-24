@@ -1,5 +1,6 @@
 import {AfterViewInit, Component, ElementRef, inject, OnDestroy, signal, Signal, viewChild} from '@angular/core';
 import {StockAutocompleteComponent} from './stock-autocomplete/stock-autocomplete';
+import {NewsAutocompleteComponent} from './news-autocomplete/news-autocomplete';
 import {IndexedKeyTicker} from '../shared';
 import {STOCK_MARKETS} from '../constants';
 import {ShareButtonComponent} from './share-button/share-button';
@@ -11,7 +12,7 @@ import {filter, map, startWith} from 'rxjs';
 
 @Component({
   selector: 'app-navigation-header',
-  imports: [StockAutocompleteComponent, ShareButtonComponent, NavButtonComponent, FeedbackMessageComponent],
+  imports: [StockAutocompleteComponent, NewsAutocompleteComponent, ShareButtonComponent, NavButtonComponent, FeedbackMessageComponent],
   templateUrl: './navigation-header.html',
   styleUrl: './navigation-header.scss',
 })

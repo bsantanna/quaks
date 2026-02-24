@@ -130,7 +130,8 @@ async def get_stats_close(
     - `index_name` (path): The Elasticsearch index to query (e.g. `markets-news`).
     - `size` (query): Number of news items to return per page.
     - `id` (query, optional): Filter by specific document ID.
-    - `key_ticker` (query, optional): Filter by ticker symbol (e.g. `AAPL`).
+    - `key_ticker` (query, optional): Filter by ticker symbol (e.g. `AAPL`). Takes precedence over `search_term`.
+    - `search_term` (query, optional): Full-text search across headline, summary, and content fields. Ignored when `key_ticker` is provided.
     - `cursor` (query, optional): Base64-encoded pagination cursor from a previous response.
     - `include_text_content` (query, optional): Include full article text content.
     - `include_key_ticker` (query, optional): Include associated ticker symbols.
@@ -186,6 +187,7 @@ async def get_news(
         index_name=index_name,
         id=request.id,
         key_ticker=request.key_ticker,
+        search_term=request.search_term,
         size=request.size,
         cursor=request.cursor,
         include_text_content=request.include_text_content,

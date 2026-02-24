@@ -154,5 +154,38 @@ describe('MarketsNewsService', () => {
       );
       consoleSpy.mockRestore();
     });
+
+    it('should not include key_ticker when ticker is empty', () => {
+      service.getNewsList('markets-news', '', 10, true, '').subscribe();
+
+      const req = httpTesting.expectOne(
+        (r) => r.url === `${baseUrl}/markets-news`
+      );
+      expect(req.request.params.has('key_ticker')).toBe(false);
+      expect(req.request.params.has('search_term')).toBe(false);
+      req.flush(mockNewsList);
+    });
+
+    it('should send search_term when ticker is empty and searchTerm is provided', () => {
+      service.getNewsList('markets-news', '', 10, true, '', 'Bezos').subscribe();
+
+      const req = httpTesting.expectOne(
+        (r) => r.url === `${baseUrl}/markets-news`
+      );
+      expect(req.request.params.has('key_ticker')).toBe(false);
+      expect(req.request.params.get('search_term')).toBe('Bezos');
+      req.flush(mockNewsList);
+    });
+
+    it('should send key_ticker and ignore search_term when both are provided', () => {
+      service.getNewsList('markets-news', 'AAPL', 10, true, '', 'Bezos').subscribe();
+
+      const req = httpTesting.expectOne(
+        (r) => r.url === `${baseUrl}/markets-news`
+      );
+      expect(req.request.params.get('key_ticker')).toBe('AAPL');
+      expect(req.request.params.has('search_term')).toBe(false);
+      req.flush(mockNewsList);
+    });
   });
 });
