@@ -60,7 +60,7 @@ bearer_scheme = HTTPBearer()
                             "is_active": True,
                             "created_at": "2024-01-15T10:30:00Z",
                             "agent_name": "image-analyzer",
-                            "agent_type": "vision_document",
+                            "agent_type": "test_echo",
                             "agent_summary": "Analyzes images and extracts information",
                             "language_model_id": "lm_abc123",
                         },
@@ -69,7 +69,7 @@ bearer_scheme = HTTPBearer()
                             "is_active": True,
                             "created_at": "2024-01-14T15:20:00Z",
                             "agent_name": "support-bot",
-                            "agent_type": "react_rag",
+                            "agent_type": "test_echo",
                             "agent_summary": "Handles customer inquiries using RAG",
                             "language_model_id": "lm_def456",
                         },
@@ -111,7 +111,7 @@ async def get_list(
                         "is_active": True,
                         "created_at": "2024-01-15T10:30:00Z",
                         "agent_name": "content-analyzer",
-                        "agent_type": "vision_document",
+                        "agent_type": "test_echo",
                         "agent_summary": "Analyzes documents and images",
                         "language_model_id": "lm_abc123",
                         "ag_settings": [
@@ -185,7 +185,7 @@ async def get_by_id(
                         "is_active": True,
                         "created_at": "2024-01-15T10:30:00Z",
                         "agent_name": "content-analyzer",
-                        "agent_type": "vision_document",
+                        "agent_type": "test_echo",
                         "agent_summary": "",
                         "language_model_id": "lm_abc123",
                     }
@@ -298,7 +298,7 @@ async def remove(
                         "is_active": True,
                         "created_at": "2024-01-15T10:30:00Z",
                         "agent_name": "updated-analyzer",
-                        "agent_type": "vision_document",
+                        "agent_type": "test_echo",
                         "agent_summary": "Updated document analyzer",
                         "language_model_id": "lm_def456",
                     }
@@ -368,7 +368,7 @@ async def update(
                         "is_active": True,
                         "created_at": "2024-01-15T10:30:00Z",
                         "agent_name": "content-analyzer",
-                        "agent_type": "vision_document",
+                        "agent_type": "test_echo",
                         "agent_summary": "Analyzes documents and images",
                         "language_model_id": "lm_abc123",
                         "ag_settings": [

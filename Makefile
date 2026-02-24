@@ -1,12 +1,16 @@
+cleanup:
+	rm agent_lab.db || true
+	rm temp* || true
+
+reset:
+	docker compose stop
+	docker compose rm -f
+
 run:
-	python -m app
+	docker compose up --build -d
 
 test:
-	rm agent_lab.db || true
-	pytest --cov=app --cov-report=xml
+	pytest --cov=app --cov-report=xml; bash -c 'cd frontend && npm test';  $(MAKE) cleanup
 
 lint:
 	python -m flake8 .
-
-setup:
-	bash -c 'cd terraform/elasticsearch && terraform init && terraform plan && terraform apply'

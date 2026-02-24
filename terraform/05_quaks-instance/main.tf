@@ -56,7 +56,7 @@ resource "helm_release" "quaks" {
 
       image = {
         repository = var.quaks_image_repository
-        tag = var.quaks_image_tag
+        tag = "v${var.quaks_image_tag}"
       }
 
       secretName = "quaks-secret"

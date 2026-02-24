@@ -72,19 +72,14 @@ Agents are the core abstraction. The class hierarchy:
 AgentBase (ABC)
 ├── WorkflowAgentBase          # LangGraph state graph + checkpointer
 │   ├── ContactSupportAgentBase
-│   ├── WebAgentBase           # Adds browser automation + web search tools
-│   │   ├── SupervisedWorkflowAgentBase  # Coordinator → Planner → Supervisor pattern
-│   │   │   ├── CoordinatorPlannerSupervisorAgent
-│   │   │   ├── VoiceMemosAgent
-│   │   │   └── AzureEntraIdVoiceMemosAgent
-│   │   └── AdaptiveRagAgent
-│   └── VisionDocumentAgent
-└── ReactRagAgent              # Uses langgraph prebuilt create_react_agent
+│   └── WebAgentBase           # Adds browser automation + web search tools
+│       └── SupervisedWorkflowAgentBase  # Coordinator → Planner → Supervisor pattern
+└── TestEchoAgent              # Simple echo agent for testing
 ```
 
 Key patterns:
 - **AgentBase** (`app/services/agent_types/base.py`): Defines `create_default_settings`, `get_input_params`, `process_message` abstract methods. Also houses `AgentUtils` which bundles all shared dependencies (services, repos, config).
-- **AgentRegistry** (`app/services/agent_types/registry.py`): Maps string type keys (e.g. `"adaptive_rag"`, `"coordinator_planner_supervisor"`) to agent instances. To register a new agent: add it to the registry dict, create a factory in `Container`, and wire it into `AgentRegistry.__init__`.
+- **AgentRegistry** (`app/services/agent_types/registry.py`): Maps string type keys (e.g. `"test_echo"`) to agent instances. To register a new agent: add it to the registry dict, create a factory in `Container`, and wire it into `AgentRegistry.__init__`.
 - **WorkflowAgentBase**: Provides `get_workflow_builder()` → compiles LangGraph `StateGraph` with a PostgreSQL checkpointer. Handles `process_message` by invoking the graph and publishing progress via Redis (`TaskNotificationService`).
 - **SupervisedWorkflowAgentBase**: Implements multi-role orchestration with abstract methods for `get_coordinator`, `get_planner`, `get_supervisor`, `get_reporter`.
 
