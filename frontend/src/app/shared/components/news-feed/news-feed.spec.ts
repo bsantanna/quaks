@@ -24,4 +24,13 @@ describe('NewsFeed', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should create without keyTicker', async () => {
+    const f = TestBed.createComponent(NewsFeed);
+    f.componentRef.setInput('indexName', 'test-index');
+    f.detectChanges();
+    expect(f.componentInstance).toBeTruthy();
+    expect(f.componentInstance.keyTicker()).toBe('');
+    expect(f.componentInstance.searchTerm()).toBe('');
+  });
 });

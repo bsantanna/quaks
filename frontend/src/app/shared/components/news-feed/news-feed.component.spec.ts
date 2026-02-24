@@ -81,7 +81,7 @@ describe('NewsFeed', () => {
     fixture.detectChanges();
 
     expect(marketsNewsService.getNewsList).toHaveBeenCalledWith(
-      'markets-news', 'AAPL', 10, true, ''
+      'markets-news', 'AAPL', 7, true, '', ''
     );
     expect(component.newsItems()).toEqual([mockNewsItem]);
     expect(component.cursor()).toBe('cursor-page-2');
@@ -99,12 +99,47 @@ describe('NewsFeed', () => {
     fixture.detectChanges();
 
     expect(marketsNewsService.getNewsList).toHaveBeenCalledWith(
-      'markets-news', 'TSLA', 10, true, ''
+      'markets-news', 'TSLA', 7, true, '', ''
     );
     // Items should be reset (not appended to old ones)
     expect(component.newsItems()).toEqual(mockNewsListPage2.items);
     expect(component.cursor()).toBeNull();
     expect(component.hasMore()).toBe(false);
+  });
+
+  it('should fetch without keyTicker when not provided', () => {
+    fixture.componentRef.setInput('keyTicker', '');
+    fixture.detectChanges();
+
+    expect(marketsNewsService.getNewsList).toHaveBeenCalledWith(
+      'markets-news', '', 7, true, '', ''
+    );
+  });
+
+  it('should pass searchTerm to service when set', () => {
+    fixture.componentRef.setInput('keyTicker', '');
+    fixture.componentRef.setInput('searchTerm', 'Bezos');
+    fixture.detectChanges();
+
+    expect(marketsNewsService.getNewsList).toHaveBeenCalledWith(
+      'markets-news', '', 7, true, '', 'Bezos'
+    );
+  });
+
+  it('should re-fetch when searchTerm changes', () => {
+    fixture.componentRef.setInput('keyTicker', '');
+    fixture.componentRef.setInput('searchTerm', 'Tesla');
+    fixture.detectChanges();
+    expect(marketsNewsService.getNewsList).toHaveBeenCalledTimes(1);
+
+    marketsNewsService.getNewsList.mockReturnValue(of(mockNewsListPage2));
+    fixture.componentRef.setInput('searchTerm', 'Apple');
+    fixture.detectChanges();
+
+    expect(marketsNewsService.getNewsList).toHaveBeenCalledWith(
+      'markets-news', '', 7, true, '', 'Apple'
+    );
+    expect(component.newsItems()).toEqual(mockNewsListPage2.items);
   });
 
   describe('loadMore', () => {
@@ -116,7 +151,7 @@ describe('NewsFeed', () => {
       component.loadMore();
 
       expect(marketsNewsService.getNewsList).toHaveBeenCalledWith(
-        'markets-news', 'AAPL', 10, true, 'cursor-page-2'
+        'markets-news', 'AAPL', 7, true, 'cursor-page-2', ''
       );
       expect(component.newsItems().length).toBe(2);
       expect(component.newsItems()[1].id).toBe('2');

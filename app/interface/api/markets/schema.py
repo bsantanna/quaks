@@ -53,12 +53,13 @@ class NewsListRequest(BaseModel):
     size: int
     id: Optional[str] = None
     key_ticker: Optional[str] = None
+    search_term: Optional[str] = None
     cursor: Optional[str] = None
     include_text_content: Optional[bool] = None
     include_key_ticker: Optional[bool] = None
     include_obj_images: Optional[bool] = None
 
-    @field_validator("id", "key_ticker", "cursor")
+    @field_validator("id", "key_ticker", "search_term", "cursor")
     @classmethod
     def validate_empty_format(cls, v: str) -> Optional[str]:
         if v == "":
