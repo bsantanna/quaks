@@ -16,7 +16,7 @@ export class NewsFeed {
   private readonly marketsNewsService = inject(MarketsNewsService);
 
   readonly indexName = input.required<string>();
-  readonly keyTicker = input.required<string>();
+  readonly keyTicker = input<string>('');
 
   readonly newsItems = signal<NewsItem[]>([]);
   readonly cursor = signal<string | null>(null);
@@ -44,7 +44,7 @@ export class NewsFeed {
     this.marketsNewsService.getNewsList(
       indexName,
       keyTicker,
-      10,
+      7,
       true,
       cursor
     ).pipe(take(1)).subscribe(newsList => {

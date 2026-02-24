@@ -52,10 +52,12 @@ export class MarketsNewsService {
   ): Observable<NewsList> {
     const url = `${this.marketsNewsUrl}/${encodeURIComponent(indexName)}`;
     const params: Record<string, string | number | boolean> = {
-      key_ticker: ticker,
       size,
       include_obj_images: includeImages,
     };
+    if (ticker) {
+      params['key_ticker'] = ticker;
+    }
     if (cursor) {
       params['cursor'] = cursor;
     }
