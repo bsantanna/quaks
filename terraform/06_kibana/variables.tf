@@ -8,12 +8,6 @@ variable "kb_url" {
   type        = string
 }
 
-variable "es_api_key" {
-  description = "The API key for authenticating to the Elasticsearch cluster"
-  type        = string
-  sensitive   = true
-}
-
 variable "kb_anonymous_username" {
   description = "The username for the anonymous access in Kibana"
   type        = string

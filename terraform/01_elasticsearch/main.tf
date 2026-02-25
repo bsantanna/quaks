@@ -4,13 +4,29 @@ terraform {
       source  = "elastic/elasticstack"
       version = "~> 0.12"
     }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.0.0"
+    }
+  }
+}
+
+provider "kubernetes" {
+  config_path = "~/.kube/config"
+}
+
+data "kubernetes_secret_v1" "es_elastic_user" {
+  metadata {
+    name      = "elasticsearch-es-elastic-user"
+    namespace = "elastic"
   }
 }
 
 provider "elasticstack" {
   elasticsearch {
     endpoints = [var.es_url]
-    api_key   = var.es_api_key
+    username  = "elastic"
+    password  = data.kubernetes_secret_v1.es_elastic_user.data["elastic"]
   }
 }
 
@@ -468,4 +484,42 @@ resource "elasticstack_elasticsearch_index" "markets_news_nasdaq" {
   }]
   deletion_protection = false
   depends_on = [elasticstack_elasticsearch_index_template.quaks_markets-news_template]
+}
+
+resource "elasticstack_elasticsearch_security_api_key" "quaks_api_key" {
+  name = "quaks-api-key"
+
+  role_descriptors = jsonencode({
+    quaks_role = {
+      cluster = ["monitor", "manage_security"]
+      indices = [
+        {
+          names      = ["quaks_*"]
+          privileges = ["read", "write", "create_index", "manage"]
+        },
+        {
+          names      = [".kibana*"]
+          privileges = ["all"]
+        }
+      ]
+      applications = [
+        {
+          application = "kibana-.kibana"
+          privileges  = ["all"]
+          resources   = ["*"]
+        }
+      ]
+    }
+  })
+}
+
+resource "kubernetes_secret_v1" "quaks_elastic_api_secret" {
+  metadata {
+    name      = "quaks-elastic-api-secret"
+    namespace = "quaks"
+  }
+
+  data = {
+    api-key = elasticstack_elasticsearch_security_api_key.quaks_api_key.encoded
+  }
 }
