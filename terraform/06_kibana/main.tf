@@ -17,15 +17,22 @@ terraform {
   }
 }
 
+data "kubernetes_secret_v1" "quaks_elastic_api_secret" {
+  metadata {
+    name      = "quaks-elastic-api-secret"
+    namespace = var.quaks_namespace
+  }
+}
+
 provider "elasticstack" {
   elasticsearch {
     endpoints = [var.es_url]
-    api_key   = var.es_api_key
+    api_key   = data.kubernetes_secret_v1.quaks_elastic_api_secret.data["api-key"]
   }
 
   kibana {
     endpoints = [var.kb_url]
-    api_key   = var.es_api_key
+    api_key   = data.kubernetes_secret_v1.quaks_elastic_api_secret.data["api-key"]
   }
 }
 
@@ -57,6 +64,8 @@ resource "helm_release" "kibana" {
       }
 
       config = {
+        "theme:darkMode" = "enabled"
+
         server = {
           publicBaseUrl   = "https://${var.quaks_fqdn}/dashboards"
           basePath        = "/dashboards"
@@ -123,14 +132,14 @@ resource "elasticstack_elasticsearch_security_role" "anonymous_dashboard_role" {
   name = "anonymous_dashboard_role"
 
   indices {
-    names      = ["*"]
+    names      = ["quaks_*"]
     privileges = ["read", "view_index_metadata"]
   }
 
   applications {
     application = "kibana-.kibana"
-    privileges  = ["feature_dashboard.read"]
-    resources   = ["*"]
+    privileges  = ["feature_dashboard.minimal_read"]
+    resources   = ["space:default"]
   }
 
 }

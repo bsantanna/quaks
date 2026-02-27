@@ -5,6 +5,13 @@
             [newsItems]="newsItems()">
     </app-news-media-cards>
 
+    @if (newsItems().length > 4) {
+        <app-news-list
+                [indexName]="indexName()"
+                [newsItems]="newsItems().slice(4)">
+        </app-news-list>
+    }
+
     <!-- Placeholder for no items -->
     @if (!newsItems() || newsItems().length === 0) {
         <div class="text-center text-gray-500 py-8">

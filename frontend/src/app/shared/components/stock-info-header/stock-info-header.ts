@@ -25,7 +25,7 @@ export class StockInfoHeader {
   readonly useIntervalInDates = input.required<boolean>();
   readonly intervalInDays = model.required<number>();
 
-  private readonly interval: Signal<string> = computed(() => {
+  readonly interval: Signal<string> = computed(() => {
     if (this.useIntervalInDates()) {
       return this.intervalInDates();
     }
@@ -56,6 +56,13 @@ export class StockInfoHeader {
 
   shortenDate(date: string): string {
     return date.replace(/^\d{2}(\d{2})/, '$1');
+  }
+
+  formatVolume(value: number): string {
+    if (value >= 1_000_000_000) return (value / 1_000_000_000).toFixed(2) + 'B';
+    if (value >= 1_000_000) return (value / 1_000_000).toFixed(2) + 'M';
+    if (value >= 1_000) return (value / 1_000).toFixed(1) + 'K';
+    return value.toString();
   }
 
 }

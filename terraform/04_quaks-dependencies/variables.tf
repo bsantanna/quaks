@@ -57,13 +57,6 @@ variable "vault_secret_value_es_url" {
   type        = string
 }
 
-variable "vault_secret_value_es_api_key" {
-  description = "The API key for authenticating to the Elasticsearch cluster"
-  type        = string
-  sensitive   = true
-}
-
-
 variable "langwatch_endpoint" {
   description = "Endpoint URL of Langwatch instance"
   type        = string

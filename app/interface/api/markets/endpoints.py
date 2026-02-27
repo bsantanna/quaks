@@ -1,5 +1,6 @@
 import re
 from datetime import datetime, timedelta
+from html import unescape
 
 from dependency_injector.wiring import inject, Provide
 from fastapi import APIRouter, Depends
@@ -201,9 +202,9 @@ async def get_news(
             NewsItem(
                 id=item.get("_id"),
                 source=item.get("_source").get("key_source"),
-                headline=item.get("_source").get("text_headline"),
-                summary=item.get("_source").get("text_summary"),
-                content=item.get("_source").get("text_content"),
+                headline=unescape(item.get("_source").get("text_headline") or ""),
+                summary=unescape(item.get("_source").get("text_summary") or ""),
+                content=unescape(item.get("_source").get("text_content") or ""),
                 date=item.get("_source").get("date_reference"),
                 images=item.get("_source").get("obj_images"),
                 key_ticker=item.get("_source").get("key_ticker"),

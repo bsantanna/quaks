@@ -33,12 +33,6 @@ variable "es_url" {
   sensitive   = true
 }
 
-variable "es_api_key" {
-  description = "Elasticsearch API key used by DAGs"
-  type        = string
-  sensitive   = true
-}
-
 variable "alpaca_api_key_id" {
   description = "Alpaca Markets API key ID (APCA-API-KEY-ID)"
   type        = string
@@ -47,6 +41,12 @@ variable "alpaca_api_key_id" {
 
 variable "alpaca_api_secret_key" {
   description = "Alpaca Markets API secret key (APCA-API-SECRET-KEY)"
+  type        = string
+  sensitive   = true
+}
+
+variable "finnhub_api_key" {
+  description = "Finnhub API key for earnings estimates"
   type        = string
   sensitive   = true
 }
