@@ -118,6 +118,7 @@ resource "kubernetes_secret_v1" "quaks_dags_secrets" {
     ELASTICSEARCH_API_KEY = data.kubernetes_secret_v1.quaks_elastic_api_secret.data["api-key"]
     "APCA-API-KEY-ID"     = var.alpaca_api_key_id
     "APCA-API-SECRET-KEY" = var.alpaca_api_secret_key
+    FINNHUB_API_KEY       = var.finnhub_api_key
   }
 
   type = "Opaque"

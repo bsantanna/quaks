@@ -45,6 +45,12 @@ variable "alpaca_api_secret_key" {
   sensitive   = true
 }
 
+variable "finnhub_api_key" {
+  description = "Finnhub API key for earnings estimates"
+  type        = string
+  sensitive   = true
+}
+
 variable "pg_image" {
   type        = string
   default     = "bsantanna/cloudnative-pg-vector:17.4"
