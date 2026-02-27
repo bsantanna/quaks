@@ -2,6 +2,38 @@
 
 <!-- version list -->
 
+## v1.3.21 (2026-02-27)
+
+### Bug Fixes
+
+- Adjusts kibana deployment ([#52](https://github.com/bsantanna/quaks/pull/52),
+  [`f1867de`](https://github.com/bsantanna/quaks/commit/f1867deb4b9f165d1f76ee9a83f515d4d073af23))
+
+- Etl fundamental data 1 ([#52](https://github.com/bsantanna/quaks/pull/52),
+  [`f1867de`](https://github.com/bsantanna/quaks/commit/f1867deb4b9f165d1f76ee9a83f515d4d073af23))
+
+- Etl ingestion company metadata ([#52](https://github.com/bsantanna/quaks/pull/52),
+  [`f1867de`](https://github.com/bsantanna/quaks/commit/f1867deb4b9f165d1f76ee9a83f515d4d073af23))
+
+- Introduces app-news-list component ([#52](https://github.com/bsantanna/quaks/pull/52),
+  [`f1867de`](https://github.com/bsantanna/quaks/commit/f1867deb4b9f165d1f76ee9a83f515d4d073af23))
+
+- Package bundle ([#52](https://github.com/bsantanna/quaks/pull/52),
+  [`f1867de`](https://github.com/bsantanna/quaks/commit/f1867deb4b9f165d1f76ee9a83f515d4d073af23))
+
+- Package bundle 2 ([#52](https://github.com/bsantanna/quaks/pull/52),
+  [`f1867de`](https://github.com/bsantanna/quaks/commit/f1867deb4b9f165d1f76ee9a83f515d4d073af23))
+
+- Package bundle 3 ([#52](https://github.com/bsantanna/quaks/pull/52),
+  [`f1867de`](https://github.com/bsantanna/quaks/commit/f1867deb4b9f165d1f76ee9a83f515d4d073af23))
+
+- Stock info header adjusts ([#52](https://github.com/bsantanna/quaks/pull/52),
+  [`f1867de`](https://github.com/bsantanna/quaks/commit/f1867deb4b9f165d1f76ee9a83f515d4d073af23))
+
+- Text encoding ([#52](https://github.com/bsantanna/quaks/pull/52),
+  [`f1867de`](https://github.com/bsantanna/quaks/commit/f1867deb4b9f165d1f76ee9a83f515d4d073af23))
+
+
 ## v1.3.20 (2026-02-24)
 
 ### Bug Fixes
