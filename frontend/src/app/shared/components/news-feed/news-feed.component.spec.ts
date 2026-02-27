@@ -16,6 +16,16 @@ class MockNewsMediaCards {
   readonly indexName = input.required<string>();
 }
 
+@Component({
+  selector: 'app-news-list',
+  template: '',
+  standalone: true,
+})
+class MockNewsList {
+  readonly newsItems = input.required<NewsItem[]>();
+  readonly indexName = input.required<string>();
+}
+
 describe('NewsFeed', () => {
   let component: NewsFeed;
   let fixture: ComponentFixture<NewsFeed>;
@@ -54,7 +64,7 @@ describe('NewsFeed', () => {
         {provide: MarketsNewsService, useValue: marketsNewsService},
       ],
     }).overrideComponent(NewsFeed, {
-      set: {imports: [MockNewsMediaCards]},
+      set: {imports: [MockNewsMediaCards, MockNewsList]},
     });
 
     fixture = TestBed.createComponent(NewsFeed);
