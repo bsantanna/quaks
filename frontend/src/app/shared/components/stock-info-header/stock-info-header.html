@@ -18,8 +18,10 @@
                             {{ statsClose().percent_variance > 0 ? '+' : '' }}{{ statsClose().percent_variance | number : '1.2-2' }}
                             %
                         </p>
+                        <p class="text-xs text-gray-400">({{ shortenDate(interval().split('_')[0]) }} – {{ shortenDate(interval().split('_')[1]) }})</p>
+                    } @else {
+                        <p class="text-xs text-gray-400">({{ shortenDate(statsClose().most_recent_date) }})</p>
                     }
-                    <p class="text-xs text-gray-400">({{ shortenDate(statsClose().most_recent_date) }})</p>
                 </div>
             </div>
         </div>
@@ -40,7 +42,7 @@
             </div>
             <div>
                 <p class="text-xs text-gray-400">Volume</p>
-                <p class="font-mono text-xs truncate">{{ statsClose().most_recent_volume | number : '1.0-0' }}</p>
+                <p class="font-mono text-xs truncate">{{ formatVolume(statsClose().most_recent_volume) }}</p>
             </div>
         </div>
 
@@ -123,8 +125,10 @@
                        [class.text-rose-400]="statsClose().percent_variance <= 0">
                         {{ statsClose().percent_variance > 0 ? '+' : '' }}{{ statsClose().percent_variance | number : '1.2-2' }}%
                     </p>
+                    <p class="text-xs text-gray-400">({{ shortenDate(interval().split('_')[0]) }} – {{ shortenDate(interval().split('_')[1]) }})</p>
+                } @else {
+                    <p class="text-xs text-gray-400">({{ shortenDate(statsClose().most_recent_date) }})</p>
                 }
-                <p class="text-xs text-gray-400">({{ shortenDate(statsClose().most_recent_date) }})</p>
             </div>
         </div>
         <!-- Line 2: O H L V + date range buttons -->
@@ -133,7 +137,7 @@
                 <span><span class="text-gray-400">Open</span>&nbsp;<span class="font-mono">{{ statsClose().most_recent_open | number : '1.2-2' }}</span></span>
                 <span><span class="text-gray-400">High</span>&nbsp;<span class="font-mono">{{ statsClose().most_recent_high | number : '1.2-2' }}</span></span>
                 <span><span class="text-gray-400">Low</span>&nbsp;<span class="font-mono">{{ statsClose().most_recent_low | number : '1.2-2' }}</span></span>
-                <span><span class="text-gray-400">Volume</span>&nbsp;<span class="font-mono">{{ statsClose().most_recent_volume | number : '1.0-0' }}</span></span>
+                <span><span class="text-gray-400">Volume</span>&nbsp;<span class="font-mono">{{ formatVolume(statsClose().most_recent_volume) }}</span></span>
             </div>
             @if (isStocksRoute && !useIntervalInDates()) {
                 <div class="isolate inline-flex rounded-md shadow-sm">
@@ -246,8 +250,10 @@
                             {{ statsClose().percent_variance > 0 ? '+' : '' }}{{ statsClose().percent_variance | number : '1.2-2' }}
                             %
                         </p>
+                        <p class="text-sm text-gray-400">{{ interval().split('_')[0] }} – {{ interval().split('_')[1] }}</p>
+                    } @else {
+                        <p class="text-sm text-gray-400">on {{ statsClose().most_recent_date }}</p>
                     }
-                    <p class="text-sm text-gray-400">on {{ statsClose().most_recent_date }}</p>
                 </div>
             </div>
         </div>
@@ -268,7 +274,7 @@
             </div>
             <div>
                 <p class="text-sm text-gray-400">Volume</p>
-                <p class="text-md font-medium">{{ statsClose().most_recent_volume | number : '1.0-0' }}</p>
+                <p class="text-md font-medium">{{ formatVolume(statsClose().most_recent_volume) }}</p>
             </div>
         </div>
 

@@ -161,6 +161,13 @@ resource "time_sleep" "wait_for_redis" {
   ]
 }
 
+data "kubernetes_secret_v1" "quaks_elastic_api_secret" {
+  metadata {
+    name      = "quaks-elastic-api-secret"
+    namespace = var.quaks_namespace
+  }
+}
+
 resource "kubernetes_secret_v1" "quaks_secret" {
   metadata {
     name      = "quaks-secret"
@@ -224,7 +231,7 @@ resource "vault_kv_secret_v2" "app_secrets" {
 
     # Elasticsearch
     elasticsearch_url = var.vault_secret_value_es_url
-    elasticsearch_api_key = var.vault_secret_value_es_api_key
+    elasticsearch_api_key = data.kubernetes_secret_v1.quaks_elastic_api_secret.data["api-key"]
   })
 
   depends_on = [

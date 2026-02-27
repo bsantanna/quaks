@@ -2,12 +2,14 @@ import {Component, computed, effect, inject, input, signal} from '@angular/core'
 import {MarketsNewsService} from '../../services/markets-news.service';
 import {take} from 'rxjs';
 import {NewsMediaCards} from './news-media-cards/news-media-cards';
+import {NewsList} from './news-list/news-list';
 import {NewsItem} from '../../models/markets.model';
 
 @Component({
   selector: 'app-news-feed',
   imports: [
-    NewsMediaCards
+    NewsMediaCards,
+    NewsList
   ],
   templateUrl: './news-feed.html',
   styleUrl: './news-feed.scss',

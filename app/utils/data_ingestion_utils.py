@@ -1,4 +1,5 @@
 import hashlib
+import math
 import os
 import requests
 import json
@@ -7,12 +8,102 @@ from datetime import datetime
 from requests import Response
 
 
+def _safe_float(val):
+    if val is None or (hasattr(val, '__class__') and val.__class__.__name__ == 'NaTType'):
+        return None
+    try:
+        f = float(val)
+        return None if math.isnan(f) or math.isinf(f) else f
+    except (ValueError, TypeError):
+        return None
+
+
+def _safe_int(val):
+    f = _safe_float(val)
+    return int(f) if f is not None else None
+
+
+def _epoch_to_date(epoch_val):
+    if epoch_val is None:
+        return None
+    try:
+        return datetime.fromtimestamp(int(epoch_val)).strftime('%Y-%m-%d')
+    except (ValueError, TypeError, OSError):
+        return None
+
+
+def _epoch_to_month_name(epoch_val):
+    if epoch_val is None:
+        return None
+    try:
+        return datetime.fromtimestamp(int(epoch_val)).strftime('%B')
+    except (ValueError, TypeError, OSError):
+        return None
+
+
+def _finnhub_get(path: str, params: dict = None) -> dict:
+    finnhub_api_key = os.environ.get('FINNHUB_API_KEY')
+    base_url = "https://finnhub.io/api/v1"
+    if params is None:
+        params = {}
+    params['token'] = finnhub_api_key
+    response = requests.get(f"{base_url}{path}", params=params)
+    return response.json()
+
+
+def _es_headers():
+    es_api_key = os.environ.get('ELASTICSEARCH_API_KEY')
+    return {
+        'Authorization': f'ApiKey {es_api_key}',
+        'Content-Type': 'application/x-ndjson'
+    }
+
+
+def _es_bulk_post(data: bytes) -> Response:
+    es_url = os.environ.get('ELASTICSEARCH_URL')
+    return requests.post(
+        url=f"{es_url}/_bulk",
+        headers=_es_headers(),
+        data=data
+    )
+
+
+# ---------------------------------------------------------------------------
+# Helper: extract a value from financials-reported line items
+# ---------------------------------------------------------------------------
+
+def _find_financial_value(items: list, concept: str, label_contains: str = None) -> float:
+    """Search a list of SEC filing line items for a matching concept or label."""
+    if not items:
+        return None
+    for item in items:
+        c = item.get('concept', '')
+        lbl = item.get('label', '')
+        if concept and concept.lower() in c.lower():
+            return _safe_float(item.get('value'))
+        if label_contains and label_contains.lower() in lbl.lower():
+            return _safe_float(item.get('value'))
+    return None
+
+
+def _find_financial_value_multi(items: list, concepts: list) -> float:
+    """Try multiple concept names, return first match."""
+    for concept in concepts:
+        val = _find_financial_value(items, concept)
+        if val is not None:
+            return val
+    return None
+
+
+# ---------------------------------------------------------------------------
+# Stocks EOD (Alpaca — unchanged)
+# ---------------------------------------------------------------------------
+
 def format_bulk_stocks_eod(ticker: str, df: pd.DataFrame, index_suffix: str, source: str) -> bytes:
-    index_name = f"quant-agents_stocks-eod_{index_suffix}"
+    index_name = f"quaks_stocks-eod_{index_suffix}"
     lines = []
 
     for _, row in df.iterrows():
-
         date_reference = row.get('timestamp') if source == "alphavantage" else row.get('t').split('T')[0]
         open_ = row.get('open') if source == "alphavantage" else row.get('o')
         close = row.get('close') if source == "alphavantage" else row.get('c')
@@ -25,7 +116,6 @@ def format_bulk_stocks_eod(ticker: str, df: pd.DataFrame, index_suffix: str, sou
         id_str = f"{ticker}_{str(date_reference)}"
 
         meta = {"index": {"_index": index_name, "_id": id_str}}
-
         doc = {
             "key_ticker": ticker,
             "date_reference": date_reference,
@@ -62,11 +152,6 @@ def ingest_stocks_eod(ticker: str, index_suffix="latest", source="alpaca") -> Re
         })
         ticker_daily_time_series = pd.json_normalize(response.json().get('bars'))
 
-    elif source == "alphavantage":
-        alpha_vantage_api_key = os.environ.get('ALPHAVANTAGE_API_KEY')
-        alpha_vantage_time_series_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={ticker}&apikey={alpha_vantage_api_key}&datatype=csv"
-        ticker_daily_time_series = pd.read_csv(alpha_vantage_time_series_url)
-
     return requests.post(
         url=f"{es_url}/_bulk",
         headers={
@@ -77,696 +162,699 @@ def ingest_stocks_eod(ticker: str, index_suffix="latest", source="alpaca") -> Re
     )
 
 
-def format_bulk_stocks_insider_trades(ticker: str, df: pd.DataFrame, index_suffix: str) -> bytes:
-    index_name = f"quant-agents_stocks-insider-trades_{index_suffix}"
+# ---------------------------------------------------------------------------
+# Insider Trades (Finnhub)
+# ---------------------------------------------------------------------------
+
+def format_bulk_stocks_insider_trades(ticker: str, data: list, index_suffix: str) -> bytes:
+    index_name = f"quaks_stocks-insider-trades_{index_suffix}"
     lines = []
 
-    for _, row in df.iterrows():
-        date_reference = row.get('transaction_date').strftime('%Y-%m-%d')
-        executive = row.get('executive')
-        executive_title = row.get('executive_title')
-        acquisition_or_disposal = row.get('acquisition_or_disposal')
-        shares = row.get('shares')
-        share_price = row.get('share_price')
+    for item in data:
+        name = item.get('name', '')
+        txn_date = item.get('transactionDate')
+        txn_code = item.get('transactionCode', '')
+        txn_price = _safe_float(item.get('transactionPrice'))
+        change = _safe_float(item.get('change'))
 
-        id_str = f"{ticker}_{date_reference}"
+        if not txn_date:
+            continue
+
+        # Map transaction codes: P=Purchase, S=Sale, A=Grant/Award
+        if txn_code in ('P', 'A'):
+            acquisition_or_disposal = "Acquisition"
+        elif txn_code == 'S':
+            acquisition_or_disposal = "Disposal"
+        else:
+            acquisition_or_disposal = "Unknown"
+
+        id_str = f"{ticker}_{txn_date}_{name[:20].replace(' ', '_')}"
 
         meta = {"index": {"_index": index_name, "_id": id_str}}
-
         doc = {
             "key_ticker": ticker,
-            "date_reference": date_reference,
-            "text_executive_name": executive,
-            "text_executive_title": executive_title,
+            "date_reference": txn_date,
+            "text_executive_name": name,
+            "text_executive_title": "",
             "key_acquisition_disposal": acquisition_or_disposal,
-            "val_share_quantity": float(shares),
-            "val_share_price": float(share_price)
+            "val_share_quantity": abs(change) if change else None,
+            "val_share_price": txn_price,
         }
 
         lines.append(json.dumps(meta))
         lines.append(json.dumps(doc))
 
-    return (("\n".join(lines)) + "\n").encode("utf-8")
+    return (("\n".join(lines)) + "\n").encode("utf-8") if lines else b""
 
 
 def ingest_stocks_insider_trades(ticker: str, cutoff_days=365, index_suffix="latest") -> Response:
-    es_url = os.environ.get('ELASTICSEARCH_URL')
-    es_api_key = os.environ.get('ELASTICSEARCH_API_KEY')
-    alpha_vantage_api_key = os.environ.get('ALPHAVANTAGE_API_KEY')
-    alpha_vantage_insider_trades_url = f"https://www.alphavantage.co/query?function=INSIDER_TRANSACTIONS&symbol={ticker}&apikey={alpha_vantage_api_key}"
+    now = datetime.now()
+    from_date = (now - pd.Timedelta(days=cutoff_days)).strftime('%Y-%m-%d')
+    to_date = now.strftime('%Y-%m-%d')
 
-    ticker_insider_trades_data = requests.get(alpha_vantage_insider_trades_url).json()
-    df = pd.json_normalize(ticker_insider_trades_data['data'])
-    df["transaction_date"] = pd.to_datetime(df["transaction_date"], errors='coerce')
-    cutoff = pd.Timestamp.now() - pd.Timedelta(days=cutoff_days)
-    ticker_recent_insider_trades = df[df["transaction_date"] >= cutoff].reset_index(drop=True)
+    result = _finnhub_get('/stock/insider-transactions', {
+        'symbol': ticker,
+        'from': from_date,
+        'to': to_date,
+    })
+    data = result.get('data', [])
 
-    return requests.post(
-        url=f"{es_url}/_bulk",
-        headers={
-            'Authorization': f'ApiKey {es_api_key}',
-            'Content-Type': 'application/x-ndjson'
-        },
-        data=format_bulk_stocks_insider_trades(ticker, ticker_recent_insider_trades, index_suffix)
+    if not data:
+        return _es_bulk_post(b"\n")
+
+    return _es_bulk_post(
+        format_bulk_stocks_insider_trades(ticker, data, index_suffix)
     )
 
 
-def format_bulk_stocks_metadata(ticker: str, df: pd.DataFrame, index_suffix: str) -> bytes:
+# ---------------------------------------------------------------------------
+# Stocks Metadata (Finnhub)
+# ---------------------------------------------------------------------------
+
+def format_bulk_stocks_metadata(ticker: str, profile: dict, index_suffix: str) -> bytes:
     today = datetime.now().strftime('%Y-%m-%d')
-    index_name = f"quant-agents_stocks-metadata_{index_suffix}"
-    lines = []
+    index_name = f"quaks_stocks-metadata_{index_suffix}"
 
-    for _, row in df.iterrows():
-        # canonical values, accept multiple key variants
-        symbol = row.get('Symbol') or ticker
-        asset_type = row.get('AssetType')
-        name = row.get('Name')
-        description = row.get('Description')
-        cik = row.get('CIK')
-        exchange = row.get('Exchange')
-        currency = row.get('Currency')
-        country = row.get('Country')
-        sector = row.get('Sector')
-        industry = row.get('Industry')
-        address = row.get('Address')
-        official_site = row.get('OfficialSite')
-        fiscal_year_end = row.get('FiscalYearEnd')
+    id_str = f"{ticker}_{today}"
 
-        latest_quarter = row.get('LatestQuarter')
-        dividend_date = row.get('DividendDate')
-        ex_dividend_date = row.get('ExDividendDate')
+    meta = {"index": {"_index": index_name, "_id": id_str}}
 
-        # numeric conversions
-        market_capitalization = int(row.get('MarketCapitalization'))
-        ebitda = int(row.get('EBITDA'))
-        pe_ratio = float(row.get('PERatio'))
-        peg_ratio = float(row.get('PEGRatio'))
-        book_value = float(row.get('BookValue'))
-        dividend_per_share = float(row.get('DividendPerShare'))
-        dividend_yield = float(row.get('DividendYield'))
-        eps = float(row.get('EPS'))
-        revenue_per_share_ttm = float(row.get('RevenuePerShareTTM'))
-        profit_margin = float(row.get('ProfitMargin'))
-        operating_margin_ttm = float(row.get('OperatingMarginTTM'))
-        return_on_assets_ttm = float(row.get('ReturnOnAssetsTTM'))
-        return_on_equity_ttm = float(row.get('ReturnOnEquityTTM'))
+    market_cap_millions = _safe_float(profile.get('marketCapitalization'))
+    market_cap = _safe_int(market_cap_millions * 1_000_000) if market_cap_millions else None
 
-        revenue_ttm = int(row.get('RevenueTTM'))
-        gross_profit_ttm = int(row.get('GrossProfitTTM'))
-        diluted_eps_ttm = float(row.get('DilutedEPSTTM'))
+    shares_millions = _safe_float(profile.get('shareOutstanding'))
+    shares = _safe_int(shares_millions * 1_000_000) if shares_millions else None
 
-        quarterly_earnings_growth_yoy = float(row.get('QuarterlyEarningsGrowthYOY'))
-        quarterly_revenue_growth_yoy = float(row.get('QuarterlyRevenueGrowthYOY'))
+    doc = {
+        "key_ticker": profile.get('ticker', ticker),
+        "asset_type": None,
+        "name": profile.get('name'),
+        "description": None,
+        "cik": None,
+        "exchange": profile.get('exchange'),
+        "currency": profile.get('currency'),
+        "country": profile.get('country'),
+        "sector": profile.get('finnhubIndustry'),
+        "industry": profile.get('finnhubIndustry'),
+        "address": None,
+        "official_site": profile.get('weburl'),
+        "fiscal_year_end": None,
+        "latest_quarter": None,
+        "market_capitalization": market_cap,
+        "ebitda": None,
+        "pe_ratio": None,
+        "peg_ratio": None,
+        "book_value": None,
+        "dividend_per_share": None,
+        "dividend_yield": None,
+        "eps": None,
+        "revenue_per_share_ttm": None,
+        "profit_margin": None,
+        "operating_margin_ttm": None,
+        "return_on_assets_ttm": None,
+        "return_on_equity_ttm": None,
+        "revenue_ttm": None,
+        "gross_profit_ttm": None,
+        "diluted_eps_ttm": None,
+        "quarterly_earnings_growth_yoy": None,
+        "quarterly_revenue_growth_yoy": None,
+        "analyst_target_price": None,
+        "analyst_rating_strong_buy": None,
+        "analyst_rating_buy": None,
+        "analyst_rating_hold": None,
+        "analyst_rating_sell": None,
+        "analyst_rating_strong_sell": None,
+        "trailing_pe": None,
+        "forward_pe": None,
+        "price_to_sales_ratio_ttm": None,
+        "price_to_book_ratio": None,
+        "ev_to_revenue": None,
+        "ev_to_ebitda": None,
+        "beta": None,
+        "week_52_high": None,
+        "week_52_low": None,
+        "moving_average_50_day": None,
+        "moving_average_200_day": None,
+        "shares_outstanding": shares,
+        "shares_float": None,
+        "percent_insiders": None,
+        "percent_institutions": None,
+        "dividend_date": None,
+        "ex_dividend_date": None,
+    }
 
-        analyst_target_price = float(row.get('AnalystTargetPrice'))
-        analyst_rating_strong_buy = int(row.get('AnalystRatingStrongBuy'))
-        analyst_rating_buy = int(row.get('AnalystRatingBuy'))
-        analyst_rating_hold = int(row.get('AnalystRatingHold'))
-        analyst_rating_sell = int(row.get('AnalystRatingSell'))
-        analyst_rating_strong_sell = int(row.get('AnalystRatingStrongSell'))
-
-        trailing_pe = float(row.get('TrailingPE'))
-        forward_pe = float(row.get('ForwardPE'))
-        price_to_sales_ratio_ttm = float(row.get('PriceToSalesRatioTTM'))
-        price_to_book_ratio = float(row.get('PriceToBookRatio'))
-        ev_to_revenue = float(row.get('EVToRevenue'))
-        ev_to_ebitda = float(row.get('EVToEBITDA'))
-        beta = float(row.get('Beta'))
-
-        week_52_high = float(row.get('52WeekHigh'))
-        week_52_low = float(row.get('52WeekLow'))
-        moving_average_50_day = float(row.get('50DayMovingAverage'))
-        moving_average_200_day = float(row.get('200DayMovingAverage'))
-
-        shares_outstanding = int(row.get('SharesOutstanding'))
-        shares_float = int(row.get('SharesFloat'))
-        percent_insiders = float(row.get('PercentInsiders'))
-        percent_institutions = float(row.get('PercentInstitutions'))
-
-        # build id using symbol and latest_quarter or today
-        id_suffix = latest_quarter or today
-        id_str = f"{symbol}_{id_suffix}"
-
-        meta = {"index": {"_index": index_name, "_id": id_str}}
-
-        doc = {
-            "key_ticker": symbol,
-            "asset_type": asset_type,
-            "name": name,
-            "description": description,
-            "cik": cik,
-            "exchange": exchange,
-            "currency": currency,
-            "country": country,
-            "sector": sector,
-            "industry": industry,
-            "address": address,
-            "official_site": official_site,
-            "fiscal_year_end": fiscal_year_end,
-            "latest_quarter": latest_quarter,
-            "market_capitalization": market_capitalization,
-            "ebitda": ebitda,
-            "pe_ratio": pe_ratio,
-            "peg_ratio": peg_ratio,
-            "book_value": book_value,
-            "dividend_per_share": dividend_per_share,
-            "dividend_yield": dividend_yield,
-            "eps": eps,
-            "revenue_per_share_ttm": revenue_per_share_ttm,
-            "profit_margin": profit_margin,
-            "operating_margin_ttm": operating_margin_ttm,
-            "return_on_assets_ttm": return_on_assets_ttm,
-            "return_on_equity_ttm": return_on_equity_ttm,
-            "revenue_ttm": revenue_ttm,
-            "gross_profit_ttm": gross_profit_ttm,
-            "diluted_eps_ttm": diluted_eps_ttm,
-            "quarterly_earnings_growth_yoy": quarterly_earnings_growth_yoy,
-            "quarterly_revenue_growth_yoy": quarterly_revenue_growth_yoy,
-            "analyst_target_price": analyst_target_price,
-            "analyst_rating_strong_buy": analyst_rating_strong_buy,
-            "analyst_rating_buy": analyst_rating_buy,
-            "analyst_rating_hold": analyst_rating_hold,
-            "analyst_rating_sell": analyst_rating_sell,
-            "analyst_rating_strong_sell": analyst_rating_strong_sell,
-            "trailing_pe": trailing_pe,
-            "forward_pe": forward_pe,
-            "price_to_sales_ratio_ttm": price_to_sales_ratio_ttm,
-            "price_to_book_ratio": price_to_book_ratio,
-            "ev_to_revenue": ev_to_revenue,
-            "ev_to_ebitda": ev_to_ebitda,
-            "beta": beta,
-            "week_52_high": week_52_high,
-            "week_52_low": week_52_low,
-            "moving_average_50_day": moving_average_50_day,
-            "moving_average_200_day": moving_average_200_day,
-            "shares_outstanding": shares_outstanding,
-            "shares_float": shares_float,
-            "percent_insiders": percent_insiders,
-            "percent_institutions": percent_institutions,
-            "dividend_date": dividend_date,
-            "ex_dividend_date": ex_dividend_date,
-        }
-
-        lines.append(json.dumps(meta))
-        lines.append(json.dumps(doc))
-
+    lines = [json.dumps(meta), json.dumps(doc)]
     return (("\n".join(lines)) + "\n").encode("utf-8")
+
+
+def _enrich_metadata_with_metrics(ticker: str, doc: dict) -> dict:
+    """Enrich metadata doc with basic metrics from Finnhub."""
+    metrics = _finnhub_get('/stock/metric', {
+        'symbol': ticker,
+        'metric': 'all',
+    })
+    m = metrics.get('metric', {})
+    if m:
+        doc["pe_ratio"] = _safe_float(m.get('peBasicExclExtraTTM'))
+        doc["trailing_pe"] = _safe_float(m.get('peBasicExclExtraTTM'))
+        doc["forward_pe"] = _safe_float(m.get('peExclExtraAnnual'))
+        doc["peg_ratio"] = _safe_float(m.get('pegRatio'))
+        doc["book_value"] = _safe_float(m.get('bookValuePerShareQuarterly'))
+        doc["dividend_per_share"] = _safe_float(m.get('dividendPerShareAnnual'))
+        doc["dividend_yield"] = _safe_float(m.get('dividendYieldIndicatedAnnual'))
+        doc["eps"] = _safe_float(m.get('epsBasicExclExtraItemsTTM'))
+        doc["revenue_per_share_ttm"] = _safe_float(m.get('revenuePerShareTTM'))
+        doc["profit_margin"] = _safe_float(m.get('netProfitMarginTTM'))
+        doc["operating_margin_ttm"] = _safe_float(m.get('operatingMarginTTM'))
+        doc["return_on_assets_ttm"] = _safe_float(m.get('roaTTM'))
+        doc["return_on_equity_ttm"] = _safe_float(m.get('roeTTM'))
+        doc["revenue_ttm"] = _safe_int(m.get('revenueTTM'))
+        doc["ebitda"] = _safe_int(m.get('ebitdTTM'))
+        doc["beta"] = _safe_float(m.get('beta'))
+        doc["week_52_high"] = _safe_float(m.get('52WeekHigh'))
+        doc["week_52_low"] = _safe_float(m.get('52WeekLow'))
+        doc["price_to_sales_ratio_ttm"] = _safe_float(m.get('psTTM'))
+        doc["price_to_book_ratio"] = _safe_float(m.get('pbQuarterly'))
+        doc["ev_to_revenue"] = _safe_float(m.get('enterpriseValueOverRevenueAnnual'))
+        doc["ev_to_ebitda"] = _safe_float(m.get('enterpriseValueOverEBITDAAnnual'))
+        doc["analyst_target_price"] = _safe_float(m.get('targetMedianPrice'))
+        doc["moving_average_50_day"] = _safe_float(m.get('50DayMA'))
+        doc["moving_average_200_day"] = _safe_float(m.get('200DayMA'))
+    return doc
 
 
 def ingest_stocks_metadata(ticker: str, index_suffix="latest") -> Response:
-    es_url = os.environ.get('ELASTICSEARCH_URL')
-    es_api_key = os.environ.get('ELASTICSEARCH_API_KEY')
-    alpha_vantage_api_key = os.environ.get('ALPHAVANTAGE_API_KEY')
-    alpha_vantage_overview_url = f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={ticker}&apikey={alpha_vantage_api_key}"
+    profile = _finnhub_get('/stock/profile2', {'symbol': ticker})
 
-    ticker_overview_data = requests.get(alpha_vantage_overview_url).json()
-    ticker_metadata = pd.json_normalize(ticker_overview_data)
+    if not profile or not profile.get('ticker'):
+        return _es_bulk_post(b"\n")
 
-    return requests.post(
-        url=f"{es_url}/_bulk",
-        headers={
-            'Authorization': f'ApiKey {es_api_key}',
-            'Content-Type': 'application/x-ndjson'
-        },
-        data=format_bulk_stocks_metadata(ticker, ticker_metadata, index_suffix)
-    )
+    data = format_bulk_stocks_metadata(ticker, profile, index_suffix)
+
+    # Decode, enrich with metrics, re-encode
+    lines = data.decode('utf-8').strip().split('\n')
+    if len(lines) >= 2:
+        doc = json.loads(lines[1])
+        doc = _enrich_metadata_with_metrics(ticker, doc)
+        lines[1] = json.dumps(doc)
+        data = (("\n".join(lines)) + "\n").encode("utf-8")
+
+    return _es_bulk_post(data)
 
 
-def format_bulk_stocks_fundamental_income_statement(ticker: str, df: pd.DataFrame, index_suffix: str) -> bytes:
+# ---------------------------------------------------------------------------
+# Fundamental: Income Statement (Finnhub financials-reported)
+# ---------------------------------------------------------------------------
+
+def format_bulk_stocks_fundamental_income_statement(ticker: str, reports: list, index_suffix: str) -> bytes:
     today = datetime.now().strftime('%Y-%m-%d')
-    index_name = f"quant-agents_stocks-fundamental-income-statement_{index_suffix}"
+    index_name = f"quaks_stocks-fundamental-income-statement_{index_suffix}"
     lines = []
 
-    for _, row in df.iterrows():
-        fiscal_date_ending = row.get('fiscalDateEnding').strftime('%Y-%m-%d')
-        reported_currency = row.get('reportedCurrency')
-        gross_profit = int(row.get('grossProfit'))
-        total_revenue = int(row.get('totalRevenue'))
-        cost_of_revenue = int(row.get('costOfRevenue'))
-        cost_of_goods_and_services_sold = int(row.get('costofGoodsAndServicesSold'))
+    for report in reports:
+        fiscal_date_ending = report.get('endDate', '').split(' ')[0].split('T')[0]
+        if not fiscal_date_ending:
+            continue
 
-        operating_income = int(row.get('operatingIncome'))
-        selling_general_and_administrative = int(row.get('sellingGeneralAndAdministrative'))
-        research_and_development = int(row.get('researchAndDevelopment'))
-        operating_expenses = int(row.get('operatingExpenses'))
+        ic = report.get('report', {}).get('ic', [])
+        if not ic:
+            continue
 
-        investment_income_net = float(row.get('investmentIncomeNet'))
-        net_interest_income = int(row.get('netInterestIncome'))
-        interest_income = int(row.get('interestIncome'))
-        interest_expense = int(row.get('interestExpense'))
-
-        non_interest_income = float(row.get('nonInterestIncome'))
-        other_non_operating_income = float(row.get('otherNonOperatingIncome'))
-        depreciation = float(row.get('depreciation'))
-        depreciation_and_amortization = int(row.get('depreciationAndAmortization'))
-
-        income_before_tax = int(row.get('incomeBeforeTax'))
-        income_tax_expense = int(row.get('incomeTaxExpense'))
-        interest_and_debt_expense = float(row.get('interestAndDebtExpense'))
-
-        net_income_from_continuing_operations = int(row.get('netIncomeFromContinuingOperations'))
-        comprehensive_income_net_of_tax = float(row.get('comprehensiveIncomeNetOfTax'))
-
-        ebit = int(row.get('ebit'))
-        ebitda = int(row.get('ebitda'))
-        net_income = int(row.get('netIncome'))
-
-        id_suffix = fiscal_date_ending or today
-        id_str = f"{ticker}_{id_suffix}"
-
+        id_str = f"{ticker}_{fiscal_date_ending}"
         meta = {"index": {"_index": index_name, "_id": id_str}}
 
         doc = {
             "key_ticker": ticker,
             "fiscal_date_ending": fiscal_date_ending,
-            "reported_currency": reported_currency,
-            "gross_profit": gross_profit,
-            "total_revenue": total_revenue,
-            "cost_of_revenue": cost_of_revenue,
-            "cost_of_goods_and_services_sold": cost_of_goods_and_services_sold,
-            "operating_income": operating_income,
-            "selling_general_and_administrative": selling_general_and_administrative,
-            "research_and_development": research_and_development,
-            "operating_expenses": operating_expenses,
-            "investment_income_net": investment_income_net,
-            "net_interest_income": net_interest_income,
-            "interest_income": interest_income,
-            "interest_expense": interest_expense,
-            "non_interest_income": non_interest_income,
-            "other_non_operating_income": other_non_operating_income,
-            "depreciation": depreciation,
-            "depreciation_and_amortization": depreciation_and_amortization,
-            "income_before_tax": income_before_tax,
-            "income_tax_expense": income_tax_expense,
-            "interest_and_debt_expense": interest_and_debt_expense,
-            "net_income_from_continuing_operations": net_income_from_continuing_operations,
-            "comprehensive_income_net_of_tax": comprehensive_income_net_of_tax,
-            "ebit": ebit,
-            "ebitda": ebitda,
-            "net_income": net_income,
+            "reported_currency": "USD",
+            "total_revenue": _safe_int(_find_financial_value_multi(ic, [
+                'Revenues', 'RevenueFromContractWithCustomerExcludingAssessedTax',
+                'SalesRevenueNet', 'Revenue', 'NetRevenues',
+            ])),
+            "gross_profit": _safe_int(_find_financial_value_multi(ic, [
+                'GrossProfit',
+            ])),
+            "cost_of_revenue": _safe_int(_find_financial_value_multi(ic, [
+                'CostOfRevenue', 'CostOfGoodsAndServicesSold', 'CostOfGoodsSold',
+            ])),
+            "cost_of_goods_and_services_sold": _safe_int(_find_financial_value_multi(ic, [
+                'CostOfGoodsAndServicesSold', 'CostOfRevenue', 'CostOfGoodsSold',
+            ])),
+            "operating_income": _safe_int(_find_financial_value_multi(ic, [
+                'OperatingIncomeLoss', 'OperatingIncome',
+            ])),
+            "selling_general_and_administrative": _safe_int(_find_financial_value_multi(ic, [
+                'SellingGeneralAndAdministrativeExpense',
+            ])),
+            "research_and_development": _safe_int(_find_financial_value_multi(ic, [
+                'ResearchAndDevelopmentExpense',
+            ])),
+            "operating_expenses": _safe_int(_find_financial_value_multi(ic, [
+                'OperatingExpenses', 'CostsAndExpenses',
+            ])),
+            "investment_income_net": _safe_float(_find_financial_value_multi(ic, [
+                'InvestmentIncomeNet',
+            ])),
+            "net_interest_income": _safe_int(_find_financial_value_multi(ic, [
+                'InterestIncomeExpenseNet', 'NetInterestIncome',
+            ])),
+            "interest_income": _safe_int(_find_financial_value_multi(ic, [
+                'InterestIncome', 'InvestmentIncomeInterest',
+            ])),
+            "interest_expense": _safe_int(_find_financial_value_multi(ic, [
+                'InterestExpense',
+            ])),
+            "non_interest_income": _safe_float(_find_financial_value_multi(ic, [
+                'NoninterestIncome', 'OtherNonoperatingIncomeExpense',
+            ])),
+            "other_non_operating_income": _safe_float(_find_financial_value_multi(ic, [
+                'OtherNonoperatingIncomeExpense', 'NonoperatingIncomeExpense',
+            ])),
+            "depreciation": _safe_float(_find_financial_value_multi(ic, [
+                'Depreciation', 'DepreciationAmortizationAndAccretion',
+            ])),
+            "depreciation_and_amortization": _safe_int(_find_financial_value_multi(ic, [
+                'DepreciationAndAmortization', 'DepreciationAmortizationAndAccretion',
+            ])),
+            "income_before_tax": _safe_int(_find_financial_value_multi(ic, [
+                'IncomeLossFromContinuingOperationsBeforeIncomeTaxes',
+                'IncomeLossBeforeIncomeTax', 'IncomeBeforeTax',
+            ])),
+            "income_tax_expense": _safe_int(_find_financial_value_multi(ic, [
+                'IncomeTaxExpenseBenefit',
+            ])),
+            "interest_and_debt_expense": _safe_float(_find_financial_value_multi(ic, [
+                'InterestExpense', 'InterestAndDebtExpense',
+            ])),
+            "net_income_from_continuing_operations": _safe_int(_find_financial_value_multi(ic, [
+                'IncomeLossFromContinuingOperations',
+                'NetIncomeLossFromContinuingOperations',
+            ])),
+            "comprehensive_income_net_of_tax": _safe_float(_find_financial_value_multi(ic, [
+                'ComprehensiveIncomeNetOfTax',
+            ])),
+            "ebit": _safe_int(_find_financial_value_multi(ic, [
+                'OperatingIncomeLoss', 'OperatingIncome',
+            ])),
+            "ebitda": None,
+            "net_income": _safe_int(_find_financial_value_multi(ic, [
+                'NetIncomeLoss', 'NetIncome', 'ProfitLoss',
+            ])),
         }
 
         lines.append(json.dumps(meta))
         lines.append(json.dumps(doc))
 
-    return (("\n".join(lines)) + "\n").encode("utf-8")
+    return (("\n".join(lines)) + "\n").encode("utf-8") if lines else b""
 
 
 def ingest_stocks_fundamental_income_statement(ticker: str, cutoff_days=3650, index_suffix="latest") -> Response:
-    es_url = os.environ.get('ELASTICSEARCH_URL')
-    es_api_key = os.environ.get('ELASTICSEARCH_API_KEY')
-    alpha_vantage_api_key = os.environ.get('ALPHAVANTAGE_API_KEY')
-    alpha_vantage_income_statement_url = f"https://www.alphavantage.co/query?function=INCOME_STATEMENT&symbol={ticker}&apikey={alpha_vantage_api_key}"
+    result = _finnhub_get('/stock/financials-reported', {
+        'symbol': ticker,
+        'freq': 'quarterly',
+    })
+    reports = result.get('data', [])
 
-    ticker_income_statement_data = requests.get(alpha_vantage_income_statement_url).json()
-    df = pd.json_normalize(ticker_income_statement_data['annualReports'])
-    df["fiscalDateEnding"] = pd.to_datetime(df["fiscalDateEnding"], errors='coerce')
-    cutoff = pd.Timestamp.now() - pd.Timedelta(days=cutoff_days)
-    ticker_recent_income_statement = df[df["fiscalDateEnding"] >= cutoff].reset_index(drop=True)
-    pd.set_option('future.no_silent_downcasting', True)
-    ticker_recent_income_statement = ticker_recent_income_statement.replace({None: 0, 'None': 0, 'null': 0})
+    if not reports:
+        return _es_bulk_post(b"\n")
 
-    return requests.post(
-        url=f"{es_url}/_bulk",
-        headers={
-            'Authorization': f'ApiKey {es_api_key}',
-            'Content-Type': 'application/x-ndjson'
-        },
-        data=format_bulk_stocks_fundamental_income_statement(ticker, ticker_recent_income_statement, index_suffix)
+    # Filter by cutoff
+    cutoff_date = (datetime.now() - pd.Timedelta(days=cutoff_days)).strftime('%Y-%m-%d')
+    reports = [r for r in reports if (r.get('endDate', '') or '') >= cutoff_date]
+
+    return _es_bulk_post(
+        format_bulk_stocks_fundamental_income_statement(ticker, reports, index_suffix)
     )
 
 
-def format_bulk_stocks_fundamental_balance_sheet(ticker: str, df: pd.DataFrame, index_suffix: str) -> bytes:
+# ---------------------------------------------------------------------------
+# Fundamental: Balance Sheet (Finnhub financials-reported)
+# ---------------------------------------------------------------------------
+
+def format_bulk_stocks_fundamental_balance_sheet(ticker: str, reports: list, index_suffix: str) -> bytes:
     today = datetime.now().strftime('%Y-%m-%d')
-    index_name = f"quant-agents_stocks-fundamental-balance-sheet_{index_suffix}"
+    index_name = f"quaks_stocks-fundamental-balance-sheet_{index_suffix}"
     lines = []
 
-    for _, row in df.iterrows():
-        fiscal_date_ending = row.get('fiscalDateEnding').strftime('%Y-%m-%d')
-        reported_currency = row.get('reportedCurrency')
-        total_assets = int(row.get('totalAssets')) if row.get('totalAssets') != "None" else None
-        total_current_assets = int(row.get('totalCurrentAssets')) if row.get('totalCurrentAssets') != "None" else None
-        cash_and_cash_equivalents_at_carrying_value = int(row.get('cashAndCashEquivalentsAtCarryingValue')) if row.get(
-            'cashAndCashEquivalentsAtCarryingValue') != "None" else None
-        cash_and_short_term_investments = int(row.get('cashAndShortTermInvestments')) if row.get(
-            'cashAndShortTermInvestments') != "None" else None
-        inventory = int(row.get('inventory')) if row.get('inventory') != "None" else None
-        current_net_receivables = int(row.get('currentNetReceivables')) if row.get(
-            'currentNetReceivables') != "None" else None
-        total_non_current_assets = int(row.get('totalNonCurrentAssets')) if row.get(
-            'totalNonCurrentAssets') != "None" else None
-        property_plant_equipment = int(row.get('propertyPlantEquipment')) if row.get(
-            'propertyPlantEquipment') != "None" else None
-        accumulated_depreciation_amortization_ppe = int(row.get('accumulatedDepreciationAmortizationPPE')) if row.get(
-            'accumulatedDepreciationAmortizationPPE') != "None" else None
-        intangible_assets = int(row.get('intangibleAssets')) if row.get('intangibleAssets') != "None" else None
-        intangible_assets_excluding_goodwill = int(row.get('intangibleAssetsExcludingGoodwill')) if row.get(
-            'intangibleAssetsExcludingGoodwill') != "None" else None
-        goodwill = int(row.get('goodwill')) if row.get('goodwill') != "None" else None
-        investments = int(row.get('investments')) if row.get('investments') != "None" else None
-        long_term_investments = int(row.get('longTermInvestments')) if row.get(
-            'longTermInvestments') != "None" else None
-        short_term_investments = int(row.get('shortTermInvestments')) if row.get(
-            'shortTermInvestments') != "None" else None
-        other_current_assets = int(row.get('otherCurrentAssets')) if row.get('otherCurrentAssets') != "None" else None
-        other_non_current_assets = int(row.get('otherNonCurrentAssets')) if row.get(
-            'otherNonCurrentAssets') != "None" else None
-        total_liabilities = int(row.get('totalLiabilities')) if row.get('totalLiabilities') != "None" else None
-        total_current_liabilities = int(row.get('totalCurrentLiabilities')) if row.get(
-            'totalCurrentLiabilities') != "None" else None
-        current_accounts_payable = int(row.get('currentAccountsPayable')) if row.get(
-            'currentAccountsPayable') != "None" else None
-        deferred_revenue = int(row.get('deferredRevenue')) if row.get('deferredRevenue') != "None" else None
-        current_debt = int(row.get('currentDebt')) if row.get('currentDebt') != "None" else None
-        short_term_debt = int(row.get('shortTermDebt')) if row.get('shortTermDebt') != "None" else None
-        total_non_current_liabilities = int(row.get('totalNonCurrentLiabilities')) if row.get(
-            'totalNonCurrentLiabilities') != "None" else None
-        capital_lease_obligations = int(row.get('capitalLeaseObligations')) if row.get(
-            'capitalLeaseObligations') != "None" else None
-        long_term_debt = int(row.get('longTermDebt')) if row.get('longTermDebt') != "None" else None
-        current_long_term_debt = int(row.get('currentLongTermDebt')) if row.get(
-            'currentLongTermDebt') != "None" else None
-        long_term_debt_noncurrent = int(row.get('longTermDebtNoncurrent')) if row.get(
-            'longTermDebtNoncurrent') != "None" else None
-        short_long_term_debt_total = int(row.get('shortLongTermDebtTotal')) if row.get(
-            'shortLongTermDebtTotal') != "None" else None
-        other_current_liabilities = int(row.get('otherCurrentLiabilities')) if row.get(
-            'otherCurrentLiabilities') != "None" else None
-        other_non_current_liabilities = int(row.get('otherNonCurrentLiabilities')) if row.get(
-            'otherNonCurrentLiabilities') != "None" else None
-        total_shareholder_equity = int(row.get('totalShareholderEquity')) if row.get(
-            'totalShareholderEquity') != "None" else None
-        treasury_stock = int(row.get('treasuryStock')) if row.get('treasuryStock') != "None" else None
-        retained_earnings = int(row.get('retainedEarnings')) if row.get('retainedEarnings') != "None" else None
-        common_stock = int(row.get('commonStock')) if row.get('commonStock') != "None" else None
-        common_stock_shares_outstanding = int(row.get('commonStockSharesOutstanding')) if row.get(
-            'commonStockSharesOutstanding') != "None" else None
+    for report in reports:
+        fiscal_date_ending = report.get('endDate', '').split(' ')[0].split('T')[0]
+        if not fiscal_date_ending:
+            continue
 
-        id_suffix = fiscal_date_ending or today
-        id_str = f"{ticker}_{id_suffix}"
+        bs = report.get('report', {}).get('bs', [])
+        if not bs:
+            continue
 
+        id_str = f"{ticker}_{fiscal_date_ending}"
         meta = {"index": {"_index": index_name, "_id": id_str}}
 
         doc = {
             "key_ticker": ticker,
             "fiscal_date_ending": fiscal_date_ending,
-            "reported_currency": reported_currency,
-            "total_assets": total_assets,
-            "total_current_assets": total_current_assets,
-            "cash_and_cash_equivalents_at_carrying_value": cash_and_cash_equivalents_at_carrying_value,
-            "cash_and_short_term_investments": cash_and_short_term_investments,
-            "inventory": inventory,
-            "current_net_receivables": current_net_receivables,
-            "total_non_current_assets": total_non_current_assets,
-            "property_plant_equipment": property_plant_equipment,
-            "accumulated_depreciation_amortization_ppe": accumulated_depreciation_amortization_ppe,
-            "intangible_assets": intangible_assets,
-            "intangible_assets_excluding_goodwill": intangible_assets_excluding_goodwill,
-            "goodwill": goodwill,
-            "investments": investments,
-            "long_term_investments": long_term_investments,
-            "short_term_investments": short_term_investments,
-            "other_current_assets": other_current_assets,
-            "other_non_current_assets": other_non_current_assets,
-            "total_liabilities": total_liabilities,
-            "total_current_liabilities": total_current_liabilities,
-            "current_accounts_payable": current_accounts_payable,
-            "deferred_revenue": deferred_revenue,
-            "current_debt": current_debt,
-            "short_term_debt": short_term_debt,
-            "total_non_current_liabilities": total_non_current_liabilities,
-            "capital_lease_obligations": capital_lease_obligations,
-            "long_term_debt": long_term_debt,
-            "current_long_term_debt": current_long_term_debt,
-            "long_term_debt_noncurrent": long_term_debt_noncurrent,
-            "short_long_term_debt_total": short_long_term_debt_total,
-            "other_current_liabilities": other_current_liabilities,
-            "other_non_current_liabilities": other_non_current_liabilities,
-            "total_shareholder_equity": total_shareholder_equity,
-            "treasury_stock": treasury_stock,
-            "retained_earnings": retained_earnings,
-            "common_stock": common_stock,
-            "common_stock_shares_outstanding": common_stock_shares_outstanding,
+            "reported_currency": "USD",
+            "total_assets": _safe_int(_find_financial_value_multi(bs, [
+                'Assets',
+            ])),
+            "total_current_assets": _safe_int(_find_financial_value_multi(bs, [
+                'AssetsCurrent',
+            ])),
+            "cash_and_cash_equivalents_at_carrying_value": _safe_int(_find_financial_value_multi(bs, [
+                'CashAndCashEquivalentsAtCarryingValue', 'CashAndCashEquivalents',
+            ])),
+            "cash_and_short_term_investments": _safe_int(_find_financial_value_multi(bs, [
+                'CashCashEquivalentsAndShortTermInvestments',
+            ])),
+            "inventory": _safe_int(_find_financial_value_multi(bs, [
+                'InventoryNet', 'Inventory',
+            ])),
+            "current_net_receivables": _safe_int(_find_financial_value_multi(bs, [
+                'AccountsReceivableNetCurrent', 'ReceivablesNetCurrent',
+            ])),
+            "total_non_current_assets": _safe_int(_find_financial_value_multi(bs, [
+                'AssetsNoncurrent',
+            ])),
+            "property_plant_equipment": _safe_int(_find_financial_value_multi(bs, [
+                'PropertyPlantAndEquipmentNet',
+            ])),
+            "accumulated_depreciation_amortization_ppe": _safe_int(_find_financial_value_multi(bs, [
+                'AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment',
+            ])),
+            "intangible_assets": _safe_int(_find_financial_value_multi(bs, [
+                'IntangibleAssetsNetIncludingGoodwill',
+            ])),
+            "intangible_assets_excluding_goodwill": _safe_int(_find_financial_value_multi(bs, [
+                'IntangibleAssetsNetExcludingGoodwill', 'FiniteLivedIntangibleAssetsNet',
+            ])),
+            "goodwill": _safe_int(_find_financial_value_multi(bs, [
+                'Goodwill',
+            ])),
+            "investments": _safe_int(_find_financial_value_multi(bs, [
+                'Investments', 'ShortTermInvestments',
+            ])),
+            "long_term_investments": _safe_int(_find_financial_value_multi(bs, [
+                'LongTermInvestments', 'MarketableSecuritiesNoncurrent',
+            ])),
+            "short_term_investments": _safe_int(_find_financial_value_multi(bs, [
+                'ShortTermInvestments', 'MarketableSecuritiesCurrent',
+            ])),
+            "other_current_assets": _safe_int(_find_financial_value_multi(bs, [
+                'OtherAssetsCurrent',
+            ])),
+            "other_non_current_assets": _safe_int(_find_financial_value_multi(bs, [
+                'OtherAssetsNoncurrent',
+            ])),
+            "total_liabilities": _safe_int(_find_financial_value_multi(bs, [
+                'Liabilities', 'LiabilitiesAndStockholdersEquity',
+            ])),
+            "total_current_liabilities": _safe_int(_find_financial_value_multi(bs, [
+                'LiabilitiesCurrent',
+            ])),
+            "current_accounts_payable": _safe_int(_find_financial_value_multi(bs, [
+                'AccountsPayableCurrent', 'AccountsPayable',
+            ])),
+            "deferred_revenue": _safe_int(_find_financial_value_multi(bs, [
+                'DeferredRevenueCurrent', 'DeferredRevenue', 'ContractWithCustomerLiabilityCurrent',
+            ])),
+            "current_debt": _safe_int(_find_financial_value_multi(bs, [
+                'DebtCurrent', 'ShortTermBorrowings', 'CommercialPaper',
+            ])),
+            "short_term_debt": _safe_int(_find_financial_value_multi(bs, [
+                'ShortTermBorrowings', 'DebtCurrent', 'CommercialPaper',
+            ])),
+            "total_non_current_liabilities": _safe_int(_find_financial_value_multi(bs, [
+                'LiabilitiesNoncurrent',
+            ])),
+            "capital_lease_obligations": _safe_int(_find_financial_value_multi(bs, [
+                'CapitalLeaseObligations', 'OperatingLeaseLiability',
+            ])),
+            "long_term_debt": _safe_int(_find_financial_value_multi(bs, [
+                'LongTermDebtNoncurrent', 'LongTermDebt',
+            ])),
+            "current_long_term_debt": _safe_int(_find_financial_value_multi(bs, [
+                'LongTermDebtCurrent',
+            ])),
+            "long_term_debt_noncurrent": _safe_int(_find_financial_value_multi(bs, [
+                'LongTermDebtNoncurrent', 'LongTermDebt',
+            ])),
+            "short_long_term_debt_total": _safe_int(_find_financial_value_multi(bs, [
+                'DebtAndCapitalLeaseObligations', 'LongTermDebtAndCapitalLeaseObligations',
+            ])),
+            "other_current_liabilities": _safe_int(_find_financial_value_multi(bs, [
+                'OtherLiabilitiesCurrent',
+            ])),
+            "other_non_current_liabilities": _safe_int(_find_financial_value_multi(bs, [
+                'OtherLiabilitiesNoncurrent',
+            ])),
+            "total_shareholder_equity": _safe_int(_find_financial_value_multi(bs, [
+                'StockholdersEquity',
+            ])),
+            "treasury_stock": _safe_int(_find_financial_value_multi(bs, [
+                'TreasuryStockValue', 'TreasuryStockShares',
+            ])),
+            "retained_earnings": _safe_int(_find_financial_value_multi(bs, [
+                'RetainedEarningsAccumulatedDeficit',
+            ])),
+            "common_stock": _safe_int(_find_financial_value_multi(bs, [
+                'CommonStockValue', 'CommonStocksIncludingAdditionalPaidInCapital',
+            ])),
+            "common_stock_shares_outstanding": _safe_int(_find_financial_value_multi(bs, [
+                'CommonStockSharesOutstanding',
+            ])),
         }
 
         lines.append(json.dumps(meta))
         lines.append(json.dumps(doc))
 
-    return (("\n".join(lines)) + "\n").encode("utf-8")
+    return (("\n".join(lines)) + "\n").encode("utf-8") if lines else b""
 
 
 def ingest_stocks_fundamental_balance_sheet(ticker: str, cutoff_days=3650, index_suffix="latest") -> Response:
-    es_url = os.environ.get('ELASTICSEARCH_URL')
-    es_api_key = os.environ.get('ELASTICSEARCH_API_KEY')
-    alpha_vantage_api_key = os.environ.get('ALPHAVANTAGE_API_KEY')
-    alpha_vantage_balance_sheet_url = f"https://www.alphavantage.co/query?function=BALANCE_SHEET&symbol={ticker}&apikey={alpha_vantage_api_key}"
+    result = _finnhub_get('/stock/financials-reported', {
+        'symbol': ticker,
+        'freq': 'quarterly',
+    })
+    reports = result.get('data', [])
 
-    ticker_balance_sheet_data = requests.get(alpha_vantage_balance_sheet_url).json()
-    df = pd.json_normalize(ticker_balance_sheet_data['annualReports'])
-    df["fiscalDateEnding"] = pd.to_datetime(df["fiscalDateEnding"], errors='coerce')
-    cutoff = pd.Timestamp.now() - pd.Timedelta(days=cutoff_days)
-    ticker_recent_balance_sheet = df[df["fiscalDateEnding"] >= cutoff].reset_index(drop=True)
-    pd.set_option('future.no_silent_downcasting', True)
-    ticker_recent_balance_sheet = ticker_recent_balance_sheet.replace({None: 0, 'None': 0, 'null': 0})
+    if not reports:
+        return _es_bulk_post(b"\n")
 
-    return requests.post(
-        url=f"{es_url}/_bulk",
-        headers={
-            'Authorization': f'ApiKey {es_api_key}',
-            'Content-Type': 'application/x-ndjson'
-        },
-        data=format_bulk_stocks_fundamental_balance_sheet(ticker, ticker_recent_balance_sheet, index_suffix)
+    cutoff_date = (datetime.now() - pd.Timedelta(days=cutoff_days)).strftime('%Y-%m-%d')
+    reports = [r for r in reports if (r.get('endDate', '') or '') >= cutoff_date]
+
+    return _es_bulk_post(
+        format_bulk_stocks_fundamental_balance_sheet(ticker, reports, index_suffix)
     )
 
 
-def format_bulk_stocks_fundamental_cash_flow(ticker: str, df: pd.DataFrame, index_suffix: str) -> bytes:
+# ---------------------------------------------------------------------------
+# Fundamental: Cash Flow (Finnhub financials-reported)
+# ---------------------------------------------------------------------------
+
+def format_bulk_stocks_fundamental_cash_flow(ticker: str, reports: list, index_suffix: str) -> bytes:
     today = datetime.now().strftime('%Y-%m-%d')
-    index_name = f"quant-agents_stocks-fundamental-cash-flow_{index_suffix}"
+    index_name = f"quaks_stocks-fundamental-cash-flow_{index_suffix}"
     lines = []
 
-    for _, row in df.iterrows():
-        fiscal_date_ending = row.get('fiscalDateEnding').strftime('%Y-%m-%d')
-        reported_currency = row.get('reportedCurrency')
-        operating_cashflow = int(row.get('operatingCashflow')) if row.get('operatingCashflow') != "None" else None
-        payments_for_operating_activities = int(row.get('paymentsForOperatingActivities')) if row.get(
-            'paymentsForOperatingActivities') != "None" else None
-        proceeds_from_operating_activities = int(row.get('proceedsFromOperatingActivities')) if row.get(
-            'proceedsFromOperatingActivities') != "None" else None
-        change_in_operating_liabilities = int(row.get('changeInOperatingLiabilities')) if row.get(
-            'changeInOperatingLiabilities') != "None" else None
-        change_in_operating_assets = int(row.get('changeInOperatingAssets')) if row.get(
-            'changeInOperatingAssets') != "None" else None
-        depreciation_depletion_and_amortization = int(row.get('depreciationDepletionAndAmortization')) if row.get(
-            'depreciationDepletionAndAmortization') != "None" else None
-        capital_expenditures = int(row.get('capitalExpenditures')) if row.get('capitalExpenditures') != "None" else None
-        change_in_receivables = int(row.get('changeInReceivables')) if row.get(
-            'changeInReceivables') != "None" else None
-        change_in_inventory = int(row.get('changeInInventory')) if row.get('changeInInventory') != "None" else None
-        profit_loss = int(row.get('profitLoss')) if row.get('profitLoss') != "None" else None
-        cashflow_from_investment = int(row.get('cashflowFromInvestment')) if row.get(
-            'cashflowFromInvestment') != "None" else None
-        cashflow_from_financing = int(row.get('cashflowFromFinancing')) if row.get(
-            'cashflowFromFinancing') != "None" else None
-        proceeds_from_repayments_of_short_term_debt = int(row.get('proceedsFromRepaymentsOfShortTermDebt')) if row.get(
-            'proceedsFromRepaymentsOfShortTermDebt') != "None" else None
-        payments_for_repurchase_of_common_stock = int(row.get('paymentsForRepurchaseOfCommonStock')) if row.get(
-            'paymentsForRepurchaseOfCommonStock') != "None" else None
-        payments_for_repurchase_of_equity = int(row.get('paymentsForRepurchaseOfEquity')) if row.get(
-            'paymentsForRepurchaseOfEquity') != "None" else None
-        payments_for_repurchase_of_preferred_stock = int(row.get('paymentsForRepurchaseOfPreferredStock')) if row.get(
-            'paymentsForRepurchaseOfPreferredStock') != "None" else None
-        dividend_payout = int(row.get('dividendPayout')) if row.get('dividendPayout') != "None" else None
-        dividend_payout_common_stock = int(row.get('dividendPayoutCommonStock')) if row.get(
-            'dividendPayoutCommonStock') != "None" else None
-        dividend_payout_preferred_stock = int(row.get('dividendPayoutPreferredStock')) if row.get(
-            'dividendPayoutPreferredStock') != "None" else None
-        proceeds_from_issuance_of_common_stock = int(row.get('proceedsFromIssuanceOfCommonStock')) if row.get(
-            'proceedsFromIssuanceOfCommonStock') != "None" else None
-        proceeds_from_issuance_of_long_term_debt_and_capital_securities_net = int(
-            row.get('proceedsFromIssuanceOfLongTermDebtAndCapitalSecuritiesNet')) if row.get(
-            'proceedsFromIssuanceOfLongTermDebtAndCapitalSecuritiesNet') != "None" else None
-        proceeds_from_issuance_of_preferred_stock = int(row.get('proceedsFromIssuanceOfPreferredStock')) if row.get(
-            'proceedsFromIssuanceOfPreferredStock') != "None" else None
-        proceeds_from_repurchase_of_equity = int(row.get('proceedsFromRepurchaseOfEquity')) if row.get(
-            'proceedsFromRepurchaseOfEquity') != "None" else None
-        proceeds_from_sale_of_treasury_stock = int(row.get('proceedsFromSaleOfTreasuryStock')) if row.get(
-            'proceedsFromSaleOfTreasuryStock') != "None" else None
-        change_in_cash_and_cash_equivalents = int(row.get('changeInCashAndCashEquivalents')) if row.get(
-            'changeInCashAndCashEquivalents') != "None" else None
-        change_in_exchange_rate = int(row.get('changeInExchangeRate')) if row.get(
-            'changeInExchangeRate') != "None" else None
-        net_income = int(row.get('netIncome')) if row.get('netIncome') != "None" else None
+    for report in reports:
+        fiscal_date_ending = report.get('endDate', '').split(' ')[0].split('T')[0]
+        if not fiscal_date_ending:
+            continue
 
-        id_suffix = fiscal_date_ending or today
-        id_str = f"{ticker}_{id_suffix}"
+        cf = report.get('report', {}).get('cf', [])
+        if not cf:
+            continue
 
+        id_str = f"{ticker}_{fiscal_date_ending}"
         meta = {"index": {"_index": index_name, "_id": id_str}}
 
         doc = {
             "key_ticker": ticker,
             "fiscal_date_ending": fiscal_date_ending,
-            "reported_currency": reported_currency,
-            "operating_cashflow": operating_cashflow,
-            "payments_for_operating_activities": payments_for_operating_activities,
-            "proceeds_from_operating_activities": proceeds_from_operating_activities,
-            "change_in_operating_liabilities": change_in_operating_liabilities,
-            "change_in_operating_assets": change_in_operating_assets,
-            "depreciation_depletion_and_amortization": depreciation_depletion_and_amortization,
-            "capital_expenditures": capital_expenditures,
-            "change_in_receivables": change_in_receivables,
-            "change_in_inventory": change_in_inventory,
-            "profit_loss": profit_loss,
-            "cashflow_from_investment": cashflow_from_investment,
-            "cashflow_from_financing": cashflow_from_financing,
-            "proceeds_from_repayments_of_short_term_debt": proceeds_from_repayments_of_short_term_debt,
-            "payments_for_repurchase_of_common_stock": payments_for_repurchase_of_common_stock,
-            "payments_for_repurchase_of_equity": payments_for_repurchase_of_equity,
-            "payments_for_repurchase_of_preferred_stock": payments_for_repurchase_of_preferred_stock,
-            "dividend_payout": dividend_payout,
-            "dividend_payout_common_stock": dividend_payout_common_stock,
-            "dividend_payout_preferred_stock": dividend_payout_preferred_stock,
-            "proceeds_from_issuance_of_common_stock": proceeds_from_issuance_of_common_stock,
-            "proceeds_from_issuance_of_long_term_debt_and_capital_securities_net": proceeds_from_issuance_of_long_term_debt_and_capital_securities_net,
-            "proceeds_from_issuance_of_preferred_stock": proceeds_from_issuance_of_preferred_stock,
-            "proceeds_from_repurchase_of_equity": proceeds_from_repurchase_of_equity,
-            "proceeds_from_sale_of_treasury_stock": proceeds_from_sale_of_treasury_stock,
-            "change_in_cash_and_cash_equivalents": change_in_cash_and_cash_equivalents,
-            "change_in_exchange_rate": change_in_exchange_rate,
-            "net_income": net_income,
+            "reported_currency": "USD",
+            "operating_cashflow": _safe_int(_find_financial_value_multi(cf, [
+                'NetCashProvidedByUsedInOperatingActivities',
+                'NetCashProvidedByOperatingActivities',
+            ])),
+            "payments_for_operating_activities": None,
+            "proceeds_from_operating_activities": None,
+            "change_in_operating_liabilities": _safe_int(_find_financial_value_multi(cf, [
+                'IncreaseDecreaseInAccountsPayable',
+                'IncreaseDecreaseInOtherOperatingLiabilities',
+            ])),
+            "change_in_operating_assets": _safe_int(_find_financial_value_multi(cf, [
+                'IncreaseDecreaseInOtherOperatingAssets',
+            ])),
+            "depreciation_depletion_and_amortization": _safe_int(_find_financial_value_multi(cf, [
+                'DepreciationDepletionAndAmortization', 'Depreciation',
+                'DepreciationAndAmortization',
+            ])),
+            "capital_expenditures": _safe_int(_find_financial_value_multi(cf, [
+                'PaymentsToAcquirePropertyPlantAndEquipment',
+                'CapitalExpenditures',
+            ])),
+            "change_in_receivables": _safe_int(_find_financial_value_multi(cf, [
+                'IncreaseDecreaseInAccountsReceivable',
+            ])),
+            "change_in_inventory": _safe_int(_find_financial_value_multi(cf, [
+                'IncreaseDecreaseInInventories',
+            ])),
+            "profit_loss": _safe_int(_find_financial_value_multi(cf, [
+                'NetIncomeLoss', 'ProfitLoss',
+            ])),
+            "cashflow_from_investment": _safe_int(_find_financial_value_multi(cf, [
+                'NetCashProvidedByUsedInInvestingActivities',
+            ])),
+            "cashflow_from_financing": _safe_int(_find_financial_value_multi(cf, [
+                'NetCashProvidedByUsedInFinancingActivities',
+            ])),
+            "proceeds_from_repayments_of_short_term_debt": _safe_int(_find_financial_value_multi(cf, [
+                'ProceedsFromRepaymentsOfShortTermDebt',
+                'RepaymentsOfShortTermDebt',
+            ])),
+            "payments_for_repurchase_of_common_stock": _safe_int(_find_financial_value_multi(cf, [
+                'PaymentsForRepurchaseOfCommonStock',
+            ])),
+            "payments_for_repurchase_of_equity": _safe_int(_find_financial_value_multi(cf, [
+                'PaymentsForRepurchaseOfCommonStock',
+                'PaymentsForRepurchaseOfEquity',
+            ])),
+            "payments_for_repurchase_of_preferred_stock": _safe_int(_find_financial_value_multi(cf, [
+                'PaymentsForRepurchaseOfPreferredStockAndPreferenceStock',
+            ])),
+            "dividend_payout": _safe_int(_find_financial_value_multi(cf, [
+                'PaymentsOfDividends', 'PaymentsOfDividendsCommonStock',
+            ])),
+            "dividend_payout_common_stock": _safe_int(_find_financial_value_multi(cf, [
+                'PaymentsOfDividendsCommonStock', 'PaymentsOfDividends',
+            ])),
+            "dividend_payout_preferred_stock": _safe_int(_find_financial_value_multi(cf, [
+                'PaymentsOfDividendsPreferredStockAndPreferenceStock',
+            ])),
+            "proceeds_from_issuance_of_common_stock": _safe_int(_find_financial_value_multi(cf, [
+                'ProceedsFromIssuanceOfCommonStock',
+            ])),
+            "proceeds_from_issuance_of_long_term_debt_and_capital_securities_net": _safe_int(_find_financial_value_multi(cf, [
+                'ProceedsFromIssuanceOfLongTermDebt',
+            ])),
+            "proceeds_from_issuance_of_preferred_stock": _safe_int(_find_financial_value_multi(cf, [
+                'ProceedsFromIssuanceOfPreferredStock',
+            ])),
+            "proceeds_from_repurchase_of_equity": None,
+            "proceeds_from_sale_of_treasury_stock": None,
+            "change_in_cash_and_cash_equivalents": _safe_int(_find_financial_value_multi(cf, [
+                'CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsPeriodIncreaseDecreaseIncludingExchangeRateEffect',
+                'CashAndCashEquivalentsPeriodIncreaseDecrease',
+            ])),
+            "change_in_exchange_rate": _safe_int(_find_financial_value_multi(cf, [
+                'EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents',
+                'EffectOfExchangeRateOnCashAndCashEquivalents',
+            ])),
+            "net_income": _safe_int(_find_financial_value_multi(cf, [
+                'NetIncomeLoss', 'ProfitLoss',
+            ])),
         }
 
         lines.append(json.dumps(meta))
         lines.append(json.dumps(doc))
 
-    return (("\n".join(lines)) + "\n").encode("utf-8")
+    return (("\n".join(lines)) + "\n").encode("utf-8") if lines else b""
 
 
 def ingest_stocks_fundamental_cash_flow(ticker: str, cutoff_days=3650, index_suffix="latest") -> Response:
-    es_url = os.environ.get('ELASTICSEARCH_URL')
-    es_api_key = os.environ.get('ELASTICSEARCH_API_KEY')
-    alpha_vantage_api_key = os.environ.get('ALPHAVANTAGE_API_KEY')
-    alpha_vantage_cash_flow_url = f"https://www.alphavantage.co/query?function=CASH_FLOW&symbol={ticker}&apikey={alpha_vantage_api_key}"
+    result = _finnhub_get('/stock/financials-reported', {
+        'symbol': ticker,
+        'freq': 'quarterly',
+    })
+    reports = result.get('data', [])
 
-    ticker_cash_flow_data = requests.get(alpha_vantage_cash_flow_url).json()
-    df = pd.json_normalize(ticker_cash_flow_data['annualReports'])
-    df["fiscalDateEnding"] = pd.to_datetime(df["fiscalDateEnding"], errors='coerce')
-    cutoff = pd.Timestamp.now() - pd.Timedelta(days=cutoff_days)
-    ticker_recent_cash_flow = df[df["fiscalDateEnding"] >= cutoff].reset_index(drop=True)
-    pd.set_option('future.no_silent_downcasting', True)
-    ticker_recent_cash_flow = ticker_recent_cash_flow.replace({None: 0, 'None': 0, 'null': 0})
+    if not reports:
+        return _es_bulk_post(b"\n")
 
-    return requests.post(
-        url=f"{es_url}/_bulk",
-        headers={
-            'Authorization': f'ApiKey {es_api_key}',
-            'Content-Type': 'application/x-ndjson'
-        },
-        data=format_bulk_stocks_fundamental_cash_flow(ticker, ticker_recent_cash_flow, index_suffix)
+    cutoff_date = (datetime.now() - pd.Timedelta(days=cutoff_days)).strftime('%Y-%m-%d')
+    reports = [r for r in reports if (r.get('endDate', '') or '') >= cutoff_date]
+
+    return _es_bulk_post(
+        format_bulk_stocks_fundamental_cash_flow(ticker, reports, index_suffix)
     )
 
 
-def format_bulk_stocks_fundamental_earnings_estimates(ticker: str, df: pd.DataFrame, index_suffix: str) -> bytes:
+# ---------------------------------------------------------------------------
+# Fundamental: Earnings Estimates (Finnhub — unchanged)
+# ---------------------------------------------------------------------------
+
+def format_bulk_stocks_fundamental_earnings_estimates(ticker: str, eps_data: list, revenue_data: list, index_suffix: str) -> bytes:
     today = datetime.now().strftime('%Y-%m-%d')
-    index_name = f"quant-agents_stocks-fundamental-estimated-earnings_{index_suffix}"
+    index_name = f"quaks_stocks-fundamental-estimated-earnings_{index_suffix}"
     lines = []
 
-    for _, row in df.iterrows():
-        date = row.get('date').strftime('%Y-%m-%d')
-        horizon = row.get('horizon')
-        eps_estimate_average = float(row.get('eps_estimate_average')) if row.get(
-            'eps_estimate_average') is not None else None
-        eps_estimate_high = float(row.get('eps_estimate_high')) if row.get('eps_estimate_high') is not None else None
-        eps_estimate_low = float(row.get('eps_estimate_low')) if row.get('eps_estimate_low') is not None else None
-        eps_estimate_analyst_count = float(row.get('eps_estimate_analyst_count')) if row.get(
-            'eps_estimate_analyst_count') is not None else None
-        eps_estimate_average_7_days_ago = float(row.get('eps_estimate_average_7_days_ago')) if row.get(
-            'eps_estimate_average_7_days_ago') is not None else None
-        eps_estimate_average_30_days_ago = float(row.get('eps_estimate_average_30_days_ago')) if row.get(
-            'eps_estimate_average_30_days_ago') is not None else None
-        eps_estimate_average_60_days_ago = float(row.get('eps_estimate_average_60_days_ago')) if row.get(
-            'eps_estimate_average_60_days_ago') is not None else None
-        eps_estimate_average_90_days_ago = float(row.get('eps_estimate_average_90_days_ago')) if row.get(
-            'eps_estimate_average_90_days_ago') is not None else None
-        eps_estimate_revision_up_trailing_7_days = float(
-            row.get('eps_estimate_revision_up_trailing_7_days')) if row.get(
-            'eps_estimate_revision_up_trailing_7_days') is not None else None
-        eps_estimate_revision_down_trailing_7_days = float(
-            row.get('eps_estimate_revision_down_trailing_7_days')) if row.get(
-            'eps_estimate_revision_down_trailing_7_days') is not None else None
-        eps_estimate_revision_up_trailing_30_days = float(
-            row.get('eps_estimate_revision_up_trailing_30_days')) if row.get(
-            'eps_estimate_revision_up_trailing_30_days') is not None else None
-        eps_estimate_revision_down_trailing_30_days = float(
-            row.get('eps_estimate_revision_down_trailing_30_days')) if row.get(
-            'eps_estimate_revision_down_trailing_30_days') is not None else None
-        revenue_estimate_average = float(row.get('revenue_estimate_average')) if row.get(
-            'revenue_estimate_average') is not None else None
-        revenue_estimate_high = float(row.get('revenue_estimate_high')) if row.get(
-            'revenue_estimate_high') is not None else None
-        revenue_estimate_low = float(row.get('revenue_estimate_low')) if row.get(
-            'revenue_estimate_low') is not None else None
-        revenue_estimate_analyst_count = float(row.get('revenue_estimate_analyst_count')) if row.get(
-            'revenue_estimate_analyst_count') is not None else None
+    revenue_by_period = {}
+    for item in revenue_data:
+        period = item.get('period')
+        if period:
+            revenue_by_period[period] = item
 
-        id_suffix = date or today
-        id_str = f"{ticker}_{id_suffix}"
+    for item in eps_data:
+        period = item.get('period')
+        freq = item.get('freq', '')
+        date = period or today
+
+        revenue_item = revenue_by_period.get(period, {})
+
+        horizon = freq
+        if freq == "quarterly":
+            horizon = "3month"
+        elif freq == "annual":
+            horizon = "12month"
+
+        id_str = f"{ticker}_{date}_{freq}"
 
         meta = {"index": {"_index": index_name, "_id": id_str}}
-
         doc = {
             "key_ticker": ticker,
             "date": date,
             "horizon": horizon,
-            "eps_estimate_average": eps_estimate_average,
-            "eps_estimate_high": eps_estimate_high,
-            "eps_estimate_low": eps_estimate_low,
-            "eps_estimate_analyst_count": eps_estimate_analyst_count,
-            "eps_estimate_average_7_days_ago": eps_estimate_average_7_days_ago,
-            "eps_estimate_average_30_days_ago": eps_estimate_average_30_days_ago,
-            "eps_estimate_average_60_days_ago": eps_estimate_average_60_days_ago,
-            "eps_estimate_average_90_days_ago": eps_estimate_average_90_days_ago,
-            "eps_estimate_revision_up_trailing_7_days": eps_estimate_revision_up_trailing_7_days,
-            "eps_estimate_revision_down_trailing_7_days": eps_estimate_revision_down_trailing_7_days,
-            "eps_estimate_revision_up_trailing_30_days": eps_estimate_revision_up_trailing_30_days,
-            "eps_estimate_revision_down_trailing_30_days": eps_estimate_revision_down_trailing_30_days,
-            "revenue_estimate_average": revenue_estimate_average,
-            "revenue_estimate_high": revenue_estimate_high,
-            "revenue_estimate_low": revenue_estimate_low,
-            "revenue_estimate_analyst_count": revenue_estimate_analyst_count,
+            "eps_estimate_average": _safe_float(item.get('epsAvg')),
+            "eps_estimate_high": _safe_float(item.get('epsHigh')),
+            "eps_estimate_low": _safe_float(item.get('epsLow')),
+            "eps_estimate_analyst_count": _safe_int(item.get('numberAnalysts')),
+            "eps_estimate_average_7_days_ago": None,
+            "eps_estimate_average_30_days_ago": None,
+            "eps_estimate_average_60_days_ago": None,
+            "eps_estimate_average_90_days_ago": None,
+            "eps_estimate_revision_up_trailing_7_days": None,
+            "eps_estimate_revision_down_trailing_7_days": None,
+            "eps_estimate_revision_up_trailing_30_days": None,
+            "eps_estimate_revision_down_trailing_30_days": None,
+            "revenue_estimate_average": _safe_float(revenue_item.get('revenueAvg')),
+            "revenue_estimate_high": _safe_float(revenue_item.get('revenueHigh')),
+            "revenue_estimate_low": _safe_float(revenue_item.get('revenueLow')),
+            "revenue_estimate_analyst_count": _safe_int(revenue_item.get('numberAnalysts')),
         }
 
         lines.append(json.dumps(meta))
         lines.append(json.dumps(doc))
 
-    return (("\n".join(lines)) + "\n").encode("utf-8")
+    return (("\n".join(lines)) + "\n").encode("utf-8") if lines else b""
 
 
 def ingest_stocks_fundamental_earnings_estimates(ticker: str, cutoff_days=3650, index_suffix="latest") -> Response:
-    es_url = os.environ.get('ELASTICSEARCH_URL')
-    es_api_key = os.environ.get('ELASTICSEARCH_API_KEY')
-    alpha_vantage_api_key = os.environ.get('ALPHAVANTAGE_API_KEY')
-    alpha_vantage_earnings_estimates_url = f"https://www.alphavantage.co/query?function=EARNINGS_ESTIMATES&symbol={ticker}&apikey={alpha_vantage_api_key}"
+    eps_data = _finnhub_get('/stock/eps-estimate', {'symbol': ticker}).get('data', [])
+    revenue_data = _finnhub_get('/stock/revenue-estimate', {'symbol': ticker}).get('data', [])
 
-    ticker_earnings_estimates_data = requests.get(alpha_vantage_earnings_estimates_url).json()
-    df = pd.json_normalize(ticker_earnings_estimates_data['estimates'])
-    df["date"] = pd.to_datetime(df["date"], errors='coerce')
-    cutoff = pd.Timestamp.now() - pd.Timedelta(days=cutoff_days)
-    ticker_recent_earnings_estimates = df[df["date"] >= cutoff].reset_index(drop=True)
-    pd.set_option('future.no_silent_downcasting', True)
-    ticker_recent_earnings_estimates = ticker_recent_earnings_estimates.replace({None: 0, 'None': 0, 'null': 0})
+    if not eps_data and not revenue_data:
+        return _es_bulk_post(b"\n")
 
-    return requests.post(
-        url=f"{es_url}/_bulk",
-        headers={
-            'Authorization': f'ApiKey {es_api_key}',
-            'Content-Type': 'application/x-ndjson'
-        },
-        data=format_bulk_stocks_fundamental_earnings_estimates(ticker, ticker_recent_earnings_estimates, index_suffix)
+    return _es_bulk_post(
+        format_bulk_stocks_fundamental_earnings_estimates(ticker, eps_data, revenue_data, index_suffix)
     )
 
 
+# ---------------------------------------------------------------------------
+# Markets News (Alpaca — unchanged)
+# ---------------------------------------------------------------------------
+
 def format_bulk_markets_news(df: pd.DataFrame, index_suffix: str) -> bytes:
-    index_name = f"quant-agents_markets-news_{index_suffix}"
+    index_name = f"quaks_markets-news_{index_suffix}"
     lines = []
 
     for _, row in df.iterrows():
