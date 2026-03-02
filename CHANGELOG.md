@@ -2,6 +2,26 @@
 
 <!-- version list -->
 
+## v1.3.22 (2026-03-02)
+
+### Bug Fixes
+
+- Adjusts indices ([#58](https://github.com/bsantanna/quaks/pull/58),
+  [`5a4424b`](https://github.com/bsantanna/quaks/commit/5a4424bbee0c2ce4f68befc2c919ebe0bafb04e5))
+
+- Adjusts null check ([#58](https://github.com/bsantanna/quaks/pull/58),
+  [`5a4424b`](https://github.com/bsantanna/quaks/commit/5a4424bbee0c2ce4f68befc2c919ebe0bafb04e5))
+
+- Complete list of companies ([#58](https://github.com/bsantanna/quaks/pull/58),
+  [`5a4424b`](https://github.com/bsantanna/quaks/commit/5a4424bbee0c2ce4f68befc2c919ebe0bafb04e5))
+
+- Fe us stock exchange ([#58](https://github.com/bsantanna/quaks/pull/58),
+  [`5a4424b`](https://github.com/bsantanna/quaks/commit/5a4424bbee0c2ce4f68befc2c919ebe0bafb04e5))
+
+- Terraform image versions ([#58](https://github.com/bsantanna/quaks/pull/58),
+  [`5a4424b`](https://github.com/bsantanna/quaks/commit/5a4424bbee0c2ce4f68befc2c919ebe0bafb04e5))
+
+
 ## v1.3.21 (2026-02-27)
 
 ### Bug Fixes
