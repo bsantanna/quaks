@@ -468,8 +468,8 @@ resource "elasticstack_elasticsearch_index_template" "quaks_stocks-fundamental-e
   }
 }
 
-resource "elasticstack_elasticsearch_index" "stocks_eod_nasdaq" {
-  name = "quaks_stocks-eod_nasdaq_100"
+resource "elasticstack_elasticsearch_index" "stocks_eod_nyse" {
+  name = "quaks_stocks-eod_nyse"
   alias = [{
     name = "quaks_stocks-eod_latest"
   }]
@@ -477,8 +477,44 @@ resource "elasticstack_elasticsearch_index" "stocks_eod_nasdaq" {
   depends_on = [elasticstack_elasticsearch_index_template.quaks_stocks-eod_template]
 }
 
+resource "elasticstack_elasticsearch_index" "stocks_eod_nasdaq" {
+  name = "quaks_stocks-eod_nasdaq"
+  alias = [{
+    name = "quaks_stocks-eod_latest"
+  }]
+  deletion_protection = false
+  depends_on = [elasticstack_elasticsearch_index_template.quaks_stocks-eod_template]
+}
+
+resource "elasticstack_elasticsearch_index" "stocks_eod_amex" {
+  name = "quaks_stocks-eod_amex"
+  alias = [{
+    name = "quaks_stocks-eod_latest"
+  }]
+  deletion_protection = false
+  depends_on = [elasticstack_elasticsearch_index_template.quaks_stocks-eod_template]
+}
+
+resource "elasticstack_elasticsearch_index" "markets_news_nyse" {
+  name = "quaks_markets-news_nyse"
+  alias = [{
+    name = "quaks_markets-news_latest"
+  }]
+  deletion_protection = false
+  depends_on = [elasticstack_elasticsearch_index_template.quaks_markets-news_template]
+}
+
 resource "elasticstack_elasticsearch_index" "markets_news_nasdaq" {
-  name = "quaks_markets-news_nasdaq_100"
+  name = "quaks_markets-news_nasdaq"
+  alias = [{
+    name = "quaks_markets-news_latest"
+  }]
+  deletion_protection = false
+  depends_on = [elasticstack_elasticsearch_index_template.quaks_markets-news_template]
+}
+
+resource "elasticstack_elasticsearch_index" "markets_news_amex" {
+  name = "quaks_markets-news_amex"
   alias = [{
     name = "quaks_markets-news_latest"
   }]
