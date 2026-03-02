@@ -60,4 +60,4 @@ testcontainers[redis]~=4.14.1
 testcontainers[vault]~=4.14.1
 typing_extensions~=4.15.0
 unstructured[md]~=0.18.31
-uvicorn~=0.40.0
+uvicorn~=0.41.0
