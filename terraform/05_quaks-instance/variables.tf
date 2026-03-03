@@ -13,7 +13,7 @@ variable "agent_lab_chart_version" {
 variable "quaks_image_tag" {
   description = "Docker image tag for Quaks application"
   type        = string
-  default     = "1.3.22"
+  default     = "1.3.23"
 }
 
 variable "quaks_image_repository" {
