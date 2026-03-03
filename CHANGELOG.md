@@ -2,6 +2,17 @@
 
 <!-- version list -->
 
+## v1.3.23 (2026-03-03)
+
+### Bug Fixes
+
+- Review and adjusts US symbols ([#59](https://github.com/bsantanna/quaks/pull/59),
+  [`fc6b6f3`](https://github.com/bsantanna/quaks/commit/fc6b6f3ca2d25dc063715817f4660d93bc4d4149))
+
+- Terraform image versions ([#59](https://github.com/bsantanna/quaks/pull/59),
+  [`fc6b6f3`](https://github.com/bsantanna/quaks/commit/fc6b6f3ca2d25dc063715817f4660d93bc4d4149))
+
+
 ## v1.3.22 (2026-03-02)
 
 ### Bug Fixes
