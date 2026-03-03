@@ -1,6 +1,7 @@
 import hashlib
 import math
 import os
+import time
 import requests
 import json
 import pandas as pd
@@ -41,12 +42,22 @@ def _epoch_to_month_name(epoch_val):
         return None
 
 
+_finnhub_request_times = []
+
+
 def _finnhub_get(path: str, params: dict = None) -> dict:
     finnhub_api_key = os.environ.get('FINNHUB_API_KEY')
     base_url = "https://finnhub.io/api/v1"
     if params is None:
         params = {}
     params['token'] = finnhub_api_key
+    now = time.time()
+    _finnhub_request_times[:] = [t for t in _finnhub_request_times if now - t < 60]
+    if len(_finnhub_request_times) >= 60:
+        wait = 60 - (now - _finnhub_request_times[0])
+        if wait > 0:
+            time.sleep(wait)
+    _finnhub_request_times.append(time.time())
     response = requests.get(f"{base_url}{path}", params=params)
     return response.json()
 
@@ -96,20 +107,20 @@ def _find_financial_value_multi(items: list, concepts: list) -> float:
 
 
 # ---------------------------------------------------------------------------
-# Stocks EOD (Alpaca — unchanged)
+# Stocks EOD (Alpaca with Finnhub fallback)
 # ---------------------------------------------------------------------------
 
-def format_bulk_stocks_eod(ticker: str, df: pd.DataFrame, index_suffix: str, source: str) -> bytes:
+def format_bulk_stocks_eod(ticker: str, df: pd.DataFrame, index_suffix: str) -> bytes:
     index_name = f"quaks_stocks-eod_{index_suffix}"
     lines = []
 
     for _, row in df.iterrows():
-        date_reference = row.get('timestamp') if source == "alphavantage" else row.get('t').split('T')[0]
-        open_ = row.get('open') if source == "alphavantage" else row.get('o')
-        close = row.get('close') if source == "alphavantage" else row.get('c')
-        high = row.get('high') if source == "alphavantage" else row.get('h')
-        low = row.get('low') if source == "alphavantage" else row.get('l')
-        volume = row.get('volume') if source == "alphavantage" else row.get('v')
+        date_reference = row.get('t').split('T')[0] if 'T' in str(row.get('t', '')) else str(row.get('t'))
+        open_ = row.get('o')
+        close = row.get('c')
+        high = row.get('h')
+        low = row.get('l')
+        volume = row.get('v')
 
         if open_ is None or close is None:
             continue
@@ -132,33 +143,58 @@ def format_bulk_stocks_eod(ticker: str, df: pd.DataFrame, index_suffix: str, sou
     return (("\n".join(lines)) + "\n").encode("utf-8")
 
 
-def ingest_stocks_eod(ticker: str, index_suffix="latest", source="alpaca") -> Response:
-    es_url = os.environ.get('ELASTICSEARCH_URL')
-    es_api_key = os.environ.get('ELASTICSEARCH_API_KEY')
+def _fetch_eod_alpaca(ticker: str, start_date: str, end_date: str) -> pd.DataFrame:
+    alpaca_api_key = os.environ.get('APCA-API-KEY-ID')
+    alpaca_api_secret = os.environ.get('APCA-API-SECRET-KEY')
+    url = f"https://data.alpaca.markets/v2/stocks/{ticker}/bars?timeframe=1D&start={start_date}&end={end_date}&adjustment=all"
+    response = requests.get(url, headers={
+        "accept": "application/json",
+        "APCA-API-KEY-ID": alpaca_api_key,
+        "APCA-API-SECRET-KEY": alpaca_api_secret
+    })
+    if response.status_code != 200 or not response.json().get('bars'):
+        return None
+    return pd.json_normalize(response.json().get('bars'))
 
-    ticker_daily_time_series = None
 
-    if source == "alpaca":
-        now = datetime.now()
-        yesterday = now.replace(day=now.day - 1)
-        back_one_year = now.replace(year=now.year - 1)
-        alpaca_api_key = os.environ.get('APCA-API-KEY-ID')
-        alpaca_api_secret = os.environ.get('APCA-API-SECRET-KEY')
-        alpaca_time_series_url = f"https://data.alpaca.markets/v2/stocks/{ticker}/bars?timeframe=1D&start={back_one_year.strftime('%Y-%m-%d')}&end={yesterday.strftime('%Y-%m-%d')}&adjustment=all"
-        response = requests.get(alpaca_time_series_url, headers={
-            "accept": "application/json",
-            "APCA-API-KEY-ID": alpaca_api_key,
-            "APCA-API-SECRET-KEY": alpaca_api_secret
-        })
-        ticker_daily_time_series = pd.json_normalize(response.json().get('bars'))
+def _fetch_eod_finnhub(ticker: str, start_date: str, end_date: str) -> pd.DataFrame:
+    from_ts = int(datetime.strptime(start_date, '%Y-%m-%d').timestamp())
+    to_ts = int(datetime.strptime(end_date, '%Y-%m-%d').timestamp())
+    result = _finnhub_get('/stock/candle', {
+        'symbol': ticker,
+        'resolution': 'D',
+        'from': from_ts,
+        'to': to_ts,
+    })
+    if result.get('s') != 'ok' or not result.get('c'):
+        return None
+    df = pd.DataFrame({
+        'o': result['o'],
+        'c': result['c'],
+        'h': result['h'],
+        'l': result['l'],
+        'v': result['v'],
+        't': [datetime.fromtimestamp(ts).strftime('%Y-%m-%d') for ts in result['t']],
+    })
+    return df
 
-    return requests.post(
-        url=f"{es_url}/_bulk",
-        headers={
-            'Authorization': f'ApiKey {es_api_key}',
-            'Content-Type': 'application/x-ndjson'
-        },
-        data=format_bulk_stocks_eod(ticker, ticker_daily_time_series, index_suffix, source)
+
+def ingest_stocks_eod(ticker: str, index_suffix="latest") -> Response:
+    now = datetime.now()
+    yesterday = now.replace(day=now.day - 1)
+    back_one_year = now.replace(year=now.year - 1)
+    start_date = back_one_year.strftime('%Y-%m-%d')
+    end_date = yesterday.strftime('%Y-%m-%d')
+
+    ticker_daily_time_series = _fetch_eod_alpaca(ticker, start_date, end_date)
+    if ticker_daily_time_series is None:
+        ticker_daily_time_series = _fetch_eod_finnhub(ticker, start_date, end_date)
+
+    if ticker_daily_time_series is None:
+        return _es_bulk_post(b"\n")
+
+    return _es_bulk_post(
+        format_bulk_stocks_eod(ticker, ticker_daily_time_series, index_suffix)
     )
 
 
@@ -340,6 +376,9 @@ def _enrich_metadata_with_metrics(ticker: str, doc: dict) -> dict:
         doc["analyst_target_price"] = _safe_float(m.get('targetMedianPrice'))
         doc["moving_average_50_day"] = _safe_float(m.get('50DayMA'))
         doc["moving_average_200_day"] = _safe_float(m.get('200DayMA'))
+        doc["diluted_eps_ttm"] = _safe_float(m.get('epsBasicExclExtraItemsTTM'))
+        doc["quarterly_earnings_growth_yoy"] = _safe_float(m.get('epsGrowthQuarterlyYoy'))
+        doc["quarterly_revenue_growth_yoy"] = _safe_float(m.get('revenueGrowthQuarterlyYoy'))
     return doc
 
 
@@ -468,12 +507,13 @@ def format_bulk_stocks_fundamental_income_statement(ticker: str, reports: list, 
     return (("\n".join(lines)) + "\n").encode("utf-8") if lines else b""
 
 
-def ingest_stocks_fundamental_income_statement(ticker: str, cutoff_days=3650, index_suffix="latest") -> Response:
-    result = _finnhub_get('/stock/financials-reported', {
-        'symbol': ticker,
-        'freq': 'quarterly',
-    })
-    reports = result.get('data', [])
+def ingest_stocks_fundamental_income_statement(ticker: str, cutoff_days=3650, index_suffix="latest", reports=None) -> Response:
+    if reports is None:
+        result = _finnhub_get('/stock/financials-reported', {
+            'symbol': ticker,
+            'freq': 'quarterly',
+        })
+        reports = result.get('data', [])
 
     if not reports:
         return _es_bulk_post(b"\n")
@@ -628,12 +668,13 @@ def format_bulk_stocks_fundamental_balance_sheet(ticker: str, reports: list, ind
     return (("\n".join(lines)) + "\n").encode("utf-8") if lines else b""
 
 
-def ingest_stocks_fundamental_balance_sheet(ticker: str, cutoff_days=3650, index_suffix="latest") -> Response:
-    result = _finnhub_get('/stock/financials-reported', {
-        'symbol': ticker,
-        'freq': 'quarterly',
-    })
-    reports = result.get('data', [])
+def ingest_stocks_fundamental_balance_sheet(ticker: str, cutoff_days=3650, index_suffix="latest", reports=None) -> Response:
+    if reports is None:
+        result = _finnhub_get('/stock/financials-reported', {
+            'symbol': ticker,
+            'freq': 'quarterly',
+        })
+        reports = result.get('data', [])
 
     if not reports:
         return _es_bulk_post(b"\n")
@@ -760,12 +801,13 @@ def format_bulk_stocks_fundamental_cash_flow(ticker: str, reports: list, index_s
     return (("\n".join(lines)) + "\n").encode("utf-8") if lines else b""
 
 
-def ingest_stocks_fundamental_cash_flow(ticker: str, cutoff_days=3650, index_suffix="latest") -> Response:
-    result = _finnhub_get('/stock/financials-reported', {
-        'symbol': ticker,
-        'freq': 'quarterly',
-    })
-    reports = result.get('data', [])
+def ingest_stocks_fundamental_cash_flow(ticker: str, cutoff_days=3650, index_suffix="latest", reports=None) -> Response:
+    if reports is None:
+        result = _finnhub_get('/stock/financials-reported', {
+            'symbol': ticker,
+            'freq': 'quarterly',
+        })
+        reports = result.get('data', [])
 
     if not reports:
         return _es_bulk_post(b"\n")
@@ -776,6 +818,25 @@ def ingest_stocks_fundamental_cash_flow(ticker: str, cutoff_days=3650, index_suf
     return _es_bulk_post(
         format_bulk_stocks_fundamental_cash_flow(ticker, reports, index_suffix)
     )
+
+
+def ingest_stocks_fundamentals(ticker: str, cutoff_days=3650, index_suffix="latest") -> list:
+    """Unified fundamentals ingestion: single API call for IC, BS, and CF."""
+    result = _finnhub_get('/stock/financials-reported', {
+        'symbol': ticker,
+        'freq': 'quarterly',
+    })
+    reports = result.get('data', [])
+
+    if not reports:
+        empty = _es_bulk_post(b"\n")
+        return [empty, empty, empty]
+
+    return [
+        ingest_stocks_fundamental_income_statement(ticker, cutoff_days, index_suffix, reports=reports),
+        ingest_stocks_fundamental_balance_sheet(ticker, cutoff_days, index_suffix, reports=reports),
+        ingest_stocks_fundamental_cash_flow(ticker, cutoff_days, index_suffix, reports=reports),
+    ]
 
 
 # ---------------------------------------------------------------------------

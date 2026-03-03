@@ -42,11 +42,21 @@ def load_stocks_estimated_earnings():
         f = safe_float(val)
         return int(f) if f is not None else None
 
+    finnhub_request_times = []
+
     def finnhub_get(path, params=None):
         finnhub_api_key = os.environ.get('FINNHUB_API_KEY')
         if params is None:
             params = {}
         params['token'] = finnhub_api_key
+        now = time.time()
+        finnhub_request_times[:] = [t for t in finnhub_request_times if now - t < 60]
+        if len(finnhub_request_times) >= 60:
+            wait = 60 - (now - finnhub_request_times[0])
+            if wait > 0:
+                print(f"  Finnhub rate limit reached, waiting {wait:.1f}s...")
+                time.sleep(wait)
+        finnhub_request_times.append(time.time())
         return requests.get(f"https://finnhub.io/api/v1{path}", params=params).json()
 
     def map_frequency(freq):
@@ -138,7 +148,7 @@ def load_stocks_estimated_earnings():
             ingest_estimated_earnings(ticker, index)
         except Exception as e:
             print(f"Error processing estimated earnings for {ticker}: {e}")
-        time.sleep(2)
+        time.sleep(0.5)
 
 with dag:
     load_stocks_estimated_earnings()
