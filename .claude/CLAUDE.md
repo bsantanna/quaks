@@ -37,7 +37,8 @@ ruff check --fix .
 npm install
 npm start                   # Dev server on port 4200
 npm run build               # Production build → copies output to app/static/frontend/
-npm test                    # Karma/Jasmine tests
+npx jest                    # Run all Jest tests
+npx jest -- <pattern>       # Run tests matching a pattern (e.g. npx jest -- markets-performance)
 ```
 
 ### Infrastructure

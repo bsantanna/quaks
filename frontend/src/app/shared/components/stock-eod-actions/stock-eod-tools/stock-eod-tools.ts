@@ -14,6 +14,6 @@ export class StockEodTools {
   private readonly router = inject(Router);
   readonly isStocksRoute = this.router.url.includes('/markets/stocks/');
   readonly isNewsRoute = this.router.url.includes('/markets/news/');
-  readonly isPerformanceRoute = this.router.url.includes('/markets/performance/');
+  readonly isPerformanceRoute = this.router.url.includes('/markets/performance');
 
 }

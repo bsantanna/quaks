@@ -26,7 +26,7 @@ export const routes: Routes = [
     children: [
       {
         title: 'Performance comparison',
-        path: 'performance/:keyTicker',
+        path: 'performance',
         component: MarketsPerformanceComparison
       },
       {
