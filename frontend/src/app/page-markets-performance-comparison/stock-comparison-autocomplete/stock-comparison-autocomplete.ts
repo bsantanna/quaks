@@ -1,44 +1,39 @@
 import {Component, computed, ElementRef, inject, input, output, signal, viewChild} from '@angular/core';
-
 import {FormsModule} from '@angular/forms';
 import {IndexedKeyTicker, IndexedKeyTickerService} from '../../shared';
 import {STOCK_MARKETS} from '../../constants';
 
-
 @Component({
-  selector: 'app-stock-autocomplete',
+  selector: 'app-stock-comparison-autocomplete',
   standalone: true,
   imports: [FormsModule],
-  templateUrl: './stock-autocomplete.html',
-  styleUrl: './stock-autocomplete.scss',
+  templateUrl: './stock-comparison-autocomplete.html',
+  styleUrl: './stock-comparison-autocomplete.scss',
 })
-export class StockAutocompleteComponent {
+export class StockComparisonAutocomplete {
 
-  readonly inputPlaceholder = input('Search stocks (e.g., NVDA, GOOG)');
+  readonly symbols = input.required<string[]>();
+  readonly symbolsChange = output<string[]>();
+
   readonly indexedKeyTickerService = inject(IndexedKeyTickerService);
   readonly searchQuery = signal('');
   readonly isOpen = signal(false);
   readonly highlightedIndex = signal(-1);
   readonly dropdownRef = viewChild<ElementRef>('dropdown');
 
-  // Filtered stocks based on search query
   filteredStocks = computed(() => {
     const query = this.searchQuery().toLowerCase().trim();
-
     if (!query || query.length === 0) {
       return [];
     }
-
+    const currentSymbols = this.symbols();
     return this.indexedKeyTickerService.indexedKeyTickers().filter(
       (stock) =>
         (stock.key_ticker.toLowerCase().includes(query) || stock.name.toLowerCase().includes(query))
         && STOCK_MARKETS.filter(market => market === stock.index)
+        && !currentSymbols.includes(stock.key_ticker)
     ).slice(0, 50);
-
   });
-
-  // Output event for when a stock is selected
-  stockSelected = output<IndexedKeyTicker>();
 
   onSearch(event: Event): void {
     const target = event.target as HTMLInputElement;
@@ -54,7 +49,6 @@ export class StockAutocompleteComponent {
   }
 
   onInputBlur(): void {
-    // Delay to allow click on dropdown item to register
     setTimeout(() => {
       this.isOpen.set(false);
       this.highlightedIndex.set(-1);
@@ -80,16 +74,29 @@ export class StockAutocompleteComponent {
     } else if (event.key === 'Enter') {
       event.preventDefault();
       if (current >= 0 && current < stocks.length) {
-        this.onSelectStock(stocks[current]);
+        this.addSymbol(stocks[current]);
       }
     }
   }
 
-  onSelectStock(stock: IndexedKeyTicker): void {
+  addSymbol(stock: IndexedKeyTicker): void {
+    const current = this.symbols();
+    if (!current.includes(stock.key_ticker)) {
+      this.symbolsChange.emit([...current, stock.key_ticker]);
+    }
     this.searchQuery.set('');
     this.isOpen.set(false);
     this.highlightedIndex.set(-1);
-    this.stockSelected.emit(stock);
+  }
+
+  removeSymbol(symbol: string): void {
+    this.symbolsChange.emit(this.symbols().filter(s => s !== symbol));
+  }
+
+  onClearSearch(): void {
+    this.searchQuery.set('');
+    this.isOpen.set(false);
+    this.highlightedIndex.set(-1);
   }
 
   private scrollToHighlighted(index: number): void {
@@ -99,12 +106,6 @@ export class StockAutocompleteComponent {
     if (items[index]) {
       items[index].scrollIntoView({block: 'nearest'});
     }
-  }
-
-  onClearSearch(): void {
-    this.searchQuery.set('');
-    this.isOpen.set(false);
-    this.highlightedIndex.set(-1);
   }
 
 }
