@@ -1,4 +1,4 @@
-import {Component, computed, inject, input, output, signal} from '@angular/core';
+import {Component, computed, ElementRef, inject, input, output, signal, viewChild} from '@angular/core';
 
 import {FormsModule} from '@angular/forms';
 import {IndexedKeyTicker, IndexedKeyTickerService} from '../../shared';
@@ -19,6 +19,7 @@ export class StockAutocompleteComponent {
   readonly searchQuery = signal('');
   readonly isOpen = signal(false);
   readonly highlightedIndex = signal(-1);
+  readonly dropdownRef = viewChild<ElementRef>('dropdown');
 
   // Filtered stocks based on search query
   filteredStocks = computed(() => {
@@ -32,7 +33,7 @@ export class StockAutocompleteComponent {
       (stock) =>
         (stock.key_ticker.toLowerCase().includes(query) || stock.name.toLowerCase().includes(query))
         && STOCK_MARKETS.filter(market => market === stock.index)
-    );
+    ).slice(0, 50);
 
   });
 
@@ -68,10 +69,14 @@ export class StockAutocompleteComponent {
 
     if (event.key === 'ArrowDown') {
       event.preventDefault();
-      this.highlightedIndex.set(current < stocks.length - 1 ? current + 1 : 0);
+      const next = current < stocks.length - 1 ? current + 1 : 0;
+      this.highlightedIndex.set(next);
+      this.scrollToHighlighted(next);
     } else if (event.key === 'ArrowUp') {
       event.preventDefault();
-      this.highlightedIndex.set(current > 0 ? current - 1 : stocks.length - 1);
+      const prev = current > 0 ? current - 1 : stocks.length - 1;
+      this.highlightedIndex.set(prev);
+      this.scrollToHighlighted(prev);
     } else if (event.key === 'Enter') {
       event.preventDefault();
       if (current >= 0 && current < stocks.length) {
@@ -85,6 +90,15 @@ export class StockAutocompleteComponent {
     this.isOpen.set(false);
     this.highlightedIndex.set(-1);
     this.stockSelected.emit(stock);
+  }
+
+  private scrollToHighlighted(index: number): void {
+    const dropdown = this.dropdownRef()?.nativeElement;
+    if (!dropdown) return;
+    const items = dropdown.querySelectorAll('button');
+    if (items[index]) {
+      items[index].scrollIntoView({block: 'nearest'});
+    }
   }
 
   onClearSearch(): void {

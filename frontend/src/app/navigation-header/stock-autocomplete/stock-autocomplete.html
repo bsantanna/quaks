@@ -31,6 +31,7 @@
   <!-- Dropdown Menu -->
   @if (isOpen() && filteredStocks().length > 0) {
     <div
+      #dropdown
       class="absolute top-full left-0 right-0 mt-1 max-h-64 overflow-y-auto rounded-md border border-slate-400/25 bg-slate-800 shadow-lg z-50"
     >
       @for (stock of filteredStocks(); track stock.key_ticker; let i = $index) {
