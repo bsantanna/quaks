@@ -1,2 +1,13 @@
-<!-- TODO : use <app-stock-comparison-autocomplete> -->
-<!-- TODO : use <app-stock-comparison-charts> -->
+<div class="flex items-start gap-4 py-4">
+  <div class="flex-1 min-w-0">
+    <app-stock-comparison-autocomplete
+      [symbols]="symbols()"
+      (symbolsChange)="updateSymbols($event)"
+    />
+  </div>
+  <app-stock-comparison-time
+    [intervalInDays]="intervalInDays()"
+    (intervalInDaysChange)="intervalInDays.set($event)"
+  />
+</div>
+<app-stock-comparison-charts [symbols]="symbols()" [intervalInDays]="intervalInDays()" />

@@ -1,1 +1,11 @@
-<p>stock-comparison-charts works!</p>
+@if (symbols().length > 0) {
+  <iframe #dashboardIframe
+          (load)="onIframeLoad(dashboardIframe)"
+          [src]="kibanaUrl()"
+          class="w-full border-none iframe_adjusted_height">
+  </iframe>
+} @else {
+  <div class="flex items-center justify-center py-16 text-white/40 text-sm">
+    Add symbols above to compare performance
+  </div>
+}

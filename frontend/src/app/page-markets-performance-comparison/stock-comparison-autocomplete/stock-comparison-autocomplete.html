@@ -1,1 +1,77 @@
-<p>stock-comparison-autocomplete works!</p>
+<div class="relative w-full">
+  <!-- Search Input -->
+  <div class="relative flex items-center">
+    <img src="/svg/icon-search.svg" class="pointer-events-none absolute left-3 size-5" aria-hidden="true" alt="" />
+
+    <input
+      type="text"
+      [value]="searchQuery()"
+      (input)="onSearch($event)"
+      (focus)="onInputFocus()"
+      (blur)="onInputBlur()"
+      (keydown)="onKeyDown($event)"
+      placeholder="Add symbol to compare (e.g., NVDA, GOOG)"
+      class="block w-full rounded-md bg-slate-700/50 py-1.5 pr-10 pl-10 text-base text-white outline-1 -outline-offset-1 outline-slate-400/25 placeholder:text-white/50 focus:outline-2 focus:-outline-offset-2 focus:outline-white sm:text-sm/6 transition-all duration-150"
+    />
+
+    @if (searchQuery().length > 0) {
+      <button
+        (click)="onClearSearch()"
+        class="absolute right-3 inline-flex items-center justify-center rounded-full p-0.5 text-white/50 hover:text-white hover:bg-slate-600/50 transition-all duration-150 cursor-pointer"
+        aria-label="Clear search"
+      >
+        <img src="/svg/icon-close.svg" class="size-4" aria-hidden="true" alt="" />
+      </button>
+    }
+  </div>
+
+    <!-- Selected Symbols -->
+  @if (symbols().length > 0) {
+    <div class="flex flex-wrap gap-2 mt-3">
+      @for (symbol of symbols(); track symbol) {
+        <span class="inline-flex items-center gap-x-1.5 rounded-md bg-slate-700/50 px-3 py-1.5 text-sm font-semibold text-white outline-1 -outline-offset-1 outline-slate-400/25">
+          {{ symbol }}
+          <button
+            (click)="removeSymbol(symbol)"
+            class="inline-flex items-center justify-center rounded-full p-0.5 text-white/50 hover:text-white hover:bg-slate-600/50 transition-all duration-150 cursor-pointer"
+            aria-label="Remove {{ symbol }}"
+          >
+            <img src="/svg/icon-close.svg" class="size-3.5" aria-hidden="true" alt="" />
+          </button>
+        </span>
+      }
+    </div>
+  }
+
+
+  <!-- Dropdown Menu -->
+  @if (isOpen() && filteredStocks().length > 0) {
+    <div
+      #dropdown
+      class="absolute top-full left-0 right-0 mt-1 max-h-64 overflow-y-auto rounded-md border border-slate-400/25 bg-slate-800 shadow-lg z-50"
+    >
+      @for (stock of filteredStocks(); track stock.key_ticker; let i = $index) {
+        <button
+          (click)="addSymbol(stock)"
+          [class]="'block w-full px-4 py-2.5 text-left text-sm text-white focus:outline-none transition-colors duration-100 first:rounded-t-md last:rounded-b-md border-b border-slate-700/50 last:border-b-0 cursor-pointer ' + (highlightedIndex() === i ? 'bg-slate-700/75' : 'hover:bg-slate-700/75')"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex flex-col">
+              <span class="font-semibold text-white">{{ stock.key_ticker }}</span>
+              <span class="text-xs text-white/60">{{ stock.name }}</span>
+            </div>
+          </div>
+        </button>
+      }
+    </div>
+  }
+
+  <!-- No Results Message -->
+  @if (isOpen() && searchQuery().length > 0 && filteredStocks().length === 0) {
+    <div
+      class="absolute top-full left-0 right-0 mt-1 rounded-md border border-slate-400/25 bg-slate-800 px-4 py-3 text-center text-sm text-white/60"
+    >
+      No stocks found for "{{ searchQuery() }}"
+    </div>
+  }
+</div>

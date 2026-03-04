@@ -1,7 +1,7 @@
 export const DASHBOARDS_ENDPOINT = 'https://quaks.ai/dashboards/app/dashboards';
 
 export const DASHBOARDS_IDS = {
-  'stocks_comparison': '8af6c96d-3b25-4a27-9ec6-96e775e666e1',
+  'stocks_comparison': 'be7be596-f3e4-4473-8f38-863b42c9b985',
   'stocks_eod_ohlcv': '827cced8-7899-40de-93c0-0515755f221b',
   'stocks_eod_indicator_ad': '347f6198-18f3-4a89-a139-68ccc5489691',
   'stocks_eod_indicator_adx': '35a14add-6d73-47ae-b32f-d6f893a8f674',
