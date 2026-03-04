@@ -2,6 +2,32 @@
 
 <!-- version list -->
 
+## v1.3.24 (2026-03-04)
+
+### Bug Fixes
+
+- Adjusts stock autocomplete ([#60](https://github.com/bsantanna/quaks/pull/60),
+  [`3ecc5bb`](https://github.com/bsantanna/quaks/commit/3ecc5bbe67fc5af1f1fb064ed289f960a15e2220))
+
+- Bundle performance comparison prototype ([#60](https://github.com/bsantanna/quaks/pull/60),
+  [`3ecc5bb`](https://github.com/bsantanna/quaks/commit/3ecc5bbe67fc5af1f1fb064ed289f960a15e2220))
+
+- Kibana deployment and stock list adjusts ([#60](https://github.com/bsantanna/quaks/pull/60),
+  [`3ecc5bb`](https://github.com/bsantanna/quaks/commit/3ecc5bbe67fc5af1f1fb064ed289f960a15e2220))
+
+- Performance comparison prototype ([#60](https://github.com/bsantanna/quaks/pull/60),
+  [`3ecc5bb`](https://github.com/bsantanna/quaks/commit/3ecc5bbe67fc5af1f1fb064ed289f960a15e2220))
+
+- Performance comparison prototype 2 ([#60](https://github.com/bsantanna/quaks/pull/60),
+  [`3ecc5bb`](https://github.com/bsantanna/quaks/commit/3ecc5bbe67fc5af1f1fb064ed289f960a15e2220))
+
+- Performance comparison start ([#60](https://github.com/bsantanna/quaks/pull/60),
+  [`3ecc5bb`](https://github.com/bsantanna/quaks/commit/3ecc5bbe67fc5af1f1fb064ed289f960a15e2220))
+
+- Us stocks comparison prototype ([#60](https://github.com/bsantanna/quaks/pull/60),
+  [`3ecc5bb`](https://github.com/bsantanna/quaks/commit/3ecc5bbe67fc5af1f1fb064ed289f960a15e2220))
+
+
 ## v1.3.23 (2026-03-03)
 
 ### Bug Fixes
