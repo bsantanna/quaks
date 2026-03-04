@@ -1,0 +1,9 @@
+.iframe_adjusted_height {
+  height: 80vh;
+}
+
+@media (max-height: 599px) {
+  .iframe_adjusted_height {
+    display: none;
+  }
+}

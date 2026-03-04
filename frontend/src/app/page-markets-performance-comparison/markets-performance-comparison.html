@@ -1,1 +1,13 @@
-<p>markets-performance-comparison works!</p>
+<div class="flex items-start gap-4 py-4">
+  <div class="flex-1 min-w-0">
+    <app-stock-comparison-autocomplete
+      [symbols]="symbols()"
+      (symbolsChange)="updateSymbols($event)"
+    />
+  </div>
+  <app-stock-comparison-time
+    [intervalInDays]="intervalInDays()"
+    (intervalInDaysChange)="intervalInDays.set($event)"
+  />
+</div>
+<app-stock-comparison-charts [symbols]="symbols()" [intervalInDays]="intervalInDays()" />
