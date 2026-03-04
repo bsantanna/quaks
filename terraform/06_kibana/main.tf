@@ -64,7 +64,6 @@ resource "helm_release" "kibana" {
       }
 
       config = {
-        "theme:darkMode" = "enabled"
 
         server = {
           publicBaseUrl   = "https://${var.quaks_fqdn}/dashboards"

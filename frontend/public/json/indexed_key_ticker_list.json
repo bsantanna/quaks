@@ -85,6 +85,11 @@
     "name": "ABM Industries Incorporated"
   },
   {
+    "key_ticker": "ABNB",
+    "index": "nasdaq",
+    "name": "Airbnb, Inc."
+  },
+  {
     "key_ticker": "ABR",
     "index": "nyse",
     "name": "Arbor Realty Trust"
@@ -1203,6 +1208,11 @@
     "key_ticker": "ARLP",
     "index": "nasdaq",
     "name": "Alliance Resource Partners, L.P."
+  },
+  {
+    "key_ticker": "ARM",
+    "index": "nasdaq",
+    "name": "Arm Holdings plc"
   },
   {
     "key_ticker": "ARMK",
@@ -4005,6 +4015,11 @@
     "name": "Cohu, Inc."
   },
   {
+    "key_ticker": "COIN",
+    "index": "nasdaq",
+    "name": "Coinbase Global, Inc."
+  },
+  {
     "key_ticker": "COKE",
     "index": "nasdaq",
     "name": "Coca-Cola Consolidated, Inc."
@@ -4745,6 +4760,11 @@
     "name": "Dare Bioscience, Inc."
   },
   {
+    "key_ticker": "DASH",
+    "index": "nasdaq",
+    "name": "DoorDash, Inc."
+  },
+  {
     "key_ticker": "DAVA",
     "index": "nyse",
     "name": "Endava plc"
@@ -4818,6 +4838,11 @@
     "key_ticker": "DDIV",
     "index": "nasdaq",
     "name": "First Trust Dorsey Wright Momentum & Dividend ETF"
+  },
+  {
+    "key_ticker": "DDOG",
+    "index": "nasdaq",
+    "name": "Datadog, Inc."
   },
   {
     "key_ticker": "DDS",
@@ -5003,6 +5028,11 @@
     "key_ticker": "DKL",
     "index": "nyse",
     "name": "Delek Logistics Partners, L.P."
+  },
+  {
+    "key_ticker": "DKNG",
+    "index": "nasdaq",
+    "name": "DraftKings Inc."
   },
   {
     "key_ticker": "DKS",
@@ -8585,6 +8615,11 @@
     "name": "Honeywell International Inc."
   },
   {
+    "key_ticker": "HOOD",
+    "index": "nasdaq",
+    "name": "Robinhood Markets, Inc."
+  },
+  {
     "key_ticker": "HOOK",
     "index": "nasdaq",
     "name": "HOOKIPA Pharma Inc."
@@ -10490,6 +10525,11 @@
     "name": "LendingClub Corporation"
   },
   {
+    "key_ticker": "LCID",
+    "index": "nasdaq",
+    "name": "Lucid Group, Inc."
+  },
+  {
     "key_ticker": "LCII",
     "index": "nyse",
     "name": "LCI Industries "
@@ -10648,6 +10688,11 @@
     "key_ticker": "LHX",
     "index": "nyse",
     "name": "L3Harris Technologies, Inc."
+  },
+  {
+    "key_ticker": "LI",
+    "index": "nasdaq",
+    "name": "Li Auto Inc."
   },
   {
     "key_ticker": "LIFE",
@@ -11380,6 +11425,11 @@
     "name": "MetLife, Inc."
   },
   {
+    "key_ticker": "META",
+    "index": "nasdaq",
+    "name": "Meta Platforms, Inc."
+  },
+  {
     "key_ticker": "METC",
     "index": "nasdaq",
     "name": "Ramaco Resources, Inc."
@@ -11673,6 +11723,11 @@
     "key_ticker": "MNDO",
     "index": "nasdaq",
     "name": "MIND C.T.I. Ltd."
+  },
+  {
+    "key_ticker": "MNDY",
+    "index": "nasdaq",
+    "name": "monday.com Ltd."
   },
   {
     "key_ticker": "MNKD",
@@ -12363,6 +12418,11 @@
     "key_ticker": "NESR",
     "index": "nasdaq",
     "name": "National Energy Services Reunited Corp."
+  },
+  {
+    "key_ticker": "NET",
+    "index": "nyse",
+    "name": "Cloudflare, Inc."
   },
   {
     "key_ticker": "NEU",
@@ -14130,6 +14190,11 @@
     "name": "Pulse Biosciences, Inc"
   },
   {
+    "key_ticker": "PLTR",
+    "index": "nasdaq",
+    "name": "Palantir Technologies Inc."
+  },
+  {
     "key_ticker": "PLUG",
     "index": "nasdaq",
     "name": "Plug Power, Inc."
@@ -14875,6 +14940,11 @@
     "name": "Rhinebeck Bancorp, Inc."
   },
   {
+    "key_ticker": "RBLX",
+    "index": "nyse",
+    "name": "Roblox Corporation"
+  },
+  {
     "key_ticker": "RC",
     "index": "nyse",
     "name": "Ready Capital Corporation"
@@ -15203,6 +15273,11 @@
     "key_ticker": "RIV",
     "index": "nyse",
     "name": "RiverNorth Opportunities Fund, Inc."
+  },
+  {
+    "key_ticker": "RIVN",
+    "index": "nasdaq",
+    "name": "Rivian Automotive, Inc."
   },
   {
     "key_ticker": "RJF",
@@ -16190,6 +16265,11 @@
     "name": "SmartFinancial, Inc."
   },
   {
+    "key_ticker": "SMCI",
+    "index": "nasdaq",
+    "name": "Super Micro Computer, Inc."
+  },
+  {
     "key_ticker": "SMFG",
     "index": "nyse",
     "name": "Sumitomo Mitsui Financial Group Inc"
@@ -16300,6 +16380,11 @@
     "name": "Sonoma Pharmaceuticals, Inc."
   },
   {
+    "key_ticker": "SNOW",
+    "index": "nyse",
+    "name": "Snowflake Inc."
+  },
+  {
     "key_ticker": "SNPS",
     "index": "nasdaq",
     "name": "Synopsys, Inc."
@@ -16328,6 +16413,11 @@
     "key_ticker": "SOCL",
     "index": "nasdaq",
     "name": "Global X Social Media ETF"
+  },
+  {
+    "key_ticker": "SOFI",
+    "index": "nasdaq",
+    "name": "SoFi Technologies, Inc."
   },
   {
     "key_ticker": "SOHOB",
@@ -16463,6 +16553,11 @@
     "key_ticker": "SPXX",
     "index": "nyse",
     "name": "Nuveen S&P 500 Dynamic Overwrite Fund"
+  },
+  {
+    "key_ticker": "SQ",
+    "index": "nyse",
+    "name": "Block, Inc."
   },
   {
     "key_ticker": "SQLV",
@@ -19483,6 +19578,11 @@
     "key_ticker": "XPER",
     "index": "nasdaq",
     "name": "Xperi Corporation"
+  },
+  {
+    "key_ticker": "XPEV",
+    "index": "nyse",
+    "name": "XPeng Inc."
   },
   {
     "key_ticker": "XPL",
