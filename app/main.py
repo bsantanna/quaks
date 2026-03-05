@@ -172,7 +172,7 @@ def setup_spa_fallback(application: FastAPI):
         response = await call_next(request)
         accept = request.headers.get("accept", "")
         if response.status_code == 404 and "text/html" in accept:
-            return FileResponse(f"{static_dir}/index.html")
+            return FileResponse(f"{static_dir}/index.csr.html")
         return response
 
     application.mount(
