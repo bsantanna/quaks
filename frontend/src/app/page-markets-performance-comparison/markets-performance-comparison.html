@@ -1,13 +1,30 @@
-<div class="flex items-start gap-4 py-4">
+<div class="flex items-center gap-4 py-4">
   <div class="flex-1 min-w-0">
     <app-stock-comparison-autocomplete
       [symbols]="symbols()"
       (symbolsChange)="updateSymbols($event)"
     />
   </div>
-  <app-stock-comparison-time
-    [intervalInDays]="intervalInDays()"
-    (intervalInDaysChange)="intervalInDays.set($event)"
-  />
+  @if (useIntervalInDates()) {
+    <div class="text-white text-sm font-mono text-left">
+      <div>Start: {{ formattedInterval().from }}</div>
+      <div>End:&nbsp;&nbsp; {{ formattedInterval().to }}</div>
+    </div>
+  } @else {
+    <app-stock-comparison-time
+      [intervalInDays]="intervalInDays()"
+      (intervalInDaysChange)="intervalInDays.set($event)"
+    />
+  }
 </div>
-<app-stock-comparison-charts [symbols]="symbols()" [intervalInDays]="intervalInDays()" />
+
+<div class="max-h-[524px] overflow-hidden">
+  @if (isProduction) {
+    <app-stock-comparison-charts [symbols]="symbols()" [intervalInDays]="intervalInDays()" />
+  } @else {
+    <p class="text-white">
+      Charts are not available on development environment.
+      Cross domain issues prevent the charts from loading.
+    </p>
+  }
+</div>

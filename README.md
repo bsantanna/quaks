@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="doc/logo.svg" alt="Quaks Logo" width="200" />
+</div>
+
 <h2 align="center"><a href="https://github.com/bsantanna/quaks">Quaks</a></h2>
 <h4 align="center">Quantitative Agents for Asset Management, Pricing & Alpha Seeking</h4>
 

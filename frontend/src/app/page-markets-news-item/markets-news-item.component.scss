@@ -1,0 +1,51 @@
+::ng-deep .news-content {
+  line-height: 1.75;
+
+  p {
+    margin: 1rem 0;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: #d1d5db;
+    font-weight: 700;
+    margin: 1.5rem 0 0.75rem;
+  }
+
+  a {
+    color: #60a5fa;
+    text-decoration: underline;
+  }
+
+  ul, ol {
+    padding-left: 1.5rem;
+    margin: 1rem 0;
+  }
+
+  ul {
+    list-style-type: disc;
+  }
+
+  ol {
+    list-style-type: decimal;
+  }
+
+  li {
+    margin: 0.25rem 0;
+  }
+
+  blockquote {
+    border-left: 4px solid #3b82f6;
+    padding-left: 1rem;
+    margin: 1rem 0;
+    font-style: italic;
+  }
+
+  strong, b {
+    font-weight: 700;
+    color: #d1d5db;
+  }
+
+  em, i {
+    font-style: italic;
+  }
+}

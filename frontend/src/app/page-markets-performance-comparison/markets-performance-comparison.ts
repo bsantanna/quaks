@@ -1,9 +1,11 @@
-import {Component, inject, signal, OnInit, OnDestroy} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Subscription} from 'rxjs';
+import {Component, computed, effect, inject, OnDestroy, signal, WritableSignal} from '@angular/core';
+import {ActivatedRoute, Params, Router} from '@angular/router';
+import {toSignal} from '@angular/core/rxjs-interop';
+import {ShareUrlService} from '../shared';
 import {StockComparisonAutocomplete} from './stock-comparison-autocomplete/stock-comparison-autocomplete';
 import {StockComparisonCharts} from './stock-comparison-charts/stock-comparison-charts';
 import {StockComparisonTime} from './stock-comparison-time/stock-comparison-time';
+import {environment} from '../../environments/environment';
 
 @Component({
   selector: 'app-markets-performance-comparison',
@@ -11,31 +13,53 @@ import {StockComparisonTime} from './stock-comparison-time/stock-comparison-time
   templateUrl: './markets-performance-comparison.html',
   styleUrl: './markets-performance-comparison.scss',
 })
-export class MarketsPerformanceComparison implements OnInit, OnDestroy {
+export class MarketsPerformanceComparison implements OnDestroy {
 
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private queryParamSub!: Subscription;
+  private readonly shareUrlService = inject(ShareUrlService);
 
-  readonly symbols = signal<string[]>([]);
-  readonly intervalInDays = signal(365);
+  private readonly queryParams = toSignal<Params>(this.route.queryParams);
+  readonly symbols = computed(() => {
+    const q = this.queryParams()?.['q'] ?? '';
+    return q ? q.split(',').map((s: string) => s.trim()).filter((s: string) => s.length > 0) : [];
+  });
+  readonly intervalInDates = computed<string>(() => this.queryParams()?.['interval'] ?? '');
+  readonly intervalInDays: WritableSignal<number> = signal<number>(365);
+  readonly useIntervalInDates = computed<boolean>(() => this.intervalInDates().trim().length > 0);
+  readonly isProduction = environment.production;
+  readonly formattedInterval = computed(() => {
+    const raw = this.intervalInDates();
+    if (!raw.includes('_')) return {from: '', to: ''};
+    const [from, to] = raw.split('_');
+    const fmt = (d: string) => {
+      const [y, m, day] = d.split('-');
+      return `${day}/${m}/${y.slice(2)}`;
+    };
+    return {from: fmt(from), to: fmt(to)};
+  });
+  private readonly routeTitle = this.route.snapshot.title ?? '';
 
-  ngOnInit() {
-    this.queryParamSub = this.route.queryParamMap.subscribe(params => {
-      const q = params.get('q');
-      this.symbols.set(q ? q.split(',').map(s => s.trim()).filter(s => s.length > 0) : []);
+  constructor() {
+    effect(() => {
+      const linkTitle = `${this.routeTitle} ${this.symbols().join(',')}`;
+      const useInterval = this.useIntervalInDates();
+      const url = useInterval
+        ? window.location.href
+        : `${window.location.href.split('?')[0]}?q=${this.symbols().join(',')}&interval=${this.shareUrlService.getPastDateInDays(this.intervalInDays())}_${this.shareUrlService.getPastDateInDays(1)}`;
+      this.shareUrlService.update({title: linkTitle, url});
     });
   }
 
-  ngOnDestroy() {
-    this.queryParamSub.unsubscribe();
+  ngOnDestroy(): void {
+    this.shareUrlService.update({title: '', url: ''});
   }
 
   updateSymbols(symbols: string[]) {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {q: symbols.join(',')},
-      queryParamsHandling: 'replace',
+      queryParamsHandling: 'merge',
     });
   }
 

@@ -1,24 +1,32 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 
 import { MarketsPerformanceComparison } from './markets-performance-comparison';
+import { ShareUrlService } from '../shared';
 
 describe('MarketsPerformanceComparison', () => {
   let component: MarketsPerformanceComparison;
   let fixture: ComponentFixture<MarketsPerformanceComparison>;
-  let queryParamMap$: BehaviorSubject<any>;
+  let queryParams$: BehaviorSubject<any>;
   let mockRouter: { navigate: jest.Mock };
+  let mockShareUrlService: { update: jest.Mock; getPastDateInDays: jest.Mock; state: any };
 
   beforeEach(async () => {
-    queryParamMap$ = new BehaviorSubject(convertToParamMap({}));
+    queryParams$ = new BehaviorSubject({});
     mockRouter = { navigate: jest.fn().mockResolvedValue(true) };
+    mockShareUrlService = {
+      update: jest.fn(),
+      getPastDateInDays: jest.fn((days: number) => '2025-01-01'),
+      state: { url: '', title: '' },
+    };
 
     await TestBed.configureTestingModule({
       imports: [MarketsPerformanceComparison],
       providers: [
-        { provide: ActivatedRoute, useValue: { queryParamMap: queryParamMap$.asObservable() } },
+        { provide: ActivatedRoute, useValue: { queryParams: queryParams$.asObservable(), snapshot: { title: 'Performance comparison' } } },
         { provide: Router, useValue: mockRouter },
+        { provide: ShareUrlService, useValue: mockShareUrlService },
       ]
     })
     .compileComponents();
@@ -33,27 +41,27 @@ describe('MarketsPerformanceComparison', () => {
   });
 
   it('should parse symbols from query param', () => {
-    queryParamMap$.next(convertToParamMap({ q: 'AAPL,MSFT,GOOGL' }));
+    queryParams$.next({ q: 'AAPL,MSFT,GOOGL' });
     expect(component.symbols()).toEqual(['AAPL', 'MSFT', 'GOOGL']);
   });
 
   it('should handle empty query param', () => {
-    queryParamMap$.next(convertToParamMap({}));
+    queryParams$.next({});
     expect(component.symbols()).toEqual([]);
   });
 
   it('should trim whitespace from symbols', () => {
-    queryParamMap$.next(convertToParamMap({ q: ' AAPL , MSFT ' }));
+    queryParams$.next({ q: ' AAPL , MSFT ' });
     expect(component.symbols()).toEqual(['AAPL', 'MSFT']);
   });
 
   it('should filter out empty strings', () => {
-    queryParamMap$.next(convertToParamMap({ q: 'AAPL,,MSFT,' }));
+    queryParams$.next({ q: 'AAPL,,MSFT,' });
     expect(component.symbols()).toEqual(['AAPL', 'MSFT']);
   });
 
   it('should handle single symbol', () => {
-    queryParamMap$.next(convertToParamMap({ q: 'AAPL' }));
+    queryParams$.next({ q: 'AAPL' });
     expect(component.symbols()).toEqual(['AAPL']);
   });
 
@@ -62,11 +70,18 @@ describe('MarketsPerformanceComparison', () => {
     expect(mockRouter.navigate).toHaveBeenCalledWith([], {
       relativeTo: expect.anything(),
       queryParams: { q: 'TSLA,AMZN' },
-      queryParamsHandling: 'replace',
+      queryParamsHandling: 'merge',
     });
   });
 
-  it('should unsubscribe on destroy', () => {
-    expect(() => component.ngOnDestroy()).not.toThrow();
+  it('should read interval from query params', () => {
+    queryParams$.next({ q: 'AAPL', interval: '2025-01-01_2025-06-01' });
+    expect(component.intervalInDates()).toBe('2025-01-01_2025-06-01');
+    expect(component.useIntervalInDates()).toBe(true);
+  });
+
+  it('should clear share url on destroy', () => {
+    component.ngOnDestroy();
+    expect(mockShareUrlService.update).toHaveBeenCalledWith({ title: '', url: '' });
   });
 });

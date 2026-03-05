@@ -1,4 +1,4 @@
-import {Component, HostListener, inject, signal} from '@angular/core';
+import {ChangeDetectorRef, Component, effect, HostListener, inject, signal} from '@angular/core';
 import {ShareUrlService, FeedbackMessageService} from '../../shared';
 
 @Component({
@@ -11,8 +11,16 @@ export class ShareButtonComponent {
 
   private readonly shareUrlService = inject(ShareUrlService);
   private readonly feedbackMessageService = inject(FeedbackMessageService);
+  private readonly cdr = inject(ChangeDetectorRef);
   readonly shareUrl = this.shareUrlService.state;
   readonly showMenu = signal<boolean>(false);
+
+  constructor() {
+    effect(() => {
+      this.shareUrl();
+      this.cdr.markForCheck();
+    });
+  }
 
   toggleMenu() {
     this.showMenu.update((val) => !val);
