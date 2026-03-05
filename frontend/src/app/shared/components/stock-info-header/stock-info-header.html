@@ -4,11 +4,12 @@
         <!-- Top section: Symbol, Name, Close, % Change -->
         <div class="flex justify-between items-start mb-3">
             <div>
-                <p class="text-2xl font-bold leading-none">{{ keyTicker() }}</p>
+                <p class="text-2xl font-bold leading-none">{{ keyTicker() }} {{ exchangeFlag() }}</p>
                 <p class="text-xs text-gray-400 truncate max-w-40">{{ companyName() }}</p>
+                <p class="text-xs text-gray-400 truncate max-w-40">{{ exchangeName() }}</p>
             </div>
             <div class="text-right flex-shrink-0">
-                <p class="text-2xl font-bold leading-none">{{ statsClose().most_recent_close | number : '1.2-2' }}</p>
+                <p class="text-2xl font-bold leading-none">{{ currencySymbol() }}{{ statsClose().most_recent_close | number : '1.2-2' }}</p>
                 @if (!isStocksRoute) {
                     <p class="text-xs text-gray-400">({{ shortenDate(statsClose().most_recent_date) }})</p>
                 }
@@ -39,61 +40,56 @@
         @if (isStocksRoute) {
             <div aria-hidden="true" class="w-full border-t border-white/10 my-3"></div>
 
-            <div class="flex justify-between items-center text-xs">
+            @if (!useIntervalInDates()) {
+                <div class="flex justify-center mb-3">
+                    <div class="isolate inline-flex rounded-md shadow-sm">
+                        <button type="button" (click)="setIntervalInDays(90)"
+                                [class]="intervalInDays() === 90 ? 'bg-white/20' : 'bg-white/10'"
+                                class="relative inline-flex items-center rounded-l-md px-2 py-1 text-xs font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                            3M
+                        </button>
+                        <button type="button" (click)="setIntervalInDays(180)"
+                                [class]="intervalInDays() === 180 ? 'bg-white/20' : 'bg-white/10'"
+                                class="relative -ml-px inline-flex items-center px-2 py-1 text-xs font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                            6M
+                        </button>
+                        <button type="button" (click)="setIntervalInDays(270)"
+                                [class]="intervalInDays() === 270 ? 'bg-white/20' : 'bg-white/10'"
+                                class="relative -ml-px inline-flex items-center px-2 py-1 text-xs font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                            9M
+                        </button>
+                        <button type="button" (click)="setIntervalInDays(365)"
+                                [class]="intervalInDays() === 365 ? 'bg-white/20' : 'bg-white/10'"
+                                class="relative -ml-px inline-flex items-center rounded-r-md px-2 py-1 text-xs font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                            1Y
+                        </button>
+                    </div>
+                </div>
+            }
+            <div class="grid grid-cols-3 gap-1 text-xs">
                 <div>
-                    <div>
-                        @if (useIntervalInDates()) {
-                            <p>Start: {{ shortenDate(intervalInDates().split('_')[0]) }}</p>
-                        } @else {
-                            <p>Start: {{ shortenDate(getPastDateInDays(intervalInDays())) }}</p>
-                        }
-                    </div>
-                    <div>
-                        @if (useIntervalInDates()) {
-                            <p>End:&nbsp;&nbsp; {{ shortenDate(intervalInDates().split('_')[1]) }}</p>
-                        } @else {
-                            <p>End:&nbsp;&nbsp; {{ shortenDate(getPastDateInDays(1)) }}</p>
-                        }
-                    </div>
-                    <p class="text-sm mt-1"
-                       [class.text-green-400]="statsClose().percent_variance > 0"
+                    <p class="text-gray-400">Start</p>
+                    @if (useIntervalInDates()) {
+                        <p>{{ shortenDate(intervalInDates().split('_')[0]) }}</p>
+                    } @else {
+                        <p>{{ shortenDate(getPastDateInDays(intervalInDays())) }}</p>
+                    }
+                </div>
+                <div>
+                    <p class="text-gray-400">End</p>
+                    @if (useIntervalInDates()) {
+                        <p>{{ shortenDate(intervalInDates().split('_')[1]) }}</p>
+                    } @else {
+                        <p>{{ shortenDate(getPastDateInDays(1)) }}</p>
+                    }
+                </div>
+                <div>
+                    <p class="text-gray-400">Change</p>
+                    <p [class.text-green-400]="statsClose().percent_variance > 0"
                        [class.text-rose-400]="statsClose().percent_variance <= 0">
                         {{ statsClose().percent_variance > 0 ? '+' : '' }}{{ statsClose().percent_variance | number : '1.2-2' }}%
                     </p>
                 </div>
-
-                @if (!useIntervalInDates()) {
-                    <div class="isolate inline-flex rounded-md shadow-sm mt-2 mx-auto">
-                        <button
-                                type="button"
-                                (click)="setIntervalInDays(90)"
-                                [class]="intervalInDays() === 90 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative inline-flex items-center rounded-l-md px-2 py-1 font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
-                            3M
-                        </button>
-                        <button
-                                type="button"
-                                (click)="setIntervalInDays(180)"
-                                [class]="intervalInDays() === 180 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative -ml-px inline-flex items-center px-2 py-1 font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
-                            6M
-                        </button>
-                        <button
-                                type="button"
-                                (click)="setIntervalInDays(270)"
-                                [class]="intervalInDays() === 270 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative -ml-px inline-flex items-center px-2 py-1 font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
-                            9M
-                        </button>
-                        <button
-                                type="button"
-                                (click)="setIntervalInDays(365)"
-                                [class]="intervalInDays() === 365 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative -ml-px inline-flex items-center rounded-r-md px-2 py-1 font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
-                            1Y
-                        </button>
-                    </div>
-                }
             </div>
 
         }
@@ -108,16 +104,20 @@
             <div class="flex items-center gap-x-3">
                 <p class="text-lg font-bold">{{ keyTicker() }}</p>
                 <p class="text-xs text-gray-400 truncate max-w-32">{{ companyName() }}</p>
+                <p class="text-xs text-gray-400 truncate max-w-32">{{ exchangeName() }}</p>
             </div>
             <div class="flex items-center gap-x-3">
-                <p class="text-lg font-bold">{{ statsClose().most_recent_close | number : '1.2-2' }}</p>
+                <p class="text-lg font-bold">{{ currencySymbol() }}{{ statsClose().most_recent_close | number : '1.2-2' }}</p>
                 @if (isStocksRoute) {
                     <p class="text-sm"
                        [class.text-green-400]="statsClose().percent_variance > 0"
                        [class.text-rose-400]="statsClose().percent_variance <= 0">
                         {{ statsClose().percent_variance > 0 ? '+' : '' }}{{ statsClose().percent_variance | number : '1.2-2' }}%
                     </p>
-                    <p class="text-xs text-gray-400">({{ shortenDate(interval().split('_')[0]) }} – {{ shortenDate(interval().split('_')[1]) }})</p>
+                    <div class="text-xs text-gray-400">
+                        <p>Start: {{ shortenDate(interval().split('_')[0]) }}</p>
+                        <p>End:&nbsp;&nbsp; {{ shortenDate(interval().split('_')[1]) }}</p>
+                    </div>
                 } @else {
                     <p class="text-xs text-gray-400">({{ shortenDate(statsClose().most_recent_date) }})</p>
                 }
@@ -250,16 +250,17 @@
         }
 
         <!-- Top section with Symbol and Close Price -->
-        <div class="flex justify-between items-start mb-4">
+        <div class="flex flex-col xl:flex-row xl:justify-between xl:items-start mb-4">
             <div>
                 <p class="text-sm text-gray-400">Symbol</p>
-                <p class="text-3xl font-bold">{{ keyTicker() }}</p>
+                <p class="text-3xl font-bold">{{ keyTicker() }} {{ exchangeFlag() }}</p>
                 <p class="text-sm truncate max-w-64">{{ companyName() }}</p>
+                <p class="text-sm truncate max-w-64">{{ exchangeName() }}</p>
             </div>
-            <div class="text-right">
+            <div class="xl:text-right mt-4 xl:mt-0">
                 <p class="text-sm text-gray-400">Close</p>
                 <p class="text-3xl font-bold">
-                    {{ statsClose().most_recent_close | number : '1.2-2' }}
+                    {{ currencySymbol() }}{{ statsClose().most_recent_close | number : '1.2-2' }}
                 </p>
                 @if (!isStocksRoute) {
                     <p class="text-sm text-gray-400">on {{ shortenDate(statsClose().most_recent_date) }}</p>
