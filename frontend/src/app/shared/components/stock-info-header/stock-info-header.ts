@@ -55,7 +55,8 @@ export class StockInfoHeader {
   }
 
   shortenDate(date: string): string {
-    return date.replace(/^\d{2}(\d{2})/, '$1');
+    const [y, m, d] = date.split('-');
+    return `${d}/${m}/${y.slice(2)}`;
   }
 
   formatVolume(value: number): string {
