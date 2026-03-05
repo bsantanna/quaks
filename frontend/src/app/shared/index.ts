@@ -8,6 +8,7 @@ export {FeedbackMessageService} from './services/feedback-message.service';
 export {IndexedKeyTickerService} from './services/indexed-key-ticker.service';
 export {MarketsNewsService} from './services/markets-news.service';
 export {MarketsStatsService} from './services/markets-stats.service';
+export {SeoService} from './services/seo.service';
 export {ShareUrlService} from './services/share-url.service';
 
 // Components

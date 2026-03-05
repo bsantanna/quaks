@@ -1,6 +1,6 @@
 import {Component, computed, effect, inject, OnDestroy} from '@angular/core';
 import {ActivatedRoute, ParamMap} from '@angular/router';
-import {ShareUrlService, MarketsNewsService, NewsItem} from '../shared';
+import {ShareUrlService, MarketsNewsService, NewsItem, IndexedKeyTickerService, SeoService} from '../shared';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {take} from 'rxjs';
 import {DatePipe} from '@angular/common';
@@ -18,6 +18,8 @@ export class MarketsNewsItem implements OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly shareUrlService = inject(ShareUrlService);
   private readonly marketsNewsService = inject(MarketsNewsService);
+  private readonly indexedKeyTickerService = inject(IndexedKeyTickerService);
+  private readonly seoService = inject(SeoService);
 
   private readonly paramMap = toSignal<ParamMap>(this.route.paramMap);
   readonly indexName = computed(() => this.paramMap()?.get('indexName') ?? '');
@@ -32,17 +34,36 @@ export class MarketsNewsItem implements OnDestroy {
         this.newsItemId()
       ).pipe(take(1)).subscribe(newsList => {
         this.marketsNewsService.newsList.set(newsList);
-        const linkTitle = newsList.items.at(0)?.headline ?? 'Breaking news';
+        const item = newsList.items.at(0);
+        const linkTitle = item?.headline ?? 'Breaking news';
         this.shareUrlService.update({
           title: linkTitle,
           url: `${window.location.href.split('?')[0]}`
         });
+        const path = `/markets/news/item/${this.indexName()}/${this.newsItemId()}`;
+        this.seoService.update({
+          title: linkTitle,
+          description: item?.summary ?? undefined,
+          path,
+          image: item?.images?.[0]?.url ?? undefined,
+        });
+        if (item) {
+          this.seoService.setNewsArticleSchema({
+            headline: item.headline,
+            description: item.summary,
+            datePublished: item.date,
+            image: item.images?.[0]?.url,
+            author: item.source,
+            url: `https://quaks.ai${path}`,
+          });
+        }
       })
     });
   }
 
   ngOnDestroy(): void {
     this.shareUrlService.update({title: '', url: ''});
+    this.seoService.reset();
   }
 
   sanitizeHtml(htmlContent: string | null | undefined): string {
@@ -55,6 +76,9 @@ export class MarketsNewsItem implements OnDestroy {
 
     // Remove dangerous elements
     tempDiv.querySelectorAll('script, style, iframe, noscript, object, embed, form, input, button').forEach(el => el.remove());
+
+    // Build a set of known tickers for fast lookup
+    const knownTickers = new Set(this.indexedKeyTickerService.indexedKeyTickers().map(t => t.key_ticker));
 
     // Remove event handler attributes and dangerous attributes from all elements
     tempDiv.querySelectorAll('*').forEach(el => {
@@ -69,6 +93,24 @@ export class MarketsNewsItem implements OnDestroy {
         if (href.trim().toLowerCase().startsWith('javascript:')) {
           el.removeAttribute('href');
         }
+      }
+    });
+
+    // Transform ticker links to internal routes
+    tempDiv.querySelectorAll('a[href]').forEach(el => {
+      const href = el.getAttribute('href') ?? '';
+      const text = (el.textContent ?? '').trim();
+
+      // Extract ticker from href (e.g. https://www.benzinga.com/quote/AAPL → AAPL)
+      const hrefMatch = href.match(/\/quote\/([A-Z]+)$/);
+      const tickerFromHref = hrefMatch ? hrefMatch[1] : '';
+      // Also check if the link text itself is a known ticker
+      const ticker = knownTickers.has(tickerFromHref) ? tickerFromHref
+        : knownTickers.has(text) ? text
+        : '';
+
+      if (ticker) {
+        el.setAttribute('href', `/markets/stocks/${ticker}`);
       }
     });
 

@@ -1,7 +1,7 @@
 import {Component, computed, effect, inject, OnDestroy, signal, WritableSignal} from '@angular/core';
 import {ActivatedRoute, ParamMap, Params} from '@angular/router';
 import {toSignal} from '@angular/core/rxjs-interop';
-import {StockInfoHeader, ShareUrlService, IndexedKeyTickerService, StockEodActions} from '../shared';
+import {StockInfoHeader, ShareUrlService, IndexedKeyTickerService, StockEodActions, SeoService} from '../shared';
 import {StockEodCharts} from './stock-eod-charts/stock-eod-charts';
 import {environment} from '../../environments/environment';
 
@@ -16,6 +16,7 @@ export class MarketsStocksDashboard implements OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly shareUrlService = inject(ShareUrlService);
   private readonly indexedKeyTickerService = inject(IndexedKeyTickerService);
+  private readonly seoService = inject(SeoService);
 
   private readonly paramMap = toSignal<ParamMap>(this.route.paramMap);
   private readonly queryParams = toSignal<Params>(this.route.queryParams);
@@ -29,7 +30,14 @@ export class MarketsStocksDashboard implements OnDestroy {
 
   constructor() {
     effect(() => {
-      const linkTitle = `${this.routeTitle} ${this.keyTicker()}`;
+      const ticker = this.keyTicker();
+      const name = this.companyName();
+      const linkTitle = `${this.routeTitle} ${ticker}`;
+      this.seoService.update({
+        title: name ? `${ticker} - ${name} Stock Dashboard` : `${ticker} Stock Dashboard`,
+        description: `Real-time stock price, technical indicators, and market data for ${name || ticker} (${ticker}).`,
+        path: `/markets/stocks/${ticker}`,
+      });
 
       if (this.useIntervalInDates()) {
         this.shareUrlService.update({
@@ -47,6 +55,7 @@ export class MarketsStocksDashboard implements OnDestroy {
 
   ngOnDestroy(): void {
     this.shareUrlService.update({title: '', url: ''});
+    this.seoService.reset();
   }
 
 }
