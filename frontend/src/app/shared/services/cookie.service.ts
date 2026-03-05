@@ -1,4 +1,5 @@
-import {effect, Injectable, signal, WritableSignal} from '@angular/core';
+import {effect, inject, Injectable, PLATFORM_ID, signal, WritableSignal} from '@angular/core';
+import {isPlatformBrowser} from '@angular/common';
 import {CookieConsent, SharedStateService} from '../models/navigation.models';
 
 @Injectable({
@@ -13,6 +14,7 @@ export class CookieService implements SharedStateService<CookieConsent> {
 
   static readonly COOKIE_CONSENT_KEY = "CookieConsent"
 
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   readonly state!: WritableSignal<CookieConsent>;
 
   constructor() {
@@ -36,6 +38,7 @@ export class CookieService implements SharedStateService<CookieConsent> {
   }
 
   setCookie(name: string, value: string, days: number) {
+    if (!this.isBrowser) return;
     const date = new Date();
     date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
     const expires = '; expires=' + date.toUTCString();
@@ -47,6 +50,7 @@ export class CookieService implements SharedStateService<CookieConsent> {
   }
 
   getCookie(name: string): string | null {
+    if (!this.isBrowser) return null;
     const nameEQ = name + '=';
     const ca = document.cookie.split(';');
     for (let i = 0; i < ca.length; i++) {
