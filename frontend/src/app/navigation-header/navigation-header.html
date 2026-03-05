@@ -13,7 +13,7 @@
                         </div>
                         <div class="hidden lg:flex items-center gap-4 ml-4 transition-opacity duration-200">
                             @if (stickyVisible()) {
-                                <h1 class="text-sm font-bold text-white truncate max-w-48">{{ title() }}</h1>
+                                <span class="text-sm font-bold text-white truncate max-w-48">{{ title() }}</span>
                             }
                         </div>
                     </div>
@@ -52,7 +52,7 @@
                             }
                         } @else {
                             <div class="sm:hidden">
-                                <h1 class="text-sm font-bold text-white truncate max-w-48">{{ title() }}</h1>
+                                <span class="text-sm font-bold text-white truncate max-w-48">{{ title() }}</span>
                             </div>
                         }
 
@@ -71,7 +71,7 @@
         <div class="mx-auto px-4 sm:px-6 lg:px-8">
             <div class="md:flex md:items-center md:justify-between">
                 <div class="min-w-0 flex-1 hidden sm:block">
-                    <h1 class="text-2xl/7 font-bold text-white sm:truncate sm:text-3xl sm:tracking-tight">{{ title() }}</h1>
+                    <span class="text-2xl/7 font-bold text-white sm:truncate sm:text-3xl sm:tracking-tight">{{ title() }}</span>
                 </div>
 
                 <div class="w-full max-w-lg lg:max-w-xs">
@@ -96,5 +96,3 @@
 
 
 </div>
-
-
