@@ -64,7 +64,7 @@ Three PostgreSQL databases:
 
 ### Frontend
 
-Angular 21 app in `frontend/`. Production build output goes to `app/static/frontend/browser/` and is served by FastAPI as a static mount at `/`. The frontend communicates with the backend REST API.
+Angular 21 app in `frontend/`. Production build output goes to `app/static/frontend/browser/` and is served by FastAPI as a static mount at `/`. The frontend communicates with the backend REST API. Stock charts and performance comparison views embed Kibana dashboards via iframe (the `#/view/` URLs in `stock-eod-charts.ts` and `stock-comparison-charts.ts` are Kibana dashboard embed URLs, not internal routes).
 
 ### Observability
 

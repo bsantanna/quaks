@@ -90,7 +90,7 @@ export class MarketsNewsItem implements OnDestroy {
         : '';
 
       if (ticker) {
-        el.setAttribute('href', `/#/markets/stocks/${ticker}`);
+        el.setAttribute('href', `/markets/stocks/${ticker}`);
       }
     });
 
