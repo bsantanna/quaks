@@ -1,4 +1,8 @@
-<h2 align="center"><a href="https://github.com/bsantanna/quaks">Quant-Agents | 🤖📈</a></h2>
+<div align="center">
+  <img src="doc/logo.svg" alt="Quaks Logo" width="200" />
+</div>
+
+<h2 align="center"><a href="https://github.com/bsantanna/quaks">Quaks</a></h2>
 <h3 align="center">Acknowledgement</h3>
 
 ---
