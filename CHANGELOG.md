@@ -2,6 +2,39 @@
 
 <!-- version list -->
 
+## v1.3.25 (2026-03-05)
+
+### Bug Fixes
+
+- Claude code adjusts ([#61](https://github.com/bsantanna/quaks/pull/61),
+  [`925799d`](https://github.com/bsantanna/quaks/commit/925799db843843c9e24b1b93e264bfaee220257a))
+
+- Documentation (1) ([#61](https://github.com/bsantanna/quaks/pull/61),
+  [`925799d`](https://github.com/bsantanna/quaks/commit/925799db843843c9e24b1b93e264bfaee220257a))
+
+- Documentation (2) ([#61](https://github.com/bsantanna/quaks/pull/61),
+  [`925799d`](https://github.com/bsantanna/quaks/commit/925799db843843c9e24b1b93e264bfaee220257a))
+
+- Documentation (3) ([#61](https://github.com/bsantanna/quaks/pull/61),
+  [`925799d`](https://github.com/bsantanna/quaks/commit/925799db843843c9e24b1b93e264bfaee220257a))
+
+- Layout adjusts for dates ([#61](https://github.com/bsantanna/quaks/pull/61),
+  [`925799d`](https://github.com/bsantanna/quaks/commit/925799db843843c9e24b1b93e264bfaee220257a))
+
+- Layout adjusts for news item (1) ([#61](https://github.com/bsantanna/quaks/pull/61),
+  [`925799d`](https://github.com/bsantanna/quaks/commit/925799db843843c9e24b1b93e264bfaee220257a))
+
+- Layout adjusts for news item (2) ([#61](https://github.com/bsantanna/quaks/pull/61),
+  [`925799d`](https://github.com/bsantanna/quaks/commit/925799db843843c9e24b1b93e264bfaee220257a))
+
+- Layout adjusts for stock info header ([#61](https://github.com/bsantanna/quaks/pull/61),
+  [`925799d`](https://github.com/bsantanna/quaks/commit/925799db843843c9e24b1b93e264bfaee220257a))
+
+- Multiple layout adjusts, documentation and Claude skill setup
+  ([#61](https://github.com/bsantanna/quaks/pull/61),
+  [`925799d`](https://github.com/bsantanna/quaks/commit/925799db843843c9e24b1b93e264bfaee220257a))
+
+
 ## v1.3.24 (2026-03-04)
 
 ### Bug Fixes
