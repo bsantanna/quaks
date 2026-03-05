@@ -45,35 +45,34 @@ export class MarketsNewsItem implements OnDestroy {
     this.shareUrlService.update({title: '', url: ''});
   }
 
-  sanitizeHtmlToPlainText(htmlContent: string | null | undefined): string {
+  sanitizeHtml(htmlContent: string | null | undefined): string {
     if (!htmlContent) {
       return '';
     }
 
-    // Step 1: Create a temporary DOM element to parse the HTML
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = htmlContent;
 
-    // Step 2: Remove dangerous elements (scripts, styles, iframes, etc.)
-    tempDiv.querySelectorAll('script, style, iframe, noscript').forEach(el => el.remove());
+    // Remove dangerous elements
+    tempDiv.querySelectorAll('script, style, iframe, noscript, object, embed, form, input, button').forEach(el => el.remove());
 
-    // Step 3: Extract text content
-    let text = tempDiv.textContent || tempDiv.innerText || '';
+    // Remove event handler attributes and dangerous attributes from all elements
+    tempDiv.querySelectorAll('*').forEach(el => {
+      for (const attr of Array.from(el.attributes)) {
+        if (attr.name.startsWith('on') || attr.name === 'srcdoc') {
+          el.removeAttribute(attr.name);
+        }
+      }
+      // Sanitize href to prevent javascript: URLs
+      if (el.hasAttribute('href')) {
+        const href = el.getAttribute('href') ?? '';
+        if (href.trim().toLowerCase().startsWith('javascript:')) {
+          el.removeAttribute('href');
+        }
+      }
+    });
 
-    // Step 4: Normalize whitespace and line breaks
-    text = text
-      .replace(/\s+/g, ' ')           // Collapse multiple spaces/tabs into one
-      .replace(/ (\n|\r\n?)/g, '\n')  // Remove spaces before newlines
-      .trim();
-
-    // Step 5: Split into paragraphs based on double newlines (common in extracted text)
-    const paragraphs = text
-      .split(/\n\s*\n/)               // Split on blank lines
-      .map(p => p.trim())
-      .filter(p => p.length > 0);
-
-    // Step 6: Join paragraphs with double newlines for natural spacing
-    return paragraphs.join('\n\n');
+    return tempDiv.innerHTML;
   }
 
 }
