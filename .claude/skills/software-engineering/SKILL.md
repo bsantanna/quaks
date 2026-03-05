@@ -76,6 +76,8 @@ OpenTelemetry is configured in `app/infrastructure/metrics/tracer.py`. Instrumen
 
 ### Backend
 
+**Important:** All Python commands must use the `agent-lab` conda environment: `conda run -n agent-lab <command>`
+
 ```bash
 # Run the app locally (requires Postgres, Redis, Vault running)
 make run
