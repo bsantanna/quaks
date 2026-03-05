@@ -7,7 +7,7 @@ from fastapi.security import HTTPBearer
 from fastapi_keycloak_middleware import KeycloakConfiguration, setup_keycloak_middleware
 from fastapi_mcp import FastApiMCP, AuthConfig
 from starlette.middleware.cors import CORSMiddleware
-from starlette.responses import JSONResponse
+from starlette.responses import JSONResponse, FileResponse
 from starlette.staticfiles import StaticFiles
 
 from app.core.container import Container
@@ -44,7 +44,7 @@ def create_app():
     setup_mcp(container, application)
     setup_exception_handlers(application)
     setup_middleware(application)
-    setup_static_files(application)
+    setup_spa_fallback(application)
 
     return application
 
@@ -75,7 +75,8 @@ def setup_auth(container, application):
                 "/*.ico",
                 "/*.svg",
                 "/*.json",
-                "/#/*",
+                "/insights/*",
+                "/terms",
                 "/"
             ],
             user_mapper=map_user,
@@ -163,10 +164,20 @@ def setup_middleware(application: FastAPI):
         allow_headers=["*"],
     )
 
-def setup_static_files(application: FastAPI):
+def setup_spa_fallback(application: FastAPI):
+    static_dir = "app/static/frontend/browser"
+
+    @application.middleware("http")
+    async def spa_middleware(request: Request, call_next):
+        response = await call_next(request)
+        accept = request.headers.get("accept", "")
+        if response.status_code == 404 and "text/html" in accept:
+            return FileResponse(f"{static_dir}/index.html")
+        return response
+
     application.mount(
         path="/",
-        app=StaticFiles(directory="app/static/frontend/browser", html=True),
+        app=StaticFiles(directory=static_dir, html=True),
         name="angular"
     )
 
