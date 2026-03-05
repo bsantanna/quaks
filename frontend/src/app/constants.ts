@@ -40,4 +40,22 @@ export const STOCK_MARKETS = [
   'amex',
 ];
 
+export const STOCK_EXCHANGE_FLAGS: Record<string, string> = {
+  'nyse': '🇺🇸',
+  'nasdaq': '🇺🇸',
+  'amex': '🇺🇸',
+};
+
+export const STOCK_EXCHANGE_NAMES: Record<string, string> = {
+  'nyse': 'New York Stock Exchange',
+  'nasdaq': 'Nasdaq Stock Market',
+  'amex': 'NYSE American',
+};
+
+export const STOCK_EXCHANGE_CURRENCY: Record<string, string> = {
+  'nyse': '$',
+  'nasdaq': '$',
+  'amex': '$',
+};
+
 export const REQUEST_TIMEOUT = 10000;

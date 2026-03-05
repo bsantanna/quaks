@@ -12,7 +12,7 @@ default_args = {
 dag = DAG(
     "quaks_stocks_eod",
     default_args=default_args,
-    schedule="0 10,22 * * *",
+    schedule="0 09,21 * * *",
     catchup=False,
 )
 

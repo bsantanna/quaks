@@ -34,8 +34,9 @@
         </header>
 
         <!-- Main Content -->
-        <div [innerHTML]="sanitizeHtmlToPlainText(newsItem().content)" class="text-gray-400">
-        </div>
+        <article [innerHTML]="sanitizeHtml(newsItem().content)"
+                 class="news-content text-gray-400">
+        </article>
 
         <!-- Fallback if no newsItem() -->
         @if (!newsItem()) {
