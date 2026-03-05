@@ -1,7 +1,7 @@
 import {Component, computed, effect, inject, OnDestroy, signal, WritableSignal} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {ActivatedRoute, ParamMap, Params} from '@angular/router';
-import {ShareUrlService, StockEodActions, StockInfoHeader, IndexedKeyTickerService, NewsFeed} from '../shared';
+import {ShareUrlService, StockEodActions, StockInfoHeader, IndexedKeyTickerService, NewsFeed, SeoService} from '../shared';
 
 @Component({
   selector: 'app-markets-news-related',
@@ -18,6 +18,7 @@ export class MarketsNewsRelated implements OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly shareUrlService = inject(ShareUrlService);
   private readonly indexedKeyTickerService = inject(IndexedKeyTickerService);
+  private readonly seoService = inject(SeoService);
 
   private readonly paramMap = toSignal<ParamMap>(this.route.paramMap);
   private readonly queryParams = toSignal<Params>(this.route.queryParams);
@@ -30,16 +31,24 @@ export class MarketsNewsRelated implements OnDestroy {
 
   constructor() {
     effect(() => {
-      const linkTitle = `${this.routeTitle} - ${this.keyTicker()}`;
+      const ticker = this.keyTicker();
+      const name = this.companyName();
+      const linkTitle = `${this.routeTitle} - ${ticker}`;
       this.shareUrlService.update({
         title: linkTitle,
         url: `${window.location.href.split('?')[0]}`
+      });
+      this.seoService.update({
+        title: `${name || ticker} (${ticker}) News Feed`,
+        description: `Latest market news and updates related to ${name || ticker} (${ticker}).`,
+        path: `/markets/news/related/${ticker}`,
       });
     });
   }
 
   ngOnDestroy(): void {
     this.shareUrlService.update({title: '', url: ''});
+    this.seoService.reset();
   }
 
 }

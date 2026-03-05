@@ -1,0 +1,15 @@
+{
+  "name": "Quaks - AI-Powered Quantitative Finance Platform",
+  "short_name": "Quaks",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#191C2D",
+  "theme_color": "#191C2D",
+  "icons": [
+    {
+      "src": "logo_large.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

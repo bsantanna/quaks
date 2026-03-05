@@ -1,6 +1,6 @@
 import {Component, computed, effect, inject, OnDestroy} from '@angular/core';
 import {ActivatedRoute, ParamMap} from '@angular/router';
-import {ShareUrlService, MarketsNewsService, NewsItem, IndexedKeyTickerService} from '../shared';
+import {ShareUrlService, MarketsNewsService, NewsItem, IndexedKeyTickerService, SeoService} from '../shared';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {take} from 'rxjs';
 import {DatePipe} from '@angular/common';
@@ -19,6 +19,7 @@ export class MarketsNewsItem implements OnDestroy {
   private readonly shareUrlService = inject(ShareUrlService);
   private readonly marketsNewsService = inject(MarketsNewsService);
   private readonly indexedKeyTickerService = inject(IndexedKeyTickerService);
+  private readonly seoService = inject(SeoService);
 
   private readonly paramMap = toSignal<ParamMap>(this.route.paramMap);
   readonly indexName = computed(() => this.paramMap()?.get('indexName') ?? '');
@@ -33,10 +34,17 @@ export class MarketsNewsItem implements OnDestroy {
         this.newsItemId()
       ).pipe(take(1)).subscribe(newsList => {
         this.marketsNewsService.newsList.set(newsList);
-        const linkTitle = newsList.items.at(0)?.headline ?? 'Breaking news';
+        const item = newsList.items.at(0);
+        const linkTitle = item?.headline ?? 'Breaking news';
         this.shareUrlService.update({
           title: linkTitle,
           url: `${window.location.href.split('?')[0]}`
+        });
+        this.seoService.update({
+          title: linkTitle,
+          description: item?.summary ?? undefined,
+          path: `/markets/news/item/${this.indexName()}/${this.newsItemId()}`,
+          image: item?.images?.[0]?.url ?? undefined,
         });
       })
     });
@@ -44,6 +52,7 @@ export class MarketsNewsItem implements OnDestroy {
 
   ngOnDestroy(): void {
     this.shareUrlService.update({title: '', url: ''});
+    this.seoService.reset();
   }
 
   sanitizeHtml(htmlContent: string | null | undefined): string {

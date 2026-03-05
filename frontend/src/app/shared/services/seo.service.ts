@@ -1,0 +1,55 @@
+import {inject, Injectable} from '@angular/core';
+import {Meta, Title} from '@angular/platform-browser';
+import {DOCUMENT} from '@angular/common';
+
+const BASE_URL = 'https://quaks.ai';
+const DEFAULT_DESCRIPTION = 'AI-powered quantitative finance platform for real-time market data analysis, stock insights, technical indicators, and financial news.';
+const DEFAULT_IMAGE = `${BASE_URL}/logo_large.png`;
+
+export interface SeoConfig {
+  title: string;
+  description?: string;
+  path?: string;
+  image?: string;
+}
+
+@Injectable({providedIn: 'root'})
+export class SeoService {
+  private readonly meta = inject(Meta);
+  private readonly title = inject(Title);
+  private readonly doc = inject(DOCUMENT);
+
+  update(config: SeoConfig): void {
+    const fullTitle = `${config.title} | Quaks`;
+    const description = config.description ?? DEFAULT_DESCRIPTION;
+    const url = `${BASE_URL}${config.path ?? '/'}`;
+    const image = config.image ?? DEFAULT_IMAGE;
+
+    this.title.setTitle(fullTitle);
+    this.meta.updateTag({name: 'description', content: description});
+
+    // Open Graph
+    this.meta.updateTag({property: 'og:title', content: fullTitle});
+    this.meta.updateTag({property: 'og:description', content: description});
+    this.meta.updateTag({property: 'og:url', content: url});
+    this.meta.updateTag({property: 'og:image', content: image});
+
+    // Twitter Card
+    this.meta.updateTag({name: 'twitter:title', content: fullTitle});
+    this.meta.updateTag({name: 'twitter:description', content: description});
+    this.meta.updateTag({name: 'twitter:image', content: image});
+
+    // Canonical
+    let link: HTMLLinkElement | null = this.doc.querySelector('link[rel="canonical"]');
+    if (!link) {
+      link = this.doc.createElement('link');
+      link.setAttribute('rel', 'canonical');
+      this.doc.head.appendChild(link);
+    }
+    link.setAttribute('href', url);
+  }
+
+  reset(): void {
+    this.update({title: 'AI-Powered Quantitative Finance Platform'});
+  }
+}
