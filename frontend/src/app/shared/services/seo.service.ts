@@ -13,6 +13,15 @@ export interface SeoConfig {
   image?: string;
 }
 
+export interface NewsArticleSchema {
+  headline: string;
+  description: string;
+  datePublished: string;
+  image?: string;
+  author: string;
+  url: string;
+}
+
 @Injectable({providedIn: 'root'})
 export class SeoService {
   private readonly meta = inject(Meta);
@@ -49,7 +58,31 @@ export class SeoService {
     link.setAttribute('href', url);
   }
 
+  setNewsArticleSchema(article: NewsArticleSchema): void {
+    this.removeJsonLd();
+    const script = this.doc.createElement('script');
+    script.type = 'application/ld+json';
+    script.id = 'seo-jsonld';
+    script.textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'NewsArticle',
+      headline: article.headline,
+      description: article.description,
+      datePublished: article.datePublished,
+      image: article.image || undefined,
+      author: {'@type': 'Organization', name: article.author},
+      publisher: {'@type': 'Organization', name: 'Quaks', logo: {'@type': 'ImageObject', url: DEFAULT_IMAGE}},
+      mainEntityOfPage: {'@type': 'WebPage', '@id': article.url},
+    });
+    this.doc.head.appendChild(script);
+  }
+
+  private removeJsonLd(): void {
+    this.doc.getElementById('seo-jsonld')?.remove();
+  }
+
   reset(): void {
+    this.removeJsonLd();
     this.update({title: 'AI-Powered Quantitative Finance Platform'});
   }
 }

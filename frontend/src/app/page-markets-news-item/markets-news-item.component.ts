@@ -40,12 +40,23 @@ export class MarketsNewsItem implements OnDestroy {
           title: linkTitle,
           url: `${window.location.href.split('?')[0]}`
         });
+        const path = `/markets/news/item/${this.indexName()}/${this.newsItemId()}`;
         this.seoService.update({
           title: linkTitle,
           description: item?.summary ?? undefined,
-          path: `/markets/news/item/${this.indexName()}/${this.newsItemId()}`,
+          path,
           image: item?.images?.[0]?.url ?? undefined,
         });
+        if (item) {
+          this.seoService.setNewsArticleSchema({
+            headline: item.headline,
+            description: item.summary,
+            datePublished: item.date,
+            image: item.images?.[0]?.url,
+            author: item.source,
+            url: `https://quaks.ai${path}`,
+          });
+        }
       })
     });
   }
