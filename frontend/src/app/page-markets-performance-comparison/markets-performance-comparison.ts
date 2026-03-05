@@ -1,7 +1,7 @@
 import {Component, computed, effect, inject, OnDestroy, signal, WritableSignal} from '@angular/core';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {toSignal} from '@angular/core/rxjs-interop';
-import {ShareUrlService} from '../shared';
+import {ShareUrlService, SeoService} from '../shared';
 import {StockComparisonAutocomplete} from './stock-comparison-autocomplete/stock-comparison-autocomplete';
 import {StockComparisonCharts} from './stock-comparison-charts/stock-comparison-charts';
 import {StockComparisonTime} from './stock-comparison-time/stock-comparison-time';
@@ -18,6 +18,7 @@ export class MarketsPerformanceComparison implements OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly shareUrlService = inject(ShareUrlService);
+  private readonly seoService = inject(SeoService);
 
   private readonly queryParams = toSignal<Params>(this.route.queryParams);
   readonly symbols = computed(() => {
@@ -42,17 +43,26 @@ export class MarketsPerformanceComparison implements OnDestroy {
 
   constructor() {
     effect(() => {
-      const linkTitle = `${this.routeTitle} ${this.symbols().join(',')}`;
+      const syms = this.symbols();
+      const linkTitle = `${this.routeTitle} ${syms.join(',')}`;
       const useInterval = this.useIntervalInDates();
       const url = useInterval
         ? window.location.href
-        : `${window.location.href.split('?')[0]}?q=${this.symbols().join(',')}&interval=${this.shareUrlService.getPastDateInDays(this.intervalInDays())}_${this.shareUrlService.getPastDateInDays(1)}`;
+        : `${window.location.href.split('?')[0]}?q=${syms.join(',')}&interval=${this.shareUrlService.getPastDateInDays(this.intervalInDays())}_${this.shareUrlService.getPastDateInDays(1)}`;
       this.shareUrlService.update({title: linkTitle, url});
+      this.seoService.update({
+        title: syms.length ? `${syms.join(' vs ')} Performance Comparison` : 'Stock Performance Comparison',
+        description: syms.length
+          ? `Compare stock performance of ${syms.join(', ')} with interactive charts and technical analysis.`
+          : 'Compare stock performance across multiple symbols with interactive charts.',
+        path: '/markets/performance',
+      });
     });
   }
 
   ngOnDestroy(): void {
     this.shareUrlService.update({title: '', url: ''});
+    this.seoService.reset();
   }
 
   updateSymbols(symbols: string[]) {

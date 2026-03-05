@@ -1,6 +1,6 @@
 <div class="flex flex-col divide-y divide-gray-700/50">
     @for (item of newsItems(); track item.id) {
-        <a [href]="`#/markets/news/item/${indexName()}/${item.id}`" target="_blank"
+        <a [href]="`/markets/news/item/${indexName()}/${item.id}`" target="_blank"
            class="flex flex-col md:flex-row gap-4 py-4 px-3 hover:bg-gray-700/30 rounded-lg transition-colors group">
             <img [src]="item.images[1]?.url || item.images[0]?.url"
                  alt="{{item.headline}}"

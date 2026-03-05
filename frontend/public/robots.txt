@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /agents/
+Disallow: /attachments/
+Disallow: /integrations/
+Disallow: /llms/
+Disallow: /messages/
+Disallow: /auth/
+Disallow: /status/
+Disallow: /docs
+Disallow: /openapi.json
+
+Sitemap: https://quaks.ai/sitemap.xml
