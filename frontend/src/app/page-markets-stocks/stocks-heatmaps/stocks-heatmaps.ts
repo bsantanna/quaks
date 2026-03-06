@@ -1,10 +1,9 @@
 import {Component, computed, ElementRef, inject, OnDestroy, PLATFORM_ID, signal, viewChild} from '@angular/core';
 import {isPlatformBrowser} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
-import {toSignal} from '@angular/core/rxjs-interop';
 import {forkJoin} from 'rxjs';
 import {Router} from '@angular/router';
-import {HeatmapConstituent, MarketCapItem, StatsClose} from '../../shared';
+import {HeatmapConstituent, StatsClose} from '../../shared';
 import {MarketsStatsService} from '../../shared';
 
 export interface HeatmapTile {
@@ -49,6 +48,26 @@ export class StocksHeatmaps implements OnDestroy {
   readonly sectorGroups = signal<SectorGroup[]>([]);
   readonly zoomedSector = signal<string | null>(null);
   readonly hoveredTile = signal<HeatmapTile | null>(null);
+  readonly mouseX = signal(0);
+  readonly mouseY = signal(0);
+
+  readonly tooltipStyle = computed(() => {
+    const x = this.mouseX();
+    const y = this.mouseY();
+    const w = this.containerWidth || 1200;
+    const h = this.containerHeight || 700;
+    const tooltipW = 220;
+    const tooltipH = 90;
+    const offset = 12;
+
+    let left = x + offset;
+    let top = y - tooltipH;
+
+    if (left + tooltipW > w) left = x - tooltipW - offset;
+    if (top < 0) top = y + offset;
+
+    return {left, top};
+  });
 
   readonly visibleGroups = computed(() => {
     const zoomed = this.zoomedSector();
@@ -57,6 +76,7 @@ export class StocksHeatmaps implements OnDestroy {
     return groups.filter(g => g.sector === zoomed);
   });
 
+  private allTiles: HeatmapTile[] = [];
   private resizeObserver: ResizeObserver | null = null;
   private containerWidth = 0;
   private containerHeight = 0;
@@ -86,6 +106,14 @@ export class StocksHeatmaps implements OnDestroy {
   zoomOut() {
     this.zoomedSector.set(null);
     this.relayout();
+  }
+
+  onMouseMove(event: MouseEvent) {
+    const container = this.containerRef()?.nativeElement;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    this.mouseX.set(event.clientX - rect.left);
+    this.mouseY.set(event.clientY - rect.top);
   }
 
   navigateToStock(ticker: string) {
@@ -180,6 +208,7 @@ export class StocksHeatmaps implements OnDestroy {
             x: 0, y: 0, w: 0, h: 0,
           }));
 
+        this.allTiles = tiles;
         this.layoutTreemap(tiles);
         this.loading.set(false);
       });
@@ -187,10 +216,8 @@ export class StocksHeatmaps implements OnDestroy {
   }
 
   private relayout() {
-    const allGroups = this.sectorGroups();
-    const allTiles = allGroups.flatMap(g => g.tiles);
-    if (allTiles.length > 0) {
-      this.layoutTreemap(allTiles);
+    if (this.allTiles.length > 0) {
+      this.layoutTreemap(this.allTiles);
     }
   }
 

@@ -1,41 +1,30 @@
 <div class="heatmap-wrapper">
-  <!-- Controls -->
-  <div class="flex items-center gap-3 mb-3">
-    <div class="flex rounded-lg overflow-hidden border border-white/10">
-      <button
-        class="px-4 py-1.5 text-sm font-medium transition-colors"
-        [class.bg-blue-600]="selectedIndex() === 'sp500'"
-        [class.text-white]="selectedIndex() === 'sp500'"
-        [class.bg-transparent]="selectedIndex() !== 'sp500'"
-        [class.text-gray-400]="selectedIndex() !== 'sp500'"
-        [class.hover:text-white]="selectedIndex() !== 'sp500'"
-        (click)="switchIndex('sp500')">
+  <!-- Controls: Tab pattern matching stock-eod-charts -->
+  <div class="border-b border-white/10 mb-3">
+    <nav aria-label="Heatmap index" class="-mb-px flex space-x-8">
+      <button (click)="switchIndex('sp500')"
+              class="border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer"
+              [class]="selectedIndex() === 'sp500' ? 'border-blue-800 text-blue-500' : 'hover:border-white/20 hover:text-gray-200 border-transparent text-gray-400'">
         S&amp;P 500
       </button>
-      <button
-        class="px-4 py-1.5 text-sm font-medium transition-colors"
-        [class.bg-blue-600]="selectedIndex() === 'nasdaq100'"
-        [class.text-white]="selectedIndex() === 'nasdaq100'"
-        [class.bg-transparent]="selectedIndex() !== 'nasdaq100'"
-        [class.text-gray-400]="selectedIndex() !== 'nasdaq100'"
-        [class.hover:text-white]="selectedIndex() !== 'nasdaq100'"
-        (click)="switchIndex('nasdaq100')">
+      <button (click)="switchIndex('nasdaq100')"
+              class="border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer"
+              [class]="selectedIndex() === 'nasdaq100' ? 'border-blue-800 text-blue-500' : 'hover:border-white/20 hover:text-gray-200 border-transparent text-gray-400'">
         NASDAQ 100
       </button>
-    </div>
 
-    @if (zoomedSector()) {
-      <button
-        class="px-3 py-1.5 text-sm text-gray-300 hover:text-white border border-white/10 rounded-lg transition-colors flex items-center gap-1"
-        (click)="zoomOut()">
-        <span class="text-xs">&#x2190;</span> All Sectors
-      </button>
-      <span class="text-sm text-gray-400">{{ zoomedSector() }}</span>
-    }
+      @if (zoomedSector()) {
+        <button
+          class="border-b-2 border-transparent px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer text-gray-400 hover:text-gray-200 hover:border-white/20"
+          (click)="zoomOut()">
+          &#x2190; All Sectors
+        </button>
+      }
+    </nav>
   </div>
 
   <!-- Heatmap -->
-  <div #heatmapContainer class="heatmap-container">
+  <div #heatmapContainer class="heatmap-container" (mousemove)="onMouseMove($event)">
     @if (loading()) {
       <div class="absolute inset-0 flex items-center justify-center">
         <div class="text-gray-400 text-sm">Loading heatmap data...</div>
@@ -79,11 +68,11 @@
         }
       }
 
-      <!-- Tooltip -->
+      <!-- Tooltip follows mouse cursor -->
       @if (hoveredTile()) {
         <div class="heatmap-tooltip"
-             [style.left.px]="hoveredTile()!.x + hoveredTile()!.w / 2"
-             [style.top.px]="hoveredTile()!.y - 4">
+             [style.left.px]="tooltipStyle().left"
+             [style.top.px]="tooltipStyle().top">
           <div class="font-semibold">{{ hoveredTile()!.ticker }}</div>
           <div class="text-xs text-gray-300">{{ hoveredTile()!.name }}</div>
           <div class="text-xs text-gray-400">{{ hoveredTile()!.sector }} &middot; {{ hoveredTile()!.industry }}</div>
