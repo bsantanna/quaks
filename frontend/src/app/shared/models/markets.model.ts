@@ -35,3 +35,23 @@ export interface NewsList {
   items: NewsItem[]
   cursor: string | null
 }
+
+export interface HeatmapConstituent {
+  ticker: string
+  name: string
+  sector: string
+  industry: string
+}
+
+export interface MarketCapItem {
+  key_ticker: string
+  market_capitalization: number | null
+}
+
+export interface MarketCapsBulkResponse {
+  items: MarketCapItem[]
+}
+
+export interface StatsCloseBulkResponse {
+  items: StatsClose[]
+}

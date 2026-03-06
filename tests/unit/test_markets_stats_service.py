@@ -194,7 +194,7 @@ class TestGetMarketCapsBulk:
         }
 
         await service.get_market_caps_bulk(
-            index_name="quaks_stocks-metadata_*",
+            index_name="quaks_stocks-metadata_latest",
             key_tickers=["AAPL", "MSFT"],
         )
 
@@ -216,7 +216,7 @@ class TestGetMarketCapsBulk:
         }
 
         results = await service.get_market_caps_bulk(
-            index_name="quaks_stocks-metadata_*",
+            index_name="quaks_stocks-metadata_latest",
             key_tickers=["AAPL", "MSFT"],
         )
 
@@ -240,7 +240,7 @@ class TestGetMarketCapsBulk:
         }
 
         results = await service.get_market_caps_bulk(
-            index_name="quaks_stocks-metadata_*",
+            index_name="quaks_stocks-metadata_latest",
             key_tickers=["AAPL", "UNKNOWN"],
         )
 
@@ -254,7 +254,7 @@ class TestGetMarketCapsBulk:
         }
 
         results = await service.get_market_caps_bulk(
-            index_name="quaks_stocks-metadata_*",
+            index_name="quaks_stocks-metadata_latest",
             key_tickers=[],
         )
 

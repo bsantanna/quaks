@@ -524,6 +524,33 @@ resource "elasticstack_elasticsearch_index" "markets_news_amex" {
   depends_on = [elasticstack_elasticsearch_index_template.quaks_markets-news_template]
 }
 
+resource "elasticstack_elasticsearch_index" "stocks_metadata_nyse" {
+  name = "quaks_stocks-metadata_nyse"
+  alias = [{
+    name = "quaks_stocks-metadata_latest"
+  }]
+  deletion_protection = false
+  depends_on = [elasticstack_elasticsearch_index_template.quaks_stocks-metadata_template]
+}
+
+resource "elasticstack_elasticsearch_index" "stocks_metadata_nasdaq" {
+  name = "quaks_stocks-metadata_nasdaq"
+  alias = [{
+    name = "quaks_stocks-metadata_latest"
+  }]
+  deletion_protection = false
+  depends_on = [elasticstack_elasticsearch_index_template.quaks_stocks-metadata_template]
+}
+
+resource "elasticstack_elasticsearch_index" "stocks_metadata_amex" {
+  name = "quaks_stocks-metadata_amex"
+  alias = [{
+    name = "quaks_stocks-metadata_latest"
+  }]
+  deletion_protection = false
+  depends_on = [elasticstack_elasticsearch_index_template.quaks_stocks-metadata_template]
+}
+
 resource "elasticstack_elasticsearch_security_api_key" "quaks_api_key" {
   name = "quaks-api-key"
 

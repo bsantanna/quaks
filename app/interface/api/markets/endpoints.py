@@ -182,7 +182,7 @@ async def get_stats_close_bulk(
     from the stocks-metadata index. Used for heatmap tile sizing.
 
     Parameters:
-    - `index_name` (path): The Elasticsearch index to query (e.g. `quaks_stocks-metadata_*`).
+    - `index_name` (path): The Elasticsearch index or alias to query (e.g. `quaks_stocks-metadata_latest`).
     - `key_tickers` (body): List of ticker symbols (e.g. `["AAPL", "MSFT"]`).
     """,
     response_description="Bulk market capitalization data",

@@ -99,6 +99,18 @@ ruff format .
 ruff check --fix .
 ```
 
+### Backend Debugging
+
+```bash
+# View live app container logs (useful for debugging API errors)
+docker compose logs -f app
+
+# Rebuild and restart the app container after backend code changes
+docker compose build app && docker compose up -d app
+```
+
+**Note:** The backend runs inside a Docker container (`compose.yml`). Local changes to Python files in `app/` are NOT reflected until the container is rebuilt. Always rebuild after modifying backend code.
+
 ### Frontend (from `frontend/` directory)
 
 ```bash
