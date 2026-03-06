@@ -173,3 +173,89 @@ class TestGetStatsCloseBulk:
 
         call_kwargs = mock_es.search_template.call_args
         assert call_kwargs.kwargs["index"] == "stocks-eod"
+
+
+def _make_market_cap_bucket(ticker, market_cap):
+    return {
+        "key": ticker,
+        "latest": {
+            "hits": {
+                "hits": [{"_source": {"market_capitalization": market_cap}}] if market_cap is not None else []
+            }
+        }
+    }
+
+
+class TestGetMarketCapsBulk:
+    @pytest.mark.asyncio
+    async def test_calls_template_with_correct_params(self, service, mock_es):
+        mock_es.search_template.return_value = {
+            "aggregations": {"by_ticker": {"buckets": []}}
+        }
+
+        await service.get_market_caps_bulk(
+            index_name="quaks_stocks-metadata_*",
+            key_tickers=["AAPL", "MSFT"],
+        )
+
+        params = _extract_template_params(mock_es)
+        assert params["key_tickers"] == ["AAPL", "MSFT"]
+        assert params["size"] == 2
+
+    @pytest.mark.asyncio
+    async def test_returns_market_caps(self, service, mock_es):
+        mock_es.search_template.return_value = {
+            "aggregations": {
+                "by_ticker": {
+                    "buckets": [
+                        _make_market_cap_bucket("AAPL", 3000000000000),
+                        _make_market_cap_bucket("MSFT", 2800000000000),
+                    ]
+                }
+            }
+        }
+
+        results = await service.get_market_caps_bulk(
+            index_name="quaks_stocks-metadata_*",
+            key_tickers=["AAPL", "MSFT"],
+        )
+
+        assert len(results) == 2
+        assert results[0]["key_ticker"] == "AAPL"
+        assert results[0]["market_capitalization"] == 3000000000000
+        assert results[1]["key_ticker"] == "MSFT"
+        assert results[1]["market_capitalization"] == 2800000000000
+
+    @pytest.mark.asyncio
+    async def test_skips_tickers_with_no_hits(self, service, mock_es):
+        mock_es.search_template.return_value = {
+            "aggregations": {
+                "by_ticker": {
+                    "buckets": [
+                        _make_market_cap_bucket("AAPL", 3000000000000),
+                        _make_market_cap_bucket("UNKNOWN", None),
+                    ]
+                }
+            }
+        }
+
+        results = await service.get_market_caps_bulk(
+            index_name="quaks_stocks-metadata_*",
+            key_tickers=["AAPL", "UNKNOWN"],
+        )
+
+        assert len(results) == 1
+        assert results[0]["key_ticker"] == "AAPL"
+
+    @pytest.mark.asyncio
+    async def test_empty_tickers_returns_empty(self, service, mock_es):
+        mock_es.search_template.return_value = {
+            "aggregations": {"by_ticker": {"buckets": []}}
+        }
+
+        results = await service.get_market_caps_bulk(
+            index_name="quaks_stocks-metadata_*",
+            key_tickers=[],
+        )
+
+        assert results == []

@@ -98,6 +98,19 @@ class StatsCloseBulkResponse(BaseModel):
     items: list[StatsClose]
 
 
+class MarketCapItem(BaseModel):
+    key_ticker: str
+    market_capitalization: Optional[int] = None
+
+
+class MarketCapsBulkRequest(BaseModel):
+    key_tickers: list[str]
+
+
+class MarketCapsBulkResponse(BaseModel):
+    items: list[MarketCapItem]
+
+
 class StatsCloseRequest(BaseModel):
     end_date: Optional[str] = None
     start_date: Optional[str] = None

@@ -7,6 +7,32 @@ class MarketsStatsService:
     def __init__(self, es: Elasticsearch) -> None:
         self.es = es
 
+    async def get_market_caps_bulk(
+            self,
+            index_name: str,
+            key_tickers: list[str],
+    ) -> list[dict]:
+        search_params = {
+            "id": "get_metadata_market_caps_template",
+            "params": {
+                "key_tickers": key_tickers,
+                "size": len(key_tickers),
+            }
+        }
+
+        response = self.es.search_template(index=index_name, body=search_params)
+        buckets = response['aggregations']['by_ticker']['buckets']
+        results = []
+        for bucket in buckets:
+            hits = bucket['latest']['hits']['hits']
+            if hits:
+                market_cap = hits[0]['_source'].get('market_capitalization')
+                results.append({
+                    'key_ticker': bucket['key'],
+                    'market_capitalization': market_cap,
+                })
+        return results
+
     async def get_stats_close_bulk(
             self,
             index_name: str,

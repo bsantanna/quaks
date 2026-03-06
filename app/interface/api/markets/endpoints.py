@@ -12,6 +12,9 @@ from app.interface.api.cache_control import cache_control
 from app.interface.api.markets.schema import (
     IndicatorRequest,
     IndicatorResponse,
+    MarketCapItem,
+    MarketCapsBulkRequest,
+    MarketCapsBulkResponse,
     NewsItem,
     NewsList,
     NewsListRequest,
@@ -167,6 +170,45 @@ async def get_stats_close_bulk(
         for r in results
     ]
     return StatsCloseBulkResponse(items=items)
+
+
+@router.post(
+    path="/market_caps_bulk/{index_name}",
+    response_model=MarketCapsBulkResponse,
+    operation_id="get_market_caps_bulk",
+    summary="Get market capitalization for multiple tickers",
+    description="""
+    Returns the most recent market capitalization for multiple ticker symbols
+    from the stocks-metadata index. Used for heatmap tile sizing.
+
+    Parameters:
+    - `index_name` (path): The Elasticsearch index to query (e.g. `quaks_stocks-metadata_*`).
+    - `key_tickers` (body): List of ticker symbols (e.g. `["AAPL", "MSFT"]`).
+    """,
+    response_description="Bulk market capitalization data",
+    dependencies=[cache_control(3600)],
+)
+@inject
+async def get_market_caps_bulk(
+    index_name: str,
+    request: MarketCapsBulkRequest,
+    markets_stats_service: Annotated[
+        MarketsStatsService, Depends(Provide[Container.markets_stats_service])
+    ],
+):
+    _validate_index_name(index_name)
+    results = await markets_stats_service.get_market_caps_bulk(
+        index_name=index_name,
+        key_tickers=request.key_tickers,
+    )
+    items = [
+        MarketCapItem(
+            key_ticker=r.get("key_ticker"),
+            market_capitalization=r.get("market_capitalization"),
+        )
+        for r in results
+    ]
+    return MarketCapsBulkResponse(items=items)
 
 
 @router.get(

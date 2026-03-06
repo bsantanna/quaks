@@ -44,6 +44,7 @@ locals {
     get_markets_news_template = "get_markets_news.mustache"
     get_stats_close_template = "get_stats_close.mustache"
     get_stats_close_bulk_template = "get_stats_close_bulk.mustache"
+    get_metadata_market_caps_template = "get_metadata_market_caps.mustache"
   }
 }
 
