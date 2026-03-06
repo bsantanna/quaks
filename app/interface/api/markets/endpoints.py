@@ -4,7 +4,7 @@ from html import unescape
 
 from dependency_injector.wiring import inject, Provide
 from fastapi import APIRouter, Depends
-from typing_extensions import Annotated
+from typing_extensions import Annotated, Optional
 
 from app.core.container import Container
 from app.domain.exceptions.base import InvalidFieldError
@@ -12,10 +12,13 @@ from app.interface.api.cache_control import cache_control
 from app.interface.api.markets.schema import (
     IndicatorRequest,
     IndicatorResponse,
+    MarketCapItem,
+    MarketCapsBulkResponse,
     NewsItem,
     NewsList,
     NewsListRequest,
     StatsClose,
+    StatsCloseBulkResponse,
     StatsCloseRequest,
 )
 from app.services.markets_news import MarketsNewsService
@@ -113,6 +116,101 @@ async def get_stats_close(
         most_recent_date=result.get("most_recent_date"),
         percent_variance=result.get("percent_variance"),
     )
+
+
+@router.get(
+    path="/stats_close_bulk/{index_name}",
+    response_model=StatsCloseBulkResponse,
+    operation_id="get_stats_close_bulk",
+    summary="Get close price statistics for multiple tickers",
+    description="""
+    Returns the most recent OHLCV data and percent variance for multiple ticker symbols
+    within an optional date range. Used for heatmap visualizations.
+
+    Parameters:
+    - `index_name` (path): The Elasticsearch index to query (e.g. `stocks-eod`).
+    - `key_tickers` (query): Comma-separated list of ticker symbols (e.g. `AAPL,MSFT`).
+    - `start_date` (query, optional): Start of the date range in `yyyy-mm-dd` format. Defaults to 7 days ago.
+    - `end_date` (query, optional): End of the date range in `yyyy-mm-dd` format. Defaults to today.
+    """,
+    response_description="Bulk close price statistics",
+    dependencies=[cache_control(86400)],
+)
+@inject
+async def get_stats_close_bulk(
+    index_name: str,
+    key_tickers: str,
+    markets_stats_service: Annotated[
+        MarketsStatsService, Depends(Provide[Container.markets_stats_service])
+    ],
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+):
+    _validate_index_name(index_name)
+    tickers = [t.strip() for t in key_tickers.split(",") if t.strip()]
+    today = datetime.now()
+    end_date = end_date or today.strftime("%Y-%m-%d")
+    start_date = start_date or (today - timedelta(days=7)).strftime("%Y-%m-%d")
+    results = await markets_stats_service.get_stats_close_bulk(
+        index_name=index_name,
+        key_tickers=tickers,
+        start_date=start_date,
+        end_date=end_date,
+    )
+    items = [
+        StatsClose(
+            key_ticker=r.get("key_ticker"),
+            most_recent_close=r.get("most_recent_close"),
+            most_recent_open=r.get("most_recent_open"),
+            most_recent_high=r.get("most_recent_high"),
+            most_recent_low=r.get("most_recent_low"),
+            most_recent_volume=r.get("most_recent_volume"),
+            most_recent_date=r.get("most_recent_date"),
+            percent_variance=r.get("percent_variance"),
+        )
+        for r in results
+    ]
+    return StatsCloseBulkResponse(items=items)
+
+
+@router.get(
+    path="/market_caps_bulk/{index_name}",
+    response_model=MarketCapsBulkResponse,
+    operation_id="get_market_caps_bulk",
+    summary="Get market capitalization for multiple tickers",
+    description="""
+    Returns the most recent market capitalization for multiple ticker symbols
+    from the stocks-metadata index. Used for heatmap tile sizing.
+
+    Parameters:
+    - `index_name` (path): The Elasticsearch index or alias to query (e.g. `quaks_stocks-metadata_latest`).
+    - `key_tickers` (query): Comma-separated list of ticker symbols (e.g. `AAPL,MSFT`).
+    """,
+    response_description="Bulk market capitalization data",
+    dependencies=[cache_control(86400)],
+)
+@inject
+async def get_market_caps_bulk(
+    index_name: str,
+    key_tickers: str,
+    markets_stats_service: Annotated[
+        MarketsStatsService, Depends(Provide[Container.markets_stats_service])
+    ],
+):
+    _validate_index_name(index_name)
+    tickers = [t.strip() for t in key_tickers.split(",") if t.strip()]
+    results = await markets_stats_service.get_market_caps_bulk(
+        index_name=index_name,
+        key_tickers=tickers,
+    )
+    items = [
+        MarketCapItem(
+            key_ticker=r.get("key_ticker"),
+            market_capitalization=r.get("market_capitalization"),
+        )
+        for r in results
+    ]
+    return MarketCapsBulkResponse(items=items)
 
 
 @router.get(

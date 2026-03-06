@@ -1,7 +1,7 @@
 import {inject, Injectable, signal, WritableSignal} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
-import {StatsClose} from '../models/markets.model';
+import {MarketCapsBulkResponse, StatsClose, StatsCloseBulkResponse} from '../models/markets.model';
 import {catchError, Observable, of, timeout} from 'rxjs';
 import {REQUEST_TIMEOUT} from '../../constants';
 
@@ -47,6 +47,36 @@ export class MarketsStatsService {
       })
     );
 
+  }
+
+  getStatsCloseBulk(
+    indexName: string,
+    keyTickers: string[],
+  ): Observable<StatsCloseBulkResponse> {
+    const url = `${environment.apiBaseUrl}/markets/stats_close_bulk/${encodeURIComponent(indexName)}`;
+    const params = {key_tickers: keyTickers.join(',')};
+    return this.httpClient.get<StatsCloseBulkResponse>(url, {params}).pipe(
+      timeout(REQUEST_TIMEOUT),
+      catchError((error) => {
+        console.error(`Failed to fetch bulk stats close for ${indexName}`, error);
+        return of({items: []});
+      })
+    );
+  }
+
+  getMarketCapsBulk(
+    indexName: string,
+    keyTickers: string[],
+  ): Observable<MarketCapsBulkResponse> {
+    const url = `${environment.apiBaseUrl}/markets/market_caps_bulk/${encodeURIComponent(indexName)}`;
+    const params = {key_tickers: keyTickers.join(',')};
+    return this.httpClient.get<MarketCapsBulkResponse>(url, {params}).pipe(
+      timeout(REQUEST_TIMEOUT),
+      catchError((error) => {
+        console.error(`Failed to fetch bulk market caps for ${indexName}`, error);
+        return of({items: []});
+      })
+    );
   }
 
 }
