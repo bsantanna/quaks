@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-06 (update 3)
 **Previous Audit:** 2026-03-05 (update 2)
-**Estimated Lighthouse SEO Score:** ~92/100 (up from ~90)
+**Estimated Lighthouse SEO Score:** ~95/100 (up from ~92)
 
 ---
 
@@ -29,23 +29,18 @@
 
 | # | Issue | What Changed |
 |---|-------|------------|
-| 16 | Stub content on Stocks page | Replaced `<p>markets-stocks works!</p>` with full heatmap component (`StocksHeatmaps`). Page now has rich interactive content (S&P 500 / NASDAQ 100 treemap heatmaps). `SeoService` called with title "Stocks" and relevant description. |
+| 16 | Stub content on Stocks page | Replaced with full heatmap component (`StocksHeatmaps`). |
+| 11 | No `prefers-reduced-motion` CSS | Added `@media (prefers-reduced-motion: reduce)` to `styles.scss` — disables animations, transitions, and scroll behavior for motion-sensitive users. |
+| 6c | No BreadcrumbList schema | `SeoService.update()` now auto-generates `BreadcrumbList` JSON-LD from the `path` param. Breadcrumbs include Home + path segments + current page title. Cleaned up on `reset()`. |
 
 ---
 
 ## Still Open
 
-### High
-
-| # | Issue | Location | Impact |
-|---|-------|----------|--------|
-| 6c | **No BreadcrumbList schema** | All nested routes | No breadcrumb display in search results. |
-
 ### Medium
 
 | # | Issue | Location | Impact |
 |---|-------|----------|--------|
-| 11 | **No `prefers-reduced-motion` CSS** | `styles.scss` | Accessibility gap for motion-sensitive users. |
 | 17 | **No `font-display: swap`** | Global styles | Minor LCP impact if custom fonts load slowly. |
 | 19 | **No SSR/prerendering** | Entire SPA | Crawlers see empty `<app-root>` until JS executes. Google renders JS but other engines may not. |
 | 20 | **No `TitleStrategy`** | `app.config.ts` | Route `title` properties don't auto-propagate. Works via manual `SeoService` calls, but no fallback for routes that forget to call it. |
@@ -81,11 +76,9 @@
 
 ## Recommended Next Steps (Priority Order)
 
-1. **Add `prefers-reduced-motion`** to `styles.scss` — quick accessibility compliance
-2. **Add `BreadcrumbList` schema** for nested routes — breadcrumb rich results
+1. **Add `font-display: swap`** if custom fonts are loaded
+2. **Wire up `TitleStrategy`** as a fallback for routes that don't call `SeoService` manually
 3. **Consider SSR/prerendering** for key landing pages — biggest remaining SEO uplift
-4. **Add `font-display: swap`** if custom fonts are loaded
-5. **Wire up `TitleStrategy`** as a fallback for routes that don't call `SeoService` manually
 
 ---
 

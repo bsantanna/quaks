@@ -11,7 +11,8 @@
   min-height: 500px;
   overflow: hidden;
   border-radius: 8px;
-  background: #0d1117;
+  border: 1px solid #2C3645;
+  background: #141F30;
 }
 
 .sector-label {
@@ -27,6 +28,7 @@
   letter-spacing: 0.5px;
   z-index: 2;
   user-select: none;
+  background: #141F30;
 }
 
 .stock-tile {
@@ -63,7 +65,7 @@
 .heatmap-tooltip {
   position: absolute;
   background: rgba(15, 20, 35, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid #2C3645;
   border-radius: 6px;
   padding: 8px 12px;
   z-index: 10;

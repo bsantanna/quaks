@@ -13,6 +13,7 @@ export interface HeatmapTile {
   industry: string;
   marketCap: number;
   percentVariance: number;
+  mostRecentDate: string;
   x: number;
   y: number;
   w: number;
@@ -153,6 +154,12 @@ export class StocksHeatmaps implements OnDestroy {
     return tile.w > 40 && tile.h > 35;
   }
 
+  formatDate(dateStr: string): string {
+    if (!dateStr) return '';
+    const [y, m, d] = dateStr.split('-');
+    return `${d}/${m}/${y.slice(2)}`;
+  }
+
   private setupResize() {
     if (typeof ResizeObserver === 'undefined') return;
 
@@ -205,6 +212,7 @@ export class StocksHeatmaps implements OnDestroy {
             industry: c.industry,
             marketCap: capsMap.get(c.ticker) || 0,
             percentVariance: statsMap.get(c.ticker)?.percent_variance ?? 0,
+            mostRecentDate: statsMap.get(c.ticker)?.most_recent_date ?? '',
             x: 0, y: 0, w: 0, h: 0,
           }));
 

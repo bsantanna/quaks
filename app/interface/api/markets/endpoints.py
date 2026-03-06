@@ -4,7 +4,7 @@ from html import unescape
 
 from dependency_injector.wiring import inject, Provide
 from fastapi import APIRouter, Depends
-from typing_extensions import Annotated
+from typing_extensions import Annotated, Optional
 
 from app.core.container import Container
 from app.domain.exceptions.base import InvalidFieldError
@@ -13,13 +13,11 @@ from app.interface.api.markets.schema import (
     IndicatorRequest,
     IndicatorResponse,
     MarketCapItem,
-    MarketCapsBulkRequest,
     MarketCapsBulkResponse,
     NewsItem,
     NewsList,
     NewsListRequest,
     StatsClose,
-    StatsCloseBulkRequest,
     StatsCloseBulkResponse,
     StatsCloseRequest,
 )
@@ -120,7 +118,7 @@ async def get_stats_close(
     )
 
 
-@router.post(
+@router.get(
     path="/stats_close_bulk/{index_name}",
     response_model=StatsCloseBulkResponse,
     operation_id="get_stats_close_bulk",
@@ -131,28 +129,31 @@ async def get_stats_close(
 
     Parameters:
     - `index_name` (path): The Elasticsearch index to query (e.g. `stocks-eod`).
-    - `key_tickers` (body): List of ticker symbols (e.g. `["AAPL", "MSFT"]`).
-    - `start_date` (body, optional): Start of the date range in `yyyy-mm-dd` format. Defaults to 7 days ago.
-    - `end_date` (body, optional): End of the date range in `yyyy-mm-dd` format. Defaults to today.
+    - `key_tickers` (query): Comma-separated list of ticker symbols (e.g. `AAPL,MSFT`).
+    - `start_date` (query, optional): Start of the date range in `yyyy-mm-dd` format. Defaults to 7 days ago.
+    - `end_date` (query, optional): End of the date range in `yyyy-mm-dd` format. Defaults to today.
     """,
     response_description="Bulk close price statistics",
-    dependencies=[cache_control(3600)],
+    dependencies=[cache_control(86400)],
 )
 @inject
 async def get_stats_close_bulk(
     index_name: str,
-    request: StatsCloseBulkRequest,
+    key_tickers: str,
     markets_stats_service: Annotated[
         MarketsStatsService, Depends(Provide[Container.markets_stats_service])
     ],
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
 ):
     _validate_index_name(index_name)
+    tickers = [t.strip() for t in key_tickers.split(",") if t.strip()]
     today = datetime.now()
-    end_date = request.end_date or today.strftime("%Y-%m-%d")
-    start_date = request.start_date or (today - timedelta(days=7)).strftime("%Y-%m-%d")
+    end_date = end_date or today.strftime("%Y-%m-%d")
+    start_date = start_date or (today - timedelta(days=7)).strftime("%Y-%m-%d")
     results = await markets_stats_service.get_stats_close_bulk(
         index_name=index_name,
-        key_tickers=request.key_tickers,
+        key_tickers=tickers,
         start_date=start_date,
         end_date=end_date,
     )
@@ -172,7 +173,7 @@ async def get_stats_close_bulk(
     return StatsCloseBulkResponse(items=items)
 
 
-@router.post(
+@router.get(
     path="/market_caps_bulk/{index_name}",
     response_model=MarketCapsBulkResponse,
     operation_id="get_market_caps_bulk",
@@ -183,23 +184,24 @@ async def get_stats_close_bulk(
 
     Parameters:
     - `index_name` (path): The Elasticsearch index or alias to query (e.g. `quaks_stocks-metadata_latest`).
-    - `key_tickers` (body): List of ticker symbols (e.g. `["AAPL", "MSFT"]`).
+    - `key_tickers` (query): Comma-separated list of ticker symbols (e.g. `AAPL,MSFT`).
     """,
     response_description="Bulk market capitalization data",
-    dependencies=[cache_control(3600)],
+    dependencies=[cache_control(86400)],
 )
 @inject
 async def get_market_caps_bulk(
     index_name: str,
-    request: MarketCapsBulkRequest,
+    key_tickers: str,
     markets_stats_service: Annotated[
         MarketsStatsService, Depends(Provide[Container.markets_stats_service])
     ],
 ):
     _validate_index_name(index_name)
+    tickers = [t.strip() for t in key_tickers.split(",") if t.strip()]
     results = await markets_stats_service.get_market_caps_bulk(
         index_name=index_name,
-        key_tickers=request.key_tickers,
+        key_tickers=tickers,
     )
     items = [
         MarketCapItem(

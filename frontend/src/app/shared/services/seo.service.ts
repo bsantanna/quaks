@@ -56,6 +56,9 @@ export class SeoService {
       this.doc.head.appendChild(link);
     }
     link.setAttribute('href', url);
+
+    // BreadcrumbList
+    this.setBreadcrumbs(config.title, config.path);
   }
 
   setNewsArticleSchema(article: NewsArticleSchema): void {
@@ -77,12 +80,46 @@ export class SeoService {
     this.doc.head.appendChild(script);
   }
 
+  private setBreadcrumbs(title: string, path?: string): void {
+    this.doc.getElementById('seo-breadcrumbs')?.remove();
+    if (!path || path === '/') return;
+
+    const segments = path.split('/').filter(Boolean);
+    const items: {name: string; url: string}[] = [{name: 'Home', url: BASE_URL}];
+
+    let accumulated = '';
+    for (let i = 0; i < segments.length - 1; i++) {
+      accumulated += `/${segments[i]}`;
+      items.push({
+        name: segments[i].charAt(0).toUpperCase() + segments[i].slice(1),
+        url: `${BASE_URL}${accumulated}`,
+      });
+    }
+    items.push({name: title, url: `${BASE_URL}${path}`});
+
+    const script = this.doc.createElement('script');
+    script.type = 'application/ld+json';
+    script.id = 'seo-breadcrumbs';
+    script.textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: items.map((item, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: item.name,
+        item: item.url,
+      })),
+    });
+    this.doc.head.appendChild(script);
+  }
+
   private removeJsonLd(): void {
     this.doc.getElementById('seo-jsonld')?.remove();
   }
 
   reset(): void {
     this.removeJsonLd();
+    this.doc.getElementById('seo-breadcrumbs')?.remove();
     this.update({title: 'AI-Powered Quantitative Finance Platform'});
   }
 }

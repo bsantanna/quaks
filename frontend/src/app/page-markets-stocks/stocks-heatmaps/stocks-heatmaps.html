@@ -1,6 +1,6 @@
 <div class="heatmap-wrapper">
   <!-- Controls: Tab pattern matching stock-eod-charts -->
-  <div class="border-b border-white/10 mb-3">
+  <div class="border-b mb-3" style="border-color: #2C3645">
     <nav aria-label="Heatmap index" class="-mb-px flex space-x-8">
       <button (click)="switchIndex('sp500')"
               class="border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer"
@@ -17,7 +17,7 @@
         <button
           class="border-b-2 border-transparent px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer text-gray-400 hover:text-gray-200 hover:border-white/20"
           (click)="zoomOut()">
-          &#x2190; All Sectors
+          &#x2190; ALL SECTORS
         </button>
       }
     </nav>
@@ -80,6 +80,7 @@
                [class.text-green-400]="hoveredTile()!.percentVariance > 0"
                [class.text-red-400]="hoveredTile()!.percentVariance < 0">
             {{ hoveredTile()!.percentVariance > 0 ? '+' : '' }}{{ hoveredTile()!.percentVariance.toFixed(2) }}%
+            <span class="text-gray-500 ml-1">{{ formatDate(hoveredTile()!.mostRecentDate) }}</span>
           </div>
         </div>
       }

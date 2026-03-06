@@ -54,7 +54,8 @@ export class MarketsStatsService {
     keyTickers: string[],
   ): Observable<StatsCloseBulkResponse> {
     const url = `${environment.apiBaseUrl}/markets/stats_close_bulk/${encodeURIComponent(indexName)}`;
-    return this.httpClient.post<StatsCloseBulkResponse>(url, {key_tickers: keyTickers}).pipe(
+    const params = {key_tickers: keyTickers.join(',')};
+    return this.httpClient.get<StatsCloseBulkResponse>(url, {params}).pipe(
       timeout(REQUEST_TIMEOUT),
       catchError((error) => {
         console.error(`Failed to fetch bulk stats close for ${indexName}`, error);
@@ -68,7 +69,8 @@ export class MarketsStatsService {
     keyTickers: string[],
   ): Observable<MarketCapsBulkResponse> {
     const url = `${environment.apiBaseUrl}/markets/market_caps_bulk/${encodeURIComponent(indexName)}`;
-    return this.httpClient.post<MarketCapsBulkResponse>(url, {key_tickers: keyTickers}).pipe(
+    const params = {key_tickers: keyTickers.join(',')};
+    return this.httpClient.get<MarketCapsBulkResponse>(url, {params}).pipe(
       timeout(REQUEST_TIMEOUT),
       catchError((error) => {
         console.error(`Failed to fetch bulk market caps for ${indexName}`, error);
