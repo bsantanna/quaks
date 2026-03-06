@@ -2,6 +2,83 @@
 
 <!-- version list -->
 
+## v1.3.26 (2026-03-06)
+
+### Bug Fixes
+
+- Bulk stock close endpoint (2) ([#63](https://github.com/bsantanna/quaks/pull/63),
+  [`79c3e88`](https://github.com/bsantanna/quaks/commit/79c3e8885fa49ceda70809c1354775581bd1c690))
+
+- Frontend adjusts (1) ([#63](https://github.com/bsantanna/quaks/pull/63),
+  [`79c3e88`](https://github.com/bsantanna/quaks/commit/79c3e8885fa49ceda70809c1354775581bd1c690))
+
+- Heatmaps (1) ([#63](https://github.com/bsantanna/quaks/pull/63),
+  [`79c3e88`](https://github.com/bsantanna/quaks/commit/79c3e8885fa49ceda70809c1354775581bd1c690))
+
+- Heatmaps (2) ([#63](https://github.com/bsantanna/quaks/pull/63),
+  [`79c3e88`](https://github.com/bsantanna/quaks/commit/79c3e8885fa49ceda70809c1354775581bd1c690))
+
+- Heatmaps (3) ([#63](https://github.com/bsantanna/quaks/pull/63),
+  [`79c3e88`](https://github.com/bsantanna/quaks/commit/79c3e8885fa49ceda70809c1354775581bd1c690))
+
+- Heatmaps (4) ([#63](https://github.com/bsantanna/quaks/pull/63),
+  [`79c3e88`](https://github.com/bsantanna/quaks/commit/79c3e8885fa49ceda70809c1354775581bd1c690))
+
+- Heatmaps (5) ([#63](https://github.com/bsantanna/quaks/pull/63),
+  [`79c3e88`](https://github.com/bsantanna/quaks/commit/79c3e8885fa49ceda70809c1354775581bd1c690))
+
+- Heatmaps (6) ([#63](https://github.com/bsantanna/quaks/pull/63),
+  [`79c3e88`](https://github.com/bsantanna/quaks/commit/79c3e8885fa49ceda70809c1354775581bd1c690))
+
+- Layout adjusts for news item (3) ([#62](https://github.com/bsantanna/quaks/pull/62),
+  [`af9f106`](https://github.com/bsantanna/quaks/commit/af9f106cbde1528097ada892b466b1f6d34a6dcb))
+
+- Quant analyst skill ([#63](https://github.com/bsantanna/quaks/pull/63),
+  [`79c3e88`](https://github.com/bsantanna/quaks/commit/79c3e8885fa49ceda70809c1354775581bd1c690))
+
+- Quant analyst skill (2) ([#63](https://github.com/bsantanna/quaks/pull/63),
+  [`79c3e88`](https://github.com/bsantanna/quaks/commit/79c3e8885fa49ceda70809c1354775581bd1c690))
+
+- SEO improvements ([#62](https://github.com/bsantanna/quaks/pull/62),
+  [`af9f106`](https://github.com/bsantanna/quaks/commit/af9f106cbde1528097ada892b466b1f6d34a6dcb))
+
+- SEO improvements (1) ([#62](https://github.com/bsantanna/quaks/pull/62),
+  [`af9f106`](https://github.com/bsantanna/quaks/commit/af9f106cbde1528097ada892b466b1f6d34a6dcb))
+
+- SEO improvements (10) ([#62](https://github.com/bsantanna/quaks/pull/62),
+  [`af9f106`](https://github.com/bsantanna/quaks/commit/af9f106cbde1528097ada892b466b1f6d34a6dcb))
+
+- SEO improvements (2) ([#62](https://github.com/bsantanna/quaks/pull/62),
+  [`af9f106`](https://github.com/bsantanna/quaks/commit/af9f106cbde1528097ada892b466b1f6d34a6dcb))
+
+- SEO improvements (3) ([#62](https://github.com/bsantanna/quaks/pull/62),
+  [`af9f106`](https://github.com/bsantanna/quaks/commit/af9f106cbde1528097ada892b466b1f6d34a6dcb))
+
+- SEO improvements (4) ([#62](https://github.com/bsantanna/quaks/pull/62),
+  [`af9f106`](https://github.com/bsantanna/quaks/commit/af9f106cbde1528097ada892b466b1f6d34a6dcb))
+
+- SEO improvements (5) ([#62](https://github.com/bsantanna/quaks/pull/62),
+  [`af9f106`](https://github.com/bsantanna/quaks/commit/af9f106cbde1528097ada892b466b1f6d34a6dcb))
+
+- SEO improvements (6) ([#62](https://github.com/bsantanna/quaks/pull/62),
+  [`af9f106`](https://github.com/bsantanna/quaks/commit/af9f106cbde1528097ada892b466b1f6d34a6dcb))
+
+- SEO improvements (7) ([#62](https://github.com/bsantanna/quaks/pull/62),
+  [`af9f106`](https://github.com/bsantanna/quaks/commit/af9f106cbde1528097ada892b466b1f6d34a6dcb))
+
+- SEO improvements (8) ([#62](https://github.com/bsantanna/quaks/pull/62),
+  [`af9f106`](https://github.com/bsantanna/quaks/commit/af9f106cbde1528097ada892b466b1f6d34a6dcb))
+
+- SEO improvements (9) ([#62](https://github.com/bsantanna/quaks/pull/62),
+  [`af9f106`](https://github.com/bsantanna/quaks/commit/af9f106cbde1528097ada892b466b1f6d34a6dcb))
+
+- Stocks overview 3 ([#63](https://github.com/bsantanna/quaks/pull/63),
+  [`79c3e88`](https://github.com/bsantanna/quaks/commit/79c3e8885fa49ceda70809c1354775581bd1c690))
+
+- Version adjust ([#62](https://github.com/bsantanna/quaks/pull/62),
+  [`af9f106`](https://github.com/bsantanna/quaks/commit/af9f106cbde1528097ada892b466b1f6d34a6dcb))
+
+
 ## v1.3.25 (2026-03-05)
 
 ### Bug Fixes
