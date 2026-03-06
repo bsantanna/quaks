@@ -43,6 +43,7 @@ locals {
     get_eod_indicator_stoch_template = "get_eod_indicator_stoch.mustache"
     get_markets_news_template = "get_markets_news.mustache"
     get_stats_close_template = "get_stats_close.mustache"
+    get_stats_close_bulk_template = "get_stats_close_bulk.mustache"
   }
 }
 

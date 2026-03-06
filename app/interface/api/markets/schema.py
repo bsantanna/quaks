@@ -78,6 +78,26 @@ class StatsClose(BaseModel):
     percent_variance: float
 
 
+class StatsCloseBulkRequest(BaseModel):
+    key_tickers: list[str]
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+
+    @field_validator("start_date", "end_date")
+    @classmethod
+    def validate_date_format(cls, v: Optional[str]) -> Optional[str]:
+        return _validate_date_format(v)
+
+    @model_validator(mode="after")
+    def validate_dates_order(self):
+        _validate_date_order(self.start_date, self.end_date)
+        return self
+
+
+class StatsCloseBulkResponse(BaseModel):
+    items: list[StatsClose]
+
+
 class StatsCloseRequest(BaseModel):
     end_date: Optional[str] = None
     start_date: Optional[str] = None

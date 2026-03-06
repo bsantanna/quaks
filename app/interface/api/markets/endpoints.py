@@ -16,6 +16,8 @@ from app.interface.api.markets.schema import (
     NewsList,
     NewsListRequest,
     StatsClose,
+    StatsCloseBulkRequest,
+    StatsCloseBulkResponse,
     StatsCloseRequest,
 )
 from app.services.markets_news import MarketsNewsService
@@ -113,6 +115,58 @@ async def get_stats_close(
         most_recent_date=result.get("most_recent_date"),
         percent_variance=result.get("percent_variance"),
     )
+
+
+@router.post(
+    path="/stats_close_bulk/{index_name}",
+    response_model=StatsCloseBulkResponse,
+    operation_id="get_stats_close_bulk",
+    summary="Get close price statistics for multiple tickers",
+    description="""
+    Returns the most recent OHLCV data and percent variance for multiple ticker symbols
+    within an optional date range. Used for heatmap visualizations.
+
+    Parameters:
+    - `index_name` (path): The Elasticsearch index to query (e.g. `stocks-eod`).
+    - `key_tickers` (body): List of ticker symbols (e.g. `["AAPL", "MSFT"]`).
+    - `start_date` (body, optional): Start of the date range in `yyyy-mm-dd` format. Defaults to 7 days ago.
+    - `end_date` (body, optional): End of the date range in `yyyy-mm-dd` format. Defaults to today.
+    """,
+    response_description="Bulk close price statistics",
+    dependencies=[cache_control(3600)],
+)
+@inject
+async def get_stats_close_bulk(
+    index_name: str,
+    request: StatsCloseBulkRequest,
+    markets_stats_service: Annotated[
+        MarketsStatsService, Depends(Provide[Container.markets_stats_service])
+    ],
+):
+    _validate_index_name(index_name)
+    today = datetime.now()
+    end_date = request.end_date or today.strftime("%Y-%m-%d")
+    start_date = request.start_date or (today - timedelta(days=7)).strftime("%Y-%m-%d")
+    results = await markets_stats_service.get_stats_close_bulk(
+        index_name=index_name,
+        key_tickers=request.key_tickers,
+        start_date=start_date,
+        end_date=end_date,
+    )
+    items = [
+        StatsClose(
+            key_ticker=r.get("key_ticker"),
+            most_recent_close=r.get("most_recent_close"),
+            most_recent_open=r.get("most_recent_open"),
+            most_recent_high=r.get("most_recent_high"),
+            most_recent_low=r.get("most_recent_low"),
+            most_recent_volume=r.get("most_recent_volume"),
+            most_recent_date=r.get("most_recent_date"),
+            percent_variance=r.get("percent_variance"),
+        )
+        for r in results
+    ]
+    return StatsCloseBulkResponse(items=items)
 
 
 @router.get(
