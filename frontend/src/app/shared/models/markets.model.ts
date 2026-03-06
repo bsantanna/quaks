@@ -28,7 +28,7 @@ export interface NewsItem {
   summary: string
   content: string
   images: NewsImage[]
-  key_ticker: string[]
+  key_ticker?: string[]
 }
 
 export interface NewsList {
