@@ -88,3 +88,4 @@ Quaks is a multi-agent quantitative finance platform built on [Agent-Lab](https:
 
 - `/software-engineering` — Architecture, common commands (build, test, lint), and code conventions.
 - `/seo` — SEO audit, meta tags, Open Graph, structured data, accessibility, Core Web Vitals, and page rank optimization.
+- `/quant` — Quantitative finance analysis: valuation, risk metrics, options pricing, technical/fundamental analysis, factor models, and portfolio strategy.

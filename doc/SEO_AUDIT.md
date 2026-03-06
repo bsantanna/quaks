@@ -1,8 +1,8 @@
 # SEO Audit Report — Quaks Platform
 
-**Date:** 2026-03-05 (update 2)
-**Previous Audit:** 2026-03-05 (update 1)
-**Estimated Lighthouse SEO Score:** ~90/100 (up from ~85)
+**Date:** 2026-03-06 (update 3)
+**Previous Audit:** 2026-03-05 (update 2)
+**Estimated Lighthouse SEO Score:** ~95/100 (up from ~92)
 
 ---
 
@@ -29,25 +29,18 @@
 
 | # | Issue | What Changed |
 |---|-------|------------|
-| 6b | No `NewsArticle` JSON-LD on news pages | `SeoService` now has `setNewsArticleSchema()` method. `MarketsNewsItem` component calls it with headline, summary, date, image, source, and URL. Cleaned up via `removeJsonLd()` in `reset()`. |
-| 12 | No skip-navigation link | Added skip link in `app.html` (line 2) targeting `#main-content` on `<main>`. Uses `sr-only` with `focus:not-sr-only` for keyboard-only visibility. |
+| 16 | Stub content on Stocks page | Replaced with full heatmap component (`StocksHeatmaps`). |
+| 11 | No `prefers-reduced-motion` CSS | Added `@media (prefers-reduced-motion: reduce)` to `styles.scss` — disables animations, transitions, and scroll behavior for motion-sensitive users. |
+| 6c | No BreadcrumbList schema | `SeoService.update()` now auto-generates `BreadcrumbList` JSON-LD from the `path` param. Breadcrumbs include Home + path segments + current page title. Cleaned up on `reset()`. |
 
 ---
 
 ## Still Open
 
-### High
-
-| # | Issue | Location | Impact |
-|---|-------|----------|--------|
-| 6c | **No BreadcrumbList schema** | All nested routes | No breadcrumb display in search results. |
-
 ### Medium
 
 | # | Issue | Location | Impact |
 |---|-------|----------|--------|
-| 11 | **No `prefers-reduced-motion` CSS** | `styles.scss` | Accessibility gap for motion-sensitive users. |
-| 16 | **Stub content on Stocks page** | `markets-stocks.html`: `<p>markets-stocks works!</p>` | Thin content penalty; page offers no value to crawlers. |
 | 17 | **No `font-display: swap`** | Global styles | Minor LCP impact if custom fonts load slowly. |
 | 19 | **No SSR/prerendering** | Entire SPA | Crawlers see empty `<app-root>` until JS executes. Google renders JS but other engines may not. |
 | 20 | **No `TitleStrategy`** | `app.config.ts` | Route `title` properties don't auto-propagate. Works via manual `SeoService` calls, but no fallback for routes that forget to call it. |
@@ -83,12 +76,9 @@
 
 ## Recommended Next Steps (Priority Order)
 
-1. **Add `prefers-reduced-motion`** to `styles.scss` — quick accessibility compliance
-2. **Replace stub content** on `markets-stocks.html` — actual stock listing content
-3. **Add `BreadcrumbList` schema** for nested routes — breadcrumb rich results
-4. **Consider SSR/prerendering** for key landing pages — biggest remaining SEO uplift
-5. **Add `font-display: swap`** if custom fonts are loaded
-6. **Wire up `TitleStrategy`** as a fallback for routes that don't call `SeoService` manually
+1. **Add `font-display: swap`** if custom fonts are loaded
+2. **Wire up `TitleStrategy`** as a fallback for routes that don't call `SeoService` manually
+3. **Consider SSR/prerendering** for key landing pages — biggest remaining SEO uplift
 
 ---
 

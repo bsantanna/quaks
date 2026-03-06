@@ -99,6 +99,18 @@ ruff format .
 ruff check --fix .
 ```
 
+### Backend Debugging
+
+```bash
+# View live app container logs (useful for debugging API errors)
+docker compose logs -f app
+
+# Rebuild and restart the app container after backend code changes
+docker compose build app && docker compose up -d app
+```
+
+**Note:** The backend runs inside a Docker container (`compose.yml`). Local changes to Python files in `app/` are NOT reflected until the container is rebuilt. Always rebuild after modifying backend code.
+
 ### Frontend (from `frontend/` directory)
 
 ```bash
@@ -108,6 +120,50 @@ npm run build               # Production build → copies output to app/static/f
 npx jest                    # Run all Jest tests
 npx jest -- <pattern>       # Run tests matching a pattern (e.g. npx jest -- markets-performance)
 ```
+
+## REST API Design
+
+Follow the **Richardson Maturity Model** (Level 3) when designing or modifying API endpoints.
+
+### HTTP Method Selection
+
+Choose the method based on the operation's semantics, not implementation convenience:
+
+| Method | Use When | Safe | Idempotent | Cacheable |
+|--------|----------|------|------------|-----------|
+| `GET` | Retrieving data (reads, queries, searches, bulk lookups) | Yes | Yes | Yes |
+| `POST` | Creating resources or triggering non-idempotent operations | No | No | No |
+| `PUT` | Full replacement of a resource | No | Yes | No |
+| `PATCH` | Partial update of a resource | No | No | No |
+| `DELETE` | Removing a resource | No | Yes | No |
+
+**Key rule:** If a request is **safe** (no side effects) and **idempotent** (same result on repeated calls), it MUST be a GET. This enables browser/CDN caching via `Cache-Control` headers. POST requests are never cached by browsers regardless of cache headers.
+
+### Query Parameters vs Request Body
+
+- **GET endpoints**: Pass filters via query parameters. For lists, use comma-separated values (e.g., `?key_tickers=AAPL,MSFT,NVDA`).
+- **POST/PUT/PATCH endpoints**: Use JSON request body for resource creation/mutation.
+- **URL path parameters**: Use for resource identifiers (e.g., `/stats_close/{index_name}/{key_ticker}`).
+
+### Caching
+
+- Use the `cache_control(max_age)` dependency from `app/interface/api/cache_control.py`.
+- Read-heavy, infrequently-changing data (e.g., market caps, EOD stats): `cache_control(86400)` (24h).
+- Frequently-changing data (e.g., news, real-time prices): `cache_control(3600)` (1h) or less.
+- Caching only works with GET — never rely on cache headers for POST endpoints.
+
+### Resource Naming
+
+- Use **nouns** for resources, not verbs: `/markets/stats_close`, not `/markets/get_stats`.
+- Use **snake_case** for path segments and query params (matching Python conventions).
+- Use plural when returning collections: `/markets/news`, `/markets/indicators`.
+
+### Validation
+
+- Path/query params are validated via `_validate_index_name()` regex in `endpoints.py`.
+- Never expose internal patterns (e.g., ES wildcards `*`) through the API — resolve them server-side or use aliases.
+
+---
 
 ## Code Conventions
 

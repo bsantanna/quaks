@@ -1,0 +1,89 @@
+<div class="heatmap-wrapper">
+  <!-- Controls: Tab pattern matching stock-eod-charts -->
+  <div class="border-b mb-3" style="border-color: #2C3645">
+    <nav aria-label="Heatmap index" class="-mb-px flex space-x-8">
+      <button (click)="switchIndex('sp500')"
+              class="border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer"
+              [class]="selectedIndex() === 'sp500' ? 'border-blue-800 text-blue-500' : 'hover:border-white/20 hover:text-gray-200 border-transparent text-gray-400'">
+        S&amp;P 500
+      </button>
+      <button (click)="switchIndex('nasdaq100')"
+              class="border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer"
+              [class]="selectedIndex() === 'nasdaq100' ? 'border-blue-800 text-blue-500' : 'hover:border-white/20 hover:text-gray-200 border-transparent text-gray-400'">
+        NASDAQ 100
+      </button>
+
+      @if (zoomedSector()) {
+        <button
+          class="border-b-2 border-transparent px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer text-gray-400 hover:text-gray-200 hover:border-white/20"
+          (click)="zoomOut()">
+          &#x2190; ALL SECTORS
+        </button>
+      }
+    </nav>
+  </div>
+
+  <!-- Heatmap -->
+  <div #heatmapContainer class="heatmap-container" (mousemove)="onMouseMove($event)">
+    @if (loading()) {
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div class="text-gray-400 text-sm">Loading heatmap data...</div>
+      </div>
+    } @else {
+      @for (group of visibleGroups(); track group.sector) {
+        <!-- Sector label -->
+        <div
+          class="sector-label cursor-pointer hover:bg-white/5 transition-colors"
+          [style.left.px]="group.x"
+          [style.top.px]="group.y"
+          [style.width.px]="group.w"
+          (click)="toggleZoom(group.sector)">
+          @if (group.w > 80) {
+            <span class="truncate">{{ group.sector }}</span>
+          }
+        </div>
+
+        <!-- Stock tiles -->
+        @for (tile of group.tiles; track tile.ticker) {
+          <div
+            class="stock-tile"
+            [style.left.px]="tile.x"
+            [style.top.px]="tile.y"
+            [style.width.px]="tile.w"
+            [style.height.px]="tile.h"
+            [style.background-color]="tileColor(tile.percentVariance)"
+            [style.font-size.px]="tileFontSize(tile)"
+            (mouseenter)="hoveredTile.set(tile)"
+            (mouseleave)="hoveredTile.set(null)"
+            (click)="navigateToStock(tile.ticker)">
+            @if (showTicker(tile)) {
+              <span class="tile-ticker">{{ tile.ticker }}</span>
+            }
+            @if (showVariance(tile)) {
+              <span class="tile-variance" [class.text-green-300]="tile.percentVariance > 0" [class.text-red-300]="tile.percentVariance < 0">
+                {{ tile.percentVariance > 0 ? '+' : '' }}{{ tile.percentVariance.toFixed(2) }}%
+              </span>
+            }
+          </div>
+        }
+      }
+
+      <!-- Tooltip follows mouse cursor -->
+      @if (hoveredTile()) {
+        <div class="heatmap-tooltip"
+             [style.left.px]="tooltipStyle().left"
+             [style.top.px]="tooltipStyle().top">
+          <div class="font-semibold">{{ hoveredTile()!.ticker }}</div>
+          <div class="text-xs text-gray-300">{{ hoveredTile()!.name }}</div>
+          <div class="text-xs text-gray-400">{{ hoveredTile()!.sector }} &middot; {{ hoveredTile()!.industry }}</div>
+          <div class="text-sm font-medium mt-0.5"
+               [class.text-green-400]="hoveredTile()!.percentVariance > 0"
+               [class.text-red-400]="hoveredTile()!.percentVariance < 0">
+            {{ hoveredTile()!.percentVariance > 0 ? '+' : '' }}{{ hoveredTile()!.percentVariance.toFixed(2) }}%
+            <span class="text-gray-500 ml-1">{{ formatDate(hoveredTile()!.mostRecentDate) }}</span>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</div>

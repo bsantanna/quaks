@@ -43,6 +43,8 @@ locals {
     get_eod_indicator_stoch_template = "get_eod_indicator_stoch.mustache"
     get_markets_news_template = "get_markets_news.mustache"
     get_stats_close_template = "get_stats_close.mustache"
+    get_stats_close_bulk_template = "get_stats_close_bulk.mustache"
+    get_metadata_market_caps_template = "get_metadata_market_caps.mustache"
   }
 }
 
@@ -520,6 +522,33 @@ resource "elasticstack_elasticsearch_index" "markets_news_amex" {
   }]
   deletion_protection = false
   depends_on = [elasticstack_elasticsearch_index_template.quaks_markets-news_template]
+}
+
+resource "elasticstack_elasticsearch_index" "stocks_metadata_nyse" {
+  name = "quaks_stocks-metadata_nyse"
+  alias = [{
+    name = "quaks_stocks-metadata_latest"
+  }]
+  deletion_protection = false
+  depends_on = [elasticstack_elasticsearch_index_template.quaks_stocks-metadata_template]
+}
+
+resource "elasticstack_elasticsearch_index" "stocks_metadata_nasdaq" {
+  name = "quaks_stocks-metadata_nasdaq"
+  alias = [{
+    name = "quaks_stocks-metadata_latest"
+  }]
+  deletion_protection = false
+  depends_on = [elasticstack_elasticsearch_index_template.quaks_stocks-metadata_template]
+}
+
+resource "elasticstack_elasticsearch_index" "stocks_metadata_amex" {
+  name = "quaks_stocks-metadata_amex"
+  alias = [{
+    name = "quaks_stocks-metadata_latest"
+  }]
+  deletion_protection = false
+  depends_on = [elasticstack_elasticsearch_index_template.quaks_stocks-metadata_template]
 }
 
 resource "elasticstack_elasticsearch_security_api_key" "quaks_api_key" {

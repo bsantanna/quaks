@@ -1,9 +1,10 @@
 import {Component, inject} from '@angular/core';
 import {SeoService} from '../shared';
+import {StocksHeatmaps} from './stocks-heatmaps/stocks-heatmaps';
 
 @Component({
   selector: 'app-markets-stocks',
-  imports: [],
+  imports: [StocksHeatmaps],
   templateUrl: './markets-stocks.html',
   styleUrl: './markets-stocks.scss',
 })
