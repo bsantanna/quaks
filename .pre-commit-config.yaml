@@ -24,13 +24,6 @@ repos:
   #    hooks:
   #      - id: isort
 
-  - repo: https://github.com/PyCQA/flake8
-    rev: 7.1.1
-    hooks:
-      - id: flake8
-        args:
-          - --ignore=E203,E501,W201,W503
-
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.5.4
     hooks:
@@ -39,14 +32,15 @@ repos:
           - --fix
       - id: ruff-format
 
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.1.1
+    hooks:
+      - id: flake8
+        args:
+          - --ignore=E203,E501,W201,W503
+
   - repo: local
     hooks:
-      - id: generate-sitemap
-        name: generate sitemap.xml
-        entry: python3 scripts/generate-sitemap.py
-        language: system
-        pass_filenames: false
-        always_run: true
       - id: test
         name: test
         entry: make test
