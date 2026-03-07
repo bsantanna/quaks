@@ -22,12 +22,6 @@ provider "kubernetes" {
   config_path = "~/.kube/config"
 }
 
-resource "kubernetes_namespace_v1" "quaks" {
-  metadata {
-    name = var.quaks_namespace
-  }
-}
-
 resource "keycloak_realm" "quaks" {
   realm   = var.auth_realm
   enabled = true
@@ -114,7 +108,7 @@ resource "keycloak_user" "service_account" {
 resource "kubernetes_secret_v1" "quaks_auth" {
   metadata {
     name      = "quaks-auth"
-    namespace = kubernetes_namespace_v1.quaks.metadata[0].name
+    namespace = var.quaks_namespace
   }
 
   data = {
