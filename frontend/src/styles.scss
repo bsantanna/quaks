@@ -1,5 +1,6 @@
 @use "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Source+Code+Pro:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600;700&display=swap');
 
 /* ── Theme: Default ── */
 [data-theme="default"], :root {
@@ -40,6 +41,27 @@
   --font-heading: 'IBM Plex Mono', ui-monospace, monospace;
   --font-body: 'IBM Plex Sans', system-ui, sans-serif;
   --font-data: 'IBM Plex Mono', ui-monospace, monospace;
+  --radius: 0px;
+}
+
+/* ── Theme: Matrix ── */
+[data-theme="matrix"] {
+  --surface-base: #000000;
+  --surface-panel: #0a0f0a;
+  --surface-elevated: #0f1a0f;
+  --surface-hover: #1a2e1a;
+  --border-primary: #0d3b0d;
+  --border-accent: #00ff41;
+  --text-primary: #00ff41;
+  --text-secondary: #00cc33;
+  --text-muted: #008f26;
+  --accent-primary: #00ff41;
+  --accent-hover: #33ff6b;
+  --status-positive: #00ff41;
+  --status-negative: #ff0040;
+  --font-heading: 'Share Tech Mono', ui-monospace, monospace;
+  --font-body: 'Source Code Pro', ui-monospace, monospace;
+  --font-data: 'Fira Code', ui-monospace, monospace;
   --radius: 0px;
 }
 

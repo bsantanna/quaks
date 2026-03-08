@@ -965,6 +965,11 @@
     "name": "Anixa Biosciences, Inc."
   },
   {
+    "key_ticker": "ANSS",
+    "index": "nasdaq",
+    "name": "ANSYS, Inc."
+  },
+  {
     "key_ticker": "ANY",
     "index": "nasdaq",
     "name": "Sphere 3D Corp."
@@ -1043,6 +1048,11 @@
     "key_ticker": "APOG",
     "index": "nasdaq",
     "name": "Apogee Enterprises, Inc."
+  },
+  {
+    "key_ticker": "APP",
+    "index": "nasdaq",
+    "name": "AppLovin Corporation"
   },
   {
     "key_ticker": "APPF",
@@ -1660,6 +1670,11 @@
     "name": "AxoGen, Inc."
   },
   {
+    "key_ticker": "AXON",
+    "index": "nasdaq",
+    "name": "Axon Enterprise, Inc."
+  },
+  {
     "key_ticker": "AXP",
     "index": "nyse",
     "name": "American Express Company"
@@ -1738,6 +1753,11 @@
     "key_ticker": "BAH",
     "index": "nyse",
     "name": "Booz Allen Hamilton Holding Corporation"
+  },
+  {
+    "key_ticker": "BALL",
+    "index": "nyse",
+    "name": "Ball Corporation"
   },
   {
     "key_ticker": "BAM",
@@ -1883,6 +1903,11 @@
     "key_ticker": "BBW",
     "index": "nyse",
     "name": "Build-A-Bear Workshop, Inc."
+  },
+  {
+    "key_ticker": "BBWI",
+    "index": "nyse",
+    "name": "Bath & Body Works, Inc."
   },
   {
     "key_ticker": "BBY",
@@ -2298,6 +2323,11 @@
     "key_ticker": "BKNG",
     "index": "nasdaq",
     "name": "Booking Holdings Inc."
+  },
+  {
+    "key_ticker": "BKR",
+    "index": "nasdaq",
+    "name": "Baker Hughes Company"
   },
   {
     "key_ticker": "BKSC",
@@ -2970,6 +3000,11 @@
     "name": "CarGurus, Inc."
   },
   {
+    "key_ticker": "CARR",
+    "index": "nyse",
+    "name": "Carrier Global Corporation"
+  },
+  {
     "key_ticker": "CARS",
     "index": "nyse",
     "name": "Cars.com Inc."
@@ -3263,6 +3298,11 @@
     "key_ticker": "CEE",
     "index": "nyse",
     "name": "The Central and Eastern Europe Fund, Inc."
+  },
+  {
+    "key_ticker": "CEG",
+    "index": "nasdaq",
+    "name": "Constellation Energy Corporation"
   },
   {
     "key_ticker": "CELC",
@@ -4093,6 +4133,11 @@
     "key_ticker": "CPAC",
     "index": "nyse",
     "name": "Cementos Pacasmayo S.A.A."
+  },
+  {
+    "key_ticker": "CPAY",
+    "index": "nyse",
+    "name": "Corpay, Inc."
   },
   {
     "key_ticker": "CPB",
@@ -5730,6 +5775,11 @@
     "name": "Eltek Ltd."
   },
   {
+    "key_ticker": "ELV",
+    "index": "nyse",
+    "name": "Elevance Health, Inc."
+  },
+  {
     "key_ticker": "EMB",
     "index": "nasdaq",
     "name": "iShares J.P. Morgan USD Emerging Markets Bond ETF"
@@ -6720,6 +6770,11 @@
     "name": "First Horizon National Corporation"
   },
   {
+    "key_ticker": "FI",
+    "index": "nyse",
+    "name": "Fiserv, Inc."
+  },
+  {
     "key_ticker": "FIBK",
     "index": "nasdaq",
     "name": "First Interstate BancSystem, Inc."
@@ -7575,6 +7630,11 @@
     "name": "Greif Bros. Corporation"
   },
   {
+    "key_ticker": "GEHC",
+    "index": "nasdaq",
+    "name": "GE HealthCare Technologies Inc."
+  },
+  {
     "key_ticker": "GEL",
     "index": "nyse",
     "name": "Genesis Energy, L.P."
@@ -7598,6 +7658,11 @@
     "key_ticker": "GERN",
     "index": "nasdaq",
     "name": "Geron Corporation"
+  },
+  {
+    "key_ticker": "GEV",
+    "index": "nyse",
+    "name": "GE Vernova Inc."
   },
   {
     "key_ticker": "GEVO",
@@ -8428,6 +8493,11 @@
     "key_ticker": "HERD",
     "index": "nasdaq",
     "name": "Pacer Cash Cows Fund of Funds ETF"
+  },
+  {
+    "key_ticker": "HES",
+    "index": "nyse",
+    "name": "Hess Corporation"
   },
   {
     "key_ticker": "HESM",
@@ -9975,6 +10045,11 @@
     "name": "The Joint Corp."
   },
   {
+    "key_ticker": "K",
+    "index": "nyse",
+    "name": "Kellanova"
+  },
+  {
     "key_ticker": "KAI",
     "index": "nyse",
     "name": "Kadant Inc"
@@ -10388,6 +10463,11 @@
     "key_ticker": "KVHI",
     "index": "nasdaq",
     "name": "KVH Industries, Inc."
+  },
+  {
+    "key_ticker": "KVUE",
+    "index": "nyse",
+    "name": "Kenvue Inc."
   },
   {
     "key_ticker": "KW",
@@ -11673,6 +11753,11 @@
     "key_ticker": "MLSS",
     "index": "amex",
     "name": "Milestone Scientific, Inc."
+  },
+  {
+    "key_ticker": "MMC",
+    "index": "nyse",
+    "name": "Marsh & McLennan Companies, Inc."
   },
   {
     "key_ticker": "MMD",
@@ -13460,6 +13545,11 @@
     "name": "Open Text Corporation"
   },
   {
+    "key_ticker": "OTIS",
+    "index": "nyse",
+    "name": "Otis Worldwide Corporation"
+  },
+  {
     "key_ticker": "OTLK",
     "index": "nasdaq",
     "name": "Outlook Therapeutics, Inc."
@@ -13608,6 +13698,11 @@
     "key_ticker": "PAR",
     "index": "nyse",
     "name": "PAR Technology Corporation"
+  },
+  {
+    "key_ticker": "PARA",
+    "index": "nasdaq",
+    "name": "Paramount Global"
   },
   {
     "key_ticker": "PARR",
@@ -13813,6 +13908,11 @@
     "key_ticker": "PDT",
     "index": "nyse",
     "name": "John Hancock Premium Dividend Fund"
+  },
+  {
+    "key_ticker": "PEAK",
+    "index": "nyse",
+    "name": "Healthpeak Properties, Inc."
   },
   {
     "key_ticker": "PEB",
@@ -15513,6 +15613,11 @@
     "key_ticker": "RSG",
     "index": "nyse",
     "name": "Republic Services, Inc."
+  },
+  {
+    "key_ticker": "RTX",
+    "index": "nyse",
+    "name": "RTX Corporation"
   },
   {
     "key_ticker": "RUBI",
@@ -17805,6 +17910,11 @@
     "name": "TSR, Inc."
   },
   {
+    "key_ticker": "TT",
+    "index": "nyse",
+    "name": "Trane Technologies plc"
+  },
+  {
     "key_ticker": "TTC",
     "index": "nyse",
     "name": "Toro Company (The)"
@@ -19043,6 +19153,11 @@
     "key_ticker": "WB",
     "index": "nasdaq",
     "name": "Weibo Corporation"
+  },
+  {
+    "key_ticker": "WBD",
+    "index": "nasdaq",
+    "name": "Warner Bros. Discovery, Inc."
   },
   {
     "key_ticker": "WBS",
