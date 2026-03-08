@@ -1,0 +1,146 @@
+.hamburger-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border: none;
+  background: none;
+  transition: color 0.15s ease;
+
+  @media (min-width: 640px) {
+    display: none;
+  }
+
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
+.hamburger-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 40;
+
+  @media (min-width: 640px) {
+    display: none;
+  }
+}
+
+.hamburger-panel {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--surface-elevated);
+  border-top: 1px solid var(--border-primary);
+  z-index: 50;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  @media (min-width: 640px) {
+    display: none;
+  }
+}
+
+.hamburger-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hamburger-label {
+  font-family: var(--font-data);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  padding: 0 8px;
+}
+
+.hamburger-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: none;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-primary);
+  }
+}
+
+.hamburger-themes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.hamburger-theme-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: none;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: var(--surface-hover);
+    color: var(--text-primary);
+  }
+
+  &.active {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+  }
+}
+
+.hamburger-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+  border: 1px solid var(--border-primary);
+  flex-shrink: 0;
+}
+
+.hamburger-swatch-default {
+  background: linear-gradient(135deg, #191C2D 50%, #3B82F6 50%);
+}
+
+.hamburger-swatch-bloomnerd {
+  background: linear-gradient(135deg, #050A12 50%, #FF8C00 50%);
+}
+
+.hamburger-swatch-matrix {
+  background: linear-gradient(135deg, #000000 50%, #00ff41 50%);
+}
+
+.hamburger-swatch-batman {
+  background: linear-gradient(135deg, #0a0a10 50%, #D4A017 50%);
+}
+
+.hamburger-swatch-barbie {
+  background: linear-gradient(135deg, #1a0a16 50%, #FF2D8A 50%);
+}

@@ -1,4 +1,5 @@
-import {Component, computed, effect, inject, OnDestroy, signal, WritableSignal} from '@angular/core';
+import {Component, computed, effect, inject, OnDestroy, PLATFORM_ID, signal, WritableSignal} from '@angular/core';
+import {isPlatformBrowser} from '@angular/common';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {ActivatedRoute, ParamMap, Params} from '@angular/router';
 import {ShareUrlService, StockEodActions, StockInfoHeader, IndexedKeyTickerService, NewsFeed, SeoService} from '../shared';
@@ -15,6 +16,7 @@ import {ShareUrlService, StockEodActions, StockInfoHeader, IndexedKeyTickerServi
 })
 export class MarketsNewsRelated implements OnDestroy {
 
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly route = inject(ActivatedRoute);
   private readonly shareUrlService = inject(ShareUrlService);
   private readonly indexedKeyTickerService = inject(IndexedKeyTickerService);
@@ -34,10 +36,12 @@ export class MarketsNewsRelated implements OnDestroy {
       const ticker = this.keyTicker();
       const name = this.companyName();
       const linkTitle = `${this.routeTitle} - ${ticker}`;
-      this.shareUrlService.update({
-        title: linkTitle,
-        url: `${window.location.href.split('?')[0]}`
-      });
+      if (this.isBrowser) {
+        this.shareUrlService.update({
+          title: linkTitle,
+          url: `${window.location.href.split('?')[0]}`
+        });
+      }
       this.seoService.update({
         title: `${name || ticker} (${ticker}) News Feed`,
         description: `Latest market news and updates related to ${name || ticker} (${ticker}).`,
