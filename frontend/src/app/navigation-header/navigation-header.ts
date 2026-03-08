@@ -8,13 +8,14 @@ import {ShareButtonComponent} from './share-button/share-button';
 import {NavButtonComponent} from './nav-button/nav-button';
 import {FeedbackMessageComponent} from './feedback-message/feedback-message';
 import {SettingsDropdownComponent} from './settings-dropdown/settings-dropdown';
+import {HamburgerMenuComponent} from './hamburger-menu/hamburger-menu';
 import {NavigationEnd, Router} from '@angular/router';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {filter, map, startWith} from 'rxjs';
 
 @Component({
   selector: 'app-navigation-header',
-  imports: [StockAutocompleteComponent, NewsAutocompleteComponent, ShareButtonComponent, NavButtonComponent, FeedbackMessageComponent, SettingsDropdownComponent],
+  imports: [StockAutocompleteComponent, NewsAutocompleteComponent, ShareButtonComponent, NavButtonComponent, FeedbackMessageComponent, SettingsDropdownComponent, HamburgerMenuComponent],
   templateUrl: './navigation-header.html',
   styleUrl: './navigation-header.scss',
 })

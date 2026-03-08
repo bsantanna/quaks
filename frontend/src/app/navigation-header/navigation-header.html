@@ -56,6 +56,7 @@
                             </div>
                         }
                         <app-settings-dropdown></app-settings-dropdown>
+                        <app-hamburger-menu [path]="path()" (stockSelected)="onKeyTickerSelected($event)"></app-hamburger-menu>
                     </div>
 
                 </div>

@@ -1,5 +1,5 @@
 .settings-btn {
-  display: inline-flex;
+  display: none;
   align-items: center;
   padding: 8px;
   color: var(--text-secondary);
@@ -7,6 +7,10 @@
   border: none;
   background: none;
   transition: color 0.15s ease;
+
+  @media (min-width: 640px) {
+    display: inline-flex;
+  }
 
   &:hover {
     color: var(--text-primary);
