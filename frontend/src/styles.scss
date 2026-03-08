@@ -2,6 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Source+Code+Pro:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Poiret+One&family=Crimson+Pro:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Quicksand:wght@300;400;500;600;700&display=swap');
 
 /* ── Theme: Default ── */
 [data-theme="default"], :root {
@@ -85,6 +86,27 @@
   --font-body: 'Crimson Pro', 'Georgia', serif;
   --font-data: 'Fira Code', ui-monospace, monospace;
   --radius: 0px;
+}
+
+/* ── Theme: Barbie ── */
+[data-theme="barbie"] {
+  --surface-base: #1a0a16;
+  --surface-panel: #24101e;
+  --surface-elevated: #33182b;
+  --surface-hover: #442238;
+  --border-primary: #5c2e4c;
+  --border-accent: #FF2D8A;
+  --text-primary: #FCEEF5;
+  --text-secondary: #D4A0BE;
+  --text-muted: #9B6888;
+  --accent-primary: #FF2D8A;
+  --accent-hover: #FF6AAF;
+  --status-positive: #50D890;
+  --status-negative: #FF4F6E;
+  --font-heading: 'Playfair Display', 'Georgia', serif;
+  --font-body: 'Quicksand', system-ui, sans-serif;
+  --font-data: 'Fira Code', ui-monospace, monospace;
+  --radius: 8px;
 }
 
 @media (prefers-reduced-motion: reduce) {

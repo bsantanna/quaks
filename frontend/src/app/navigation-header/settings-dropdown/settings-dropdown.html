@@ -34,6 +34,12 @@
                         <span class="theme-swatch theme-swatch-batman"></span>
                         <span>Batman</span>
                     </button>
+                    <button (click)="selectTheme('barbie')"
+                            [class.active]="themeService.state().theme === 'barbie'"
+                            class="theme-option">
+                        <span class="theme-swatch theme-swatch-barbie"></span>
+                        <span>Barbie</span>
+                    </button>
                 </div>
             </div>
         </div>
