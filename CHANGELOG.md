@@ -2,6 +2,56 @@
 
 <!-- version list -->
 
+## v1.3.27 (2026-03-08)
+
+### Bug Fixes
+
+- Adjusts main and vars ([#64](https://github.com/bsantanna/quaks/pull/64),
+  [`3afc896`](https://github.com/bsantanna/quaks/commit/3afc89660fd574e8f02e2d86cc6a331df83a6e06))
+
+- Build fixes and hamburger menu prototype ([#64](https://github.com/bsantanna/quaks/pull/64),
+  [`3afc896`](https://github.com/bsantanna/quaks/commit/3afc89660fd574e8f02e2d86cc6a331df83a6e06))
+
+- Build fixes and hamburger menu prototype (2) ([#64](https://github.com/bsantanna/quaks/pull/64),
+  [`3afc896`](https://github.com/bsantanna/quaks/commit/3afc89660fd574e8f02e2d86cc6a331df83a6e06))
+
+- Build fixes and hamburger menu prototype (3) ([#64](https://github.com/bsantanna/quaks/pull/64),
+  [`3afc896`](https://github.com/bsantanna/quaks/commit/3afc89660fd574e8f02e2d86cc6a331df83a6e06))
+
+- Build fixes and hamburger menu prototype (4) ([#64](https://github.com/bsantanna/quaks/pull/64),
+  [`3afc896`](https://github.com/bsantanna/quaks/commit/3afc89660fd574e8f02e2d86cc6a331df83a6e06))
+
+- Frontend adjusts (1) ([#64](https://github.com/bsantanna/quaks/pull/64),
+  [`3afc896`](https://github.com/bsantanna/quaks/commit/3afc89660fd574e8f02e2d86cc6a331df83a6e06))
+
+- Frontend adjusts (2) ([#64](https://github.com/bsantanna/quaks/pull/64),
+  [`3afc896`](https://github.com/bsantanna/quaks/commit/3afc89660fd574e8f02e2d86cc6a331df83a6e06))
+
+- Frontend adjusts (3) ([#64](https://github.com/bsantanna/quaks/pull/64),
+  [`3afc896`](https://github.com/bsantanna/quaks/commit/3afc89660fd574e8f02e2d86cc6a331df83a6e06))
+
+- Introduces theme feature ([#64](https://github.com/bsantanna/quaks/pull/64),
+  [`3afc896`](https://github.com/bsantanna/quaks/commit/3afc89660fd574e8f02e2d86cc6a331df83a6e06))
+
+- Remove sitemap ([#64](https://github.com/bsantanna/quaks/pull/64),
+  [`3afc896`](https://github.com/bsantanna/quaks/commit/3afc89660fd574e8f02e2d86cc6a331df83a6e06))
+
+- Requirements updates ([#64](https://github.com/bsantanna/quaks/pull/64),
+  [`3afc896`](https://github.com/bsantanna/quaks/commit/3afc89660fd574e8f02e2d86cc6a331df83a6e06))
+
+- The barbie theme ([#64](https://github.com/bsantanna/quaks/pull/64),
+  [`3afc896`](https://github.com/bsantanna/quaks/commit/3afc89660fd574e8f02e2d86cc6a331df83a6e06))
+
+- The batman theme ([#64](https://github.com/bsantanna/quaks/pull/64),
+  [`3afc896`](https://github.com/bsantanna/quaks/commit/3afc89660fd574e8f02e2d86cc6a331df83a6e06))
+
+- The matrix theme (skill update) ([#64](https://github.com/bsantanna/quaks/pull/64),
+  [`3afc896`](https://github.com/bsantanna/quaks/commit/3afc89660fd574e8f02e2d86cc6a331df83a6e06))
+
+- UI designer skill 2 ([#64](https://github.com/bsantanna/quaks/pull/64),
+  [`3afc896`](https://github.com/bsantanna/quaks/commit/3afc89660fd574e8f02e2d86cc6a331df83a6e06))
+
+
 ## v1.3.26 (2026-03-06)
 
 ### Bug Fixes
