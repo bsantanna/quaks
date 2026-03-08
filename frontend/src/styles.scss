@@ -1,6 +1,7 @@
 @use "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Source+Code+Pro:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poiret+One&family=Crimson+Pro:wght@300;400;500;600;700&display=swap');
 
 /* ── Theme: Default ── */
 [data-theme="default"], :root {
@@ -61,6 +62,27 @@
   --status-negative: #ff0040;
   --font-heading: 'Share Tech Mono', ui-monospace, monospace;
   --font-body: 'Source Code Pro', ui-monospace, monospace;
+  --font-data: 'Fira Code', ui-monospace, monospace;
+  --radius: 0px;
+}
+
+/* ── Theme: Batman ── */
+[data-theme="batman"] {
+  --surface-base: #0a0a10;
+  --surface-panel: #0f0e18;
+  --surface-elevated: #1a1726;
+  --surface-hover: #251f34;
+  --border-primary: #2a2440;
+  --border-accent: #D4A017;
+  --text-primary: #E8E4D9;
+  --text-secondary: #9B95A8;
+  --text-muted: #5E5872;
+  --accent-primary: #D4A017;
+  --accent-hover: #E8B84A;
+  --status-positive: #5CB85C;
+  --status-negative: #D94452;
+  --font-heading: 'Poiret One', 'Georgia', serif;
+  --font-body: 'Crimson Pro', 'Georgia', serif;
   --font-data: 'Fira Code', ui-monospace, monospace;
   --radius: 0px;
 }

@@ -28,6 +28,12 @@
                         <span class="theme-swatch theme-swatch-matrix"></span>
                         <span>Matrix</span>
                     </button>
+                    <button (click)="selectTheme('batman')"
+                            [class.active]="themeService.state().theme === 'batman'"
+                            class="theme-option">
+                        <span class="theme-swatch theme-swatch-batman"></span>
+                        <span>Batman</span>
+                    </button>
                 </div>
             </div>
         </div>

@@ -25,7 +25,7 @@ export interface CookieConsent extends NavigationModel {
   type: 'all' | 'essential_only';
 }
 
-export type ThemeName = 'default' | 'bloomnerd' | 'matrix';
+export type ThemeName = 'default' | 'bloomnerd' | 'matrix' | 'batman';
 
 export interface ThemePreference extends NavigationModel {
   theme: ThemeName;
