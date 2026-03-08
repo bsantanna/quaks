@@ -1,4 +1,5 @@
-import {AfterViewInit, Component, ElementRef, inject, OnDestroy, signal, Signal, viewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, inject, OnDestroy, PLATFORM_ID, signal, Signal, viewChild} from '@angular/core';
+import {isPlatformBrowser} from '@angular/common';
 import {StockAutocompleteComponent} from './stock-autocomplete/stock-autocomplete';
 import {NewsAutocompleteComponent} from './news-autocomplete/news-autocomplete';
 import {IndexedKeyTicker} from '../shared';
@@ -18,6 +19,7 @@ import {filter, map, startWith} from 'rxjs';
   styleUrl: './navigation-header.scss',
 })
 export class NavigationHeader implements AfterViewInit, OnDestroy {
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly router = inject(Router);
   readonly subHeader = viewChild<ElementRef>('subHeader');
   readonly stickyVisible = signal(false);
@@ -49,6 +51,7 @@ export class NavigationHeader implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
+    if (!this.isBrowser) return;
     const el = this.subHeader()?.nativeElement;
     if (el) {
       this.observer = new IntersectionObserver(
