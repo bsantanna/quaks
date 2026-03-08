@@ -11,7 +11,7 @@
       (blur)="onInputBlur()"
       (keydown)="onKeyDown($event)"
       placeholder="Add symbol to compare (e.g., NVDA, GOOG)"
-      class="block w-full rounded-md bg-slate-700/50 py-1.5 pr-10 pl-10 text-base text-white outline-1 -outline-offset-1 outline-slate-400/25 placeholder:text-white/50 focus:outline-2 focus:-outline-offset-2 focus:outline-white sm:text-sm/6 transition-all duration-150"
+      class="autocomplete-input block w-full py-1.5 pr-10 pl-10 text-base sm:text-sm/6 transition-all duration-150"
     />
 
     @if (searchQuery().length > 0) {
@@ -29,7 +29,7 @@
   @if (symbols().length > 0) {
     <div class="flex flex-wrap gap-2 mt-3">
       @for (symbol of symbols(); track symbol) {
-        <span class="inline-flex items-center gap-x-1.5 rounded-md bg-slate-700/50 px-3 py-1.5 text-sm font-semibold text-white outline-1 -outline-offset-1 outline-slate-400/25">
+        <span class="symbol-chip inline-flex items-center gap-x-1.5 px-3 py-1.5 text-sm font-semibold">
           {{ symbol }}
           <button
             (click)="removeSymbol(symbol)"
@@ -48,17 +48,17 @@
   @if (isOpen() && filteredStocks().length > 0) {
     <div
       #dropdown
-      class="absolute top-full left-0 right-0 mt-1 max-h-64 overflow-y-auto rounded-md border border-slate-400/25 bg-slate-800 shadow-lg z-50"
+      class="autocomplete-dropdown absolute top-full left-0 right-0 mt-1 max-h-64 overflow-y-auto z-50"
     >
       @for (stock of filteredStocks(); track stock.key_ticker; let i = $index) {
         <button
           (click)="addSymbol(stock)"
-          [class]="'block w-full px-4 py-2.5 text-left text-sm text-white focus:outline-none transition-colors duration-100 first:rounded-t-md last:rounded-b-md border-b border-slate-700/50 last:border-b-0 cursor-pointer ' + (highlightedIndex() === i ? 'bg-slate-700/75' : 'hover:bg-slate-700/75')"
+          [class]="'autocomplete-item block w-full px-4 py-2.5 text-left text-sm focus:outline-none transition-colors duration-100 cursor-pointer ' + (highlightedIndex() === i ? 'highlighted' : '')"
         >
           <div class="flex items-center justify-between">
             <div class="flex flex-col">
-              <span class="font-semibold text-white">{{ stock.key_ticker }}</span>
-              <span class="text-xs text-white/60">{{ stock.name }}</span>
+              <span class="autocomplete-item-title font-semibold">{{ stock.key_ticker }}</span>
+              <span class="autocomplete-item-subtitle text-xs">{{ stock.name }}</span>
             </div>
           </div>
         </button>
@@ -69,7 +69,7 @@
   <!-- No Results Message -->
   @if (isOpen() && searchQuery().length > 0 && filteredStocks().length === 0) {
     <div
-      class="absolute top-full left-0 right-0 mt-1 rounded-md border border-slate-400/25 bg-slate-800 px-4 py-3 text-center text-sm text-white/60"
+      class="autocomplete-dropdown absolute top-full left-0 right-0 mt-1 px-4 py-3 text-center text-sm"
     >
       No stocks found for "{{ searchQuery() }}"
     </div>

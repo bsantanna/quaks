@@ -1,4 +1,4 @@
-<div class="flex items-center gap-4 py-4">
+<div class="flex gap-4 py-4">
   <div class="flex-1 min-w-0">
     <app-stock-comparison-autocomplete
       [symbols]="symbols()"
@@ -6,7 +6,7 @@
     />
   </div>
   @if (useIntervalInDates()) {
-    <div class="text-white text-sm font-mono text-left">
+    <div class="text-sm text-left" style="color: var(--text-secondary); font-family: var(--font-data);">
       <div>Start: {{ formattedInterval().from }}</div>
       <div>End:&nbsp;&nbsp; {{ formattedInterval().to }}</div>
     </div>

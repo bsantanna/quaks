@@ -43,7 +43,7 @@ export class CookieService implements SharedStateService<CookieConsent> {
     date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
     const expires = '; expires=' + date.toUTCString();
     let cookie = name + '=' + value + expires + '; path=/; SameSite=Lax';
-    if (window.isSecureContext) {
+    if (this.isBrowser && window.isSecureContext) {
       cookie += '; Secure';
     }
     document.cookie = cookie;

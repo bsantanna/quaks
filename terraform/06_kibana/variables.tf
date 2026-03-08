@@ -41,7 +41,7 @@ variable "es_cluster_name" {
 variable "kb_version" {
   description = "Kibana version to deploy"
   type        = string
-  default     = "9.2.0"
+  default     = "9.3.1"
 }
 
 variable "quaks_fqdn" {

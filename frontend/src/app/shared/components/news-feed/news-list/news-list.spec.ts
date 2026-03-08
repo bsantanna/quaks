@@ -66,7 +66,7 @@ describe('NewsList', () => {
   });
 
   it('should show key_ticker badge when present', () => {
-    const badges = fixture.nativeElement.querySelectorAll('.bg-blue-100');
+    const badges = fixture.nativeElement.querySelectorAll('.news-ticker-badge');
     expect(badges.length).toBe(1);
     expect(badges[0].textContent.trim()).toBe('AAPL');
   });

@@ -24,3 +24,9 @@ export interface CookieConsent extends NavigationModel {
   consentGiven: boolean;
   type: 'all' | 'essential_only';
 }
+
+export type ThemeName = 'default' | 'bloomnerd' | 'matrix' | 'batman' | 'barbie';
+
+export interface ThemePreference extends NavigationModel {
+  theme: ThemeName;
+}

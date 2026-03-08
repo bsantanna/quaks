@@ -66,6 +66,90 @@ Three PostgreSQL databases:
 
 Angular 21 app in `frontend/`. Production build output goes to `app/static/frontend/browser/` and is served by FastAPI as a static mount at `/`. The frontend communicates with the backend REST API. Stock charts and performance comparison views embed Kibana dashboards via iframe (the `#/view/` URLs in `stock-eod-charts.ts` and `stock-comparison-charts.ts` are Kibana dashboard embed URLs, not internal routes).
 
+### Frontend Theming System
+
+The frontend supports multiple themes via CSS custom properties scoped to `[data-theme="<name>"]` on the `<html>` element. Theme preference is persisted in `localStorage` and managed by `ThemeService`.
+
+#### Architecture
+
+- **Theme tokens** are defined in `frontend/src/styles.scss` under `[data-theme="<name>"]` selectors
+- **ThemeService** (`frontend/src/app/shared/services/theme.service.ts`) reads/writes localStorage, applies `data-theme` attribute
+- **ThemeName type** is defined in `frontend/src/app/shared/models/navigation.models.ts`
+- **Settings dropdown** (`frontend/src/app/navigation-header/settings-dropdown/`) provides the UI to switch themes
+
+#### Design Tokens (CSS Custom Properties)
+
+Every theme MUST define all of these tokens:
+
+```css
+[data-theme="<name>"] {
+  /* Surfaces — background layers from darkest to lightest */
+  --surface-base: <color>;       /* HTML/body background */
+  --surface-panel: <color>;      /* Main content panel */
+  --surface-elevated: <color>;   /* Cards, dropdowns, header/footer */
+  --surface-hover: <color>;      /* Hover state backgrounds */
+
+  /* Borders */
+  --border-primary: <color>;     /* Default borders */
+  --border-accent: <color>;      /* Accent-colored borders (matches accent) */
+
+  /* Text */
+  --text-primary: <color>;       /* Main text */
+  --text-secondary: <color>;     /* Labels, descriptions */
+  --text-muted: <color>;         /* Timestamps, metadata, disabled */
+
+  /* Accent — brand/highlight color */
+  --accent-primary: <color>;     /* Active tabs, links, badges, focus rings */
+  --accent-hover: <color>;       /* Accent hover state */
+
+  /* Status */
+  --status-positive: <color>;    /* Gains, success (green family) */
+  --status-negative: <color>;    /* Losses, errors (red family) */
+
+  /* Typography */
+  --font-heading: <stack>;       /* Page titles, nav titles */
+  --font-body: <stack>;          /* Body text, paragraphs */
+  --font-data: <stack>;          /* Financial data, monospace content */
+
+  /* Shape */
+  --radius: <px>;                /* Border radius: 0px=sharp, 8px=rounded */
+}
+```
+
+#### How to Add a New Theme
+
+1. **Define tokens** — Add a new `[data-theme="<name>"]` block in `styles.scss` with all required tokens
+2. **Register the type** — Add the name to `ThemeName` union in `navigation.models.ts`
+3. **Add UI option** — Add a button in `settings-dropdown.html` with a `.theme-swatch-<name>` color swatch
+4. **Add swatch style** — Add `.theme-swatch-<name>` in `settings-dropdown.scss` with a representative gradient
+5. **Import fonts** — If using custom fonts, add the `@import url(...)` to `styles.scss`
+6. **Run tests** — `npx jest` (all 159+ tests should pass unchanged)
+
+#### Styling Conventions
+
+- **NEVER use hardcoded Tailwind color classes** (e.g., `bg-gray-800`, `text-white`, `border-blue-500`) for themed elements. Use SCSS classes that reference CSS vars instead.
+- **DO use Tailwind** for layout/spacing (`flex`, `grid`, `px-4`, `gap-2`, etc.) — these are theme-independent.
+- **Component SCSS files** define theme-aware classes using `var(--token)`. Examples: `.nav-btn`, `.tools-list`, `.autocomplete-input`, `.interval-btn`.
+- **Reusable class patterns** used across components:
+  - `.actions-tab` / `.actions-tab-bar` — Tab navigation (used in stock-eod-actions, heatmaps)
+  - `.tools-list` / `.tools-item` / `.tools-title` / `.tools-subtitle` — List items (tools, insights)
+  - `.autocomplete-input` / `.autocomplete-dropdown` / `.autocomplete-item` — Search inputs (stock, news, comparison)
+  - `.interval-btn` / `.interval-active` — Time range button groups
+  - `.dashboard-panel` / `.dashboard-panel-blur` — Container panels
+  - `.variance-positive` / `.variance-negative` — Gain/loss coloring
+  - `.news-card` / `.news-title` / `.news-summary` / `.news-meta` / `.news-ticker-badge` — News components
+  - `.info-header` / `.info-label` / `.info-divider` — Stock info header
+- **SVG icons** use explicit fill/stroke colors (not `currentColor`) since they're loaded via `<img>` tags. Store in `frontend/public/svg/`.
+- **SSR safety** — Guard browser APIs (`localStorage`, `ResizeObserver`) with `isPlatformBrowser` from `@angular/common`.
+
+#### Theme Design Guidelines
+
+- **Contrast**: Ensure sufficient contrast between `--text-primary` and `--surface-panel` (WCAG AA: 4.5:1 minimum)
+- **Accent**: Pick ONE strong accent color. It will be used for active tabs, links, badges, focus rings, and active buttons.
+- **Surfaces**: Use 4 tiers of darkness. `--surface-base` < `--surface-panel` < `--surface-elevated` < `--surface-hover` (from darkest to lightest for dark themes).
+- **Radius**: `0px` for sharp/terminal themes, `8px` for soft/rounded themes. This single value controls ALL borders site-wide.
+- **Fonts**: Import via Google Fonts `@import url(...)` in `styles.scss`. Use monospace for `--font-data` in data-heavy themes.
+
 ### Observability
 
 OpenTelemetry is configured in `app/infrastructure/metrics/tracer.py`. Instrumented: FastAPI, HTTPx, LangChain, SQLAlchemy, Psycopg. Exports via OTLP to a collector that feeds Prometheus (metrics), Loki (logs), Tempo (traces), and Grafana (dashboards). Config in `otel/`.

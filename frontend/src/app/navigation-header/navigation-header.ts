@@ -1,4 +1,5 @@
-import {AfterViewInit, Component, ElementRef, inject, OnDestroy, signal, Signal, viewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, inject, OnDestroy, PLATFORM_ID, signal, Signal, viewChild} from '@angular/core';
+import {isPlatformBrowser} from '@angular/common';
 import {StockAutocompleteComponent} from './stock-autocomplete/stock-autocomplete';
 import {NewsAutocompleteComponent} from './news-autocomplete/news-autocomplete';
 import {IndexedKeyTicker} from '../shared';
@@ -6,17 +7,20 @@ import {STOCK_MARKETS} from '../constants';
 import {ShareButtonComponent} from './share-button/share-button';
 import {NavButtonComponent} from './nav-button/nav-button';
 import {FeedbackMessageComponent} from './feedback-message/feedback-message';
+import {SettingsDropdownComponent} from './settings-dropdown/settings-dropdown';
+import {HamburgerMenuComponent} from './hamburger-menu/hamburger-menu';
 import {NavigationEnd, Router} from '@angular/router';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {filter, map, startWith} from 'rxjs';
 
 @Component({
   selector: 'app-navigation-header',
-  imports: [StockAutocompleteComponent, NewsAutocompleteComponent, ShareButtonComponent, NavButtonComponent, FeedbackMessageComponent],
+  imports: [StockAutocompleteComponent, NewsAutocompleteComponent, ShareButtonComponent, NavButtonComponent, FeedbackMessageComponent, SettingsDropdownComponent, HamburgerMenuComponent],
   templateUrl: './navigation-header.html',
   styleUrl: './navigation-header.scss',
 })
 export class NavigationHeader implements AfterViewInit, OnDestroy {
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly router = inject(Router);
   readonly subHeader = viewChild<ElementRef>('subHeader');
   readonly stickyVisible = signal(false);
@@ -48,6 +52,7 @@ export class NavigationHeader implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
+    if (!this.isBrowser) return;
     const el = this.subHeader()?.nativeElement;
     if (el) {
       this.observer = new IntersectionObserver(

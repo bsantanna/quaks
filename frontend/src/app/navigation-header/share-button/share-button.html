@@ -1,66 +1,58 @@
 @if (shareUrl().url.trim().length > 0) {
     <div class="mt-4 flex md:mt-0  relative">
         <button type="button" (click)="toggleMenu()"
-                class="inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white inset-ring inset-ring-white/5 hover:bg-white/20 cursor-pointer">
+                class="nav-btn inline-flex items-center px-3 py-2 text-sm font-semibold cursor-pointer">
             <img src="/svg/icon-share.svg" class="mr-2 size-5" aria-hidden="true" alt="" />
             <span>Share</span>
         </button>
 
         @if (showMenu()) {
-            <div class="absolute top-full right-0 mt-2 w-36 rounded-md bg-slate-800 shadow-lg ring-1 ring-white/5">
+            <div class="share-dropdown">
                 <ul class="py-1">
                     <li>
-                        <button (click)="share('x')"
-                                class="flex items-center w-full px-4 py-2 text-sm text-white bg-slate-800 hover:bg-white/20 cursor-pointer">
+                        <button (click)="share('x')" class="share-item">
                             <span class="ml-2">X</span>
                         </button>
                     </li>
-                    <div aria-hidden="true" class="w-full border-t border-white/15"></div>
+                    <div aria-hidden="true" class="share-divider"></div>
                     <li>
-                        <button (click)="share('facebook')"
-                                class="flex items-center w-full px-4 py-2 text-sm text-white bg-slate-800 hover:bg-white/20 cursor-pointer">
+                        <button (click)="share('facebook')" class="share-item">
                             <span class="ml-2">Facebook</span>
                         </button>
                     </li>
-                    <div aria-hidden="true" class="w-full border-t border-white/15"></div>
+                    <div aria-hidden="true" class="share-divider"></div>
                     <li>
-                        <button (click)="share('whatsapp')"
-                                class="flex items-center w-full px-4 py-2 text-sm text-white bg-slate-800 hover:bg-white/20 cursor-pointer">
+                        <button (click)="share('whatsapp')" class="share-item">
                             <span class="ml-2">WhatsApp</span>
                         </button>
                     </li>
-                    <div aria-hidden="true" class="w-full border-t border-white/15"></div>
+                    <div aria-hidden="true" class="share-divider"></div>
                     <li>
-                        <button (click)="share('threads')"
-                                class="flex items-center w-full px-4 py-2 text-sm text-white bg-slate-800 hover:bg-white/20 cursor-pointer">
+                        <button (click)="share('threads')" class="share-item">
                             <span class="ml-2">Threads</span>
                         </button>
                     </li>
-                    <div aria-hidden="true" class="w-full border-t border-white/15"></div>
+                    <div aria-hidden="true" class="share-divider"></div>
                     <li>
-                        <button (click)="share('linkedin')"
-                                class="flex items-center w-full px-4 py-2 text-sm text-white bg-slate-800 hover:bg-white/20 cursor-pointer">
+                        <button (click)="share('linkedin')" class="share-item">
                             <span class="ml-2">LinkedIn</span>
                         </button>
                     </li>
-                    <div aria-hidden="true" class="w-full border-t border-white/15"></div>
+                    <div aria-hidden="true" class="share-divider"></div>
                     <li>
-                        <button (click)="share('reddit')"
-                                class="flex items-center w-full px-4 py-2 text-sm text-white bg-slate-800 hover:bg-white/20 cursor-pointer">
+                        <button (click)="share('reddit')" class="share-item">
                             <span class="ml-2">Reddit</span>
                         </button>
                     </li>
-                    <div aria-hidden="true" class="w-full border-t border-white/15"></div>
+                    <div aria-hidden="true" class="share-divider"></div>
                     <li>
-                        <button (click)="share('copy')"
-                                class="flex items-center w-full px-4 py-2 text-sm text-white bg-slate-800 hover:bg-white/20 cursor-pointer">
+                        <button (click)="share('copy')" class="share-item">
                             <span class="ml-2">Copy link</span>
                         </button>
                     </li>
-                    <div aria-hidden="true" class="w-full border-t border-white/15"></div>
+                    <div aria-hidden="true" class="share-divider"></div>
                     <li>
-                        <button (click)="share('email')"
-                                class="flex items-center w-full px-4 py-2 text-sm text-white bg-slate-800 hover:bg-white/20 cursor-pointer">
+                        <button (click)="share('email')" class="share-item">
                             <span class="ml-2">E-mail link</span>
                         </button>
                     </li>
