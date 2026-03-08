@@ -1,4 +1,5 @@
-import {Component, computed, effect, inject, OnDestroy, signal, WritableSignal} from '@angular/core';
+import {Component, computed, effect, inject, OnDestroy, PLATFORM_ID, signal, WritableSignal} from '@angular/core';
+import {isPlatformBrowser} from '@angular/common';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {ShareUrlService, SeoService} from '../shared';
@@ -15,6 +16,7 @@ import {environment} from '../../environments/environment';
 })
 export class MarketsPerformanceComparison implements OnDestroy {
 
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly shareUrlService = inject(ShareUrlService);
@@ -46,10 +48,12 @@ export class MarketsPerformanceComparison implements OnDestroy {
       const syms = this.symbols();
       const linkTitle = `${this.routeTitle} ${syms.join(',')}`;
       const useInterval = this.useIntervalInDates();
-      const url = useInterval
-        ? window.location.href
-        : `${window.location.href.split('?')[0]}?q=${syms.join(',')}&interval=${this.shareUrlService.getPastDateInDays(this.intervalInDays())}_${this.shareUrlService.getPastDateInDays(1)}`;
-      this.shareUrlService.update({title: linkTitle, url});
+      if (this.isBrowser) {
+        const url = useInterval
+          ? window.location.href
+          : `${window.location.href.split('?')[0]}?q=${syms.join(',')}&interval=${this.shareUrlService.getPastDateInDays(this.intervalInDays())}_${this.shareUrlService.getPastDateInDays(1)}`;
+        this.shareUrlService.update({title: linkTitle, url});
+      }
       this.seoService.update({
         title: syms.length ? `${syms.join(' vs ')} Performance Comparison` : 'Stock Performance Comparison',
         description: syms.length

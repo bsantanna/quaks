@@ -1,0 +1,36 @@
+.tools-list {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+}
+
+.tools-item {
+  border-bottom: 1px solid var(--border-primary);
+  transition: background 0.15s ease;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: var(--surface-hover);
+  }
+}
+
+.tools-title {
+  color: var(--text-primary);
+  font-family: var(--font-heading);
+}
+
+.tools-subtitle {
+  color: var(--text-secondary);
+}
+
+.tools-chevron {
+  opacity: 0.4;
+  transition: opacity 0.15s ease;
+
+  .tools-item:hover & {
+    opacity: 0.8;
+  }
+}

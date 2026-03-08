@@ -1,0 +1,87 @@
+<button type="button" (click)="toggle()"
+        class="hamburger-btn"
+        aria-label="Open menu">
+    @if (menuOpen()) {
+        <img src="/svg/icon-close.svg" class="size-5" aria-hidden="true" alt="" />
+    } @else {
+        <img src="/svg/icon-hamburger.svg" class="size-5" aria-hidden="true" alt="" />
+    }
+</button>
+
+@if (menuOpen()) {
+    <div class="hamburger-backdrop" (click)="close()"></div>
+    <div class="hamburger-panel">
+
+        <div class="hamburger-section">
+            <span class="hamburger-label">Navigate</span>
+            <button class="hamburger-item" (click)="navigate('/markets/stocks')">
+                <img src="/svg/icon-bar-chart.svg" class="size-5" aria-hidden="true" alt="" />
+                <span>Stocks</span>
+            </button>
+            <button class="hamburger-item" (click)="navigate('/markets/performance')">
+                <img src="/svg/icon-chart-compare.svg" class="size-5" aria-hidden="true" alt="" />
+                <span>Performance</span>
+            </button>
+            <button class="hamburger-item" (click)="navigate('/markets/news')">
+                <img src="/svg/icon-document.svg" class="size-5" aria-hidden="true" alt="" />
+                <span>News</span>
+            </button>
+        </div>
+
+        @if (path().indexOf('stocks') > -1) {
+            <div class="hamburger-section">
+                <span class="hamburger-label">Search Stocks</span>
+                <app-stock-autocomplete
+                        [inputPlaceholder]="'Search stock symbols'"
+                        (stockSelected)="onKeyTickerSelected($event)">
+                </app-stock-autocomplete>
+            </div>
+        }
+
+        @if (path().indexOf('news') > -1) {
+            <div class="hamburger-section">
+                <span class="hamburger-label">Search News</span>
+                <app-news-autocomplete
+                        [inputPlaceholder]="'Search news'">
+                </app-news-autocomplete>
+            </div>
+        }
+
+        <div class="hamburger-section">
+            <span class="hamburger-label">Theme</span>
+            <div class="hamburger-themes">
+                <button (click)="selectTheme('default')"
+                        [class.active]="themeService.state().theme === 'default'"
+                        class="hamburger-theme-option">
+                    <span class="hamburger-swatch hamburger-swatch-default"></span>
+                    <span>Default</span>
+                </button>
+                <button (click)="selectTheme('bloomnerd')"
+                        [class.active]="themeService.state().theme === 'bloomnerd'"
+                        class="hamburger-theme-option">
+                    <span class="hamburger-swatch hamburger-swatch-bloomnerd"></span>
+                    <span>Bloomnerd</span>
+                </button>
+                <button (click)="selectTheme('matrix')"
+                        [class.active]="themeService.state().theme === 'matrix'"
+                        class="hamburger-theme-option">
+                    <span class="hamburger-swatch hamburger-swatch-matrix"></span>
+                    <span>Matrix</span>
+                </button>
+                <button (click)="selectTheme('batman')"
+                        [class.active]="themeService.state().theme === 'batman'"
+                        class="hamburger-theme-option">
+                    <span class="hamburger-swatch hamburger-swatch-batman"></span>
+                    <span>Batman</span>
+                </button>
+                <button (click)="selectTheme('barbie')"
+                        [class.active]="themeService.state().theme === 'barbie'"
+                        class="hamburger-theme-option">
+                    <span class="hamburger-swatch hamburger-swatch-barbie"></span>
+                    <span>Barbie</span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+}

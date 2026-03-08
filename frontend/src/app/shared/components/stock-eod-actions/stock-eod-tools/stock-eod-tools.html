@@ -1,71 +1,67 @@
-<ul role="list" class="mt-4 mb-4 divide-y divide-white/5 overflow-hidden bg-gray-800/50 outline-1 outline-white/10 sm:rounded-xl sm:-outline-offset-1">
+<ul role="list" class="tools-list mt-4 mb-4 overflow-hidden">
 
     @if (!isStocksRoute) {
-    <li class="relative flex justify-between gap-x-6 px-4 py-5 hover:bg-white/2.5 sm:px-6">
+    <li class="tools-item relative flex justify-between gap-x-6 px-4 py-5 sm:px-6">
         <div class="flex min-w-0 gap-x-4">
             <img src="/svg/icon-bar-chart.svg" class="size-12 flex-none rounded-full" aria-hidden="true" alt="" />
-
             <div class="min-w-0 flex-auto">
                 <a href="/markets/stocks/{{keyTicker()}}">
-                    <p class="text-sm/6 font-semibold text-white truncate">
+                    <p class="tools-title text-sm/6 font-semibold truncate">
                         <span class="absolute inset-x-0 -top-px bottom-0"></span>
                         Stocks dashboard
                     </p>
-                    <p class="mt-1 flex text-xs/5 text-gray-400">
+                    <p class="tools-subtitle mt-1 flex text-xs/5">
                         <span class="relative truncate hover:underline">Stock price and technical indicators for {{keyTicker()}}</span>
                     </p>
                 </a>
             </div>
         </div>
         <div class="flex shrink-0 items-center gap-x-4">
-            <img src="/svg/icon-chevron-right.svg" class="size-5 flex-none" aria-hidden="true" alt="" />
+            <img src="/svg/icon-chevron-right.svg" class="tools-chevron size-5 flex-none" aria-hidden="true" alt="" />
         </div>
     </li>
     }
 
     @if (!isNewsRoute) {
-    <li class="relative flex justify-between gap-x-6 px-4 py-5 hover:bg-white/2.5 sm:px-6">
+    <li class="tools-item relative flex justify-between gap-x-6 px-4 py-5 sm:px-6">
         <div class="flex min-w-0 gap-x-4">
             <img src="/svg/icon-document.svg" class="size-12 flex-none rounded-full" aria-hidden="true" alt="" />
-
             <div class="min-w-0 flex-auto">
                 <a href="/markets/news/related/{{keyTicker()}}">
-                    <p class="text-sm/6 font-semibold text-white truncate">
+                    <p class="tools-title text-sm/6 font-semibold truncate">
                         <span class="absolute inset-x-0 -top-px bottom-0"></span>
                         News feed
                     </p>
-                    <p class="mt-1 flex text-xs/5 text-gray-400">
+                    <p class="tools-subtitle mt-1 flex text-xs/5">
                         <span class="relative truncate hover:underline">Market news related to {{keyTicker()}}</span>
                     </p>
                 </a>
             </div>
         </div>
         <div class="flex shrink-0 items-center gap-x-4">
-            <img src="/svg/icon-chevron-right.svg" class="size-5 flex-none" aria-hidden="true" alt="" />
+            <img src="/svg/icon-chevron-right.svg" class="tools-chevron size-5 flex-none" aria-hidden="true" alt="" />
         </div>
     </li>
     }
 
     @if (!isPerformanceRoute) {
-    <li class="relative flex justify-between gap-x-6 px-4 py-5 hover:bg-white/2.5 sm:px-6">
+    <li class="tools-item hidden md:flex relative justify-between gap-x-6 px-4 py-5 sm:px-6">
         <div class="flex min-w-0 gap-x-4">
             <img src="/svg/icon-chart-compare.svg" class="size-12 flex-none rounded-full" aria-hidden="true" alt="" />
-
-
             <div class="min-w-0 flex-auto">
                 <a href="/markets/performance?q={{keyTicker()}}">
-                    <p class="text-sm/6 font-semibold text-white truncate">
+                    <p class="tools-title text-sm/6 font-semibold truncate">
                         <span class="absolute inset-x-0 -top-px bottom-0"></span>
                         Performance comparison
                     </p>
-                    <p class="mt-1 flex text-xs/5 text-gray-400">
+                    <p class="tools-subtitle mt-1 flex text-xs/5">
                         <span class="relative truncate hover:underline">Comparison between {{keyTicker()}} and other symbol</span>
                     </p>
                 </a>
             </div>
         </div>
         <div class="flex shrink-0 items-center gap-x-4">
-            <img src="/svg/icon-chevron-right.svg" class="size-5 flex-none" aria-hidden="true" alt="" />
+            <img src="/svg/icon-chevron-right.svg" class="tools-chevron size-5 flex-none" aria-hidden="true" alt="" />
         </div>
     </li>
     }

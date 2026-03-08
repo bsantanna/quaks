@@ -1,17 +1,17 @@
-<div class="sm:hidden mt-8">
-    <div class="text-white p-4 font-mono">
+<div class="sm:hidden mt-4">
+    <div class="info-header p-4">
 
         <!-- Top section: Symbol, Name, Close, % Change -->
         <div class="flex justify-between items-start mb-3">
             <div>
                 <p class="text-2xl font-bold leading-none">{{ keyTicker() }} {{ exchangeFlag() }}</p>
-                <p class="text-xs text-gray-400 truncate max-w-40">{{ companyName() }}</p>
-                <p class="text-xs text-gray-400 truncate max-w-40">{{ exchangeName() }}</p>
+                <p class="text-xs info-label truncate max-w-40">{{ companyName() }}</p>
+                <p class="text-xs info-label truncate max-w-40">{{ exchangeName() }}</p>
             </div>
             <div class="text-right flex-shrink-0">
                 <p class="text-2xl font-bold leading-none">{{ currencySymbol() }}{{ statsClose().most_recent_close | number : '1.2-2' }}</p>
                 @if (!isStocksRoute) {
-                    <p class="text-xs text-gray-400">({{ shortenDate(statsClose().most_recent_date) }})</p>
+                    <p class="text-xs info-label">({{ shortenDate(statsClose().most_recent_date) }})</p>
                 }
             </div>
         </div>
@@ -19,48 +19,48 @@
         <!-- Detailed stats: O, H, L, V -->
         <div class="grid grid-cols-4 gap-1 text-center mb-3">
             <div>
-                <p class="text-xs text-gray-400">Open</p>
+                <p class="text-xs info-label">Open</p>
                 <p class="text-xs truncate">{{ statsClose().most_recent_open | number : '1.2-2' }}</p>
             </div>
             <div>
-                <p class="text-xs text-gray-400">High</p>
+                <p class="text-xs info-label">High</p>
                 <p class="text-xs truncate">{{ statsClose().most_recent_high | number : '1.2-2' }}</p>
             </div>
             <div>
-                <p class="text-xs text-gray-400">Low</p>
+                <p class="text-xs info-label">Low</p>
                 <p class="text-xs truncate">{{ statsClose().most_recent_low | number : '1.2-2' }}</p>
             </div>
             <div>
-                <p class="text-xs text-gray-400">Volume</p>
+                <p class="text-xs info-label">Volume</p>
                 <p class="text-xs truncate">{{ formatVolume(statsClose().most_recent_volume) }}</p>
             </div>
         </div>
 
         <!-- Date Range Selection (visible on stocks dashboard) -->
         @if (isStocksRoute) {
-            <div aria-hidden="true" class="w-full border-t border-white/10 my-3"></div>
+            <div aria-hidden="true" class="w-full border-t info-divider my-3"></div>
 
             @if (!useIntervalInDates()) {
                 <div class="flex justify-center mb-3">
-                    <div class="isolate inline-flex rounded-md shadow-sm">
+                    <div class="isolate inline-flex">
                         <button type="button" (click)="setIntervalInDays(90)"
-                                [class]="intervalInDays() === 90 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative inline-flex items-center rounded-l-md px-2 py-1 text-xs font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                                class="interval-btn relative inline-flex items-center px-2 py-1 text-xs font-semibold"
+                                [class.interval-active]="intervalInDays() === 90">
                             3M
                         </button>
                         <button type="button" (click)="setIntervalInDays(180)"
-                                [class]="intervalInDays() === 180 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative -ml-px inline-flex items-center px-2 py-1 text-xs font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                                class="interval-btn relative -ml-px inline-flex items-center px-2 py-1 text-xs font-semibold"
+                                [class.interval-active]="intervalInDays() === 180">
                             6M
                         </button>
                         <button type="button" (click)="setIntervalInDays(270)"
-                                [class]="intervalInDays() === 270 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative -ml-px inline-flex items-center px-2 py-1 text-xs font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                                class="interval-btn relative -ml-px inline-flex items-center px-2 py-1 text-xs font-semibold"
+                                [class.interval-active]="intervalInDays() === 270">
                             9M
                         </button>
                         <button type="button" (click)="setIntervalInDays(365)"
-                                [class]="intervalInDays() === 365 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative -ml-px inline-flex items-center rounded-r-md px-2 py-1 text-xs font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                                class="interval-btn relative -ml-px inline-flex items-center px-2 py-1 text-xs font-semibold"
+                                [class.interval-active]="intervalInDays() === 365">
                             1Y
                         </button>
                     </div>
@@ -68,7 +68,7 @@
             }
             <div class="grid grid-cols-3 gap-1 text-xs">
                 <div>
-                    <p class="text-gray-400">Start</p>
+                    <p class="info-label">Start</p>
                     @if (useIntervalInDates()) {
                         <p>{{ shortenDate(intervalInDates().split('_')[0]) }}</p>
                     } @else {
@@ -76,7 +76,7 @@
                     }
                 </div>
                 <div>
-                    <p class="text-gray-400">End</p>
+                    <p class="info-label">End</p>
                     @if (useIntervalInDates()) {
                         <p>{{ shortenDate(intervalInDates().split('_')[1]) }}</p>
                     } @else {
@@ -84,9 +84,9 @@
                     }
                 </div>
                 <div>
-                    <p class="text-gray-400">Change</p>
-                    <p [class.text-green-400]="statsClose().percent_variance > 0"
-                       [class.text-rose-400]="statsClose().percent_variance <= 0">
+                    <p class="info-label">Change</p>
+                    <p [class.variance-positive]="statsClose().percent_variance > 0"
+                       [class.variance-negative]="statsClose().percent_variance <= 0">
                         {{ statsClose().percent_variance > 0 ? '+' : '' }}{{ statsClose().percent_variance | number : '1.2-2' }}%
                     </p>
                 </div>
@@ -97,60 +97,60 @@
 </div>
 
 <!-- Medium view: landscape phones / small tablets (sm to lg) — compact 2-line layout -->
-<div class="hidden sm:block lg:hidden mt-7">
-    <div class="text-white px-4 py-2 font-mono">
+<div class="hidden sm:block lg:hidden mt-4">
+    <div class="info-header px-4 py-2">
         <!-- Line 1: Ticker, Company, Close, Variance, Date -->
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-x-3">
                 <p class="text-lg font-bold">{{ keyTicker() }}</p>
-                <p class="text-xs text-gray-400 truncate max-w-32">{{ companyName() }}</p>
-                <p class="text-xs text-gray-400 truncate max-w-32">{{ exchangeName() }}</p>
+                <p class="text-xs info-label truncate max-w-32">{{ companyName() }}</p>
+                <p class="text-xs info-label truncate max-w-32">{{ exchangeName() }}</p>
             </div>
             <div class="flex items-center gap-x-3">
                 <p class="text-lg font-bold">{{ currencySymbol() }}{{ statsClose().most_recent_close | number : '1.2-2' }}</p>
                 @if (isStocksRoute) {
                     <p class="text-sm"
-                       [class.text-green-400]="statsClose().percent_variance > 0"
-                       [class.text-rose-400]="statsClose().percent_variance <= 0">
+                       [class.variance-positive]="statsClose().percent_variance > 0"
+                       [class.variance-negative]="statsClose().percent_variance <= 0">
                         {{ statsClose().percent_variance > 0 ? '+' : '' }}{{ statsClose().percent_variance | number : '1.2-2' }}%
                     </p>
-                    <div class="text-xs text-gray-400">
+                    <div class="text-xs info-label">
                         <p>Start: {{ shortenDate(interval().split('_')[0]) }}</p>
                         <p>End:&nbsp;&nbsp; {{ shortenDate(interval().split('_')[1]) }}</p>
                     </div>
                 } @else {
-                    <p class="text-xs text-gray-400">({{ shortenDate(statsClose().most_recent_date) }})</p>
+                    <p class="text-xs info-label">({{ shortenDate(statsClose().most_recent_date) }})</p>
                 }
             </div>
         </div>
         <!-- Line 2: O H L V + date range buttons -->
         <div class="flex items-center justify-between mt-1">
             <div class="flex items-center gap-x-3 text-[11px]">
-                <span><span class="text-gray-400">Open</span>&nbsp;<span>{{ statsClose().most_recent_open | number : '1.2-2' }}</span></span>
-                <span><span class="text-gray-400">High</span>&nbsp;<span>{{ statsClose().most_recent_high | number : '1.2-2' }}</span></span>
-                <span><span class="text-gray-400">Low</span>&nbsp;<span>{{ statsClose().most_recent_low | number : '1.2-2' }}</span></span>
-                <span><span class="text-gray-400">Volume</span>&nbsp;<span>{{ formatVolume(statsClose().most_recent_volume) }}</span></span>
+                <span><span class="info-label">Open</span>&nbsp;<span>{{ statsClose().most_recent_open | number : '1.2-2' }}</span></span>
+                <span><span class="info-label">High</span>&nbsp;<span>{{ statsClose().most_recent_high | number : '1.2-2' }}</span></span>
+                <span><span class="info-label">Low</span>&nbsp;<span>{{ statsClose().most_recent_low | number : '1.2-2' }}</span></span>
+                <span><span class="info-label">Volume</span>&nbsp;<span>{{ formatVolume(statsClose().most_recent_volume) }}</span></span>
             </div>
             @if (isStocksRoute && !useIntervalInDates()) {
-                <div class="isolate inline-flex rounded-md shadow-sm">
+                <div class="isolate inline-flex">
                     <button type="button" (click)="setIntervalInDays(90)"
-                            [class]="intervalInDays() === 90 ? 'bg-white/20' : 'bg-white/10'"
-                            class="relative inline-flex items-center rounded-l-md px-2 py-0.5 text-xs font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                            class="interval-btn relative inline-flex items-center px-2 py-0.5 text-xs font-semibold"
+                            [class.interval-active]="intervalInDays() === 90">
                         3M
                     </button>
                     <button type="button" (click)="setIntervalInDays(180)"
-                            [class]="intervalInDays() === 180 ? 'bg-white/20' : 'bg-white/10'"
-                            class="relative -ml-px inline-flex items-center px-2 py-0.5 text-xs font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                            class="interval-btn relative -ml-px inline-flex items-center px-2 py-0.5 text-xs font-semibold"
+                            [class.interval-active]="intervalInDays() === 180">
                         6M
                     </button>
                     <button type="button" (click)="setIntervalInDays(270)"
-                            [class]="intervalInDays() === 270 ? 'bg-white/20' : 'bg-white/10'"
-                            class="relative -ml-px inline-flex items-center px-2 py-0.5 text-xs font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                            class="interval-btn relative -ml-px inline-flex items-center px-2 py-0.5 text-xs font-semibold"
+                            [class.interval-active]="intervalInDays() === 270">
                         9M
                     </button>
                     <button type="button" (click)="setIntervalInDays(365)"
-                            [class]="intervalInDays() === 365 ? 'bg-white/20' : 'bg-white/10'"
-                            class="relative -ml-px inline-flex items-center rounded-r-md px-2 py-0.5 text-xs font-semibold ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                            class="interval-btn relative -ml-px inline-flex items-center px-2 py-0.5 text-xs font-semibold"
+                            [class.interval-active]="intervalInDays() === 365">
                         1Y
                     </button>
                 </div>
@@ -161,40 +161,39 @@
 
 <!-- Large view: desktop sidebar (lg+) -->
 <div class="hidden lg:block">
-    <div class="text-white p-6 rounded-lg shadow-lg font-mono">
+    <div class="info-header p-6">
 
         <!-- Date Range Selection (visible on stocks dashboard) -->
         @if (isStocksRoute) {
-            <!-- Below xl: buttons on top, dates below -->
             @if (!useIntervalInDates()) {
-                <div class="flex justify-center pb-4 xl:hidden">
-                    <div class="isolate inline-flex rounded-md shadow-sm">
+                <div class="flex justify-center pb-4">
+                    <div class="isolate inline-flex">
                         <button type="button" (click)="setIntervalInDays(90)"
-                                [class]="intervalInDays() === 90 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative inline-flex items-center rounded-l-md px-2 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                                class="interval-btn relative inline-flex items-center px-2 py-2 text-sm font-semibold"
+                                [class.interval-active]="intervalInDays() === 90">
                             3M
                         </button>
                         <button type="button" (click)="setIntervalInDays(180)"
-                                [class]="intervalInDays() === 180 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative -ml-px inline-flex items-center px-2 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                                class="interval-btn relative -ml-px inline-flex items-center px-2 py-2 text-sm font-semibold"
+                                [class.interval-active]="intervalInDays() === 180">
                             6M
                         </button>
                         <button type="button" (click)="setIntervalInDays(270)"
-                                [class]="intervalInDays() === 270 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative -ml-px inline-flex items-center px-2 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                                class="interval-btn relative -ml-px inline-flex items-center px-2 py-2 text-sm font-semibold"
+                                [class.interval-active]="intervalInDays() === 270">
                             9M
                         </button>
                         <button type="button" (click)="setIntervalInDays(365)"
-                                [class]="intervalInDays() === 365 ? 'bg-white/20' : 'bg-white/10'"
-                                class="relative -ml-px inline-flex items-center rounded-r-md px-2 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+                                class="interval-btn relative -ml-px inline-flex items-center px-2 py-2 text-sm font-semibold"
+                                [class.interval-active]="intervalInDays() === 365">
                             1Y
                         </button>
                     </div>
                 </div>
             }
-            <div class="grid grid-cols-3 xl:grid-cols-4 gap-4 pb-8">
+            <div class="grid grid-cols-3 gap-x-6 gap-y-4 pb-2">
                 <div>
-                    <p class="text-sm text-gray-400">Start</p>
+                    <p class="text-sm info-label">Start</p>
                     @if (useIntervalInDates()) {
                         <p class="text-sm font-medium">{{ shortenDate(intervalInDates().split('_')[0]) }}</p>
                     } @else {
@@ -202,7 +201,7 @@
                     }
                 </div>
                 <div>
-                    <p class="text-sm text-gray-400">End</p>
+                    <p class="text-sm info-label">End</p>
                     @if (useIntervalInDates()) {
                         <p class="text-sm font-medium">{{ shortenDate(intervalInDates().split('_')[1]) }}</p>
                     } @else {
@@ -210,60 +209,33 @@
                     }
                 </div>
                 <div>
-                    <p class="text-sm text-gray-400">Change</p>
+                    <p class="text-sm info-label">Change</p>
                     <p class="text-sm font-medium"
-                       [class.text-green-400]="statsClose().percent_variance > 0"
-                       [class.text-rose-400]="statsClose().percent_variance <= 0">
+                       [class.variance-positive]="statsClose().percent_variance > 0"
+                       [class.variance-negative]="statsClose().percent_variance <= 0">
                         {{ statsClose().percent_variance > 0 ? '+' : '' }}{{ statsClose().percent_variance | number : '1.2-2' }}%
                     </p>
                 </div>
-                <!-- xl only: buttons inline -->
-                @if (!useIntervalInDates()) {
-                    <div class="hidden xl:flex items-end justify-end">
-                        <div class="isolate inline-flex rounded-md shadow-sm">
-                            <button type="button" (click)="setIntervalInDays(90)"
-                                    [class]="intervalInDays() === 90 ? 'bg-white/20' : 'bg-white/10'"
-                                    class="relative inline-flex items-center rounded-l-md px-2 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
-                                3M
-                            </button>
-                            <button type="button" (click)="setIntervalInDays(180)"
-                                    [class]="intervalInDays() === 180 ? 'bg-white/20' : 'bg-white/10'"
-                                    class="relative -ml-px inline-flex items-center px-2 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
-                                6M
-                            </button>
-                            <button type="button" (click)="setIntervalInDays(270)"
-                                    [class]="intervalInDays() === 270 ? 'bg-white/20' : 'bg-white/10'"
-                                    class="relative -ml-px inline-flex items-center px-2 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
-                                9M
-                            </button>
-                            <button type="button" (click)="setIntervalInDays(365)"
-                                    [class]="intervalInDays() === 365 ? 'bg-white/20' : 'bg-white/10'"
-                                    class="relative -ml-px inline-flex items-center rounded-r-md px-2 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
-                                1Y
-                            </button>
-                        </div>
-                    </div>
-                }
             </div>
 
-            <div aria-hidden="true" class="w-full border-t border-white/15 py-4"></div>
+            <div aria-hidden="true" class="w-full border-t info-divider my-2"></div>
         }
 
         <!-- Top section with Symbol and Close Price -->
         <div class="flex flex-col xl:flex-row xl:justify-between xl:items-start mb-4">
             <div>
-                <p class="text-sm text-gray-400">Symbol</p>
+                <p class="text-sm info-label">Symbol</p>
                 <p class="text-3xl font-bold">{{ keyTicker() }} {{ exchangeFlag() }}</p>
                 <p class="text-sm truncate max-w-64">{{ companyName() }}</p>
                 <p class="text-sm truncate max-w-64">{{ exchangeName() }}</p>
             </div>
             <div class="xl:text-right mt-4 xl:mt-0">
-                <p class="text-sm text-gray-400">Close</p>
+                <p class="text-sm info-label">Close</p>
                 <p class="text-3xl font-bold">
                     {{ currencySymbol() }}{{ statsClose().most_recent_close | number : '1.2-2' }}
                 </p>
                 @if (!isStocksRoute) {
-                    <p class="text-sm text-gray-400">on {{ shortenDate(statsClose().most_recent_date) }}</p>
+                    <p class="text-sm info-label">on {{ shortenDate(statsClose().most_recent_date) }}</p>
                 }
             </div>
         </div>
@@ -271,23 +243,22 @@
         <!-- Detailed stats section -->
         <div class="grid grid-cols-4 gap-4 py-4">
             <div>
-                <p class="text-sm text-gray-400">Open</p>
+                <p class="text-sm info-label">Open</p>
                 <p class="text-md font-medium">{{ statsClose().most_recent_open | number : '1.2-2' }}</p>
             </div>
             <div>
-                <p class="text-sm text-gray-400">High</p>
+                <p class="text-sm info-label">High</p>
                 <p class="text-md font-medium">{{ statsClose().most_recent_high | number : '1.2-2' }}</p>
             </div>
             <div>
-                <p class="text-sm text-gray-400">Low</p>
+                <p class="text-sm info-label">Low</p>
                 <p class="text-md font-medium">{{ statsClose().most_recent_low | number : '1.2-2' }}</p>
             </div>
             <div>
-                <p class="text-sm text-gray-400">Volume</p>
+                <p class="text-sm info-label">Volume</p>
                 <p class="text-md font-medium">{{ formatVolume(statsClose().most_recent_volume) }}</p>
             </div>
         </div>
 
     </div>
 </div>
-

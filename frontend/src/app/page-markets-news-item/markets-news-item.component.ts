@@ -1,9 +1,9 @@
-import {Component, computed, effect, inject, OnDestroy} from '@angular/core';
+import {Component, computed, effect, inject, OnDestroy, PLATFORM_ID} from '@angular/core';
 import {ActivatedRoute, ParamMap} from '@angular/router';
 import {ShareUrlService, MarketsNewsService, NewsItem, IndexedKeyTickerService, SeoService} from '../shared';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {take} from 'rxjs';
-import {DatePipe} from '@angular/common';
+import {DatePipe, isPlatformBrowser} from '@angular/common';
 
 @Component({
   selector: 'app-markets-news-item',
@@ -15,6 +15,7 @@ import {DatePipe} from '@angular/common';
 })
 export class MarketsNewsItem implements OnDestroy {
 
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly route = inject(ActivatedRoute);
   private readonly shareUrlService = inject(ShareUrlService);
   private readonly marketsNewsService = inject(MarketsNewsService);
@@ -36,10 +37,12 @@ export class MarketsNewsItem implements OnDestroy {
         this.marketsNewsService.newsList.set(newsList);
         const item = newsList.items.at(0);
         const linkTitle = item?.headline ?? 'Breaking news';
-        this.shareUrlService.update({
-          title: linkTitle,
-          url: `${window.location.href.split('?')[0]}`
-        });
+        if (this.isBrowser) {
+          this.shareUrlService.update({
+            title: linkTitle,
+            url: `${window.location.href.split('?')[0]}`
+          });
+        }
         const path = `/markets/news/item/${this.indexName()}/${this.newsItemId()}`;
         this.seoService.update({
           title: linkTitle,

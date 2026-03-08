@@ -14,7 +14,7 @@
 
     <!-- Placeholder for no items -->
     @if (!newsItems() || newsItems().length === 0) {
-        <div class="text-center text-gray-500 py-8">
+        <div class="text-center news-placeholder py-8">
             No news items available.
         </div>
     }
@@ -25,7 +25,7 @@
             <button
                     (click)="loadMore()"
                     [disabled]="loading()"
-                    class="inline-flex items-center px-6 py-2 border border-gray-600 rounded-md text-sm font-medium text-gray-300 bg-gray-800/50 hover:bg-gray-700/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                    class="news-load-more inline-flex items-center px-6 py-2 text-sm font-medium">
                 @if (loading()) {
                     Loading...
                 } @else {

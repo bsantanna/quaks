@@ -1,0 +1,42 @@
+.cookie-dialog {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+}
+
+.cookie-text {
+  color: var(--text-primary);
+}
+
+.cookie-link {
+  color: var(--accent-primary);
+
+  &:hover {
+    color: var(--accent-hover);
+  }
+}
+
+.cookie-btn-accept {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: var(--accent-primary);
+    color: var(--surface-base);
+  }
+}
+
+.cookie-btn-reject {
+  color: var(--text-primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--text-secondary);
+  }
+}

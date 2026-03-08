@@ -1,7 +1,50 @@
-/* Stock Autocomplete Styles */
-
 :host {
   width: 100%;
+}
+
+.autocomplete-input {
+  background: var(--surface-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+
+  &::placeholder {
+    color: var(--text-muted);
+  }
+
+  &:focus {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: -2px;
+  }
+}
+
+.autocomplete-dropdown {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+}
+
+.autocomplete-item {
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-primary);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover,
+  &.highlighted {
+    background: var(--surface-hover);
+  }
+}
+
+.autocomplete-item-title {
+  color: var(--text-primary);
+}
+
+.autocomplete-item-subtitle {
+  color: var(--text-secondary);
 }
 
 /* Custom scrollbar for dropdown */
@@ -10,14 +53,14 @@
 }
 
 ::ng-deep .stock-autocomplete-dropdown::-webkit-scrollbar-track {
-  background-color: rgb(51 65 85 / 0.25);
+  background-color: var(--surface-base);
 }
 
 ::ng-deep .stock-autocomplete-dropdown::-webkit-scrollbar-thumb {
-  background-color: rgb(100 116 139 / 0.5);
+  background-color: var(--border-primary);
   border-radius: 0.25rem;
 }
 
 ::ng-deep .stock-autocomplete-dropdown::-webkit-scrollbar-thumb:hover {
-  background-color: rgb(100 116 139);
+  background-color: var(--text-muted);
 }

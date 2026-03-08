@@ -1,0 +1,24 @@
+.news-card {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+}
+
+.news-title {
+  color: var(--text-primary);
+}
+
+.news-summary {
+  color: var(--text-secondary);
+}
+
+.news-meta {
+  color: var(--text-muted);
+}
+
+.news-ticker-badge {
+  background: var(--accent-primary);
+  color: var(--surface-base);
+  border-radius: var(--radius);
+  font-family: var(--font-data);
+}

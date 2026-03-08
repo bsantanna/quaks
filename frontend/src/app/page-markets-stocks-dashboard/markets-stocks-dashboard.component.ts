@@ -1,4 +1,5 @@
-import {Component, computed, effect, inject, OnDestroy, signal, WritableSignal} from '@angular/core';
+import {Component, computed, effect, inject, OnDestroy, PLATFORM_ID, signal, WritableSignal} from '@angular/core';
+import {isPlatformBrowser} from '@angular/common';
 import {ActivatedRoute, ParamMap, Params} from '@angular/router';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {StockInfoHeader, ShareUrlService, IndexedKeyTickerService, StockEodActions, SeoService} from '../shared';
@@ -13,6 +14,7 @@ import {environment} from '../../environments/environment';
   styleUrl: './markets-stocks-dashboard.component.scss',
 })
 export class MarketsStocksDashboard implements OnDestroy {
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly route = inject(ActivatedRoute);
   private readonly shareUrlService = inject(ShareUrlService);
   private readonly indexedKeyTickerService = inject(IndexedKeyTickerService);
@@ -39,16 +41,18 @@ export class MarketsStocksDashboard implements OnDestroy {
         path: `/markets/stocks/${ticker}`,
       });
 
-      if (this.useIntervalInDates()) {
-        this.shareUrlService.update({
-          title: linkTitle,
-          url: window.location.href
-        });
-      } else {
-        this.shareUrlService.update({
-          title: linkTitle,
-          url: `${window.location.href.split('?')[0]}?interval=${this.shareUrlService.getPastDateInDays(this.intervalInDays())}_${this.shareUrlService.getPastDateInDays(1)}`
-        });
+      if (this.isBrowser) {
+        if (this.useIntervalInDates()) {
+          this.shareUrlService.update({
+            title: linkTitle,
+            url: window.location.href
+          });
+        } else {
+          this.shareUrlService.update({
+            title: linkTitle,
+            url: `${window.location.href.split('?')[0]}?interval=${this.shareUrlService.getPastDateInDays(this.intervalInDays())}_${this.shareUrlService.getPastDateInDays(1)}`
+          });
+        }
       }
     });
   }

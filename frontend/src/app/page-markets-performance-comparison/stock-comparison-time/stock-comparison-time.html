@@ -1,13 +1,11 @@
-<div class="isolate inline-flex rounded-md shadow-sm flex-shrink-0">
-  @for (range of ranges; track range.days; let first = $first; let last = $last) {
+<div class="isolate inline-flex flex-shrink-0">
+  @for (range of ranges; track range.days; let first = $first) {
     <button
       type="button"
       (click)="setInterval(range.days)"
-      [class]="(intervalInDays() === range.days ? 'bg-white/20' : 'bg-white/10') +
-               (first ? ' rounded-l-md' : '') +
-               (last ? ' rounded-r-md' : '') +
-               (!first ? ' -ml-px' : '')"
-      class="relative inline-flex items-center px-3 py-1.5 text-sm font-semibold text-white ring-1 ring-inset ring-gray-700 hover:bg-white/20 focus:z-10 cursor-pointer">
+      class="interval-btn relative inline-flex items-center px-3 py-1.5 text-sm font-semibold cursor-pointer"
+      [class.interval-active]="intervalInDays() === range.days"
+      [class.-ml-px]="!first">
       {{ range.label }}
     </button>
   }

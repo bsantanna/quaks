@@ -1,29 +1,27 @@
 <div class="grid grid-cols-1 sm:hidden">
     <select aria-label="Select a tab"
             (change)="selectedTab.set($any($event.target).value)"
-            class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white/5 py-2 pr-8 pl-3 text-base text-gray-100 outline-1 -outline-offset-1 outline-white/10 *:bg-gray-800 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500">
+            class="actions-select col-start-1 row-start-1 w-full appearance-none py-2 pr-8 pl-3 text-base">
         <option [selected]="selectedTab() === 'tools'" value="tools">Tools</option>
         <option [selected]="selectedTab() === 'insights'" value="insights">Insights</option>
     </select>
     <img src="/svg/icon-chevron-down.svg" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end" aria-hidden="true" alt="" />
 </div>
 <div class="hidden sm:block">
-    <div class="border-b border-white/10">
+    <div class="actions-tab-bar">
         <nav aria-label="Tabs" class="-mb-px flex space-x-8">
             <button (click)="selectedTab.set('tools')"
-                    class="border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer"
-                    [class]="selectedTab() === 'tools' ? 'border-blue-800 text-blue-500' : 'hover:border-white/20 hover:text-gray-200 border-transparent text-gray-400'">
+                    class="actions-tab border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer"
+                    [class]="selectedTab() === 'tools' ? 'active' : ''">
                 Tools
             </button>
             <button (click)="selectedTab.set('insights')"
-                    class="border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer"
-                    [class]="selectedTab() === 'insights' ? 'border-blue-800 text-blue-500' : 'hover:border-white/20 hover:text-gray-200 border-transparent text-gray-400'">
-
+                    class="actions-tab border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer"
+                    [class]="selectedTab() === 'insights' ? 'active' : ''">
                 Insights
             </button>
         </nav>
     </div>
-
 </div>
 
 @if (selectedTab() == 'tools') {

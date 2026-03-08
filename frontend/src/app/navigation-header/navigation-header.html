@@ -1,7 +1,7 @@
-<div class="bg-slate-800 pb-32">
+<div class="nav-header-shell pb-32">
 
     @if (path() !== '') {
-        <nav class="fixed top-0 w-full bg-slate-800 z-50">
+        <nav class="nav-bar fixed top-0 w-full z-50">
             <div class="mx-auto px-2 sm:px-4 lg:px-8">
                 <div class="relative flex h-16 items-center justify-between">
 
@@ -13,7 +13,7 @@
                         </div>
                         <div class="hidden lg:flex items-center gap-4 ml-4 transition-opacity duration-200">
                             @if (stickyVisible()) {
-                                <span class="text-sm font-bold text-white truncate max-w-48">{{ title() }}</span>
+                                <span class="nav-title text-sm font-bold truncate max-w-48">{{ title() }}</span>
                             }
                         </div>
                     </div>
@@ -37,7 +37,7 @@
                         <app-share-button></app-share-button>
                     </div>
 
-                    <div class="flex items-center px-2 lg:px-0">
+                    <div class="flex items-center gap-2 px-2 lg:px-0">
                         @if (stickyVisible()) {
                             @if (path().indexOf('stocks') > -1) {
                                 <app-stock-autocomplete
@@ -52,10 +52,11 @@
                             }
                         } @else {
                             <div class="sm:hidden">
-                                <span class="text-sm font-bold text-white truncate max-w-48">{{ title() }}</span>
+                                <span class="nav-title text-sm font-bold truncate max-w-48">{{ title() }}</span>
                             </div>
                         }
-
+                        <app-settings-dropdown></app-settings-dropdown>
+                        <app-hamburger-menu [path]="path()" (stockSelected)="onKeyTickerSelected($event)"></app-hamburger-menu>
                     </div>
 
                 </div>
@@ -71,18 +72,16 @@
         <div class="mx-auto px-4 sm:px-6 lg:px-8">
             <div class="md:flex md:items-center md:justify-between">
                 <div class="min-w-0 flex-1 hidden sm:block">
-                    <span class="text-2xl/7 font-bold text-white sm:truncate sm:text-3xl sm:tracking-tight">{{ title() }}</span>
+                    <span class="nav-title text-2xl/7 font-bold sm:truncate sm:text-3xl sm:tracking-tight">{{ title() }}</span>
                 </div>
 
                 <div class="w-full max-w-lg lg:max-w-xs">
-                    <!-- Show on stocks page -->
                     @if (path().indexOf('stocks') >-1) {
                         <app-stock-autocomplete
                                 [inputPlaceholder]="'Search stocks (e.g., NVDA, GOOG)'"
                                 (stockSelected)="onKeyTickerSelected($event)">
                         </app-stock-autocomplete>
                     }
-                    <!-- Show on news page -->
                     @if (path().indexOf('news') > -1) {
                         <app-news-autocomplete
                                 [inputPlaceholder]="'Search news (e.g., Tesla, earnings)'">

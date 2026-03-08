@@ -1,4 +1,113 @@
 @use "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Source+Code+Pro:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poiret+One&family=Crimson+Pro:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Quicksand:wght@300;400;500;600;700&display=swap');
+
+/* ── Theme: Default ── */
+[data-theme="default"], :root {
+  --surface-base: #191C2D;
+  --surface-panel: #0B1628;
+  --surface-elevated: #1e2235;
+  --surface-hover: rgba(255, 255, 255, 0.05);
+  --border-primary: rgba(255, 255, 255, 0.1);
+  --border-accent: #3B82F6;
+  --text-primary: #FFFFFF;
+  --text-secondary: #9CA3AF;
+  --text-muted: #6B7280;
+  --accent-primary: #3B82F6;
+  --accent-hover: #60A5FA;
+  --status-positive: #4ADE80;
+  --status-negative: #F87171;
+  --font-heading: system-ui, -apple-system, sans-serif;
+  --font-body: system-ui, -apple-system, sans-serif;
+  --font-data: ui-monospace, monospace;
+  --radius: 8px;
+}
+
+/* ── Theme: Bloomnerd ── */
+[data-theme="bloomnerd"] {
+  --surface-base: #050A12;
+  --surface-panel: #0A0E17;
+  --surface-elevated: #111827;
+  --surface-hover: #1A2233;
+  --border-primary: #1E293B;
+  --border-accent: #FF8C00;
+  --text-primary: #E2E8F0;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --accent-primary: #FF8C00;
+  --accent-hover: #FFA033;
+  --status-positive: #22C55E;
+  --status-negative: #EF4444;
+  --font-heading: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-data: 'IBM Plex Mono', ui-monospace, monospace;
+  --radius: 0px;
+}
+
+/* ── Theme: Matrix ── */
+[data-theme="matrix"] {
+  --surface-base: #000000;
+  --surface-panel: #0a0f0a;
+  --surface-elevated: #0f1a0f;
+  --surface-hover: #1a2e1a;
+  --border-primary: #0d3b0d;
+  --border-accent: #00ff41;
+  --text-primary: #00ff41;
+  --text-secondary: #00cc33;
+  --text-muted: #008f26;
+  --accent-primary: #00ff41;
+  --accent-hover: #33ff6b;
+  --status-positive: #00ff41;
+  --status-negative: #ff0040;
+  --font-heading: 'Share Tech Mono', ui-monospace, monospace;
+  --font-body: 'Source Code Pro', ui-monospace, monospace;
+  --font-data: 'Fira Code', ui-monospace, monospace;
+  --radius: 0px;
+}
+
+/* ── Theme: Batman ── */
+[data-theme="batman"] {
+  --surface-base: #0a0a10;
+  --surface-panel: #0f0e18;
+  --surface-elevated: #1a1726;
+  --surface-hover: #251f34;
+  --border-primary: #2a2440;
+  --border-accent: #D4A017;
+  --text-primary: #E8E4D9;
+  --text-secondary: #9B95A8;
+  --text-muted: #5E5872;
+  --accent-primary: #D4A017;
+  --accent-hover: #E8B84A;
+  --status-positive: #5CB85C;
+  --status-negative: #D94452;
+  --font-heading: 'Poiret One', 'Georgia', serif;
+  --font-body: 'Crimson Pro', 'Georgia', serif;
+  --font-data: 'Fira Code', ui-monospace, monospace;
+  --radius: 0px;
+}
+
+/* ── Theme: Barbie ── */
+[data-theme="barbie"] {
+  --surface-base: #1a0a16;
+  --surface-panel: #24101e;
+  --surface-elevated: #33182b;
+  --surface-hover: #442238;
+  --border-primary: #5c2e4c;
+  --border-accent: #FF2D8A;
+  --text-primary: #FCEEF5;
+  --text-secondary: #D4A0BE;
+  --text-muted: #9B6888;
+  --accent-primary: #FF2D8A;
+  --accent-hover: #FF6AAF;
+  --status-positive: #50D890;
+  --status-negative: #FF4F6E;
+  --font-heading: 'Playfair Display', 'Georgia', serif;
+  --font-body: 'Quicksand', system-ui, sans-serif;
+  --font-data: 'Fira Code', ui-monospace, monospace;
+  --radius: 8px;
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -10,9 +119,36 @@
 }
 
 html, body {
-  background-color: #191C2D;
+  background-color: var(--surface-base);
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .global_dark-background {
-  background-color: #0B1628;
+  background-color: var(--surface-panel);
+}
+
+.global_main-panel {
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-base);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-primary);
+
+  &:hover {
+    background: var(--text-muted);
+  }
 }

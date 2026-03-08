@@ -1,0 +1,47 @@
+<div class="relative">
+    <button type="button" (click)="toggleMenu()"
+            class="settings-btn"
+            aria-label="Settings">
+        <img src="/svg/icon-settings.svg" class="size-5" aria-hidden="true" alt="" />
+    </button>
+
+    @if (showMenu()) {
+        <div class="settings-panel">
+            <div class="settings-section">
+                <span class="settings-label">Theme</span>
+                <div class="settings-options">
+                    <button (click)="selectTheme('default')"
+                            [class.active]="themeService.state().theme === 'default'"
+                            class="theme-option">
+                        <span class="theme-swatch theme-swatch-default"></span>
+                        <span>Default</span>
+                    </button>
+                    <button (click)="selectTheme('bloomnerd')"
+                            [class.active]="themeService.state().theme === 'bloomnerd'"
+                            class="theme-option">
+                        <span class="theme-swatch theme-swatch-bloomnerd"></span>
+                        <span>Bloomnerd</span>
+                    </button>
+                    <button (click)="selectTheme('matrix')"
+                            [class.active]="themeService.state().theme === 'matrix'"
+                            class="theme-option">
+                        <span class="theme-swatch theme-swatch-matrix"></span>
+                        <span>Matrix</span>
+                    </button>
+                    <button (click)="selectTheme('batman')"
+                            [class.active]="themeService.state().theme === 'batman'"
+                            class="theme-option">
+                        <span class="theme-swatch theme-swatch-batman"></span>
+                        <span>Batman</span>
+                    </button>
+                    <button (click)="selectTheme('barbie')"
+                            [class.active]="themeService.state().theme === 'barbie'"
+                            class="theme-option">
+                        <span class="theme-swatch theme-swatch-barbie"></span>
+                        <span>Barbie</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>

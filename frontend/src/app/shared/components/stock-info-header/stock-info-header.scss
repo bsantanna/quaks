@@ -1,0 +1,39 @@
+.info-header {
+  color: var(--text-primary);
+  font-family: var(--font-data);
+}
+
+.info-label {
+  color: var(--text-secondary);
+}
+
+.info-divider {
+  border-color: var(--border-primary);
+}
+
+.interval-btn {
+  font-family: var(--font-data);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+  transition: background 0.15s ease;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--surface-hover);
+  }
+
+  &.interval-active {
+    background: var(--surface-hover);
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+    z-index: 1;
+  }
+}
+
+.variance-positive {
+  color: var(--status-positive);
+}
+
+.variance-negative {
+  color: var(--status-negative);
+}

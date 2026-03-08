@@ -1,0 +1,17 @@
+.nav-footer {
+  background-color: var(--surface-elevated);
+  border-top: 1px solid var(--border-primary);
+}
+
+.footer-link {
+  color: var(--text-secondary);
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
+.footer-muted {
+  color: var(--text-muted);
+}

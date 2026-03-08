@@ -4,22 +4,22 @@
         <div class="mb-8">
             <img [src]="newsItem().images[0]?.url"
                  [alt]="newsItem().headline"
-                 class="w-full h-96 object-cover rounded-xl shadow-lg"/>
+                 class="news-item-hero w-full h-96 object-cover"/>
         </div>
 
         <!-- newsItem() Header -->
         <header class="mb-10">
-            <h1 class="text-4xl md:text-5xl font-bold text-gray-300 leading-tight mb-4">
+            <h1 class="text-4xl md:text-5xl font-bold news-item-title leading-tight mb-4">
                 {{ newsItem().headline }}
             </h1>
 
             <!-- Metadata -->
-            <div class="flex flex-wrap items-center gap-4 text-gray-600 mb-6">
+            <div class="flex flex-wrap items-center gap-4 news-item-meta mb-6">
                 <span class="font-semibold capitalize">{{ newsItem().source }}</span>
-                <span class="text-gray-400">·</span>
+                <span>·</span>
                 <span>{{ newsItem().date | date: 'longDate' }}</span>
                 @if (newsItem().key_ticker) {
-                    <span class="ml-auto bg-blue-100 text-blue-300 px-3 py-1 rounded-full text-sm font-semibold">
+                    <span class="ml-auto news-ticker-badge px-3 py-1 text-sm font-semibold">
           {{ newsItem().key_ticker }}
         </span>
                 }
@@ -27,7 +27,7 @@
 
             <!-- Summary (optional but nice to have) -->
             @if (newsItem().summary) {
-                <p class="text-xl text-gray-400 italic mb-8 border-l-4 border-blue-500 pl-4">
+                <p class="text-xl news-item-summary italic mb-8 border-l-4 pl-4">
                     {{ newsItem().summary }}
                 </p>
             }
@@ -35,12 +35,12 @@
 
         <!-- Main Content -->
         <article [innerHTML]="sanitizeHtml(newsItem().content)"
-                 class="news-content text-gray-400">
+                 class="news-content news-item-body">
         </article>
 
         <!-- Fallback if no newsItem() -->
         @if (!newsItem()) {
-            <div class="text-center py-12 text-gray-500">
+            <div class="text-center py-12 news-item-meta">
                 News item not found...
             </div>
         }
