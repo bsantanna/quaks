@@ -1,0 +1,35 @@
+.actions-select {
+  background: var(--surface-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+
+  option {
+    background: var(--surface-elevated);
+  }
+
+  &:focus {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: -2px;
+  }
+}
+
+.actions-tab-bar {
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.actions-tab {
+  color: var(--text-secondary);
+  border-color: transparent;
+  transition: all 0.15s ease;
+
+  &:hover {
+    color: var(--text-primary);
+    border-color: var(--border-primary);
+  }
+
+  &.active {
+    color: var(--accent-primary);
+    border-color: var(--accent-primary);
+  }
+}

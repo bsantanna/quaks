@@ -13,7 +13,7 @@
       (blur)="onInputBlur()"
       (keydown.enter)="onSearchSubmit()"
       [placeholder]="inputPlaceholder()"
-      class="block w-full rounded-md bg-slate-700/50 py-1.5 pr-10 pl-10 text-base text-white outline-1 -outline-offset-1 outline-slate-400/25 placeholder:text-white/50 focus:outline-2 focus:-outline-offset-2 focus:outline-white sm:text-sm/6 transition-all duration-150"
+      class="autocomplete-input block w-full py-1.5 pr-10 pl-10 text-base sm:text-sm/6 transition-all duration-150"
     />
 
     <!-- Clear Button -->
@@ -31,14 +31,14 @@
   <!-- Dropdown Menu -->
   @if (isOpen() && searchQuery().trim().length > 0) {
     <div
-      class="absolute top-full left-0 right-0 mt-1 rounded-md border border-slate-400/25 bg-slate-800 shadow-lg z-50"
+      class="autocomplete-dropdown absolute top-full left-0 right-0 mt-1 z-50"
     >
       <button
         (click)="onSearchSubmit()"
-        class="block w-full px-4 py-2.5 text-left text-sm text-white hover:bg-slate-700/75 focus:bg-slate-700/75 focus:outline-none transition-colors duration-100 rounded-md cursor-pointer"
+        class="autocomplete-item block w-full px-4 py-2.5 text-left text-sm focus:outline-none transition-colors duration-100 cursor-pointer"
       >
-        <span class="text-white/60">Search for </span>
-        <span class="font-semibold text-white">"{{ searchQuery().trim() }}"</span>
+        <span class="autocomplete-item-subtitle">Search for </span>
+        <span class="autocomplete-item-title font-semibold">"{{ searchQuery().trim() }}"</span>
       </button>
     </div>
   }
