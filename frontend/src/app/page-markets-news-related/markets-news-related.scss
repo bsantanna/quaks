@@ -1,0 +1,12 @@
+.dashboard-panel {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+}
+
+.dashboard-panel-blur {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+  backdrop-filter: blur(12px);
+}

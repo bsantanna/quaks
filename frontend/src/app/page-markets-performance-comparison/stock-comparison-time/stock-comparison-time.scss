@@ -1,0 +1,17 @@
+.interval-btn {
+  font-family: var(--font-data);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: var(--surface-hover);
+  }
+
+  &.interval-active {
+    background: var(--surface-hover);
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+    z-index: 1;
+  }
+}
