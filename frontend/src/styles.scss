@@ -1,4 +1,47 @@
 @use "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
+
+/* ── Theme: Default ── */
+[data-theme="default"], :root {
+  --surface-base: #191C2D;
+  --surface-panel: #0B1628;
+  --surface-elevated: #1e2235;
+  --surface-hover: rgba(255, 255, 255, 0.05);
+  --border-primary: rgba(255, 255, 255, 0.1);
+  --border-accent: #3B82F6;
+  --text-primary: #FFFFFF;
+  --text-secondary: #9CA3AF;
+  --text-muted: #6B7280;
+  --accent-primary: #3B82F6;
+  --accent-hover: #60A5FA;
+  --status-positive: #4ADE80;
+  --status-negative: #F87171;
+  --font-heading: system-ui, -apple-system, sans-serif;
+  --font-body: system-ui, -apple-system, sans-serif;
+  --font-data: ui-monospace, monospace;
+  --radius: 8px;
+}
+
+/* ── Theme: Bloomnerd ── */
+[data-theme="bloomnerd"] {
+  --surface-base: #050A12;
+  --surface-panel: #0A0E17;
+  --surface-elevated: #111827;
+  --surface-hover: #1A2233;
+  --border-primary: #1E293B;
+  --border-accent: #FF8C00;
+  --text-primary: #E2E8F0;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --accent-primary: #FF8C00;
+  --accent-hover: #FFA033;
+  --status-positive: #22C55E;
+  --status-negative: #EF4444;
+  --font-heading: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-data: 'IBM Plex Mono', ui-monospace, monospace;
+  --radius: 0px;
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -10,9 +53,31 @@
 }
 
 html, body {
-  background-color: #191C2D;
+  background-color: var(--surface-base);
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .global_dark-background {
-  background-color: #0B1628;
+  background-color: var(--surface-panel);
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-base);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-primary);
+
+  &:hover {
+    background: var(--text-muted);
+  }
 }

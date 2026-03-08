@@ -6,13 +6,14 @@ import {STOCK_MARKETS} from '../constants';
 import {ShareButtonComponent} from './share-button/share-button';
 import {NavButtonComponent} from './nav-button/nav-button';
 import {FeedbackMessageComponent} from './feedback-message/feedback-message';
+import {SettingsDropdownComponent} from './settings-dropdown/settings-dropdown';
 import {NavigationEnd, Router} from '@angular/router';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {filter, map, startWith} from 'rxjs';
 
 @Component({
   selector: 'app-navigation-header',
-  imports: [StockAutocompleteComponent, NewsAutocompleteComponent, ShareButtonComponent, NavButtonComponent, FeedbackMessageComponent],
+  imports: [StockAutocompleteComponent, NewsAutocompleteComponent, ShareButtonComponent, NavButtonComponent, FeedbackMessageComponent, SettingsDropdownComponent],
   templateUrl: './navigation-header.html',
   styleUrl: './navigation-header.scss',
 })

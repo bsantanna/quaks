@@ -1,0 +1,11 @@
+.nav-btn {
+  color: var(--text-primary);
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-primary);
+  }
+}
