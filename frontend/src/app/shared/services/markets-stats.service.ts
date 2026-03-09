@@ -67,9 +67,13 @@ export class MarketsStatsService {
   getStatsCloseBulk(
     indexName: string,
     keyTickers: string[],
+    startDate?: string,
+    endDate?: string,
   ): Observable<StatsCloseBulkResponse> {
     const url = `${environment.apiBaseUrl}/markets/stats_close_bulk/${encodeURIComponent(indexName)}`;
-    const params = {key_tickers: keyTickers.join(',')};
+    const params: Record<string, string> = {key_tickers: keyTickers.join(',')};
+    if (startDate) params['start_date'] = startDate;
+    if (endDate) params['end_date'] = endDate;
     return this.httpClient.get<StatsCloseBulkResponse>(url, {params}).pipe(
       timeout(REQUEST_TIMEOUT),
       catchError((error) => {
