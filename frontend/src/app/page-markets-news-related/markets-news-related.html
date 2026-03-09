@@ -1,17 +1,15 @@
 <div class="mx-auto grid max-w-2xl grid-cols-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
 
     <!-- Mobile only: stock info header (sticky) + eod actions on top -->
-    <div class="lg:hidden sticky top-9 z-10">
-        <div class="dashboard-panel-blur">
-            <app-stock-info-header
-                    [indexName]="'quaks_stocks-eod_latest'"
-                    [keyTicker]="keyTicker()"
-                    [companyName]="companyName()"
-                    [(intervalInDays)]="intervalInDays"
-                    [intervalInDates]="intervalInDates()"
-                    [useIntervalInDates]="useIntervalInDates()"
-            ></app-stock-info-header>
-        </div>
+    <div class="lg:hidden sticky top-14 z-10 mt-4 mx-1 sm:mx-0">
+        <app-stock-info-header
+                [indexName]="'quaks_stocks-eod_latest'"
+                [keyTicker]="keyTicker()"
+                [companyName]="companyName()"
+                [(intervalInDays)]="intervalInDays"
+                [intervalInDates]="intervalInDates()"
+                [useIntervalInDates]="useIntervalInDates()"
+        ></app-stock-info-header>
     </div>
 
     <div class="lg:hidden">

@@ -67,6 +67,64 @@ class NewsListRequest(BaseModel):
         return v
 
 
+class CompanyProfile(BaseModel):
+    key_ticker: str
+    asset_type: Optional[str] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    cik: Optional[str] = None
+    exchange: Optional[str] = None
+    currency: Optional[str] = None
+    country: Optional[str] = None
+    sector: Optional[str] = None
+    industry: Optional[str] = None
+    address: Optional[str] = None
+    official_site: Optional[str] = None
+    fiscal_year_end: Optional[str] = None
+    latest_quarter: Optional[str] = None
+    market_capitalization: Optional[int] = None
+    ebitda: Optional[float] = None
+    pe_ratio: Optional[float] = None
+    peg_ratio: Optional[float] = None
+    book_value: Optional[float] = None
+    dividend_per_share: Optional[float] = None
+    dividend_yield: Optional[float] = None
+    eps: Optional[float] = None
+    revenue_per_share_ttm: Optional[float] = None
+    profit_margin: Optional[float] = None
+    operating_margin_ttm: Optional[float] = None
+    return_on_assets_ttm: Optional[float] = None
+    return_on_equity_ttm: Optional[float] = None
+    revenue_ttm: Optional[int] = None
+    gross_profit_ttm: Optional[int] = None
+    diluted_eps_ttm: Optional[float] = None
+    quarterly_earnings_growth_yoy: Optional[float] = None
+    quarterly_revenue_growth_yoy: Optional[float] = None
+    analyst_target_price: Optional[float] = None
+    analyst_rating_strong_buy: Optional[int] = None
+    analyst_rating_buy: Optional[int] = None
+    analyst_rating_hold: Optional[int] = None
+    analyst_rating_sell: Optional[int] = None
+    analyst_rating_strong_sell: Optional[int] = None
+    trailing_pe: Optional[float] = None
+    forward_pe: Optional[float] = None
+    price_to_sales_ratio_ttm: Optional[float] = None
+    price_to_book_ratio: Optional[float] = None
+    ev_to_revenue: Optional[float] = None
+    ev_to_ebitda: Optional[float] = None
+    beta: Optional[float] = None
+    week_52_high: Optional[float] = None
+    week_52_low: Optional[float] = None
+    moving_average_50_day: Optional[float] = None
+    moving_average_200_day: Optional[float] = None
+    shares_outstanding: Optional[int] = None
+    shares_float: Optional[int] = None
+    percent_insiders: Optional[float] = None
+    percent_institutions: Optional[float] = None
+    dividend_date: Optional[str] = None
+    ex_dividend_date: Optional[str] = None
+
+
 class StatsClose(BaseModel):
     key_ticker: str
     most_recent_close: float

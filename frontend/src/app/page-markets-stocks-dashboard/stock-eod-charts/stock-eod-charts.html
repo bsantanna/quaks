@@ -1,7 +1,7 @@
-<div class="grid grid-cols-1 sm:hidden mx-4 mb-4 minimum-screen-height ">
+<div class="grid grid-cols-1 sm:hidden mx-2 mb-2 minimum-screen-height">
     <select aria-label="Select a tab"
             (change)="selectedTab.set($any($event.target).value)"
-            class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white/5 py-2 pr-8 pl-3 text-base text-gray-100 outline-1 -outline-offset-1 outline-white/10 *:bg-gray-800 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500">
+            class="charts-select col-start-1 row-start-1 w-full appearance-none py-1.5 pr-8 pl-3 text-sm">
         <option [selected]="selectedTab() === 'stock_price'" value="stock_price">Stock Price</option>
         <option [selected]="selectedTab() === 'indicator_ema'" value="indicator_ema">EMA</option>
         <option [selected]="selectedTab() === 'indicator_macd'" value="indicator_macd">MACD</option>
@@ -69,8 +69,7 @@
 </div>
 
 <iframe #dashboardIframe
-        [class]="selectedTab()"
         (load)="onIframeLoad(dashboardIframe)"
         [src]="kibanaUrl()"
-        class="w-full border-none iframe_adjusted_height minimum-screen-height">
+        class="kibana-iframe minimum-screen-height">
 </iframe>
