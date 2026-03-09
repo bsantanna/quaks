@@ -91,14 +91,17 @@
   border-top: 1px solid var(--border-primary);
 }
 
-.profile-link {
+.profile-nav-btn {
+  color: var(--text-primary);
   font-family: var(--font-data);
-  font-size: 1rem;
-  color: var(--accent-primary);
   text-decoration: none;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
 
   &:hover {
-    color: var(--accent-hover);
+    background: var(--surface-hover);
+    border-color: var(--border-primary);
   }
 }
 

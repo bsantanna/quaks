@@ -23,7 +23,7 @@
       </div>
       <div class="profile-header-details">
         @if (p.exchange) {
-          <span class="profile-detail-item">{{ p.exchange }}</span>
+          <span class="profile-detail-item">{{ exchangeFlag() }} {{ p.exchange }}</span>
         }
         @if (p.currency) {
           <span class="profile-detail-item">{{ p.currency }}</span>
@@ -39,10 +39,19 @@
         <p class="profile-description">{{ about }}</p>
       }
       <div class="profile-header-links">
-        <a [routerLink]="['/markets/stocks', p.key_ticker]" class="profile-link">Dashboard</a>
-        <a [routerLink]="['/markets/news/related', p.key_ticker]" class="profile-link">News</a>
+        <a [routerLink]="['/markets/stocks', p.key_ticker]" class="profile-nav-btn inline-flex items-center px-3 py-2 text-sm font-semibold cursor-pointer">
+          <img src="/svg/icon-bar-chart.svg" class="mr-2 size-5" aria-hidden="true" alt="" />
+          <span>Dashboard</span>
+        </a>
+        <a [routerLink]="['/markets/news/related', p.key_ticker]" class="profile-nav-btn inline-flex items-center px-3 py-2 text-sm font-semibold cursor-pointer">
+          <img src="/svg/icon-document.svg" class="mr-2 size-5" aria-hidden="true" alt="" />
+          <span>News</span>
+        </a>
         @if (p.official_site) {
-          <a [href]="p.official_site" target="_blank" rel="noopener noreferrer" class="profile-link">Website</a>
+          <a [href]="p.official_site" target="_blank" rel="noopener noreferrer" class="profile-nav-btn inline-flex items-center px-3 py-2 text-sm font-semibold cursor-pointer">
+            <img src="/svg/icon-building-office.svg" class="mr-2 size-5" aria-hidden="true" alt="" />
+            <span>Website</span>
+          </a>
         }
       </div>
     </div>

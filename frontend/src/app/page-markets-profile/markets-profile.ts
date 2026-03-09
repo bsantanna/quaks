@@ -8,6 +8,7 @@ import {CompanyProfile} from '../shared/models/markets.model';
 import {MarketsStatsService} from '../shared/services/markets-stats.service';
 import {IndexedKeyTickerService} from '../shared/services/indexed-key-ticker.service';
 import {SeoService} from '../shared/services/seo.service';
+import {STOCK_EXCHANGE_FLAGS} from '../constants';
 
 @Component({
   selector: 'app-markets-profile',
@@ -28,6 +29,10 @@ export class MarketsProfile implements OnDestroy {
   readonly indexName = computed(() => {
     const entry = this.indexedKeyTickerService.findKeyTicker(this.keyTicker());
     return entry ? `quaks_stocks-metadata_${entry.index}` : 'quaks_stocks-metadata_latest';
+  });
+  readonly exchangeFlag = computed(() => {
+    const entry = this.indexedKeyTickerService.findKeyTicker(this.keyTicker());
+    return entry ? (STOCK_EXCHANGE_FLAGS[entry.index] ?? '') : '';
   });
 
   private readonly companyDescriptions = toSignal(

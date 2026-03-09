@@ -9,6 +9,7 @@
   --surface-base: #191C2D;
   --surface-panel: #0B1628;
   --surface-elevated: #1e2235;
+  --surface-elevated-translucent: rgba(30, 34, 53, 0.6);
   --surface-hover: rgba(255, 255, 255, 0.05);
   --border-primary: rgba(255, 255, 255, 0.1);
   --border-accent: #3B82F6;
@@ -30,6 +31,7 @@
   --surface-base: #050A12;
   --surface-panel: #0A0E17;
   --surface-elevated: #111827;
+  --surface-elevated-translucent: rgba(17, 24, 39, 0.6);
   --surface-hover: #1A2233;
   --border-primary: #1E293B;
   --border-accent: #FF8C00;
@@ -51,6 +53,7 @@
   --surface-base: #000000;
   --surface-panel: #0a0f0a;
   --surface-elevated: #0f1a0f;
+  --surface-elevated-translucent: rgba(15, 26, 15, 0.6);
   --surface-hover: #1a2e1a;
   --border-primary: #0d3b0d;
   --border-accent: #00ff41;
@@ -72,6 +75,7 @@
   --surface-base: #0a0a10;
   --surface-panel: #0f0e18;
   --surface-elevated: #1a1726;
+  --surface-elevated-translucent: rgba(26, 23, 38, 0.6);
   --surface-hover: #251f34;
   --border-primary: #2a2440;
   --border-accent: #D4A017;
@@ -93,6 +97,7 @@
   --surface-base: #1a0a16;
   --surface-panel: #24101e;
   --surface-elevated: #33182b;
+  --surface-elevated-translucent: rgba(51, 24, 43, 0.6);
   --surface-hover: #442238;
   --border-primary: #5c2e4c;
   --border-accent: #FF2D8A;
