@@ -1,6 +1,11 @@
 .info-header {
   color: var(--text-primary);
   font-family: var(--font-data);
+  background: var(--surface-elevated-translucent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
 }
 
 .info-label {

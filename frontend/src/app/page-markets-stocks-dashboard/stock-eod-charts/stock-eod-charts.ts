@@ -1,6 +1,6 @@
-import {Component, computed, effect, inject, input, model, signal, WritableSignal} from '@angular/core';
+import {Component, computed, inject, input, model, OnDestroy, signal, WritableSignal} from '@angular/core';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
-import {DASHBOARDS_IDS, IFRAME_STYLE, DASHBOARDS_ENDPOINT} from '../../constants';
+import {DASHBOARDS_IDS, IFRAME_STYLE, DASHBOARDS_ENDPOINT, setupIframeAutoResize} from '../../constants';
 
 @Component({
   selector: 'app-stock-eod-charts',
@@ -8,9 +8,10 @@ import {DASHBOARDS_IDS, IFRAME_STYLE, DASHBOARDS_ENDPOINT} from '../../constants
   templateUrl: './stock-eod-charts.html',
   styleUrl: './stock-eod-charts.scss',
 })
-export class StockEodCharts {
+export class StockEodCharts implements OnDestroy {
 
   private readonly sanitizer = inject(DomSanitizer);
+  private cleanupResize: (() => void) | null = null;
 
   readonly keyTicker = input.required<string>();
   readonly intervalInDates = input.required<string>();
@@ -60,16 +61,22 @@ export class StockEodCharts {
   });
 
   onIframeLoad(iframe: HTMLIFrameElement) {
+    this.cleanupResize?.();
     try {
       const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
       if (iframeDoc) {
         const style = iframeDoc.createElement('style');
         style.innerHTML = IFRAME_STYLE;
         iframeDoc.head.appendChild(style);
+        this.cleanupResize = setupIframeAutoResize(iframe, iframeDoc);
       }
     } catch (e) {
       console.error('Error injecting styles into iframe', e);
     }
+  }
+
+  ngOnDestroy() {
+    this.cleanupResize?.();
   }
 
 }

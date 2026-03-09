@@ -1,30 +1,38 @@
-<div class="flex gap-4 py-4">
-  <div class="flex-1 min-w-0">
-    <app-stock-comparison-autocomplete
-      [symbols]="symbols()"
-      (symbolsChange)="updateSymbols($event)"
-    />
-  </div>
-  @if (useIntervalInDates()) {
-    <div class="text-sm text-left" style="color: var(--text-secondary); font-family: var(--font-data);">
-      <div>Start: {{ formattedInterval().from }}</div>
-      <div>End:&nbsp;&nbsp; {{ formattedInterval().to }}</div>
-    </div>
-  } @else {
-    <app-stock-comparison-time
-      [intervalInDays]="intervalInDays()"
-      (intervalInDaysChange)="intervalInDays.set($event)"
-    />
-  }
+<div class="md:hidden flex flex-col items-center justify-center py-12 px-6">
+  <img src="/svg/error-resolution-small.svg" alt="Screen too small" class="small-screen-img" />
+  <p class="small-screen-title">Screen too small</p>
+  <p class="small-screen-notice">Performance comparison requires a larger screen. Please use a tablet in landscape or desktop.</p>
 </div>
 
-<div class="max-h-[524px] overflow-hidden">
-  @if (isProduction) {
-    <app-stock-comparison-charts [symbols]="symbols()" [intervalInDays]="intervalInDays()" />
-  } @else {
-    <p class="text-white">
-      Charts are not available on development environment.
-      Cross domain issues prevent the charts from loading.
-    </p>
-  }
+<div class="hidden md:block">
+  <div class="flex gap-4 py-4">
+    <div class="flex-1 min-w-0">
+      <app-stock-comparison-autocomplete
+        [symbols]="symbols()"
+        (symbolsChange)="updateSymbols($event)"
+      />
+    </div>
+    @if (useIntervalInDates()) {
+      <div class="text-sm text-left" style="color: var(--text-secondary); font-family: var(--font-data);">
+        <div>Start: {{ formattedInterval().from }}</div>
+        <div>End:&nbsp;&nbsp; {{ formattedInterval().to }}</div>
+      </div>
+    } @else {
+      <app-stock-comparison-time
+        [intervalInDays]="intervalInDays()"
+        (intervalInDaysChange)="intervalInDays.set($event)"
+      />
+    }
+  </div>
+
+  <div class="max-h-[524px] overflow-hidden">
+    @if (isProduction) {
+      <app-stock-comparison-charts [symbols]="symbols()" [intervalInDays]="intervalInDays()" />
+    } @else {
+      <p class="text-white">
+        Charts are not available on development environment.
+        Cross domain issues prevent the charts from loading.
+      </p>
+    }
+  </div>
 </div>

@@ -55,7 +55,9 @@
                                 <span class="nav-title text-sm font-bold truncate max-w-48">{{ title() }}</span>
                             </div>
                         }
-                        <app-settings-dropdown></app-settings-dropdown>
+                        <div class="hidden lg:block">
+                            <app-settings-dropdown></app-settings-dropdown>
+                        </div>
                         <app-hamburger-menu [path]="path()" (stockSelected)="onKeyTickerSelected($event)"></app-hamburger-menu>
                     </div>
 

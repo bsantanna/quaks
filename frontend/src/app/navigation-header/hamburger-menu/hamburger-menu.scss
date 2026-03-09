@@ -8,7 +8,7 @@
   background: none;
   transition: color 0.15s ease;
 
-  @media (min-width: 640px) {
+  @media (min-width: 1024px) {
     display: none;
   }
 
@@ -23,7 +23,7 @@
   background: rgba(0, 0, 0, 0.5);
   z-index: 40;
 
-  @media (min-width: 640px) {
+  @media (min-width: 1024px) {
     display: none;
   }
 }
@@ -43,8 +43,34 @@
   flex-direction: column;
   gap: 24px;
 
-  @media (min-width: 640px) {
+  @media (min-width: 1024px) {
     display: none;
+  }
+}
+
+.hamburger-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  @media (min-width: 640px) {
+    flex-direction: row;
+    gap: 32px;
+  }
+}
+
+.hamburger-left {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 1;
+}
+
+.hamburger-right {
+  @media (min-width: 640px) {
+    flex: 1;
+    border-left: 1px solid var(--border-primary);
+    padding-left: 32px;
   }
 }
 
