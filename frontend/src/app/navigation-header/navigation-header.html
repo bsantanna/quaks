@@ -19,21 +19,7 @@
                     </div>
 
                     <div class="absolute left-1/2 -translate-x-1/2 hidden lg:flex items-center gap-2">
-                        <app-nav-button
-                                [buttonLabel]="'Stocks'"
-                                [buttonIcon]="'/svg/icon-bar-chart.svg'"
-                                [navigationPath]="'/markets/stocks'"
-                        ></app-nav-button>
-                        <app-nav-button
-                                [buttonLabel]="'Performance'"
-                                [buttonIcon]="'/svg/icon-chart-compare.svg'"
-                                [navigationPath]="'/markets/performance'"
-                        ></app-nav-button>
-                        <app-nav-button
-                                [buttonLabel]="'News'"
-                                [buttonIcon]="'/svg/icon-document.svg'"
-                                [navigationPath]="'/markets/news'"
-                        ></app-nav-button>
+                        <app-markets-dropdown></app-markets-dropdown>
                         <app-share-button></app-share-button>
                     </div>
 
