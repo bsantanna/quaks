@@ -18,8 +18,15 @@
         </app-stock-eod-actions>
     </div>
 
-    <!-- Desktop: charts spanning cols 1-2 -->
-    <div class="lg:col-span-2 lg:row-start-1">
+    <!-- Small screen fallback (visible below md breakpoint) -->
+    <div class="md:hidden flex flex-col items-center justify-center py-12 px-6">
+        <img src="/svg/error-resolution-small.svg" alt="Screen too small" class="small-screen-img" />
+        <p class="small-screen-title">Screen too small</p>
+        <p class="small-screen-notice">Charts require a larger screen. Please use a tablet in landscape or desktop.</p>
+    </div>
+
+    <!-- Charts (visible at md and above) -->
+    <div class="hidden md:block lg:col-span-2 lg:row-start-1">
         @if (isProduction) {
             <app-stock-eod-charts
                     [keyTicker]="keyTicker()"

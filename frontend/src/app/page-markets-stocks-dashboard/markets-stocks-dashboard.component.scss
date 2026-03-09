@@ -1,3 +1,27 @@
+.small-screen-img {
+  width: 160px;
+  height: auto;
+  margin-bottom: 1.5rem;
+  opacity: 0.85;
+}
+
+.small-screen-title {
+  color: var(--text-primary);
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.small-screen-notice {
+  color: var(--text-muted);
+  font-family: var(--font-data);
+  font-size: 0.8125rem;
+  text-align: center;
+  max-width: 280px;
+  line-height: 1.5;
+}
+
 .dashboard-panel {
   background: var(--surface-elevated);
   border: 1px solid var(--border-primary);
