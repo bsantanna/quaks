@@ -53,38 +53,47 @@
             <div class="hamburger-right">
                 <div class="hamburger-section">
                     <span class="hamburger-label">Theme</span>
-                    <div class="hamburger-themes">
-                        <button (click)="selectTheme('default')"
-                                [class.active]="themeService.state().theme === 'default'"
-                                class="hamburger-theme-option">
-                            <span class="hamburger-swatch hamburger-swatch-default"></span>
-                            <span>Default</span>
+                    <div class="hamburger-theme-dropdown">
+                        <button class="hamburger-theme-trigger" (click)="toggleThemeDropdown()">
+                            <span class="hamburger-swatch hamburger-swatch-{{themeService.state().theme}}"></span>
+                            <span class="hamburger-theme-trigger-label">{{themeService.state().theme | titlecase}}</span>
+                            <img src="/svg/icon-chevron-down.svg" class="hamburger-theme-chevron size-4" [class.open]="themeOpen()" aria-hidden="true" alt="" />
                         </button>
-                        <button (click)="selectTheme('bloomnerd')"
-                                [class.active]="themeService.state().theme === 'bloomnerd'"
-                                class="hamburger-theme-option">
-                            <span class="hamburger-swatch hamburger-swatch-bloomnerd"></span>
-                            <span>Bloomnerd</span>
-                        </button>
-                        <button (click)="selectTheme('matrix')"
-                                [class.active]="themeService.state().theme === 'matrix'"
-                                class="hamburger-theme-option">
-                            <span class="hamburger-swatch hamburger-swatch-matrix"></span>
-                            <span>Matrix</span>
-                        </button>
-                        <button (click)="selectTheme('batman')"
-                                [class.active]="themeService.state().theme === 'batman'"
-                                class="hamburger-theme-option">
-                            <span class="hamburger-swatch hamburger-swatch-batman"></span>
-                            <span>Batman</span>
-                        </button>
-                        <button (click)="selectTheme('barbie')"
-                                [class.active]="themeService.state().theme === 'barbie'"
-                                class="hamburger-theme-option">
-                            <span class="hamburger-swatch hamburger-swatch-barbie"></span>
-                            <span>Barbie</span>
-                        </button>
+                        @if (themeOpen()) {
+                            <div class="hamburger-theme-list">
+                                <button (click)="selectTheme('default')" class="hamburger-theme-item">
+                                    <span class="hamburger-swatch hamburger-swatch-default"></span>
+                                    <span>Default</span>
+                                </button>
+                                <button (click)="selectTheme('bloomnerd')" class="hamburger-theme-item">
+                                    <span class="hamburger-swatch hamburger-swatch-bloomnerd"></span>
+                                    <span>Bloomnerd</span>
+                                </button>
+                                <button (click)="selectTheme('matrix')" class="hamburger-theme-item">
+                                    <span class="hamburger-swatch hamburger-swatch-matrix"></span>
+                                    <span>Matrix</span>
+                                </button>
+                                <button (click)="selectTheme('batman')" class="hamburger-theme-item">
+                                    <span class="hamburger-swatch hamburger-swatch-batman"></span>
+                                    <span>Batman</span>
+                                </button>
+                                <button (click)="selectTheme('barbie')" class="hamburger-theme-item">
+                                    <span class="hamburger-swatch hamburger-swatch-barbie"></span>
+                                    <span>Barbie</span>
+                                </button>
+                            </div>
+                        }
                     </div>
+                </div>
+                <div class="hamburger-section mt-4">
+                    <span class="hamburger-label">Date Format</span>
+                    <select class="hamburger-date-select"
+                            [value]="dateFormatService.state().dateFormat"
+                            (change)="selectDateFormat($any($event.target).value)">
+                        <option value="DD/MM/YY">DD/MM/YY</option>
+                        <option value="YY/MM/DD">YY/MM/DD</option>
+                        <option value="MM/DD/YY">MM/DD/YY</option>
+                    </select>
                 </div>
             </div>
 

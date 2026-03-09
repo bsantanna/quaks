@@ -1,6 +1,6 @@
 import {Component, computed, effect, inject, OnDestroy, PLATFORM_ID} from '@angular/core';
 import {ActivatedRoute, ParamMap} from '@angular/router';
-import {ShareUrlService, MarketsNewsService, NewsItem, IndexedKeyTickerService, SeoService} from '../shared';
+import {ShareUrlService, MarketsNewsService, NewsItem, IndexedKeyTickerService, SeoService, DateFormatService} from '../shared';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {take} from 'rxjs';
 import {DatePipe, isPlatformBrowser} from '@angular/common';
@@ -21,6 +21,7 @@ export class MarketsNewsItem implements OnDestroy {
   private readonly marketsNewsService = inject(MarketsNewsService);
   private readonly indexedKeyTickerService = inject(IndexedKeyTickerService);
   private readonly seoService = inject(SeoService);
+  readonly dateFormatService = inject(DateFormatService);
 
   private readonly paramMap = toSignal<ParamMap>(this.route.paramMap);
   readonly indexName = computed(() => this.paramMap()?.get('indexName') ?? '');

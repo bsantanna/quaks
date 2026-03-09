@@ -1,5 +1,6 @@
 {
   "routes": {
+    "/cookies": {},
     "/markets/news": {},
     "/markets/performance": {},
     "/markets/stocks": {},

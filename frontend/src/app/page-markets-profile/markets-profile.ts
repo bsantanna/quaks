@@ -8,6 +8,7 @@ import {CompanyProfile} from '../shared/models/markets.model';
 import {MarketsStatsService} from '../shared/services/markets-stats.service';
 import {IndexedKeyTickerService} from '../shared/services/indexed-key-ticker.service';
 import {SeoService} from '../shared/services/seo.service';
+import {DateFormatService} from '../shared/services/date-format.service';
 import {STOCK_EXCHANGE_FLAGS} from '../constants';
 
 @Component({
@@ -18,6 +19,7 @@ import {STOCK_EXCHANGE_FLAGS} from '../constants';
 })
 export class MarketsProfile implements OnDestroy {
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  private readonly dateFormatService = inject(DateFormatService);
   private readonly route = inject(ActivatedRoute);
   private readonly httpClient = inject(HttpClient);
   private readonly marketsStatsService = inject(MarketsStatsService);
@@ -99,9 +101,7 @@ export class MarketsProfile implements OnDestroy {
   }
 
   formatDate(value: string | null | undefined): string {
-    if (!value) return '--';
-    const [y, m, d] = value.split('-');
-    return `${d}/${m}/${y}`;
+    return this.dateFormatService.format(value);
   }
 
 }

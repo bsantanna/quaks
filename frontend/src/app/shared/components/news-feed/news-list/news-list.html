@@ -11,7 +11,7 @@
                 <div class="flex items-center text-xs news-meta">
                     <span class="font-medium capitalize">{{item.source}}</span>
                     <span class="mx-2">·</span>
-                    <span>{{item.date | date: 'mediumDate'}}</span>
+                    <span>{{item.date | date: dateFormatService.toAngularFormat()}}</span>
                     @if (item.key_ticker?.length) {
                         <span class="ml-auto news-ticker-badge px-2 py-1 text-xs font-semibold">{{item.key_ticker}}</span>
                     }

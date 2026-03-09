@@ -9,38 +9,47 @@
         <div class="settings-panel">
             <div class="settings-section">
                 <span class="settings-label">Theme</span>
-                <div class="settings-options">
-                    <button (click)="selectTheme('default')"
-                            [class.active]="themeService.state().theme === 'default'"
-                            class="theme-option">
-                        <span class="theme-swatch theme-swatch-default"></span>
-                        <span>Default</span>
+                <div class="theme-dropdown">
+                    <button class="theme-dropdown-trigger" (click)="toggleThemeDropdown()">
+                        <span class="theme-swatch theme-swatch-{{themeService.state().theme}}"></span>
+                        <span class="theme-dropdown-label">{{themeService.state().theme | titlecase}}</span>
+                        <img src="/svg/icon-chevron-down.svg" class="theme-dropdown-chevron size-4" [class.open]="themeOpen()" aria-hidden="true" alt="" />
                     </button>
-                    <button (click)="selectTheme('bloomnerd')"
-                            [class.active]="themeService.state().theme === 'bloomnerd'"
-                            class="theme-option">
-                        <span class="theme-swatch theme-swatch-bloomnerd"></span>
-                        <span>Bloomnerd</span>
-                    </button>
-                    <button (click)="selectTheme('matrix')"
-                            [class.active]="themeService.state().theme === 'matrix'"
-                            class="theme-option">
-                        <span class="theme-swatch theme-swatch-matrix"></span>
-                        <span>Matrix</span>
-                    </button>
-                    <button (click)="selectTheme('batman')"
-                            [class.active]="themeService.state().theme === 'batman'"
-                            class="theme-option">
-                        <span class="theme-swatch theme-swatch-batman"></span>
-                        <span>Batman</span>
-                    </button>
-                    <button (click)="selectTheme('barbie')"
-                            [class.active]="themeService.state().theme === 'barbie'"
-                            class="theme-option">
-                        <span class="theme-swatch theme-swatch-barbie"></span>
-                        <span>Barbie</span>
-                    </button>
+                    @if (themeOpen()) {
+                        <div class="theme-dropdown-list">
+                            <button (click)="selectTheme('default')" class="theme-dropdown-item">
+                                <span class="theme-swatch theme-swatch-default"></span>
+                                <span>Default</span>
+                            </button>
+                            <button (click)="selectTheme('bloomnerd')" class="theme-dropdown-item">
+                                <span class="theme-swatch theme-swatch-bloomnerd"></span>
+                                <span>Bloomnerd</span>
+                            </button>
+                            <button (click)="selectTheme('matrix')" class="theme-dropdown-item">
+                                <span class="theme-swatch theme-swatch-matrix"></span>
+                                <span>Matrix</span>
+                            </button>
+                            <button (click)="selectTheme('batman')" class="theme-dropdown-item">
+                                <span class="theme-swatch theme-swatch-batman"></span>
+                                <span>Batman</span>
+                            </button>
+                            <button (click)="selectTheme('barbie')" class="theme-dropdown-item">
+                                <span class="theme-swatch theme-swatch-barbie"></span>
+                                <span>Barbie</span>
+                            </button>
+                        </div>
+                    }
                 </div>
+            </div>
+            <div class="settings-section mt-3">
+                <span class="settings-label">Date Format</span>
+                <select class="date-format-select"
+                        [value]="dateFormatService.state().dateFormat"
+                        (change)="selectDateFormat($any($event.target).value)">
+                    <option value="DD/MM/YY">DD/MM/YY</option>
+                    <option value="YY/MM/DD">YY/MM/DD</option>
+                    <option value="MM/DD/YY">MM/DD/YY</option>
+                </select>
             </div>
         </div>
     }

@@ -27,6 +27,12 @@ export interface CookieConsent extends NavigationModel {
 
 export type ThemeName = 'default' | 'bloomnerd' | 'matrix' | 'batman' | 'barbie';
 
+export type DateFormatName = 'DD/MM/YY' | 'YY/MM/DD' | 'MM/DD/YY';
+
+export interface DateFormatPreference extends NavigationModel {
+  dateFormat: DateFormatName;
+}
+
 export interface ThemePreference extends NavigationModel {
   theme: ThemeName;
 }

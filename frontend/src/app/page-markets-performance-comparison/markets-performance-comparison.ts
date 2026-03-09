@@ -2,7 +2,7 @@ import {Component, computed, effect, inject, OnDestroy, PLATFORM_ID, signal, Wri
 import {isPlatformBrowser} from '@angular/common';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {toSignal} from '@angular/core/rxjs-interop';
-import {ShareUrlService, SeoService} from '../shared';
+import {ShareUrlService, SeoService, DateFormatService} from '../shared';
 import {StockComparisonAutocomplete} from './stock-comparison-autocomplete/stock-comparison-autocomplete';
 import {StockComparisonCharts} from './stock-comparison-charts/stock-comparison-charts';
 import {StockComparisonTime} from './stock-comparison-time/stock-comparison-time';
@@ -21,6 +21,7 @@ export class MarketsPerformanceComparison implements OnDestroy {
   private readonly router = inject(Router);
   private readonly shareUrlService = inject(ShareUrlService);
   private readonly seoService = inject(SeoService);
+  private readonly dateFormatService = inject(DateFormatService);
 
   private readonly queryParams = toSignal<Params>(this.route.queryParams);
   readonly symbols = computed(() => {
@@ -35,10 +36,7 @@ export class MarketsPerformanceComparison implements OnDestroy {
     const raw = this.intervalInDates();
     if (!raw.includes('_')) return {from: '', to: ''};
     const [from, to] = raw.split('_');
-    const fmt = (d: string) => {
-      const [y, m, day] = d.split('-');
-      return `${day}/${m}/${y.slice(2)}`;
-    };
+    const fmt = (d: string) => this.dateFormatService.format(d);
     return {from: fmt(from), to: fmt(to)};
   });
   private readonly routeTitle = this.route.snapshot.title ?? '';

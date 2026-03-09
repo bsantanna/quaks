@@ -4,7 +4,7 @@ import {HttpClient} from '@angular/common/http';
 import {forkJoin} from 'rxjs';
 import {Router} from '@angular/router';
 import {HeatmapConstituent, StatsClose} from '../../shared';
-import {MarketsStatsService} from '../../shared';
+import {MarketsStatsService, DateFormatService} from '../../shared';
 
 export interface HeatmapTile {
   ticker: string;
@@ -42,6 +42,7 @@ export class StocksHeatmaps implements OnDestroy {
   private readonly httpClient = inject(HttpClient);
   private readonly statsService = inject(MarketsStatsService);
   private readonly router = inject(Router);
+  private readonly dateFormatService = inject(DateFormatService);
   private readonly containerRef = viewChild<ElementRef>('heatmapContainer');
 
   readonly selectedIndex = signal<HeatmapIndex>('sp500');
@@ -155,9 +156,7 @@ export class StocksHeatmaps implements OnDestroy {
   }
 
   formatDate(dateStr: string): string {
-    if (!dateStr) return '';
-    const [y, m, d] = dateStr.split('-');
-    return `${d}/${m}/${y.slice(2)}`;
+    return this.dateFormatService.format(dateStr);
   }
 
   private setupResize() {
