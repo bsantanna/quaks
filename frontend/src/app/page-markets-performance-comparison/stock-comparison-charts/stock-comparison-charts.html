@@ -2,7 +2,7 @@
   <iframe #dashboardIframe
           (load)="onIframeLoad(dashboardIframe)"
           [src]="kibanaUrl()"
-          class="w-full border-none iframe_adjusted_height">
+          class="kibana-iframe">
   </iframe>
 } @else {
   <div class="flex items-center justify-center py-16 text-white/40 text-sm">

@@ -69,8 +69,7 @@
 </div>
 
 <iframe #dashboardIframe
-        [class]="selectedTab()"
         (load)="onIframeLoad(dashboardIframe)"
         [src]="kibanaUrl()"
-        class="w-full border-none iframe_adjusted_height minimum-screen-height">
+        class="kibana-iframe minimum-screen-height">
 </iframe>
