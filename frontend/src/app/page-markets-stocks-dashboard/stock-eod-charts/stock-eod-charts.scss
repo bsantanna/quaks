@@ -1,5 +1,25 @@
 @use 'sass:math';
 
+.charts-select {
+  font-family: var(--font-data);
+  color: var(--text-primary);
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+  outline: none;
+
+  option {
+    background: var(--surface-elevated);
+    color: var(--text-primary);
+  }
+
+  &:focus {
+    border-color: var(--accent-primary);
+    outline: 1px solid var(--accent-primary);
+    outline-offset: -1px;
+  }
+}
+
 .iframe_adjusted_height {
   height: 80vh;
 }
