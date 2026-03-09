@@ -2,6 +2,35 @@
 
 <!-- version list -->
 
+## v1.3.28 (2026-03-09)
+
+### Bug Fixes
+
+- Company profile 1 ([#70](https://github.com/bsantanna/quaks/pull/70),
+  [`3f31bfb`](https://github.com/bsantanna/quaks/commit/3f31bfb83c5035614e899d23bbfb3a2e80228403))
+
+- Company profile page ([#70](https://github.com/bsantanna/quaks/pull/70),
+  [`3f31bfb`](https://github.com/bsantanna/quaks/commit/3f31bfb83c5035614e899d23bbfb3a2e80228403))
+
+- Company profile page (2) ([#70](https://github.com/bsantanna/quaks/pull/70),
+  [`3f31bfb`](https://github.com/bsantanna/quaks/commit/3f31bfb83c5035614e899d23bbfb3a2e80228403))
+
+- Layout adjusts (1) ([#70](https://github.com/bsantanna/quaks/pull/70),
+  [`3f31bfb`](https://github.com/bsantanna/quaks/commit/3f31bfb83c5035614e899d23bbfb3a2e80228403))
+
+- Layout adjusts (2) ([#70](https://github.com/bsantanna/quaks/pull/70),
+  [`3f31bfb`](https://github.com/bsantanna/quaks/commit/3f31bfb83c5035614e899d23bbfb3a2e80228403))
+
+- Layout adjusts (3) ([#70](https://github.com/bsantanna/quaks/pull/70),
+  [`3f31bfb`](https://github.com/bsantanna/quaks/commit/3f31bfb83c5035614e899d23bbfb3a2e80228403))
+
+- Layout adjusts (4) ([#70](https://github.com/bsantanna/quaks/pull/70),
+  [`3f31bfb`](https://github.com/bsantanna/quaks/commit/3f31bfb83c5035614e899d23bbfb3a2e80228403))
+
+- Layout adjusts (5) ([#70](https://github.com/bsantanna/quaks/pull/70),
+  [`3f31bfb`](https://github.com/bsantanna/quaks/commit/3f31bfb83c5035614e899d23bbfb3a2e80228403))
+
+
 ## v1.3.27 (2026-03-08)
 
 ### Bug Fixes
