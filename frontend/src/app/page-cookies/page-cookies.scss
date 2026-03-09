@@ -1,1 +1,16 @@
+.policy-content {
+  color: var(--text-primary);
+}
 
+.policy-border {
+  border-color: var(--border-primary);
+}
+
+a {
+  color: var(--accent-primary);
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: var(--accent-hover);
+  }
+}

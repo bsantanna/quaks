@@ -1,0 +1,12 @@
+.policy-content {
+  color: var(--text-primary);
+}
+
+a {
+  color: var(--accent-primary);
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: var(--accent-hover);
+  }
+}

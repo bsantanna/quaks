@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, HostListener, inject, signal} from '@angular/core';
 import {TitleCasePipe} from '@angular/common';
 import {ThemeService} from '../../shared/services/theme.service';
 import {DateFormatService} from '../../shared/services/date-format.service';
@@ -35,5 +35,14 @@ export class SettingsDropdownComponent {
   selectDateFormat(dateFormat: DateFormatName): void {
     this.dateFormatService.update({dateFormat});
     this.showMenu.set(false);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('app-settings-dropdown')) {
+      this.showMenu.set(false);
+      this.themeOpen.set(false);
+    }
   }
 }
