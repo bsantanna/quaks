@@ -7,6 +7,24 @@ class MarketsStatsService:
     def __init__(self, es: Elasticsearch) -> None:
         self.es = es
 
+    async def get_company_profile(
+            self,
+            index_name: str,
+            key_ticker: str,
+    ) -> dict:
+        search_params = {
+            "id": "get_metadata_profile_template",
+            "params": {
+                "key_ticker": key_ticker,
+            }
+        }
+
+        response = self.es.search_template(index=index_name, body=search_params)
+        hits = response['hits']['hits']
+        if not hits:
+            return {}
+        return hits[0]['_source']
+
     async def get_market_caps_bulk(
             self,
             index_name: str,

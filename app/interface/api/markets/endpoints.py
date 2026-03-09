@@ -10,6 +10,7 @@ from app.core.container import Container
 from app.domain.exceptions.base import InvalidFieldError
 from app.interface.api.cache_control import cache_control
 from app.interface.api.markets.schema import (
+    CompanyProfile,
     IndicatorRequest,
     IndicatorResponse,
     MarketCapItem,
@@ -116,6 +117,41 @@ async def get_stats_close(
         most_recent_date=result.get("most_recent_date"),
         percent_variance=result.get("percent_variance"),
     )
+
+
+@router.get(
+    path="/profile/{index_name}/{key_ticker}",
+    response_model=CompanyProfile,
+    operation_id="get_company_profile",
+    summary="Get company profile metadata for a ticker",
+    description="""
+    Returns structured company profile data from the stocks-metadata index,
+    including valuation multiples, financial metrics, analyst ratings,
+    ownership structure, and technical indicators.
+
+    Parameters:
+    - `index_name` (path): The Elasticsearch metadata index or alias (e.g. `quaks_stocks-metadata_latest`).
+    - `key_ticker` (path): The ticker symbol (e.g. `AAPL`, `MSFT`).
+    """,
+    response_description="Company profile metadata",
+    dependencies=[cache_control(86400)],
+)
+@inject
+async def get_company_profile(
+    index_name: str,
+    key_ticker: str,
+    markets_stats_service: Annotated[
+        MarketsStatsService, Depends(Provide[Container.markets_stats_service])
+    ],
+):
+    _validate_index_name(index_name)
+    result = await markets_stats_service.get_company_profile(
+        index_name=index_name,
+        key_ticker=key_ticker,
+    )
+    return CompanyProfile(key_ticker=key_ticker, **{
+        k: v for k, v in result.items() if k != "key_ticker"
+    })
 
 
 @router.get(

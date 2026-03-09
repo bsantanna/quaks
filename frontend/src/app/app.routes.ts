@@ -7,6 +7,7 @@ import {InsightsQuaksStocksExpert} from './page-insights-quaks-stocks-expert';
 import {MarketsNewsItem} from './page-markets-news-item';
 import {MarketsStocks} from './page-markets-stocks';
 import {MarketsNews} from './page-markets-news';
+import {MarketsProfile} from './page-markets-profile/markets-profile';
 
 export const routes: Routes = [
   {
@@ -45,7 +46,7 @@ export const routes: Routes = [
         component: MarketsNewsRelated
       },
       {
-        title: 'Stocks',
+        title: 'Stocks Market',
         path: 'stocks',
         component: MarketsStocks
       },
@@ -53,6 +54,11 @@ export const routes: Routes = [
         title: 'Stocks Dashboard',
         path: 'stocks/:keyTicker',
         component: MarketsStocksDashboard
+      },
+      {
+        title: 'Company Profile',
+        path: 'profile/:keyTicker',
+        component: MarketsProfile
       }
     ]
   },

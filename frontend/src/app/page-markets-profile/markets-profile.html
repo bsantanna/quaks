@@ -1,0 +1,250 @@
+@if (loading()) {
+  <div class="profile-loading">
+    <p class="profile-loading-text">Loading profile...</p>
+  </div>
+} @else if (profile(); as p) {
+  <div class="profile-container">
+
+    <!-- Header -->
+    <div class="profile-header">
+      <div class="profile-header-top">
+        <div>
+          <p class="profile-ticker">{{ p.key_ticker }}</p>
+          <p class="profile-name">{{ p.name ?? '--' }}</p>
+        </div>
+        <div class="profile-header-meta">
+          @if (p.sector) {
+            <span class="profile-badge">{{ p.sector }}</span>
+          }
+          @if (p.industry && p.industry !== p.sector) {
+            <span class="profile-badge">{{ p.industry }}</span>
+          }
+        </div>
+      </div>
+      <div class="profile-header-details">
+        @if (p.exchange) {
+          <span class="profile-detail-item">{{ p.exchange }}</span>
+        }
+        @if (p.currency) {
+          <span class="profile-detail-item">{{ p.currency }}</span>
+        }
+        @if (p.country) {
+          <span class="profile-detail-item">{{ p.country }}</span>
+        }
+        @if (p.fiscal_year_end) {
+          <span class="profile-detail-item">FY End: {{ p.fiscal_year_end }}</span>
+        }
+      </div>
+      @if (companyAbout(); as about) {
+        <p class="profile-description">{{ about }}</p>
+      }
+      <div class="profile-header-links">
+        <a [routerLink]="['/markets/stocks', p.key_ticker]" class="profile-link">Dashboard</a>
+        <a [routerLink]="['/markets/news/related', p.key_ticker]" class="profile-link">News</a>
+        @if (p.official_site) {
+          <a [href]="p.official_site" target="_blank" rel="noopener noreferrer" class="profile-link">Website</a>
+        }
+      </div>
+    </div>
+
+    <!-- Grid -->
+    <div class="profile-grid">
+
+      <!-- Valuation -->
+      <div class="profile-section">
+        <p class="profile-section-title">Valuation</p>
+        <div class="profile-data-grid">
+          <div class="profile-data-item">
+            <span class="profile-data-label">Market Cap</span>
+            <span class="profile-data-value">{{ formatLargeNumber(p.market_capitalization) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">P/E (TTM)</span>
+            <span class="profile-data-value">{{ formatNumber(p.trailing_pe) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">Forward P/E</span>
+            <span class="profile-data-value">{{ formatNumber(p.forward_pe) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">PEG Ratio</span>
+            <span class="profile-data-value">{{ formatNumber(p.peg_ratio) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">P/B Ratio</span>
+            <span class="profile-data-value">{{ formatNumber(p.price_to_book_ratio) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">P/S (TTM)</span>
+            <span class="profile-data-value">{{ formatNumber(p.price_to_sales_ratio_ttm) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">EV/Revenue</span>
+            <span class="profile-data-value">{{ formatNumber(p.ev_to_revenue) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">EV/EBITDA</span>
+            <span class="profile-data-value">{{ formatNumber(p.ev_to_ebitda) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">Book Value</span>
+            <span class="profile-data-value">{{ formatNumber(p.book_value) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Financials -->
+      <div class="profile-section">
+        <p class="profile-section-title">Financials</p>
+        <div class="profile-data-grid">
+          <div class="profile-data-item">
+            <span class="profile-data-label">Revenue (TTM)</span>
+            <span class="profile-data-value">{{ formatLargeNumber(p.revenue_ttm) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">Gross Profit (TTM)</span>
+            <span class="profile-data-value">{{ formatLargeNumber(p.gross_profit_ttm) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">EBITDA</span>
+            <span class="profile-data-value">{{ formatLargeNumber(p.ebitda) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">EPS</span>
+            <span class="profile-data-value">{{ formatNumber(p.eps) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">Diluted EPS (TTM)</span>
+            <span class="profile-data-value">{{ formatNumber(p.diluted_eps_ttm) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">Rev/Share (TTM)</span>
+            <span class="profile-data-value">{{ formatNumber(p.revenue_per_share_ttm) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profitability -->
+      <div class="profile-section">
+        <p class="profile-section-title">Profitability</p>
+        <div class="profile-data-grid">
+          <div class="profile-data-item">
+            <span class="profile-data-label">Profit Margin</span>
+            <span class="profile-data-value">{{ formatPercent(p.profit_margin) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">Operating Margin (TTM)</span>
+            <span class="profile-data-value">{{ formatPercent(p.operating_margin_ttm) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">Return on Assets (TTM)</span>
+            <span class="profile-data-value">{{ formatPercent(p.return_on_assets_ttm) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">Return on Equity (TTM)</span>
+            <span class="profile-data-value">{{ formatPercent(p.return_on_equity_ttm) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Growth -->
+      <div class="profile-section">
+        <p class="profile-section-title">Growth</p>
+        <div class="profile-data-grid">
+          <div class="profile-data-item">
+            <span class="profile-data-label">Quarterly Earnings Growth (YoY)</span>
+            <span class="profile-data-value" [class.profile-positive]="(p.quarterly_earnings_growth_yoy ?? 0) > 0"
+                  [class.profile-negative]="(p.quarterly_earnings_growth_yoy ?? 0) < 0">
+              {{ formatPercent(p.quarterly_earnings_growth_yoy) }}
+            </span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">Quarterly Revenue Growth (YoY)</span>
+            <span class="profile-data-value" [class.profile-positive]="(p.quarterly_revenue_growth_yoy ?? 0) > 0"
+                  [class.profile-negative]="(p.quarterly_revenue_growth_yoy ?? 0) < 0">
+              {{ formatPercent(p.quarterly_revenue_growth_yoy) }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dividends -->
+      <div class="profile-section">
+        <p class="profile-section-title">Dividends</p>
+        <div class="profile-data-grid">
+          <div class="profile-data-item">
+            <span class="profile-data-label">Dividend Yield</span>
+            <span class="profile-data-value">{{ formatPercent(p.dividend_yield) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">Dividend/Share</span>
+            <span class="profile-data-value">{{ formatNumber(p.dividend_per_share) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">Dividend Date</span>
+            <span class="profile-data-value">{{ formatDate(p.dividend_date) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">Ex-Dividend Date</span>
+            <span class="profile-data-value">{{ formatDate(p.ex_dividend_date) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Technicals -->
+      <div class="profile-section">
+        <p class="profile-section-title">Technicals</p>
+        <div class="profile-data-grid">
+          <div class="profile-data-item">
+            <span class="profile-data-label">Beta</span>
+            <span class="profile-data-value">{{ formatNumber(p.beta) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">52-Week High</span>
+            <span class="profile-data-value">{{ formatNumber(p.week_52_high) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">52-Week Low</span>
+            <span class="profile-data-value">{{ formatNumber(p.week_52_low) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">50-Day MA</span>
+            <span class="profile-data-value">{{ formatNumber(p.moving_average_50_day) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">200-Day MA</span>
+            <span class="profile-data-value">{{ formatNumber(p.moving_average_200_day) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ownership -->
+      <div class="profile-section">
+        <p class="profile-section-title">Ownership</p>
+        <div class="profile-data-grid">
+          <div class="profile-data-item">
+            <span class="profile-data-label">Shares Outstanding</span>
+            <span class="profile-data-value">{{ formatLargeNumber(p.shares_outstanding) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">Shares Float</span>
+            <span class="profile-data-value">{{ formatLargeNumber(p.shares_float) }}</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">Insider Ownership</span>
+            <span class="profile-data-value">{{ formatNumber(p.percent_insiders) }}%</span>
+          </div>
+          <div class="profile-data-item">
+            <span class="profile-data-label">Institutional Ownership</span>
+            <span class="profile-data-value">{{ formatNumber(p.percent_institutions) }}%</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    @if (p.latest_quarter) {
+      <p class="profile-footer">Data as of {{ formatDate(p.latest_quarter) }}</p>
+    }
+  </div>
+}

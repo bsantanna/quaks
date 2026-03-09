@@ -1,7 +1,7 @@
 import {inject, Injectable, signal, WritableSignal} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
-import {MarketCapsBulkResponse, StatsClose, StatsCloseBulkResponse} from '../models/markets.model';
+import {CompanyProfile, MarketCapsBulkResponse, StatsClose, StatsCloseBulkResponse} from '../models/markets.model';
 import {catchError, Observable, of, timeout} from 'rxjs';
 import {REQUEST_TIMEOUT} from '../../constants';
 
@@ -12,6 +12,7 @@ export class MarketsStatsService {
 
   private readonly httpClient = inject(HttpClient);
 
+  private readonly marketsProfileUrl = `${environment.apiBaseUrl}/markets/profile`;
   private readonly marketsStatsCloseUrl = `${environment.apiBaseUrl}/markets/stats_close`;
 
   static readonly INITIAL_STATS_CLOSE: StatsClose = {
@@ -26,6 +27,20 @@ export class MarketsStatsService {
   };
 
   readonly statsClose: WritableSignal<StatsClose> = signal(MarketsStatsService.INITIAL_STATS_CLOSE);
+
+  getCompanyProfile(
+    indexName: string,
+    ticker: string,
+  ): Observable<CompanyProfile> {
+    const url = `${this.marketsProfileUrl}/${encodeURIComponent(indexName)}/${encodeURIComponent(ticker)}`;
+    return this.httpClient.get<CompanyProfile>(url).pipe(
+      timeout(REQUEST_TIMEOUT),
+      catchError((error) => {
+        console.error(`Failed to fetch company profile for ${ticker} @ ${indexName}`, error);
+        return of({key_ticker: ticker} as CompanyProfile);
+      })
+    );
+  }
 
   getStatsClose(
     indexName: string,
