@@ -1,7 +1,7 @@
 # SEO Audit Report — Quaks Platform
 
-**Date:** 2026-03-06 (update 3)
-**Previous Audit:** 2026-03-05 (update 2)
+**Date:** 2026-03-09 (update 4)
+**Previous Audit:** 2026-03-06 (update 3)
 **Estimated Lighthouse SEO Score:** ~95/100 (up from ~92)
 
 ---
@@ -29,6 +29,13 @@
 
 | # | Issue | What Changed |
 |---|-------|------------|
+| 22 | No `/cookies` route | Added `PageCookies` component at `/cookies` with GDPR-compliant cookie policy content. SSR prerender enabled. `SeoService.update()` called with title, description, path. |
+| 23 | No cookie management UX | Footer "Cookies" link reopens consent dialog via `CookieService.resetConsent()`. Users can switch between "Accept all" and "Reject non-essential" at any time. |
+
+### Resolved Previously
+
+| # | Issue | What Changed |
+|---|-------|------------|
 | 16 | Stub content on Stocks page | Replaced with full heatmap component (`StocksHeatmaps`). |
 | 11 | No `prefers-reduced-motion` CSS | Added `@media (prefers-reduced-motion: reduce)` to `styles.scss` — disables animations, transitions, and scroll behavior for motion-sensitive users. |
 | 6c | No BreadcrumbList schema | `SeoService.update()` now auto-generates `BreadcrumbList` JSON-LD from the `path` param. Breadcrumbs include Home + path segments + current page title. Cleaned up on `reset()`. |
@@ -51,7 +58,8 @@
 |---|-------|----------|--------|
 | 13 | `stock-eod-insights.html` img `alt=""` without `aria-hidden` | Line 5 | Minor — `alt=""` is valid per WCAG for decorative images. |
 | 18 | No `hreflang` tags | N/A | Only relevant if i18n is planned. |
-| 21 | **Sitemap is static** | `frontend/public/sitemap.xml` (512KB+) | Large static file. Consider dynamic generation. |
+| 21 | **Sitemap missing** | `frontend/public/sitemap.xml` | File no longer exists in repo. robots.txt still references it. Needs regeneration including `/cookies` route. |
+| 24 | **`page-cookies.html` / `page-terms.html` hardcoded text colors** | `text-gray-100` | Not theme-aware. Works on dark themes but won't adapt to light themes. |
 
 ---
 
@@ -67,7 +75,8 @@
 - **FastAPI SPA fallback**: `StaticFiles(html=True)` for all frontend routes.
 - **Path-based routing**: Clean URLs like `/markets/stocks/AAPL`.
 - **robots.txt**: Blocks API endpoints, allows public pages.
-- **sitemap.xml**: Comprehensive with all public URLs and per-ticker pages.
+- **Cookie policy page**: `/cookies` route with GDPR content, SSR prerender, full SEO meta tags and breadcrumbs.
+- **Cookie consent management**: Users can re-manage preferences via footer link at any time.
 - **Full meta tag set**: Description, OG, Twitter Cards, canonical, theme-color.
 - **PWA-ready**: Manifest, icons, apple-touch-icon, theme-color.
 - **`lang="en"`**: Present on `<html>` tag.
