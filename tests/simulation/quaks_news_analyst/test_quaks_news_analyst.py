@@ -13,7 +13,7 @@ def client():
     yield TestClient(app)
 
 
-scenario.configure(default_model="openai/gpt-5-nano")
+scenario.configure(default_model="openai/gpt-4.1-2025-04-14")
 
 
 @pytest.mark.agent_test
@@ -188,7 +188,7 @@ def _setup_agent(client):
         headers={"Authorization": f"Bearer {os.getenv('ACCESS_TOKEN')}"},
         json={
             "integration_id": integration_id,
-            "language_model_tag": "grok-3-fast-latest",
+            "language_model_tag": "grok-4-1-fast-non-reasoning",
         },
     )
     language_model_id = response_2.json()["id"]

@@ -121,16 +121,20 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
 
             actual_size = min(size, 50)
             date_from = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-            results, _ = asyncio.get_event_loop().run_until_complete(
-                markets_news_service.get_news(
-                    index_name="quaks_markets-news_latest",
-                    search_term=search_term if search_term else None,
-                    date_from=date_from,
-                    size=actual_size,
-                    include_text_content=True,
-                    include_key_ticker=True,
+            loop = asyncio.new_event_loop()
+            try:
+                results, _ = loop.run_until_complete(
+                    markets_news_service.get_news(
+                        index_name="quaks_markets-news_latest",
+                        search_term=search_term if search_term else None,
+                        date_from=date_from,
+                        size=actual_size,
+                        include_text_content=True,
+                        include_key_ticker=True,
+                    )
                 )
-            )
+            finally:
+                loop.close()
             articles = []
             for hit in results:
                 source = hit["_source"]
