@@ -2,6 +2,44 @@
 
 <!-- version list -->
 
+## v1.3.31 (2026-03-10)
+
+### Bug Fixes
+
+- Insights 1 ([#72](https://github.com/bsantanna/quaks/pull/72),
+  [`f5d0ba0`](https://github.com/bsantanna/quaks/commit/f5d0ba0f53895515c5315d4fc59df9bddf9777f4))
+
+- Prototypes insights (10) ([#72](https://github.com/bsantanna/quaks/pull/72),
+  [`f5d0ba0`](https://github.com/bsantanna/quaks/commit/f5d0ba0f53895515c5315d4fc59df9bddf9777f4))
+
+- Prototypes insights (11) ([#72](https://github.com/bsantanna/quaks/pull/72),
+  [`f5d0ba0`](https://github.com/bsantanna/quaks/commit/f5d0ba0f53895515c5315d4fc59df9bddf9777f4))
+
+- Prototypes insights (12) ([#72](https://github.com/bsantanna/quaks/pull/72),
+  [`f5d0ba0`](https://github.com/bsantanna/quaks/commit/f5d0ba0f53895515c5315d4fc59df9bddf9777f4))
+
+- Prototypes insights (3) ([#72](https://github.com/bsantanna/quaks/pull/72),
+  [`f5d0ba0`](https://github.com/bsantanna/quaks/commit/f5d0ba0f53895515c5315d4fc59df9bddf9777f4))
+
+- Prototypes insights (4) ([#72](https://github.com/bsantanna/quaks/pull/72),
+  [`f5d0ba0`](https://github.com/bsantanna/quaks/commit/f5d0ba0f53895515c5315d4fc59df9bddf9777f4))
+
+- Prototypes insights (5) ([#72](https://github.com/bsantanna/quaks/pull/72),
+  [`f5d0ba0`](https://github.com/bsantanna/quaks/commit/f5d0ba0f53895515c5315d4fc59df9bddf9777f4))
+
+- Prototypes insights (6) ([#72](https://github.com/bsantanna/quaks/pull/72),
+  [`f5d0ba0`](https://github.com/bsantanna/quaks/commit/f5d0ba0f53895515c5315d4fc59df9bddf9777f4))
+
+- Prototypes insights (7) ([#72](https://github.com/bsantanna/quaks/pull/72),
+  [`f5d0ba0`](https://github.com/bsantanna/quaks/commit/f5d0ba0f53895515c5315d4fc59df9bddf9777f4))
+
+- Prototypes insights (8) ([#72](https://github.com/bsantanna/quaks/pull/72),
+  [`f5d0ba0`](https://github.com/bsantanna/quaks/commit/f5d0ba0f53895515c5315d4fc59df9bddf9777f4))
+
+- Prototypes insights (9) ([#72](https://github.com/bsantanna/quaks/pull/72),
+  [`f5d0ba0`](https://github.com/bsantanna/quaks/commit/f5d0ba0f53895515c5315d4fc59df9bddf9777f4))
+
+
 ## v1.3.30 (2026-03-10)
 
 ### Bug Fixes
