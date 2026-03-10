@@ -1,11 +1,12 @@
 import json
-from datetime import datetime
+import re
+from datetime import datetime, timedelta
 
 from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.tools import tool
 from langgraph.constants import START, END
-from langgraph.graph import StateGraph
+from langgraph.graph import MessagesState, StateGraph
 from langgraph.prebuilt import create_react_agent
 from langgraph.types import Command
 from typing_extensions import Literal
@@ -22,9 +23,7 @@ from app.services.agent_types.quaks.insights.news import (
 from app.services.agent_types.quaks.insights.news.prompts import (
     COORDINATOR_SYSTEM_PROMPT,
     AGGREGATOR_SYSTEM_PROMPT,
-    HEADLINES_CREATOR_SYSTEM_PROMPT,
-    NEWS_WRITER_SYSTEM_PROMPT,
-    EDITOR_SYSTEM_PROMPT,
+    REPORTER_SYSTEM_PROMPT,
 )
 from app.services.agent_types.quaks.insights.news.schema import CoordinatorRouter
 from app.services.agent_types.quaks.insights.news.state import NewsAnalystState
@@ -33,10 +32,9 @@ from app.services.tasks import TaskProgress
 
 EXECUTION_PLAN = (
     "News analysis plan:\n"
-    "1. aggregator: Fetch latest news from the last 24 hours\n"
-    "2. headlines_creator: Group articles by topic and create headlines\n"
-    "3. news_writer: Write 3-paragraph summaries per topic\n"
-    "4. editor: Format the final investor briefing report"
+    "1. coordinator: Decide whether to proceed with news analysis\n"
+    "2. aggregator: Fetch latest news from the last 24 hours and prioritize by economic impact\n"
+    "3. reporter: Group articles by topic, write 4-paragraph summaries, and produce the final briefing"
 )
 
 
@@ -49,9 +47,7 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
         prompts = {
             "coordinator_system_prompt": COORDINATOR_SYSTEM_PROMPT,
             "aggregator_system_prompt": AGGREGATOR_SYSTEM_PROMPT,
-            "headlines_creator_system_prompt": HEADLINES_CREATOR_SYSTEM_PROMPT,
-            "news_writer_system_prompt": NEWS_WRITER_SYSTEM_PROMPT,
-            "editor_system_prompt": EDITOR_SYSTEM_PROMPT,
+            "reporter_system_prompt": REPORTER_SYSTEM_PROMPT,
         }
         for key, value in prompts.items():
             self.agent_setting_service.create_agent_setting(
@@ -66,14 +62,10 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
         workflow_builder.add_edge(START, "coordinator")
         workflow_builder.add_node("coordinator", self.get_coordinator)
         workflow_builder.add_node("aggregator", self.get_aggregator)
-        workflow_builder.add_node("headlines_creator", self.get_headlines_creator)
-        workflow_builder.add_node("news_writer", self.get_news_writer)
-        workflow_builder.add_node("editor", self.get_editor)
+        workflow_builder.add_node("reporter", self.get_reporter)
         # Deterministic sequential edges — no supervisor LLM calls needed
-        workflow_builder.add_edge("aggregator", "headlines_creator")
-        workflow_builder.add_edge("headlines_creator", "news_writer")
-        workflow_builder.add_edge("news_writer", "editor")
-        workflow_builder.add_edge("editor", END)
+        workflow_builder.add_edge("aggregator", "reporter")
+        workflow_builder.add_edge("reporter", END)
         return workflow_builder
 
     def get_input_params(self, message_request: MessageRequest, schema: str) -> dict:
@@ -86,6 +78,7 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
 
         template_vars = {
             "CURRENT_TIME": datetime.now().strftime("%a %b %d %Y %H:%M:%S %z"),
+            "EXECUTION_PLAN": EXECUTION_PLAN,
             "NEWS_AGENTS": NEWS_AGENTS,
             "NEWS_AGENT_CONFIGURATION": NEWS_AGENT_CONFIGURATION,
         }
@@ -101,14 +94,8 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
             "aggregator_system_prompt": self.parse_prompt_template(
                 settings_dict, "aggregator_system_prompt", template_vars
             ),
-            "headlines_creator_system_prompt": self.parse_prompt_template(
-                settings_dict, "headlines_creator_system_prompt", template_vars
-            ),
-            "news_writer_system_prompt": self.parse_prompt_template(
-                settings_dict, "news_writer_system_prompt", template_vars
-            ),
-            "editor_system_prompt": self.parse_prompt_template(
-                settings_dict, "editor_system_prompt", template_vars
+            "reporter_system_prompt": self.parse_prompt_template(
+                settings_dict, "reporter_system_prompt", template_vars
             ),
             "messages": [HumanMessage(content=message_request.message_content)],
         }
@@ -121,7 +108,7 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
             search_term: str = "",
             size: int = 50,
         ) -> str:
-            """Fetch the latest market news articles from Elasticsearch.
+            """Fetch the latest market news articles from the last 24 hours.
 
             Args:
                 search_term: Optional search term to filter news (e.g. sector, company, topic).
@@ -133,10 +120,12 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
             import asyncio
 
             actual_size = min(size, 50)
+            date_from = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
             results, _ = asyncio.get_event_loop().run_until_complete(
                 markets_news_service.get_news(
                     index_name="quaks_markets-news_latest",
                     search_term=search_term if search_term else None,
+                    date_from=date_from,
                     size=actual_size,
                     include_text_content=True,
                     include_key_ticker=True,
@@ -203,7 +192,7 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
         else:
             return Command(goto="aggregator")
 
-    def get_aggregator(self, state: NewsAnalystState) -> Command[Literal["headlines_creator"]]:
+    def get_aggregator(self, state: NewsAnalystState) -> Command[Literal["reporter"]]:
         agent_id = state["agent_id"]
         schema = state["schema"]
         aggregator_system_prompt = state["aggregator_system_prompt"]
@@ -235,81 +224,59 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
         )
         return Command(
             update={"messages": response["messages"]},
-            goto="headlines_creator",
+            goto="reporter",
         )
 
-    def get_headlines_creator(self, state: NewsAnalystState) -> Command[Literal["news_writer"]]:
+    @staticmethod
+    def _extract_executive_summary(html: str) -> str:
+        match = re.search(r"<blockquote>(.*?)</blockquote>", html, re.DOTALL)
+        return match.group(1).strip() if match else ""
+
+    def get_reporter(self, state: NewsAnalystState):
         agent_id = state["agent_id"]
         schema = state["schema"]
 
-        self.logger.info(f"Agent[{agent_id}] -> Headlines Creator")
+        self.logger.info(f"Agent[{agent_id}] -> Reporter")
         self.task_notification_service.publish_update(
             task_progress=TaskProgress(
                 agent_id=agent_id,
                 status="in_progress",
-                message_content="Grouping articles and creating topic headlines...",
+                message_content="Grouping articles, writing summaries, and producing the final briefing...",
             )
         )
 
         response = self._invoke_chain(
-            agent_id, schema, state["headlines_creator_system_prompt"], state
+            agent_id, schema, state["reporter_system_prompt"], state
         )
 
-        self.logger.info(f"Agent[{agent_id}] -> Headlines Creator -> Response complete")
-        return Command(
-            update={"messages": [AIMessage(content=response.content, name="headlines_creator")]},
-            goto="news_writer",
-        )
+        report_html = response.content
+        executive_summary = self._extract_executive_summary(report_html)
 
-    def get_news_writer(self, state: NewsAnalystState) -> Command[Literal["editor"]]:
-        agent_id = state["agent_id"]
-        schema = state["schema"]
-
-        self.logger.info(f"Agent[{agent_id}] -> News Writer")
+        self.logger.info(f"Agent[{agent_id}] -> Reporter -> Response complete")
         self.task_notification_service.publish_update(
             task_progress=TaskProgress(
                 agent_id=agent_id,
                 status="in_progress",
-                message_content="Writing topic summaries...",
+                message_content=executive_summary[:200] if executive_summary else report_html[:200],
             )
         )
+        return {
+            "messages": [AIMessage(content=report_html, name="reporter")],
+            "executive_summary": executive_summary,
+        }
 
-        response = self._invoke_chain(
-            agent_id, schema, state["news_writer_system_prompt"], state
-        )
-
-        self.logger.info(f"Agent[{agent_id}] -> News Writer -> Response complete")
-        return Command(
-            update={"messages": [AIMessage(content=response.content, name="news_writer")]},
-            goto="editor",
-        )
-
-    def get_editor(self, state: NewsAnalystState):
-        agent_id = state["agent_id"]
-        schema = state["schema"]
-
-        self.logger.info(f"Agent[{agent_id}] -> Editor")
-        self.task_notification_service.publish_update(
-            task_progress=TaskProgress(
-                agent_id=agent_id,
-                status="in_progress",
-                message_content="Formatting final investor briefing...",
-            )
-        )
-
-        response = self._invoke_chain(
-            agent_id, schema, state["editor_system_prompt"], state
-        )
-
-        self.logger.info(f"Agent[{agent_id}] -> Editor -> Response complete")
-        self.task_notification_service.publish_update(
-            task_progress=TaskProgress(
-                agent_id=agent_id,
-                status="in_progress",
-                message_content=response.content[:200],
-            )
-        )
-        return {"messages": [AIMessage(content=response.content, name="editor")]}
+    def format_response(self, workflow_state: MessagesState) -> (str, dict):
+        report_html = workflow_state["messages"][-1].content
+        executive_summary = workflow_state.get("executive_summary", "")
+        response_data = {
+            "executive_summary": executive_summary,
+            "report_html": report_html,
+            "messages": [
+                json.loads(message.model_dump_json())
+                for message in workflow_state["messages"]
+            ],
+        }
+        return report_html, response_data
 
     # --- Abstract method stubs (not used — graph uses deterministic edges) ---
 
@@ -318,6 +285,3 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
 
     def get_supervisor(self, state: NewsAnalystState) -> Command:
         return Command(goto=END)
-
-    def get_reporter(self, state: NewsAnalystState) -> Command[Literal["supervisor"]]:
-        return Command(goto="supervisor")

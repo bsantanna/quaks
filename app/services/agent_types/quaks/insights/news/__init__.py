@@ -9,33 +9,14 @@ NEWS_AGENT_CONFIGURATION = {
         ),
         "is_optional": False,
     },
-    "headlines_creator": {
-        "name": "headlines_creator",
-        "desc": "Groups news by similarity and creates attention-capturing topic headlines",
+    "reporter": {
+        "name": "reporter",
+        "desc": "Groups articles by topic, writes 4-paragraph summaries, and produces the final investor briefing",
         "desc_for_llm": (
-            "Analyzes the collected news articles and groups them by similarity of subject, "
-            "sector, and industry. Creates attention-capturing headlines or topic names for each group. "
-            "Outputs a structured list of topics, each with a headline and the associated articles."
-        ),
-        "is_optional": False,
-    },
-    "news_writer": {
-        "name": "news_writer",
-        "desc": "Writes professional summaries for each topic group",
-        "desc_for_llm": (
-            "Takes the grouped and categorized topics and writes a concise, copywriter-quality summary "
-            "of exactly 3 paragraphs per topic. The writing should be engaging, informative, and help "
-            "investors quickly understand the key events and their potential impact."
-        ),
-        "is_optional": False,
-    },
-    "editor": {
-        "name": "editor",
-        "desc": "Formats the final investor briefing report",
-        "desc_for_llm": (
-            "Head editor that takes the work of all other agents and formats it into a polished, "
-            "professional investor briefing report in Markdown. Ensures consistency, readability, "
-            "and that the report helps investors get in context and make informed decisions."
+            "Senior financial journalist that performs three phases in a single pass: "
+            "(1) groups articles by similarity and creates compelling topic headlines, "
+            "(2) writes exactly 4 paragraphs per topic (what happened, why it matters, market context, what to watch), "
+            "(3) formats the final polished Markdown investor briefing report."
         ),
         "is_optional": False,
     },

@@ -13,8 +13,7 @@ class NewsAnalystState(MessagesState):
     execution_plan: str
     coordinator_system_prompt: str
     aggregator_system_prompt: str
-    headlines_creator_system_prompt: str
-    news_writer_system_prompt: str
-    editor_system_prompt: str
+    reporter_system_prompt: str
+    executive_summary: str
     messages: Annotated[List, join_messages]
     remaining_steps: RemainingSteps
