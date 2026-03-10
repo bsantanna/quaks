@@ -66,6 +66,8 @@ Three PostgreSQL databases:
 
 Angular 21 app in `frontend/`. Production build output goes to `app/static/frontend/browser/` and is served by FastAPI as a static mount at `/`. The frontend communicates with the backend REST API. Stock charts and performance comparison views embed Kibana dashboards via iframe (the `#/view/` URLs in `stock-eod-charts.ts` and `stock-comparison-charts.ts` are Kibana dashboard embed URLs, not internal routes).
 
+**Navigation header ↔ Hamburger menu sync:** The hamburger menu (`navigation-header/hamburger-menu/`) is the mobile counterpart of the desktop navigation header. It mirrors navigation links, search autocompletes, theme switcher, and settings. When adding, removing, or modifying navigation items, theme options, or settings in the desktop header, always apply the same changes to the hamburger menu (and vice versa).
+
 ### Frontend Theming System
 
 The frontend supports multiple themes via CSS custom properties scoped to `[data-theme="<name>"]` on the `<html>` element. Theme preference is persisted in `localStorage` and managed by `ThemeService`.

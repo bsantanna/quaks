@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { StockEodActions } from './stock-eod-actions';
 
@@ -8,7 +10,8 @@ describe('StockEodActions', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [StockEodActions]
+      imports: [StockEodActions],
+      providers: [provideHttpClient(), provideHttpClientTesting()]
     }).compileComponents();
 
     fixture = TestBed.createComponent(StockEodActions);
