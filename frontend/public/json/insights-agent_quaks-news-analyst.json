@@ -1,0 +1,13 @@
+{
+  "name": "Quaks News Analyst",
+  "role": "AI Market News Analyst",
+  "avatar": "/svg/insights-agent_quaks-news-analyst.svg",
+  "ctaLabel": "News Insights",
+  "ctaLink": "/insights/news",
+  "ctaIcon": "/svg/icon-document.svg",
+  "bio": [
+    "Quaks News Analyst is an AI-powered agent specialized in monitoring and analyzing financial news across US equity markets.",
+    "The agent processes market news from multiple sources, identifying key events, sentiment shifts, and potential impact on individual stocks and broader market sectors.",
+    "By combining natural language processing with market data context, the agent delivers concise news summaries and highlights the most relevant developments for informed investment decisions."
+  ]
+}

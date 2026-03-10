@@ -15,6 +15,7 @@ class MarketsNewsService:
             id: str = None,
             key_ticker: str = None,
             search_term: str = None,
+            date_from: str = None,
             size=10,
             cursor: str = None,
             include_text_content=False,
@@ -32,6 +33,8 @@ class MarketsNewsService:
             params["key_ticker"] = key_ticker
         elif search_term:
             params["search_term"] = search_term
+        if date_from:
+            params["date_from"] = date_from
         if cursor:
             params["search_after"] = json.loads(base64.urlsafe_b64decode(cursor).decode())
         search_params = {

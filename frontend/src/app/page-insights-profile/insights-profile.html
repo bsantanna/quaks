@@ -1,0 +1,35 @@
+@if (profile(); as agent) {
+    <div class="profile-page mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <div class="profile-layout">
+            <div class="profile-main">
+                <h1 class="profile-name">{{ agent.name }}</h1>
+                <h2 class="profile-role">{{ agent.role }}</h2>
+                @for (paragraph of agent.bio; track $index) {
+                    <p class="profile-bio">{{ paragraph }}</p>
+                }
+                <div class="profile-actions">
+                    <a href="/insights/agents" class="profile-cta">
+                        <img src="/svg/icon-chevron-left.svg" class="mr-2 size-5" aria-hidden="true" alt="" />
+                        <span>Back to Agents</span>
+                    </a>
+                    @if (agent.ctaLink) {
+                        <a [href]="agent.ctaLink" class="profile-cta">
+                            @if (agent.ctaIcon) {
+                                <img [src]="agent.ctaIcon" class="mr-2 size-5" aria-hidden="true" alt="" />
+                            }
+                            <span>{{ agent.ctaLabel }}</span>
+                        </a>
+                    }
+                </div>
+            </div>
+
+            <aside class="profile-sidebar">
+                <div class="profile-card">
+                    <img [src]="agent.avatar" [alt]="agent.name" class="profile-avatar" />
+                </div>
+            </aside>
+        </div>
+
+    </div>
+}

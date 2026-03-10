@@ -12,26 +12,47 @@
   {{/id}}
   {{^id}}
   "query": {
-    {{#key_ticker}}
-    "term": {
-      "key_ticker": {
-        "value": "{{key_ticker}}"
-      }
+    "bool": {
+      "must": [
+        {{#key_ticker}}
+        {
+          "term": {
+            "key_ticker": {
+              "value": "{{key_ticker}}"
+            }
+          }
+        }
+        {{/key_ticker}}
+        {{^key_ticker}}
+        {{#search_term}}
+        {
+          "multi_match": {
+            "query": "{{search_term}}",
+            "fields": ["text_headline^3", "text_summary^2", "text_content"],
+            "type": "best_fields",
+            "operator": "or"
+          }
+        }
+        {{/search_term}}
+        {{^search_term}}
+        {
+          "match_all": {}
+        }
+        {{/search_term}}
+        {{/key_ticker}}
+      ]
+      {{#date_from}}
+      ,"filter": [
+        {
+          "range": {
+            "date_reference": {
+              "gte": "{{date_from}}"
+            }
+          }
+        }
+      ]
+      {{/date_from}}
     }
-    {{/key_ticker}}
-    {{^key_ticker}}
-    {{#search_term}}
-    "multi_match": {
-      "query": "{{search_term}}",
-      "fields": ["text_headline^3", "text_summary^2", "text_content"],
-      "type": "best_fields",
-      "operator": "or"
-    }
-    {{/search_term}}
-    {{^search_term}}
-    "match_all": {}
-    {{/search_term}}
-    {{/key_ticker}}
   }
   {{/id}},
   "_source": [

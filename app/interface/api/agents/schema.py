@@ -8,6 +8,7 @@ from app.domain.exceptions.base import InvalidFieldError
 
 valid_agent_types = [
     "test_echo",
+    "quaks_news_analyst",
 ]
 
 invalid_characters_description = "contains invalid characters"
