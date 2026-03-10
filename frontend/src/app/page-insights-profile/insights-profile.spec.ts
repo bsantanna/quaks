@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 
 import { InsightsProfile } from './insights-profile';
 
@@ -8,9 +11,13 @@ describe('InsightsProfile', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [InsightsProfile]
-    })
-    .compileComponents();
+      imports: [InsightsProfile],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([])
+      ]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(InsightsProfile);
     component = fixture.componentInstance;
