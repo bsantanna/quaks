@@ -1,4 +1,13 @@
 
-<div class="p-4 h-[calc(100vh-64px)]">
-  <app-stocks-heatmaps />
+<div class="p-4 h-[calc(100vh-64px)] mb-10">
+  <!-- Small screen fallback (visible when viewport height < 600px) -->
+  <div class="small-screen-message flex flex-col items-center justify-center py-12 px-6">
+    <img src="/svg/error-resolution-small.svg" alt="Screen too small" class="small-screen-img" />
+    <p class="small-screen-title">Screen too small</p>
+    <p class="small-screen-notice">Heatmaps require a taller screen. Please rotate your device or use a larger display.</p>
+  </div>
+
+  <div class="heatmaps-section h-full">
+    <app-stocks-heatmaps />
+  </div>
 </div>

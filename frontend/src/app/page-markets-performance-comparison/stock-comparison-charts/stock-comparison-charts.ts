@@ -1,6 +1,6 @@
-import {Component, computed, inject, input, OnDestroy} from '@angular/core';
+import {Component, computed, inject, input} from '@angular/core';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
-import {DASHBOARDS_IDS, IFRAME_STYLE, DASHBOARDS_ENDPOINT, setupIframeAutoResize} from '../../constants';
+import {DASHBOARDS_IDS, IFRAME_STYLE, DASHBOARDS_ENDPOINT} from '../../constants';
 
 @Component({
   selector: 'app-stock-comparison-charts',
@@ -8,10 +8,9 @@ import {DASHBOARDS_IDS, IFRAME_STYLE, DASHBOARDS_ENDPOINT, setupIframeAutoResize
   templateUrl: './stock-comparison-charts.html',
   styleUrl: './stock-comparison-charts.scss',
 })
-export class StockComparisonCharts implements OnDestroy {
+export class StockComparisonCharts {
 
   private readonly sanitizer = inject(DomSanitizer);
-  private cleanupResize: (() => void) | null = null;
 
   readonly symbols = input.required<string[]>();
   readonly intervalInDays = input<number>(365);
@@ -42,22 +41,16 @@ export class StockComparisonCharts implements OnDestroy {
   });
 
   onIframeLoad(iframe: HTMLIFrameElement) {
-    this.cleanupResize?.();
     try {
       const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
       if (iframeDoc) {
         const style = iframeDoc.createElement('style');
         style.innerHTML = IFRAME_STYLE;
         iframeDoc.head.appendChild(style);
-        this.cleanupResize = setupIframeAutoResize(iframe, iframeDoc);
       }
     } catch (e) {
       console.error('Error injecting styles into iframe', e);
     }
-  }
-
-  ngOnDestroy() {
-    this.cleanupResize?.();
   }
 
 }

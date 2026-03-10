@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {CookieConsentDialogComponent} from './cookie-consent-dialog/cookie-consent-dialog';
+import {CookieService} from '../shared';
 
 @Component({
   selector: 'app-navigation-footer',
@@ -10,5 +11,11 @@ import {CookieConsentDialogComponent} from './cookie-consent-dialog/cookie-conse
   styleUrl: './navigation-footer.scss',
 })
 export class NavigationFooter {
+
+  private readonly cookieService = inject(CookieService);
+
+  manageCookies(): void {
+    this.cookieService.resetConsent();
+  }
 
 }

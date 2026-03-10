@@ -44,7 +44,7 @@ describe('MarketsProfile', () => {
   });
 
   it('should format dates', () => {
-    expect(component.formatDate('2025-03-15')).toBe('15/03/2025');
+    expect(component.formatDate('2025-03-15')).toBe('15/03/25');
     expect(component.formatDate(null)).toBe('--');
   });
 });

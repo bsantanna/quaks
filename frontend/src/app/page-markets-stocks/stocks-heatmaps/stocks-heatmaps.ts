@@ -2,9 +2,9 @@ import {Component, computed, ElementRef, inject, OnDestroy, PLATFORM_ID, signal,
 import {isPlatformBrowser} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
 import {forkJoin} from 'rxjs';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {HeatmapConstituent, StatsClose} from '../../shared';
-import {MarketsStatsService} from '../../shared';
+import {MarketsStatsService, DateFormatService, ShareUrlService} from '../../shared';
 
 export interface HeatmapTile {
   ticker: string;
@@ -38,10 +38,13 @@ type HeatmapIndex = 'sp500' | 'nasdaq100';
   styleUrl: './stocks-heatmaps.scss',
 })
 export class StocksHeatmaps implements OnDestroy {
-  private readonly platformId = inject(PLATFORM_ID);
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly httpClient = inject(HttpClient);
   private readonly statsService = inject(MarketsStatsService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly dateFormatService = inject(DateFormatService);
+  private readonly shareUrlService = inject(ShareUrlService);
   private readonly containerRef = viewChild<ElementRef>('heatmapContainer');
 
   readonly selectedIndex = signal<HeatmapIndex>('sp500');
@@ -51,6 +54,8 @@ export class StocksHeatmaps implements OnDestroy {
   readonly hoveredTile = signal<HeatmapTile | null>(null);
   readonly mouseX = signal(0);
   readonly mouseY = signal(0);
+  readonly heatmapDate = signal<string>('');
+  readonly hasPointer = this.isBrowser && typeof window.matchMedia === 'function' && window.matchMedia('(hover: hover)').matches;
 
   readonly tooltipStyle = computed(() => {
     const x = this.mouseX();
@@ -83,7 +88,9 @@ export class StocksHeatmaps implements OnDestroy {
   private containerHeight = 0;
 
   constructor() {
-    if (isPlatformBrowser(this.platformId)) {
+    if (this.isBrowser) {
+      const dateParam = this.route.snapshot.queryParamMap.get('date');
+      this.heatmapDate.set(dateParam || this.todayISO());
       this.loadData();
       this.setupResize();
     }
@@ -91,6 +98,7 @@ export class StocksHeatmaps implements OnDestroy {
 
   ngOnDestroy() {
     this.resizeObserver?.disconnect();
+    this.shareUrlService.update({title: '', url: ''});
   }
 
   switchIndex(index: HeatmapIndex) {
@@ -155,9 +163,27 @@ export class StocksHeatmaps implements OnDestroy {
   }
 
   formatDate(dateStr: string): string {
-    if (!dateStr) return '';
-    const [y, m, d] = dateStr.split('-');
-    return `${d}/${m}/${y.slice(2)}`;
+    return this.dateFormatService.format(dateStr);
+  }
+
+  private updateShareUrl(): void {
+    if (this.isBrowser) {
+      this.shareUrlService.update({
+        title: `Stocks Heatmap - ${this.formatDate(this.heatmapDate())}`,
+        url: `${window.location.origin}/markets/stocks?date=${this.heatmapDate()}`,
+      });
+    }
+  }
+
+  private todayISO(): string {
+    const d = new Date();
+    return d.toISOString().split('T')[0];
+  }
+
+  private startDateFor(endDate: string): string {
+    const d = new Date(endDate);
+    d.setDate(d.getDate() - 7);
+    return d.toISOString().split('T')[0];
   }
 
   private setupResize() {
@@ -190,9 +216,11 @@ export class StocksHeatmaps implements OnDestroy {
 
     this.httpClient.get<HeatmapConstituent[]>(jsonFile).subscribe(constituents => {
       const tickers = constituents.map(c => c.ticker);
+      const endDate = this.heatmapDate();
+      const startDate = this.startDateFor(endDate);
 
       forkJoin({
-        stats: this.statsService.getStatsCloseBulk('quaks_stocks-eod_latest', tickers),
+        stats: this.statsService.getStatsCloseBulk('quaks_stocks-eod_latest', tickers, startDate, endDate),
         caps: this.statsService.getMarketCapsBulk('quaks_stocks-metadata_latest', tickers),
       }).subscribe(({stats, caps}) => {
         const statsMap = new Map<string, StatsClose>();
@@ -217,6 +245,9 @@ export class StocksHeatmaps implements OnDestroy {
           }));
 
         this.allTiles = tiles;
+        const mostRecent = tiles.reduce((latest, t) => t.mostRecentDate > latest ? t.mostRecentDate : latest, '');
+        if (mostRecent) this.heatmapDate.set(mostRecent);
+        this.updateShareUrl();
         this.layoutTreemap(tiles);
         this.loading.set(false);
       });

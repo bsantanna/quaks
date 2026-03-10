@@ -15,11 +15,12 @@ export const DASHBOARDS_IDS = {
 
 export const IFRAME_STYLE = `
   html, body {
+    overflow:hidden;
     background-color: #0B1628;
-    scrollbar-width: none !important;
-    -ms-overflow-style: none !important;
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important;  /* IE and Edge */
   }
-  html::-webkit-scrollbar, body::-webkit-scrollbar {
+  html::-webkit-scrollbar, body::-webkit-scrollbar, {
     display: none !important;
   }
   .euiHorizontalRule {
@@ -32,53 +33,6 @@ export const IFRAME_STYLE = `
     margin-top: 3vh;
   }
 `
-
-export function setupIframeAutoResize(iframe: HTMLIFrameElement, doc: Document): () => void {
-  let timer: ReturnType<typeof setInterval> | null = null;
-  let resizeTimeout: ReturnType<typeof setTimeout> | null = null;
-
-  const measure = () => {
-    let lastHeight = 0;
-    let stableCount = 0;
-    if (timer) clearInterval(timer);
-    timer = setInterval(() => {
-      const height = Math.max(
-        doc.body?.scrollHeight ?? 0,
-        doc.documentElement?.scrollHeight ?? 0
-      );
-      if (height > 100 && height === lastHeight) {
-        stableCount++;
-        if (stableCount >= 3) {
-          if (timer) { clearInterval(timer); timer = null; }
-          iframe.style.height = `${height}px`;
-          if (doc.documentElement) doc.documentElement.style.overflow = 'hidden';
-        }
-      } else {
-        stableCount = 0;
-        lastHeight = height;
-      }
-    }, 500);
-    setTimeout(() => { if (timer) { clearInterval(timer); timer = null; } }, 15000);
-  };
-
-  measure();
-
-  const onResize = () => {
-    if (resizeTimeout) clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-      if (doc.documentElement) doc.documentElement.style.overflow = '';
-      iframe.style.height = '';
-      measure();
-    }, 300);
-  };
-  window.addEventListener('resize', onResize);
-
-  return () => {
-    if (timer) clearInterval(timer);
-    if (resizeTimeout) clearTimeout(resizeTimeout);
-    window.removeEventListener('resize', onResize);
-  };
-}
 
 export const STOCK_MARKETS = [
   'nyse',

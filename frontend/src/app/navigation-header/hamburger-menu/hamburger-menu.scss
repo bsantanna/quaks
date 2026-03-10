@@ -112,34 +112,65 @@
   }
 }
 
-.hamburger-themes {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
+.hamburger-theme-dropdown {
+  position: relative;
 }
 
-.hamburger-theme-option {
+.hamburger-theme-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 8px;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+  background: var(--surface-base);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.hamburger-theme-trigger-label {
+  flex: 1;
+  text-align: left;
+}
+
+.hamburger-theme-chevron {
+  transition: transform 0.15s ease;
+  opacity: 0.6;
+
+  &.open {
+    transform: rotate(180deg);
+  }
+}
+
+.hamburger-theme-list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 4px;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+  background: var(--surface-base);
+  overflow: hidden;
+}
+
+.hamburger-theme-item {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 10px 8px;
-  border: 1px solid transparent;
-  border-radius: var(--radius);
+  border: none;
   background: none;
   color: var(--text-secondary);
   font-family: var(--font-body);
   font-size: 13px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.1s ease;
 
   &:hover {
     background: var(--surface-hover);
     color: var(--text-primary);
-  }
-
-  &.active {
-    border-color: var(--accent-primary);
-    color: var(--accent-primary);
   }
 }
 
@@ -169,4 +200,22 @@
 
 .hamburger-swatch-barbie {
   background: linear-gradient(135deg, #1a0a16 50%, #FF2D8A 50%);
+}
+
+.hamburger-date-select {
+  width: 100%;
+  padding: 10px 8px;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+  background: var(--surface-base);
+  color: var(--text-primary);
+  font-family: var(--font-data);
+  font-size: 13px;
+  cursor: pointer;
+  appearance: auto;
+
+  &:focus {
+    outline: 1px solid var(--accent-primary);
+    outline-offset: -1px;
+  }
 }

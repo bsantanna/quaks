@@ -1,3 +1,21 @@
+.small-screen-message-height {
+  display: none;
+}
+
+@media (max-height: 767px) {
+  .comparison-section {
+    display: none !important;
+  }
+
+  .small-screen-message-width {
+    display: none !important;
+  }
+
+  .small-screen-message-height {
+    display: flex;
+  }
+}
+
 .small-screen-img {
   width: 160px;
   height: auto;

@@ -1,3 +1,7 @@
+:host-context([data-cookie-consent="given"]) {
+  display: none;
+}
+
 .cookie-dialog {
   background: var(--surface-elevated);
   border: 1px solid var(--border-primary);

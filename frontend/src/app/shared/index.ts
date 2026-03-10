@@ -4,6 +4,7 @@ export * from './models/navigation.models';
 
 // Services
 export {CookieService} from './services/cookie.service';
+export {DateFormatService} from './services/date-format.service';
 export {FeedbackMessageService} from './services/feedback-message.service';
 export {IndexedKeyTickerService} from './services/indexed-key-ticker.service';
 export {MarketsNewsService} from './services/markets-news.service';
