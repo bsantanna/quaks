@@ -30,7 +30,7 @@ export class InsightsProfile {
     if (this.isBrowser) {
       const agentName = this.route.snapshot.paramMap.get('agentName');
       if (agentName) {
-        this.httpClient.get<AgentProfile>(`/json/insight_agent_${agentName}.json`)
+        this.httpClient.get<AgentProfile>(`/json/insights-agent_${agentName}.json`)
           .subscribe(data => this.profile.set(data));
       }
     }

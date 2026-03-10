@@ -8,14 +8,20 @@
                 @for (paragraph of agent.bio; track $index) {
                     <p class="profile-bio">{{ paragraph }}</p>
                 }
-                @if (agent.ctaLink) {
-                    <a [href]="agent.ctaLink" class="profile-cta">
-                        @if (agent.ctaIcon) {
-                            <img [src]="agent.ctaIcon" class="mr-2 size-5" aria-hidden="true" alt="" />
-                        }
-                        <span>{{ agent.ctaLabel }}</span>
+                <div class="profile-actions">
+                    <a href="/insights/agents" class="profile-cta">
+                        <img src="/svg/icon-chevron-left.svg" class="mr-2 size-5" aria-hidden="true" alt="" />
+                        <span>Back to Agents</span>
                     </a>
-                }
+                    @if (agent.ctaLink) {
+                        <a [href]="agent.ctaLink" class="profile-cta">
+                            @if (agent.ctaIcon) {
+                                <img [src]="agent.ctaIcon" class="mr-2 size-5" aria-hidden="true" alt="" />
+                            }
+                            <span>{{ agent.ctaLabel }}</span>
+                        </a>
+                    }
+                </div>
             </div>
 
             <aside class="profile-sidebar">

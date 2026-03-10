@@ -1,7 +1,7 @@
 {
   "name": "Quaks Stocks Analyst",
   "role": "AI Stocks Research Analyst",
-  "avatar": "/svg/insight-agent_quaks-stocks-analyst.svg",
+  "avatar": "/svg/insights-agent_quaks-stocks-analyst.svg",
   "ctaLabel": "Stocks Insights",
   "ctaLink": "/insights/stocks",
   "ctaIcon": "/svg/icon-bar-chart-square.svg",

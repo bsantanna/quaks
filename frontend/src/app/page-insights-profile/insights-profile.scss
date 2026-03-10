@@ -40,10 +40,15 @@
   color: var(--text-secondary);
 }
 
+.profile-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 24px;
+}
+
 .profile-cta {
   display: inline-flex;
   align-items: center;
-  margin-top: 24px;
   padding: 8px 12px;
   font-family: var(--font-data);
   font-size: 0.875rem;
