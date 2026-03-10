@@ -2,6 +2,17 @@
 
 <!-- version list -->
 
+## v1.3.30 (2026-03-10)
+
+### Bug Fixes
+
+- Prototypes insights (1)
+  ([`69f75f5`](https://github.com/bsantanna/quaks/commit/69f75f5d17a24d4b8bbd5ed3cd81a010d5418308))
+
+- Prototypes insights (2)
+  ([`6c1c88c`](https://github.com/bsantanna/quaks/commit/6c1c88c8b4a725ef65dd1ebe7fba60d1fadc472f))
+
+
 ## v1.3.29 (2026-03-10)
 
 ### Bug Fixes
