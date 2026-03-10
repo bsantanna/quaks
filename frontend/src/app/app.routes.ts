@@ -12,6 +12,7 @@ import {InsightsStocksReport} from './page-insights-stocks-report/insights-stock
 import {InsightsStocks} from './page-insights-stocks/insights-stocks';
 import {InsightsAgents} from './page-insights-agents/insights-agents';
 import {InsightsProfile} from './page-insights-profile/insights-profile';
+import {InsightsNews} from './page-insights-news/insights-news';
 
 export const routes: Routes = [
   {
@@ -27,6 +28,11 @@ export const routes: Routes = [
         title: 'Insights Agent Profile',
         path: 'profile/:agentName',
         component: InsightsProfile
+      },
+      {
+        title: 'News Insights',
+        path: 'news',
+        component: InsightsNews
       },
       {
         title: 'Stocks Insights',
