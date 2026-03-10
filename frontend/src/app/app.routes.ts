@@ -4,11 +4,13 @@ import {PageTerms} from './page-terms';
 import {PageCookies} from './page-cookies';
 import {MarketsNewsRelated} from './page-markets-news-related';
 import {MarketsPerformanceComparison} from './page-markets-performance-comparison';
-import {InsightsQuaksStocksExpert} from './page-insights-quaks-stocks-expert';
 import {MarketsNewsItem} from './page-markets-news-item';
 import {MarketsStocks} from './page-markets-stocks';
 import {MarketsNews} from './page-markets-news';
 import {MarketsProfile} from './page-markets-profile/markets-profile';
+import {InsightsStocksReport} from './page-insights-stocks-report/insights-stocks-report';
+import {InsightsStocks} from './page-insights-stocks/insights-stocks';
+import {InsightsAgents} from './page-insights-agents/insights-agents';
 
 export const routes: Routes = [
   {
@@ -16,9 +18,19 @@ export const routes: Routes = [
     path: 'insights',
     children: [
       {
-        title: 'AI Stocks Experts',
-        path: 'qse/:keyTicker',
-        component: InsightsQuaksStocksExpert
+        title: 'Insights Agents',
+        path: 'agents',
+        component: InsightsAgents
+      },
+      {
+        title: 'Stocks Insights',
+        path: 'stocks',
+        component: InsightsStocks
+      },
+      {
+        title: 'Stocks Insights Report',
+        path: 'stocks/:keyTicker',
+        component: InsightsStocksReport
       },
     ]
   },

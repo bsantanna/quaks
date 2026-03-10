@@ -1,24 +1,21 @@
 <ul role="list" class="tools-list mt-4 mb-4 overflow-hidden">
 
-    <li class="tools-item relative flex justify-between gap-x-6 px-4 py-5 sm:px-6">
-        <div class="flex min-w-0 gap-x-4">
-            <img src="/svg/quaks-stocks-experts.svg" alt="" class="size-12 flex-none rounded-full" />
+    <li class="tools-item relative flex justify-between gap-x-6 px-2 py-2 sm:px-6">
+        <div class="flex min-w-0 gap-x-4 items-center">
+            <img src="/svg/quaks-stocks-analyst.svg" alt="" class="size-24 flex-none rounded-full" />
             <div class="min-w-0 flex-auto">
-                <a href="/insights/qse/{{keyTicker()}}" target="_blank">
+                <a href="/insights/stocks/{{keyTicker()}}">
                     <p class="tools-title text-sm/6 font-semibold truncate">
                         <span class="absolute inset-x-0 -top-px bottom-0"></span>
-                        Quaks Stocks Experts
+                        Stocks Insights
                     </p>
                     <p class="tools-subtitle mt-1 flex text-xs/5">
-                        <span class="relative truncate hover:underline">Team of AI experts in stocks</span>
+                        <span class="relative truncate hover:underline">AI Report - {{keyTicker()}}</span>
                     </p>
                 </a>
             </div>
         </div>
         <div class="flex shrink-0 items-center gap-x-4">
-            <div class="hidden sm:flex sm:flex-col sm:items-end">
-                <p class="tools-title text-sm/6">{{keyTicker()}} Report</p>
-            </div>
             <img src="/svg/icon-chevron-right.svg" class="tools-chevron size-5 flex-none" aria-hidden="true" alt="" />
         </div>
     </li>

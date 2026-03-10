@@ -1,3 +1,4 @@
+@if (isHeatmapStock()) {
 <div class="grid grid-cols-1 sm:hidden">
     <select aria-label="Select a tab"
             (change)="selectedTab.set($any($event.target).value)"
@@ -23,12 +24,13 @@
         </nav>
     </div>
 </div>
+}
 
 @if (selectedTab() == 'tools') {
     <app-stock-eod-tools
             [keyTicker]="keyTicker()">
     </app-stock-eod-tools>
-} @else if (selectedTab() == 'insights') {
+} @else if (selectedTab() == 'insights' && isHeatmapStock()) {
     <app-stock-eod-insights
             [keyTicker]="keyTicker()">
     </app-stock-eod-insights>
