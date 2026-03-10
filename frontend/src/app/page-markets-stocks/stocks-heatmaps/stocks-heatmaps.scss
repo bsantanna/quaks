@@ -117,3 +117,10 @@
 .variance-negative {
   color: var(--status-negative);
 }
+
+.heatmap-date {
+  font-family: var(--font-data);
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 4px 0;
+}

@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import {MarketsStocksDashboard} from './page-markets-stocks-dashboard';
 import {PageTerms} from './page-terms';
+import {PageCookies} from './page-cookies';
 import {MarketsNewsRelated} from './page-markets-news-related';
 import {MarketsPerformanceComparison} from './page-markets-performance-comparison';
 import {InsightsQuaksStocksExpert} from './page-insights-quaks-stocks-expert';
@@ -66,6 +67,11 @@ export const routes: Routes = [
     title: 'Terms of Service',
     path: 'terms',
     component: PageTerms
+  },
+  {
+    title: 'Cookie Policy',
+    path: 'cookies',
+    component: PageCookies
   },
   { path: '**', redirectTo: '' }
 ];

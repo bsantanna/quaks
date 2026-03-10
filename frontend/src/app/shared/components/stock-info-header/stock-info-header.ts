@@ -6,6 +6,7 @@ import {ShareUrlService} from '../../services/share-url.service';
 import {take} from 'rxjs';
 import {Router} from '@angular/router';
 import {STOCK_EXCHANGE_FLAGS, STOCK_EXCHANGE_CURRENCY, STOCK_EXCHANGE_NAMES} from '../../../constants';
+import {DateFormatService} from '../../services/date-format.service';
 
 @Component({
   selector: 'app-stock-info-header',
@@ -20,6 +21,7 @@ export class StockInfoHeader {
   private readonly shareUrlService = inject(ShareUrlService);
   private readonly indexedKeyTickerService = inject(IndexedKeyTickerService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly dateFormatService = inject(DateFormatService);
   readonly isStocksRoute = this.router.url.includes('/markets/stocks/');
 
   readonly indexName = input.required<string>();
@@ -69,8 +71,7 @@ export class StockInfoHeader {
   }
 
   shortenDate(date: string): string {
-    const [y, m, d] = date.split('-');
-    return `${d}/${m}/${y.slice(2)}`;
+    return this.dateFormatService.format(date);
   }
 
   formatVolume(value: number): string {

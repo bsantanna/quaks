@@ -1,6 +1,6 @@
 <div class="heatmap-wrapper">
   <!-- Controls: Tab pattern matching stock-eod-charts -->
-  <div class="actions-tab-bar mb-3">
+  <div class="actions-tab-bar mb-3 flex items-center justify-between">
     <nav aria-label="Heatmap index" class="-mb-px flex space-x-8">
       <button (click)="switchIndex('sp500')"
               class="actions-tab border-b-2 px-1 py-4 text-sm font-medium whitespace-nowrap cursor-pointer"
@@ -21,10 +21,13 @@
         </button>
       }
     </nav>
+    @if (heatmapDate()) {
+      <span class="heatmap-date">{{ formatDate(heatmapDate()) }}</span>
+    }
   </div>
 
   <!-- Heatmap -->
-  <div #heatmapContainer class="heatmap-container" (mousemove)="onMouseMove($event)">
+  <div #heatmapContainer class="heatmap-container" (mousemove)="hasPointer && onMouseMove($event)">
     @if (loading()) {
       <div class="absolute inset-0 flex items-center justify-center">
         <div class="heatmap-loading text-sm">Loading heatmap data...</div>
@@ -53,8 +56,8 @@
             [style.height.px]="tile.h"
             [style.background-color]="tileColor(tile.percentVariance)"
             [style.font-size.px]="tileFontSize(tile)"
-            (mouseenter)="hoveredTile.set(tile)"
-            (mouseleave)="hoveredTile.set(null)"
+            (mouseenter)="hasPointer && hoveredTile.set(tile)"
+            (mouseleave)="hasPointer && hoveredTile.set(null)"
             (click)="navigateToStock(tile.ticker)">
             @if (showTicker(tile)) {
               <span class="tile-ticker">{{ tile.ticker }}</span>
@@ -68,8 +71,8 @@
         }
       }
 
-      <!-- Tooltip follows mouse cursor -->
-      @if (hoveredTile()) {
+      <!-- Tooltip follows mouse cursor (pointer devices only) -->
+      @if (hasPointer && hoveredTile()) {
         <div class="heatmap-tooltip"
              [style.left.px]="tooltipStyle().left"
              [style.top.px]="tooltipStyle().top">
