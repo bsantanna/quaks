@@ -152,6 +152,43 @@ Every theme MUST define all of these tokens:
 - **Radius**: `0px` for sharp/terminal themes, `8px` for soft/rounded themes. This single value controls ALL borders site-wide.
 - **Fonts**: Import via Google Fonts `@import url(...)` in `styles.scss`. Use monospace for `--font-data` in data-heavy themes.
 
+### Insights Agent Profiles
+
+The Insights section displays AI agent profiles. Each agent has a listing card on the agents page and a dedicated profile page loaded from a static JSON file.
+
+#### Architecture
+
+- **Agents page** (`page-insights-agents/`) — Grid of agent cards linking to `/insights/profile/:agentName`
+- **Profile page** (`page-insights-profile/`) — Reads `:agentName` from the route, fetches `/json/insight_agent_{agentName}.json`, renders a two-column layout (bio + avatar sidebar)
+- **Profile data** — Static JSON files in `frontend/public/json/` prefixed `insight_agent_<agent_name>.json`
+
+#### JSON Schema
+
+```json
+{
+  "name": "Agent Display Name",
+  "role": "Agent Role/Title",
+  "avatar": "/svg/agent-avatar.svg",
+  "ctaLabel": "Button Label",
+  "ctaLink": "/path/to/page",
+  "ctaIcon": "/svg/icon-name.svg",
+  "bio": [
+    "First paragraph of the agent description.",
+    "Second paragraph with more details."
+  ]
+}
+```
+
+Required fields: `name`, `role`, `avatar`, `bio`.
+Optional fields: `ctaLabel`, `ctaLink`, `ctaIcon` — when `ctaLink` is set, a call-to-action button renders below the bio.
+
+#### How to Add a New Agent Profile
+
+1. **Create JSON** — Add `frontend/public/json/insight_agent_<agent-name>.json` with all required fields
+2. **Add avatar** — Place the agent's SVG avatar in `frontend/public/svg/`
+3. **Add card** — Add an `<a class="agent-card">` entry in `insights-agents.html` linking to `/insights/profile/<agent-name>`
+4. **Run tests** — `npx jest` (all tests should pass unchanged)
+
 ### Observability
 
 OpenTelemetry is configured in `app/infrastructure/metrics/tracer.py`. Instrumented: FastAPI, HTTPx, LangChain, SQLAlchemy, Psycopg. Exports via OTLP to a collector that feeds Prometheus (metrics), Loki (logs), Tempo (traces), and Grafana (dashboards). Config in `otel/`.

@@ -39,6 +39,10 @@
         <p class="profile-description">{{ about }}</p>
       }
       <div class="profile-header-links">
+        <a [routerLink]="['/markets/stocks']" class="profile-nav-btn inline-flex items-center px-3 py-2 text-sm font-semibold cursor-pointer">
+          <img src="/svg/icon-chevron-left.svg" class="mr-2 size-5" aria-hidden="true" alt="" />
+          <span>Back to Stocks</span>
+        </a>
         <a [routerLink]="['/markets/stocks', p.key_ticker]" class="profile-nav-btn inline-flex items-center px-3 py-2 text-sm font-semibold cursor-pointer">
           <img src="/svg/icon-bar-chart.svg" class="mr-2 size-5" aria-hidden="true" alt="" />
           <span>Dashboard</span>

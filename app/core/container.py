@@ -19,6 +19,7 @@ from app.infrastructure.metrics.tracer import Tracer
 from app.services.agent_settings import AgentSettingService
 from app.services.agent_types.base import AgentUtils
 from app.services.agent_types.registry import AgentRegistry
+from app.services.agent_types.quaks.insights.news.agent import QuaksNewsAnalystAgent
 from app.services.agent_types.test_echo.test_echo_agent import TestEchoAgent
 from app.services.agents import AgentService
 from app.services.attachments import AttachmentService
@@ -215,9 +216,16 @@ class Container(containers.DeclarativeContainer):
 
     test_echo_agent = providers.Factory(TestEchoAgent, agent_utils=agent_utils)
 
+    quaks_news_analyst_agent = providers.Factory(
+        QuaksNewsAnalystAgent,
+        agent_utils=agent_utils,
+        markets_news_service=markets_news_service,
+    )
+
     agent_registry = providers.Singleton(
         AgentRegistry,
         test_echo_agent=test_echo_agent,
+        quaks_news_analyst_agent=quaks_news_analyst_agent,
     )
 
     tracer = providers.Singleton(Tracer)
