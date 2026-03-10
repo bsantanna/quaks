@@ -2,6 +2,41 @@
 
 <!-- version list -->
 
+## v1.3.29 (2026-03-10)
+
+### Bug Fixes
+
+- Footer cookie page ([#71](https://github.com/bsantanna/quaks/pull/71),
+  [`85df625`](https://github.com/bsantanna/quaks/commit/85df62592fe4d25dd9e2a0705bb7975232888e16))
+
+- Layout adjusts (10) ([#71](https://github.com/bsantanna/quaks/pull/71),
+  [`85df625`](https://github.com/bsantanna/quaks/commit/85df62592fe4d25dd9e2a0705bb7975232888e16))
+
+- Layout adjusts (11) ([#71](https://github.com/bsantanna/quaks/pull/71),
+  [`85df625`](https://github.com/bsantanna/quaks/commit/85df62592fe4d25dd9e2a0705bb7975232888e16))
+
+- Layout adjusts (12) ([#71](https://github.com/bsantanna/quaks/pull/71),
+  [`85df625`](https://github.com/bsantanna/quaks/commit/85df62592fe4d25dd9e2a0705bb7975232888e16))
+
+- Layout adjusts (13) ([#71](https://github.com/bsantanna/quaks/pull/71),
+  [`85df625`](https://github.com/bsantanna/quaks/commit/85df62592fe4d25dd9e2a0705bb7975232888e16))
+
+- Layout adjusts (14) ([#71](https://github.com/bsantanna/quaks/pull/71),
+  [`85df625`](https://github.com/bsantanna/quaks/commit/85df62592fe4d25dd9e2a0705bb7975232888e16))
+
+- Layout adjusts (6) ([#71](https://github.com/bsantanna/quaks/pull/71),
+  [`85df625`](https://github.com/bsantanna/quaks/commit/85df62592fe4d25dd9e2a0705bb7975232888e16))
+
+- Layout adjusts (7) ([#71](https://github.com/bsantanna/quaks/pull/71),
+  [`85df625`](https://github.com/bsantanna/quaks/commit/85df62592fe4d25dd9e2a0705bb7975232888e16))
+
+- Layout adjusts (8) ([#71](https://github.com/bsantanna/quaks/pull/71),
+  [`85df625`](https://github.com/bsantanna/quaks/commit/85df62592fe4d25dd9e2a0705bb7975232888e16))
+
+- Layout adjusts (9) ([#71](https://github.com/bsantanna/quaks/pull/71),
+  [`85df625`](https://github.com/bsantanna/quaks/commit/85df62592fe4d25dd9e2a0705bb7975232888e16))
+
+
 ## v1.3.28 (2026-03-09)
 
 ### Bug Fixes
