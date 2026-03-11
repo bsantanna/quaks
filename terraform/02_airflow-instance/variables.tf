@@ -56,3 +56,33 @@ variable "pg_image" {
   default     = "bsantanna/cloudnative-pg-vector:17.4"
   description = "PostgreSQL image with pgvector (adjust if needed)"
 }
+
+variable "quaks_fqdn" {
+  description = "Quaks backend API URL used by DAGs"
+  type        = string
+  sensitive   = true
+}
+
+variable "auth_service_account_username" {
+  description = "Quaks service account username for DAG authentication"
+  type        = string
+  sensitive   = true
+}
+
+variable "auth_service_account_secret" {
+  description = "Quaks service account password for DAG authentication"
+  type        = string
+  sensitive   = true
+}
+
+variable "quaks_integration_type" {
+  description = "LLM integration type used by insights DAGs (e.g. xai_api_v1, openai_api_v1)"
+  type        = string
+  default     = "xai_api_v1"
+}
+
+variable "quaks_integration_api_key" {
+  description = "LLM provider API key used by insights DAGs"
+  type        = string
+  sensitive   = true
+}

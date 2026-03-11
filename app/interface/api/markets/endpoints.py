@@ -13,6 +13,9 @@ from app.interface.api.markets.schema import (
     CompanyProfile,
     IndicatorRequest,
     IndicatorResponse,
+    InsightsNewsItem,
+    InsightsNewsList,
+    InsightsNewsListRequest,
     MarketCapItem,
     MarketCapsBulkResponse,
     NewsItem,
@@ -22,6 +25,7 @@ from app.interface.api.markets.schema import (
     StatsCloseBulkResponse,
     StatsCloseRequest,
 )
+from app.services.markets_insights import MarketsInsightsService
 from app.services.markets_news import MarketsNewsService
 from app.services.markets_stats import MarketsStatsService
 
@@ -347,6 +351,62 @@ async def get_news(
 
     return NewsList(
         items=news_items,
+        cursor=sort,
+    )
+
+
+@router.get(
+    path="/insights_news/{index_name}",
+    response_model=InsightsNewsList,
+    operation_id="get_insights_news",
+    summary="Get AI-generated investor briefings",
+    description="""
+    Returns paginated AI-generated investor briefings (news insights)
+    from the specified Elasticsearch index.
+
+    Parameters:
+    - `index_name` (path): The Elasticsearch index to query (e.g. `insights-news`).
+    - `size` (query): Number of briefings to return per page.
+    - `id` (query, optional): Filter by specific document ID to load a single briefing.
+    - `date_from` (query, optional): Filter briefings from this date (yyyy-mm-dd).
+    - `cursor` (query, optional): Base64-encoded pagination cursor from a previous response.
+    - `include_report_html` (query, optional): Include the full HTML report content.
+    """,
+    response_description="Paginated list of investor briefings with cursor for next page",
+    dependencies=[cache_control(3600)],
+)
+@inject
+async def get_insights_news(
+    index_name: str,
+    markets_insights_service: Annotated[
+        MarketsInsightsService, Depends(Provide[Container.markets_insights_service])
+    ],
+    request: Annotated[InsightsNewsListRequest, Depends()],
+):
+    _validate_index_name(index_name)
+    results, sort = await markets_insights_service.get_insights_news(
+        index_name=index_name,
+        id=request.id,
+        date_from=request.date_from,
+        size=request.size,
+        cursor=request.cursor,
+        include_report_html=request.include_report_html,
+    )
+
+    items = []
+    for item in results:
+        source = item.get("_source")
+        items.append(
+            InsightsNewsItem(
+                id=item.get("_id"),
+                date=source.get("date_reference"),
+                executive_summary=source.get("text_executive_summary", ""),
+                report_html=source.get("text_report_html"),
+            )
+        )
+
+    return InsightsNewsList(
+        items=items,
         cursor=sort,
     )
 
