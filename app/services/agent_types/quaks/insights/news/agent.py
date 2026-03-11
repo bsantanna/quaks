@@ -25,7 +25,6 @@ from app.services.agent_types.quaks.insights.news.prompts import (
     AGGREGATOR_SYSTEM_PROMPT,
     REPORTER_SYSTEM_PROMPT,
 )
-from app.services.agent_types.quaks.insights.news.schema import CoordinatorRouter
 from app.services.agent_types.quaks.insights.news.state import NewsAnalystState
 from app.services.markets_news import MarketsNewsService
 from app.services.tasks import TaskProgress
@@ -169,7 +168,6 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
         agent_id = state["agent_id"]
         schema = state["schema"]
         query = state["query"]
-        coordinator_system_prompt = state["coordinator_system_prompt"]
 
         self.logger.info(f"Agent[{agent_id}] -> Coordinator -> Query -> {query}")
         self.task_notification_service.publish_update(
@@ -179,22 +177,20 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
                 message_content=f"Analyzing query: {query}",
             )
         )
-        chat_model = self.get_chat_model(agent_id, schema)
-        chat_model_with_structured_output = chat_model.with_structured_output(
-            CoordinatorRouter
-        )
-        response = self.get_coordinator_chain(
-            chat_model_with_structured_output, coordinator_system_prompt
-        ).invoke({"query": query})
-        self.logger.info(f"Agent[{agent_id}] -> Coordinator -> Response -> {response}")
 
-        if response["next"] == END:
-            return Command(
-                goto=response["next"],
-                update={"messages": [AIMessage(content=response["generated"])]},
-            )
-        else:
+        if query.strip() == "BATCH_ETL":
+            self.logger.info(f"Agent[{agent_id}] -> Coordinator -> BATCH_ETL -> aggregator")
             return Command(goto="aggregator")
+
+        # QA mode: answer the user's question directly
+        self.logger.info(f"Agent[{agent_id}] -> Coordinator -> QA mode")
+        response = self._invoke_chain(
+            agent_id, schema, state["coordinator_system_prompt"], state
+        )
+        return Command(
+            goto=END,
+            update={"messages": [AIMessage(content=response.content)]},
+        )
 
     def get_aggregator(self, state: NewsAnalystState) -> Command[Literal["reporter"]]:
         agent_id = state["agent_id"]
