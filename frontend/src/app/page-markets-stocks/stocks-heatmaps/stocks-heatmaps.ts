@@ -89,8 +89,6 @@ export class StocksHeatmaps implements OnDestroy {
 
   constructor() {
     if (this.isBrowser) {
-      const dateParam = this.route.snapshot.queryParamMap.get('date');
-      this.heatmapDate.set(dateParam || this.todayISO());
       this.loadData();
       this.setupResize();
     }
@@ -216,8 +214,9 @@ export class StocksHeatmaps implements OnDestroy {
 
     this.httpClient.get<HeatmapConstituent[]>(jsonFile).subscribe(constituents => {
       const tickers = constituents.map(c => c.ticker);
-      const endDate = this.heatmapDate();
-      const startDate = this.startDateFor(endDate);
+      const dateParam = this.route.snapshot.queryParamMap.get('date');
+      const endDate = dateParam || undefined;
+      const startDate = endDate ? this.startDateFor(endDate) : undefined;
 
       forkJoin({
         stats: this.statsService.getStatsCloseBulk('quaks_stocks-eod_latest', tickers, startDate, endDate),

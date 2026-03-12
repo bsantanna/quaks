@@ -1,0 +1,48 @@
+{
+  "size": {{size}},
+  {{#search_after}}
+  "search_after": {{#toJson}}search_after{{/toJson}},
+  {{/search_after}}
+  {{#id}}
+  "query": {
+    "ids": {
+      "values": ["{{id}}"]
+    }
+  }
+  {{/id}}
+  {{^id}}
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match_all": {}
+        }
+      ]
+      {{#date_from}}
+      ,"filter": [
+        {
+          "range": {
+            "date_reference": {
+              "gte": "{{date_from}}"
+            }
+          }
+        }
+      ]
+      {{/date_from}}
+    }
+  }
+  {{/id}},
+  "_source": [
+    "date_reference", "text_executive_summary"
+    {{#include_report_html}},
+    "text_report_html"
+    {{/include_report_html}}
+  ],
+  "sort": [
+    {
+      "date_reference": {
+        "order": "desc"
+      }
+    }
+  ]
+}

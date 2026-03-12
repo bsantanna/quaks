@@ -11,6 +11,7 @@ interface AgentProfile {
   ctaLabel?: string;
   ctaLink?: string;
   ctaIcon?: string;
+  referenceNotebook?: string;
 }
 
 @Component({

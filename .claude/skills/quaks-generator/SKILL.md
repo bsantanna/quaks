@@ -205,3 +205,88 @@ See agent-lab upstream `app/services/agent_types/coordinator_planner_supervisor/
 - Uses all four abstract methods with real LLM-based routing logic
 - Supervisor node decides which worker to invoke next via structured output
 - Supports conditional branching and iterative refinement loops
+
+## ETL Testing Notebooks
+
+When an agent is designed for batch/ETL use cases (e.g., triggered by Airflow DAGs), **always create a companion Jupyter notebook** in `notebooks/` that exercises the full ETL flow via HTTP calls. This allows fast local testing without deploying to Airflow.
+
+### Why
+
+- Airflow DAGs run as Kubernetes tasks — testing requires a full release cycle
+- Notebooks reproduce the exact same HTTP flow the DAG performs
+- Each step is in its own cell for incremental execution and debugging
+- The report can be previewed inline before committing to Elasticsearch
+
+### Notebook Structure
+
+Follow this cell layout (each step is a separate code cell with a markdown header):
+
+1. **Setup** — Load env vars from `.env`, configure endpoints and constants
+2. **Authenticate** — `POST /auth/login` with service account credentials
+3. **Create Resources** — Create integration → language model → agent via API
+4. **Send Message** — `POST /messages/post` with the ETL trigger message (e.g., `BATCH_ETL`)
+5. **Preview** — Render the result inline (`display(HTML(...))` or `display(Markdown(...))`)
+6. **Index to Elasticsearch** — Bulk index the result into the target ES index
+
+### Naming Convention
+
+`notebooks/{sequence}_{agent_description}_etl.ipynb`
+
+Example: `notebooks/14_insights_quaks_news_analyst_etl.ipynb`
+
+### Required Environment Variables
+
+Document these in the notebook's opening markdown cell:
+
+| Variable | Purpose |
+|----------|---------|
+| `QUAKS_API_URL` | Backend endpoint (e.g., `http://localhost:18000`) |
+| `QUAKS_SERVICE_ACCOUNT_USERNAME` | Service account username |
+| `QUAKS_SERVICE_ACCOUNT_SECRET` | Service account password |
+| `QUAKS_INTEGRATION_TYPE` | LLM provider type (default: `xai_api_v1`) |
+| `QUAKS_INTEGRATION_API_KEY` | LLM provider API key |
+| `QUAKS_LANGUAGE_MODEL_TAG` | Model tag (default: agent-specific) |
+| `ELASTICSEARCH_URL` | Elasticsearch endpoint |
+| `ELASTICSEARCH_API_KEY` | Elasticsearch API key |
+
+### Integration Endpoint Mapping
+
+Use a constant dict to derive the API endpoint from the integration type:
+
+```python
+INTEGRATION_ENDPOINTS = {
+    "xai_api_v1": "https://api.x.ai/v1/",
+    "openai_api_v1": "https://api.openai.com/v1/",
+    "anthropic_api_v1": "https://api.anthropic.com",
+}
+```
+
+### API Flow Pattern
+
+The notebook must replicate the exact HTTP calls the DAG makes:
+
+```python
+# 1. Login
+login_response = requests.post(f"{API_URL}/auth/login", json={"username": ..., "password": ...})
+access_token = login_response.json()["access_token"]
+headers = {"Authorization": f"Bearer {access_token}"}
+
+# 2. Create integration
+requests.post(f"{API_URL}/integrations/create", json={...}, headers=headers)
+
+# 3. Create language model
+requests.post(f"{API_URL}/llms/create", json={"integration_id": ..., "language_model_tag": ...}, headers=headers)
+
+# 4. Create agent
+requests.post(f"{API_URL}/agents/create", json={"agent_name": ..., "agent_type": ..., "language_model_id": ...}, headers=headers)
+
+# 5. Send ETL message
+requests.post(f"{API_URL}/messages/post", json={"agent_id": ..., "message_role": "human", "message_content": "BATCH_ETL"}, headers=headers, timeout=600)
+
+# 6. Index result into ES
+requests.post(f"{ES_URL}/_bulk", headers={"Authorization": f"ApiKey {ES_API_KEY}", ...}, data=bulk_body)
+```
+
+### Reference Implementation
+
+See `notebooks/14_insights_quaks_news_analyst_etl.ipynb` for a complete example that tests the `quaks_insights_news` Airflow DAG.
