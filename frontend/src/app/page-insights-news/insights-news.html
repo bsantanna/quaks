@@ -1,4 +1,4 @@
-<div class="insights-news-container container mx-auto px-4 py-8 max-w-4xl">
+<div class="insights-news-container container mx-auto sm:px-4 py-8 max-w-4xl">
 
   @if (!loading() && items().length === 0) {
     <div class="empty-state text-center py-16">
@@ -9,20 +9,53 @@
   <div class="briefings-list">
     @for (item of items(); track item.id) {
       <div class="briefing-entry">
-            <button class="briefing-card relative text-left w-full" (click)="toggleReport(item)"
-                    [class.briefing-card-expanded]="expandedId() === item.id">
+            <div class="briefing-card relative text-left w-full"
+                 [class.briefing-card-expanded]="expandedId() === item.id">
               <div class="briefing-card-top flex justify-between items-start">
                 <div class="flex-1 min-w-0">
                   <p class="briefing-summary-text text-lg">{{ item.executive_summary }}</p>
-                  <span class="briefing-expand-hint text-xs mt-2 inline-block">
-                    @if (loadingReport() === item.id) {
-                      Loading report…
-                    } @else if (expandedId() === item.id) {
-                      Collapse
-                    } @else {
-                      Read full report
-                    }
-                  </span>
+                  <div class="flex items-center gap-2 mt-2">
+                    <button class="briefing-toggle-btn inline-flex items-center px-3 py-2 text-sm font-semibold"
+                            (click)="toggleReport(item)">
+                      @if (loadingReport() === item.id) {
+                        Loading…
+                      } @else if (expandedId() === item.id) {
+                        <img src="/svg/chevron-up.svg" class="mr-2 size-5" aria-hidden="true" alt="" />
+                        Less
+                      } @else {
+                        <img src="/svg/chevron-down.svg" class="mr-2 size-5" aria-hidden="true" alt="" />
+                        More
+                      }
+                    </button>
+                    <div class="briefing-share relative">
+                      <button class="briefing-toggle-btn inline-flex items-center px-3 py-2 text-sm font-semibold"
+                              (click)="toggleShare(item.id)">
+                        <img src="/svg/icon-share.svg" class="mr-2 size-5" aria-hidden="true" alt="" />
+                        Share
+                      </button>
+                      @if (shareOpenId() === item.id) {
+                        <div class="share-dropdown">
+                          <ul class="py-1">
+                            <li><button (click)="share('x', item)" class="share-item"><span class="ml-2">X</span></button></li>
+                            <div aria-hidden="true" class="share-divider"></div>
+                            <li><button (click)="share('facebook', item)" class="share-item"><span class="ml-2">Facebook</span></button></li>
+                            <div aria-hidden="true" class="share-divider"></div>
+                            <li><button (click)="share('whatsapp', item)" class="share-item"><span class="ml-2">WhatsApp</span></button></li>
+                            <div aria-hidden="true" class="share-divider"></div>
+                            <li><button (click)="share('threads', item)" class="share-item"><span class="ml-2">Threads</span></button></li>
+                            <div aria-hidden="true" class="share-divider"></div>
+                            <li><button (click)="share('linkedin', item)" class="share-item"><span class="ml-2">LinkedIn</span></button></li>
+                            <div aria-hidden="true" class="share-divider"></div>
+                            <li><button (click)="share('reddit', item)" class="share-item"><span class="ml-2">Reddit</span></button></li>
+                            <div aria-hidden="true" class="share-divider"></div>
+                            <li><button (click)="share('copy', item)" class="share-item"><span class="ml-2">Copy link</span></button></li>
+                            <div aria-hidden="true" class="share-divider"></div>
+                            <li><button (click)="share('email', item)" class="share-item"><span class="ml-2">E-mail link</span></button></li>
+                          </ul>
+                        </div>
+                      }
+                    </div>
+                  </div>
                 </div>
                 <div class="briefing-avatar-col flex flex-col items-center ml-4 flex-shrink-0">
                   <img src="/svg/insights-agent_quaks-news-analyst.svg"
@@ -32,7 +65,7 @@
                   <time class="briefing-date-label">{{ formatDate(item.date) }}</time>
                 </div>
               </div>
-            </button>
+            </div>
 
             @if (expandedId() === item.id && item.report_html) {
               <div class="briefing-report" [innerHTML]="item.report_html"></div>
