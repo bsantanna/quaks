@@ -2,7 +2,7 @@ import {Component, computed, effect, inject, OnDestroy, PLATFORM_ID, signal, Wri
 import {isPlatformBrowser} from '@angular/common';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {toSignal} from '@angular/core/rxjs-interop';
-import {ShareUrlService, SeoService, DateFormatService} from '../shared';
+import {ShareUrlService, SeoService, DateFormatService, SmallScreenMessage} from '../shared';
 import {StockComparisonAutocomplete} from './stock-comparison-autocomplete/stock-comparison-autocomplete';
 import {StockComparisonCharts} from './stock-comparison-charts/stock-comparison-charts';
 import {StockComparisonTime} from './stock-comparison-time/stock-comparison-time';
@@ -10,7 +10,7 @@ import {environment} from '../../environments/environment';
 
 @Component({
   selector: 'app-markets-performance-comparison',
-  imports: [StockComparisonAutocomplete, StockComparisonCharts, StockComparisonTime],
+  imports: [StockComparisonAutocomplete, StockComparisonCharts, StockComparisonTime, SmallScreenMessage],
   templateUrl: './markets-performance-comparison.html',
   styleUrl: './markets-performance-comparison.scss',
 })

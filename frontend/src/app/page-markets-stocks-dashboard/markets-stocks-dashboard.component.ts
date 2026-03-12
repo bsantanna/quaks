@@ -2,14 +2,14 @@ import {Component, computed, effect, inject, OnDestroy, PLATFORM_ID, signal, Wri
 import {isPlatformBrowser} from '@angular/common';
 import {ActivatedRoute, ParamMap, Params} from '@angular/router';
 import {toSignal} from '@angular/core/rxjs-interop';
-import {StockInfoHeader, ShareUrlService, IndexedKeyTickerService, StockEodActions, SeoService} from '../shared';
+import {StockInfoHeader, ShareUrlService, IndexedKeyTickerService, StockEodActions, SmallScreenMessage, SeoService} from '../shared';
 import {StockEodCharts} from './stock-eod-charts/stock-eod-charts';
 import {environment} from '../../environments/environment';
 
 
 @Component({
   selector: 'app-markets-stocks-eod-dashboard',
-  imports: [StockInfoHeader, StockEodActions, StockEodCharts],
+  imports: [StockInfoHeader, StockEodActions, StockEodCharts, SmallScreenMessage],
   templateUrl: './markets-stocks-dashboard.component.html',
   styleUrl: './markets-stocks-dashboard.component.scss',
 })

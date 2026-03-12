@@ -18,21 +18,13 @@
         </app-stock-eod-actions>
     </div>
 
-    <!-- Small screen fallback (width < 768px) -->
-    <div class="small-screen-message-width md:hidden flex flex-col items-center justify-center py-12 px-6">
-        <img src="/svg/error-resolution-small.svg" alt="Screen too small" class="small-screen-img" />
-        <p class="small-screen-title">Screen too small</p>
-        <p class="small-screen-notice">Charts require a larger screen. Please use a tablet in landscape or desktop.</p>
-    </div>
-    <!-- Small screen fallback (height < 768px) -->
-    <div class="small-screen-message-height flex flex-col items-center justify-center py-12 px-6">
-        <img src="/svg/error-resolution-small.svg" alt="Screen too small" class="small-screen-img" />
-        <p class="small-screen-title">Screen too small</p>
-        <p class="small-screen-notice">Charts require a taller screen. Please rotate your device or use a larger display.</p>
+    <!-- Small screen fallback (below lg) -->
+    <div class="lg:hidden">
+        <app-small-screen-message notice="Charts require a larger screen. Please use a tablet or desktop."></app-small-screen-message>
     </div>
 
-    <!-- Charts (visible at md width and above, and height >= 768px) -->
-    <div class="hidden md:block lg:col-span-2 lg:row-start-1 charts-section">
+    <!-- Charts (visible at lg and above) -->
+    <div class="hidden lg:block lg:col-span-2 lg:row-start-1">
         @if (isProduction) {
             <app-stock-eod-charts
                     [keyTicker]="keyTicker()"
