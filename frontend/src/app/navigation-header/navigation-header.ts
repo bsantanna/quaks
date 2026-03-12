@@ -5,7 +5,6 @@ import {NewsAutocompleteComponent} from './news-autocomplete/news-autocomplete';
 import {IndexedKeyTicker} from '../shared';
 import {STOCK_MARKETS} from '../constants';
 import {ShareButtonComponent} from './share-button/share-button';
-import {NavButtonComponent} from './nav-button/nav-button';
 import {InsightsDropdownComponent} from './insights-dropdown/insights-dropdown';
 import {MarketsDropdownComponent} from './markets-dropdown/markets-dropdown';
 import {FeedbackMessageComponent} from './feedback-message/feedback-message';
@@ -17,7 +16,7 @@ import {filter, map, startWith} from 'rxjs';
 
 @Component({
   selector: 'app-navigation-header',
-  imports: [StockAutocompleteComponent, NewsAutocompleteComponent, ShareButtonComponent, NavButtonComponent, FeedbackMessageComponent, SettingsDropdownComponent, HamburgerMenuComponent, InsightsDropdownComponent, MarketsDropdownComponent],
+  imports: [StockAutocompleteComponent, NewsAutocompleteComponent, ShareButtonComponent, FeedbackMessageComponent, SettingsDropdownComponent, HamburgerMenuComponent, InsightsDropdownComponent, MarketsDropdownComponent],
   templateUrl: './navigation-header.html',
   styleUrl: './navigation-header.scss',
 })

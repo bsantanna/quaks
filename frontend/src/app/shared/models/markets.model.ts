@@ -113,3 +113,15 @@ export interface CompanyProfile {
 export interface StatsCloseBulkResponse {
   items: StatsClose[]
 }
+
+export interface InsightsNewsItem {
+  id: string
+  date: string
+  executive_summary: string
+  report_html: string | null
+}
+
+export interface InsightsNewsList {
+  items: InsightsNewsItem[]
+  cursor: string | null
+}

@@ -114,11 +114,16 @@ resource "kubernetes_secret_v1" "quaks_dags_secrets" {
   }
 
   data = {
-    ELASTICSEARCH_URL     = var.es_url
-    ELASTICSEARCH_API_KEY = data.kubernetes_secret_v1.quaks_elastic_api_secret.data["api-key"]
-    "APCA-API-KEY-ID"     = var.alpaca_api_key_id
-    "APCA-API-SECRET-KEY" = var.alpaca_api_secret_key
-    FINNHUB_API_KEY       = var.finnhub_api_key
+    ELASTICSEARCH_URL              = var.es_url
+    ELASTICSEARCH_API_KEY          = data.kubernetes_secret_v1.quaks_elastic_api_secret.data["api-key"]
+    "APCA-API-KEY-ID"              = var.alpaca_api_key_id
+    "APCA-API-SECRET-KEY"          = var.alpaca_api_secret_key
+    FINNHUB_API_KEY                = var.finnhub_api_key
+    QUAKS_API_URL                  = "https://${var.quaks_fqdn}"
+    QUAKS_SERVICE_ACCOUNT_USERNAME = var.auth_service_account_username
+    QUAKS_SERVICE_ACCOUNT_SECRET   = var.auth_service_account_secret
+    QUAKS_INTEGRATION_TYPE         = var.quaks_integration_type
+    QUAKS_INTEGRATION_API_KEY      = var.quaks_integration_api_key
   }
 
   type = "Opaque"

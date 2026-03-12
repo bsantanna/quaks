@@ -67,6 +67,38 @@ class NewsListRequest(BaseModel):
         return v
 
 
+class InsightsNewsItem(BaseModel):
+    id: str
+    date: str
+    executive_summary: str
+    report_html: Optional[str]
+
+
+class InsightsNewsList(BaseModel):
+    items: list[InsightsNewsItem]
+    cursor: Optional[str] = None
+
+
+class InsightsNewsListRequest(BaseModel):
+    size: int
+    id: Optional[str] = None
+    date_from: Optional[str] = None
+    cursor: Optional[str] = None
+    include_report_html: Optional[bool] = None
+
+    @field_validator("id", "date_from", "cursor")
+    @classmethod
+    def validate_empty_format(cls, v: str) -> Optional[str]:
+        if v == "":
+            return None
+        return v
+
+    @field_validator("date_from")
+    @classmethod
+    def validate_date_format(cls, v: Optional[str]) -> Optional[str]:
+        return _validate_date_format(v)
+
+
 class CompanyProfile(BaseModel):
     key_ticker: str
     asset_type: Optional[str] = None

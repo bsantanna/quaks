@@ -5,6 +5,7 @@
   "ctaLabel": "Stocks Insights",
   "ctaLink": "/insights/stocks",
   "ctaIcon": "/svg/icon-bar-chart-square.svg",
+  "referenceNotebook": "",
   "bio": [
     "Quaks Stocks Analyst is an AI-powered research agent specialized in equity analysis across US stock markets.",
     "The agent covers S&P 500 and NASDAQ 100 constituents, providing data-driven insights based on end-of-day price data, financial statements, insider trades, and estimated earnings.",

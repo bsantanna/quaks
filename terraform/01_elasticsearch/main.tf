@@ -46,6 +46,7 @@ locals {
     get_stats_close_bulk_template = "get_stats_close_bulk.mustache"
     get_metadata_market_caps_template = "get_metadata_market_caps.mustache"
     get_metadata_profile_template = "get_metadata_profile.mustache"
+    get_insights_news_template = "get_insights_news.mustache"
   }
 }
 
@@ -550,6 +551,41 @@ resource "elasticstack_elasticsearch_index" "stocks_metadata_amex" {
   }]
   deletion_protection = false
   depends_on = [elasticstack_elasticsearch_index_template.quaks_stocks-metadata_template]
+}
+
+resource "elasticstack_elasticsearch_index_template" "quaks_insights-news_template" {
+  name = "quaks_insights-news_template"
+
+  index_patterns = ["quaks_insights-news_*"]
+
+  template {
+    mappings = jsonencode({
+      dynamic = "strict"
+      properties = {
+        date_reference         = { type = "date", format = "yyyy-MM-dd" }
+        text_executive_summary = { type = "text" }
+        text_report_html       = { type = "text" }
+      }
+    })
+
+    settings = jsonencode({
+      number_of_shards   = 1
+      number_of_replicas = 1
+
+      lifecycle = {
+        name = elasticstack_elasticsearch_index_lifecycle.quaks_policy.name
+      }
+    })
+  }
+}
+
+resource "elasticstack_elasticsearch_index" "insights_news_usa" {
+  name = "quaks_insights-news_usa"
+  alias = [{
+    name = "quaks_insights-news_latest"
+  }]
+  deletion_protection = false
+  depends_on = [elasticstack_elasticsearch_index_template.quaks_insights-news_template]
 }
 
 resource "elasticstack_elasticsearch_security_api_key" "quaks_api_key" {

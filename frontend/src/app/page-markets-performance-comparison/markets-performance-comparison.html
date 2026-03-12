@@ -1,16 +1,9 @@
-<!-- Small screen fallback (visible below md width or below 800px height) -->
-<div class="small-screen-message-width flex flex-col items-center justify-center py-12 px-6 md:hidden">
-  <img src="/svg/error-resolution-small.svg" alt="Screen too small" class="small-screen-img" />
-  <p class="small-screen-title">Screen too small</p>
-  <p class="small-screen-notice">Performance comparison requires a larger screen. Please use a tablet in landscape or desktop.</p>
-</div>
-<div class="small-screen-message-height flex flex-col items-center justify-center py-12 px-6">
-  <img src="/svg/error-resolution-small.svg" alt="Screen too small" class="small-screen-img" />
-  <p class="small-screen-title">Screen too small</p>
-  <p class="small-screen-notice">Performance comparison requires a taller screen. Please rotate your device or use a larger display.</p>
+<!-- Small screen fallback (below lg) -->
+<div class="lg:hidden">
+  <app-small-screen-message notice="Performance comparison requires a larger screen. Please use a tablet or desktop."></app-small-screen-message>
 </div>
 
-<div class="hidden md:block comparison-section">
+<div class="hidden lg:block">
   <div class="flex gap-4 py-4">
     <div class="flex-1 min-w-0">
       <app-stock-comparison-autocomplete
