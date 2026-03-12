@@ -2,6 +2,32 @@
 
 <!-- version list -->
 
+## v1.3.32 (2026-03-12)
+
+### Bug Fixes
+
+- Insights 2 ([#73](https://github.com/bsantanna/quaks/pull/73),
+  [`a872c93`](https://github.com/bsantanna/quaks/commit/a872c93c884e6d9bd199e848d6e96722830aeda6))
+
+- Prototypes insights (13) ([#73](https://github.com/bsantanna/quaks/pull/73),
+  [`a872c93`](https://github.com/bsantanna/quaks/commit/a872c93c884e6d9bd199e848d6e96722830aeda6))
+
+- Prototypes insights (14) ([#73](https://github.com/bsantanna/quaks/pull/73),
+  [`a872c93`](https://github.com/bsantanna/quaks/commit/a872c93c884e6d9bd199e848d6e96722830aeda6))
+
+- Prototypes insights (15) ([#73](https://github.com/bsantanna/quaks/pull/73),
+  [`a872c93`](https://github.com/bsantanna/quaks/commit/a872c93c884e6d9bd199e848d6e96722830aeda6))
+
+- Prototypes insights (16) ([#73](https://github.com/bsantanna/quaks/pull/73),
+  [`a872c93`](https://github.com/bsantanna/quaks/commit/a872c93c884e6d9bd199e848d6e96722830aeda6))
+
+- Prototypes insights (17) ([#73](https://github.com/bsantanna/quaks/pull/73),
+  [`a872c93`](https://github.com/bsantanna/quaks/commit/a872c93c884e6d9bd199e848d6e96722830aeda6))
+
+- Prototypes insights (18) ([#73](https://github.com/bsantanna/quaks/pull/73),
+  [`a872c93`](https://github.com/bsantanna/quaks/commit/a872c93c884e6d9bd199e848d6e96722830aeda6))
+
+
 ## v1.3.31 (2026-03-10)
 
 ### Bug Fixes
