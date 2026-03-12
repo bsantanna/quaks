@@ -138,7 +138,7 @@ async def get_stats_close(
     - `key_ticker` (path): The ticker symbol (e.g. `AAPL`, `MSFT`).
     """,
     response_description="Company profile metadata",
-    dependencies=[cache_control(86400)],
+    dependencies=[cache_control(3600)],
 )
 @inject
 async def get_company_profile(
@@ -174,7 +174,7 @@ async def get_company_profile(
     - `end_date` (query, optional): End of the date range in `yyyy-mm-dd` format. Defaults to today.
     """,
     response_description="Bulk close price statistics",
-    dependencies=[cache_control(86400)],
+    dependencies=[cache_control(3600)],
 )
 @inject
 async def get_stats_close_bulk(
@@ -227,7 +227,7 @@ async def get_stats_close_bulk(
     - `key_tickers` (query): Comma-separated list of ticker symbols (e.g. `AAPL,MSFT`).
     """,
     response_description="Bulk market capitalization data",
-    dependencies=[cache_control(86400)],
+    dependencies=[cache_control(3600)],
 )
 @inject
 async def get_market_caps_bulk(

@@ -1,1 +1,65 @@
-<p>insights-news works!</p>
+<div class="insights-news-container container mx-auto px-4 py-8 max-w-4xl">
+
+  @if (!loading() && items().length === 0) {
+    <div class="empty-state text-center py-16">
+      <p class="empty-text">No briefings available yet.</p>
+    </div>
+  }
+
+  <div class="briefings-list">
+    @for (item of items(); track item.id) {
+      <div class="briefing-entry">
+            <button class="briefing-card relative text-left w-full" (click)="toggleReport(item)"
+                    [class.briefing-card-expanded]="expandedId() === item.id">
+              <div class="briefing-card-top flex justify-between items-start">
+                <div class="flex-1 min-w-0">
+                  <p class="briefing-summary-text text-lg">{{ item.executive_summary }}</p>
+                  <span class="briefing-expand-hint text-xs mt-2 inline-block">
+                    @if (loadingReport() === item.id) {
+                      Loading report…
+                    } @else if (expandedId() === item.id) {
+                      Collapse
+                    } @else {
+                      Read full report
+                    }
+                  </span>
+                </div>
+                <div class="briefing-avatar-col flex flex-col items-center ml-4 flex-shrink-0">
+                  <img src="/svg/insights-agent_quaks-news-analyst.svg"
+                       alt="News Analyst"
+                       class="briefing-avatar">
+                  <span class="briefing-agent-name mt-1.5">Quaks News Analyst</span>
+                  <time class="briefing-date-label">{{ formatDate(item.date) }}</time>
+                </div>
+              </div>
+            </button>
+
+            @if (expandedId() === item.id && item.report_html) {
+              <div class="briefing-report" [innerHTML]="item.report_html"></div>
+            }
+      </div>
+    }
+  </div>
+
+  @if (hasMore() && items().length > 0) {
+    <div class="text-center py-8">
+      <button
+        (click)="loadMore()"
+        [disabled]="loading()"
+        class="load-more-btn">
+        @if (loading()) {
+          Loading…
+        } @else {
+          Load older briefings
+        }
+      </button>
+    </div>
+  }
+
+  @if (loading() && items().length === 0) {
+    <div class="text-center py-16">
+      <p class="loading-text">Loading briefings…</p>
+    </div>
+  }
+
+</div>

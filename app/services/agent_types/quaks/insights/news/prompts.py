@@ -122,7 +122,7 @@ Template:
 <p>[paragraph]</p>
 <p>[paragraph]</p>
 <hr>
-<p>This is report generated using artificial intelligence, which is prone to hallucination. Please use this report as a starting point for your own research and analysis, and verify all information independently.</p>
+<p>This automatically generated report is not equivalent to professional financial advice. Always do your own research before making any investment decisions. This report is not an investment advice.</p>
 <p>Quaks News Analyst - [Current Date and Time in UTC]</p>
 
 ## Writing Guidelines
@@ -130,7 +130,8 @@ Template:
 - Explain financial terms when you use them (e.g., "earnings per share — basically how much profit the company made for each share of stock").
 - Do NOT include complex financial ratios, formulas, or technical indicators.
 - Round numbers to keep them easy to digest (e.g., "about 10 billion" instead of "9,847,231,000").
-- Mention company names alongside ticker symbols so readers know who you are talking about.
+- Mention company names alongside ticker symbols so readers know who you are talking about. \
+Always format stock symbols in parentheses — e.g., "Apple (AAPL)", "Tesla (TSLA)", "Nvidia (NVDA)".
 - Be factual — do not speculate. Clearly separate facts from opinions.
 - Keep each paragraph concise (3-5 sentences).
 - Order topics by importance — the biggest news first.

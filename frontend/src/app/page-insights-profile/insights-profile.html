@@ -21,6 +21,12 @@
                             <span>{{ agent.ctaLabel }}</span>
                         </a>
                     }
+                    @if (agent.referenceNotebook) {
+                        <a [href]="agent.referenceNotebook" target="_blank" rel="noopener noreferrer" class="profile-cta">
+                            <img src="/svg/icon-github.svg" class="mr-2 size-5" aria-hidden="true" alt="" />
+                            <span>Reference Notebook</span>
+                        </a>
+                    }
                 </div>
             </div>
 
