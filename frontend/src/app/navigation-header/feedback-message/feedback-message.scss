@@ -1,0 +1,27 @@
+.feedback-banner {
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  border: 1px solid var(--border-primary);
+  background: var(--surface-elevated);
+  color: var(--text-primary);
+}
+
+.feedback-success {
+  border-color: var(--status-positive);
+  color: var(--status-positive);
+}
+
+.feedback-info {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.feedback-warning {
+  border-color: var(--accent-primary);
+  color: var(--text-primary);
+}
+
+.feedback-error {
+  border-color: var(--status-negative);
+  color: var(--status-negative);
+}

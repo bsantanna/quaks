@@ -16,13 +16,6 @@ dag = DAG(
     catchup=False,
 )
 
-INTEGRATION_ENDPOINTS = {
-    "xai_api_v1": "https://api.x.ai/v1/",
-    "openai_api_v1": "https://api.openai.com/v1/",
-    "anthropic_api_v1": "https://api.anthropic.com",
-}
-
-
 @task.kubernetes(
     image="bsantanna/java-python-dev",
     namespace="airflow",
@@ -35,6 +28,12 @@ def generate_insights_news():
     from uuid import uuid4
 
     import requests
+
+    INTEGRATION_ENDPOINTS = {
+        "xai_api_v1": "https://api.x.ai/v1/",
+        "openai_api_v1": "https://api.openai.com/v1/",
+        "anthropic_api_v1": "https://api.anthropic.com",
+    }
 
     api_url = os.environ.get("QUAKS_API_URL")
     username = os.environ.get("QUAKS_SERVICE_ACCOUNT_USERNAME")
