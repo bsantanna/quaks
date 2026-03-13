@@ -1,8 +1,9 @@
-import {Component, computed, inject, PLATFORM_ID, signal} from '@angular/core';
+import {Component, computed, HostListener, inject, PLATFORM_ID, signal} from '@angular/core';
 import {isPlatformBrowser} from '@angular/common';
 import {MarketsInsightsService} from '../shared/services/markets-insights.service';
 import {IndexedKeyTickerService} from '../shared/services/indexed-key-ticker.service';
 import {DateFormatService} from '../shared/services/date-format.service';
+import {FeedbackMessageService} from '../shared';
 import {InsightsNewsItem} from '../shared/models/markets.model';
 import {take} from 'rxjs';
 
@@ -25,6 +26,9 @@ export class InsightsNews {
   readonly expandedId = signal<string | null>(null);
   readonly loadingReport = signal<string | null>(null);
   readonly hasMore = computed(() => this.cursor() !== null);
+
+  private readonly feedbackMessageService = inject(FeedbackMessageService);
+  readonly shareOpenId = signal<string | null>(null);
 
   private readonly indexName = 'quaks_insights-news_latest';
   private readonly pageSize = 10;
@@ -154,6 +158,62 @@ export class InsightsNews {
         return match;
       }
     );
+  }
+
+  toggleShare(itemId: string): void {
+    this.shareOpenId.update(id => id === itemId ? null : itemId);
+  }
+
+  getShareUrl(item: InsightsNewsItem): string {
+    return `${window.location.origin}/insights/news/item/${this.indexName}/${item.id}`;
+  }
+
+  share(platform: string, item: InsightsNewsItem): void {
+    this.shareOpenId.set(null);
+    const url = this.getShareUrl(item);
+    const urlEncoded = encodeURIComponent(url);
+    const text = encodeURIComponent(item.executive_summary || 'Quaks News Insight');
+    let targetUrl: string;
+
+    switch (platform) {
+      case 'x':
+        targetUrl = `https://twitter.com/intent/tweet?url=${urlEncoded}&text=${text}`;
+        break;
+      case 'facebook':
+        targetUrl = `https://www.facebook.com/sharer.php?u=${urlEncoded}`;
+        break;
+      case 'whatsapp':
+        targetUrl = `https://api.whatsapp.com/send?text=${text}%20${urlEncoded}`;
+        break;
+      case 'threads':
+        targetUrl = `https://www.threads.net/intent/post?text=${text}&url=${urlEncoded}`;
+        break;
+      case 'linkedin':
+        targetUrl = `https://www.linkedin.com/shareArticle?url=${urlEncoded}&title=${text}`;
+        break;
+      case 'reddit':
+        targetUrl = `https://reddit.com/submit?url=${urlEncoded}&title=${text}`;
+        break;
+      case 'email':
+        window.location.href = `mailto:?subject=Quaks&body=${text}%20${urlEncoded}`;
+        return;
+      case 'copy':
+        navigator.clipboard.writeText(url);
+        this.feedbackMessageService.update({message: 'Link copied', type: 'info', timeout: 3000});
+        return;
+      default:
+        return;
+    }
+    window.open(targetUrl, '_blank');
+  }
+
+  @HostListener('document:click', ['$event'])
+  @HostListener('document:touchstart', ['$event'])
+  onDocumentClick(event: Event): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.briefing-share')) {
+      this.shareOpenId.set(null);
+    }
   }
 
   formatDate(dateStr: string): string {
