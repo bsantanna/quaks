@@ -12,7 +12,7 @@ variable "airflow_fqdn" {
 variable "quaks_dags_image_tag" {
   description = "Docker image tag for quaks-dags"
   type        = string
-  default     = "v1.3.33"
+  default     = "v1.3.35"
 }
 
 variable "airflow_admin_username" {
@@ -91,4 +91,28 @@ variable "quaks_integration_api_key" {
   description = "LLM provider API key used by insights DAGs"
   type        = string
   sensitive   = true
+}
+
+variable "keycloak_admin_url" {
+  description = "Keycloak base URL for admin REST API (e.g. https://auth.quaks.ai)"
+  type        = string
+  sensitive   = true
+}
+
+variable "keycloak_admin_username" {
+  description = "Keycloak admin username for waiting list user provisioning"
+  type        = string
+  sensitive   = true
+}
+
+variable "keycloak_admin_password" {
+  description = "Keycloak admin password for waiting list user provisioning"
+  type        = string
+  sensitive   = true
+}
+
+variable "keycloak_realm" {
+  description = "Keycloak realm name for waiting list user provisioning"
+  type        = string
+  default     = "quaks"
 }

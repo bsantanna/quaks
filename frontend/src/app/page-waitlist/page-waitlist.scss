@@ -1,0 +1,50 @@
+.waitlist-content {
+  color: var(--text-primary);
+}
+
+.waitlist-description {
+  color: var(--text-secondary);
+}
+
+.waitlist-field {
+  background: var(--surface-panel);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+
+  &:focus {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 1px;
+  }
+}
+
+.field-error {
+  color: var(--status-negative);
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.waitlist-btn {
+  background: var(--accent-primary);
+  color: var(--surface-base);
+  font-weight: 600;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius);
+  transition: background 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--accent-hover);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.error-banner {
+  background: var(--surface-panel);
+  border: 1px solid var(--status-negative);
+  color: var(--status-negative);
+}

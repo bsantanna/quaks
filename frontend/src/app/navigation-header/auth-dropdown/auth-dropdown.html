@@ -1,0 +1,46 @@
+<div class="relative">
+    @if (authService.isLoggedIn()) {
+        <button type="button" (click)="toggleMenu()"
+                class="auth-avatar-btn"
+                aria-label="User menu">
+            <span class="auth-avatar">{{ getInitials() }}</span>
+        </button>
+
+        @if (showMenu()) {
+            <div class="auth-panel">
+                <div class="auth-user-info">
+                    <span class="auth-username">{{ authService.state()?.username }}</span>
+                    <span class="auth-email">{{ authService.state()?.email }}</span>
+                    <span class="auth-tier auth-tier-{{ authService.subscriptionTier() }}">
+                        {{ authService.subscriptionTier() | uppercase }}
+                    </span>
+                </div>
+                <div class="auth-divider"></div>
+                <button class="auth-menu-item" (click)="logout()">
+                    <img src="/svg/icon-close.svg" class="size-4" aria-hidden="true" alt="" />
+                    <span>Sign out</span>
+                </button>
+            </div>
+        }
+    } @else {
+        <button type="button" (click)="toggleMenu()"
+                class="auth-btn"
+                aria-label="Account">
+            <img src="/svg/icon-user.svg" class="size-5" aria-hidden="true" alt="" />
+        </button>
+
+        @if (showMenu()) {
+            <div class="auth-panel">
+                <div class="auth-section">
+                    <span class="auth-label">Account</span>
+                </div>
+                <a routerLink="/waitlist" class="auth-menu-item" (click)="showMenu.set(false)">
+                    <span>Join waitlist</span>
+                </a>
+                <button class="auth-menu-item" (click)="login()">
+                    <span>Sign in</span>
+                </button>
+            </div>
+        }
+    }
+</div>

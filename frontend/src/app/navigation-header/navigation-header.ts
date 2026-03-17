@@ -10,13 +10,14 @@ import {MarketsDropdownComponent} from './markets-dropdown/markets-dropdown';
 import {FeedbackMessageComponent} from './feedback-message/feedback-message';
 import {SettingsDropdownComponent} from './settings-dropdown/settings-dropdown';
 import {HamburgerMenuComponent} from './hamburger-menu/hamburger-menu';
+import {AuthDropdownComponent} from './auth-dropdown/auth-dropdown';
 import {NavigationEnd, Router} from '@angular/router';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {filter, map, startWith} from 'rxjs';
 
 @Component({
   selector: 'app-navigation-header',
-  imports: [StockAutocompleteComponent, NewsAutocompleteComponent, ShareButtonComponent, FeedbackMessageComponent, SettingsDropdownComponent, HamburgerMenuComponent, InsightsDropdownComponent, MarketsDropdownComponent],
+  imports: [StockAutocompleteComponent, NewsAutocompleteComponent, ShareButtonComponent, FeedbackMessageComponent, SettingsDropdownComponent, HamburgerMenuComponent, InsightsDropdownComponent, MarketsDropdownComponent, AuthDropdownComponent],
   templateUrl: './navigation-header.html',
   styleUrl: './navigation-header.scss',
 })

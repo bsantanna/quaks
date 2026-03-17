@@ -3,7 +3,12 @@ from fastapi import APIRouter, status, Body, Depends
 from typing_extensions import Annotated
 
 from app.core.container import Container
-from app.interface.api.auth.schema import AuthResponse, LoginRequest, RenewRequest
+from app.interface.api.auth.schema import (
+    AuthResponse,
+    ExchangeRequest,
+    LoginRequest,
+    RenewRequest,
+)
 from app.services.auth import AuthService
 
 router = APIRouter()
@@ -102,3 +107,54 @@ async def renew(
     auth_service: Annotated[AuthService, Depends(Provide[Container.auth_service])],
 ):
     return auth_service.renew(renew_request.refresh_token)
+
+
+@router.post(
+    path="/exchange",
+    status_code=status.HTTP_201_CREATED,
+    response_model=AuthResponse,
+    summary="Exchange an authorization code for tokens (PKCE)",
+    description="""
+    Exchanges an authorization code obtained from the Keycloak login page for
+    access and refresh tokens. Used by the frontend's Authorization Code + PKCE flow.
+
+    Parameters (JSON body):
+    - `code`: The authorization code from Keycloak's redirect.
+    - `code_verifier`: The PKCE code verifier that matches the code challenge sent during login.
+    - `redirect_uri`: The redirect URI used in the authorization request.
+    """,
+    response_description="Access and refresh tokens",
+    responses={
+        201: {
+            "description": "Tokens successfully obtained",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+                        "refresh_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    }
+                }
+            },
+        },
+        401: {
+            "description": "Invalid authorization code or code verifier",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Authentication failed: invalid authorization code"
+                    }
+                }
+            },
+        },
+    },
+)
+@inject
+async def exchange(
+    exchange_request: Annotated[ExchangeRequest, Body(...)],
+    auth_service: Annotated[AuthService, Depends(Provide[Container.auth_service])],
+):
+    return auth_service.exchange(
+        code=exchange_request.code,
+        code_verifier=exchange_request.code_verifier,
+        redirect_uri=exchange_request.redirect_uri,
+    )
