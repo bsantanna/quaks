@@ -27,6 +27,12 @@ variable "airflow_admin_password" {
   sensitive   = true
 }
 
+variable "airflow_admin_email" {
+  description = "Email for the Airflow admin user"
+  type        = string
+  sensitive   = true
+}
+
 variable "es_url" {
   description = "Elasticsearch endpoint URL used by DAGs"
   type        = string
