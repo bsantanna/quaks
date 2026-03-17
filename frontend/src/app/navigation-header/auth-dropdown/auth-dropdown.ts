@@ -1,10 +1,11 @@
 import {Component, HostListener, inject, signal} from '@angular/core';
 import {UpperCasePipe} from '@angular/common';
+import {RouterLink} from '@angular/router';
 import {AuthService} from '../../shared/services/auth.service';
 
 @Component({
   selector: 'app-auth-dropdown',
-  imports: [UpperCasePipe],
+  imports: [UpperCasePipe, RouterLink],
   templateUrl: './auth-dropdown.html',
   styleUrl: './auth-dropdown.scss',
 })

@@ -1,19 +1,15 @@
-.auth-login-btn {
+.auth-btn {
   display: inline-flex;
   align-items: center;
-  padding: 6px 14px;
-  background: var(--accent-primary);
-  color: var(--surface-base);
-  border: none;
-  border-radius: var(--radius);
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 600;
+  padding: 8px;
+  color: var(--text-secondary);
   cursor: pointer;
-  transition: background 0.15s ease;
+  border: none;
+  background: none;
+  transition: color 0.15s ease;
 
   &:hover {
-    background: var(--accent-hover);
+    color: var(--text-primary);
   }
 }
 
@@ -56,6 +52,22 @@
   border-radius: var(--radius);
   padding: 12px;
   z-index: 50;
+}
+
+.auth-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.auth-label {
+  font-family: var(--font-data);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
 }
 
 .auth-user-info {
@@ -120,6 +132,7 @@
   font-family: var(--font-body);
   font-size: 13px;
   cursor: pointer;
+  text-decoration: none;
   transition: all 0.15s ease;
 
   &:hover {

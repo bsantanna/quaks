@@ -33,6 +33,7 @@ from app.services.markets_news import MarketsNewsService
 from app.services.markets_stats import MarketsStatsService
 from app.services.messages import MessageService
 from app.services.tasks import TaskNotificationService
+from app.services.waitlist import WaitlistService
 
 
 class Container(containers.DeclarativeContainer):
@@ -45,6 +46,7 @@ class Container(containers.DeclarativeContainer):
             "app.interface.api.language_models.endpoints",
             "app.interface.api.markets.endpoints",
             "app.interface.api.messages.endpoints",
+            "app.interface.api.waitlist.endpoints",
         ]
     )
 
@@ -131,6 +133,11 @@ class Container(containers.DeclarativeContainer):
 
     markets_stats_service = providers.Factory(
         MarketsStatsService,
+        es=es,
+    )
+
+    waitlist_service = providers.Factory(
+        WaitlistService,
         es=es,
     )
 

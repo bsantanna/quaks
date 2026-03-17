@@ -1,4 +1,5 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {provideRouter} from '@angular/router';
 import {AuthDropdownComponent} from './auth-dropdown';
 import {AuthService} from '../../shared/services/auth.service';
 import {signal} from '@angular/core';
@@ -20,6 +21,7 @@ describe('AuthDropdownComponent', () => {
     await TestBed.configureTestingModule({
       imports: [AuthDropdownComponent],
       providers: [
+        provideRouter([]),
         {provide: AuthService, useValue: mockAuthService},
       ],
     }).compileComponents();
@@ -33,11 +35,10 @@ describe('AuthDropdownComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should show login button when not logged in', () => {
+  it('should show account button when not logged in', () => {
     const el: HTMLElement = fixture.nativeElement;
-    const loginBtn = el.querySelector('.auth-login-btn');
-    expect(loginBtn).toBeTruthy();
-    expect(loginBtn?.textContent?.trim()).toBe('Sign in');
+    const accountBtn = el.querySelector('.auth-btn');
+    expect(accountBtn).toBeTruthy();
   });
 
   it('should call initiateLogin on login click', () => {

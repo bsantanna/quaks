@@ -52,3 +52,10 @@ class AudioOptimizationError(HTTPException):
 class AuthenticationError(HTTPException):
     def __init__(self, reason):
         super().__init__(status_code=401, detail=f"Authentication failed: {reason}")
+
+
+class DuplicateEntryError(HTTPException):
+    def __init__(self, field_name):
+        super().__init__(
+            status_code=409, detail=f"{field_name} already registered"
+        )

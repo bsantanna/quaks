@@ -1,0 +1,13 @@
+{
+  "size": {{#size}}{{size}}{{/size}}{{^size}}100{{/size}},
+  "query": {
+    "bool": {
+      "must": [
+        {"term": {"flag_processed": false}}
+      ]
+    }
+  },
+  "sort": [
+    {"date_timestamp": "asc"}
+  ]
+}

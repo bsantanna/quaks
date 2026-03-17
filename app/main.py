@@ -21,6 +21,7 @@ from app.interface.api.language_models.endpoints import router as language_model
 from app.interface.api.markets.endpoints import router as markets_router
 from app.interface.api.messages.endpoints import router as messages_router
 from app.interface.api.status.endpoints import router as status_router
+from app.interface.api.waitlist.endpoints import router as waitlist_router
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -76,6 +77,8 @@ def setup_auth(container, application):
                 "/*.svg",
                 "/*.json",
                 "/insights/*",
+                "/waitlist",
+                "/waitlist/*",
                 "/terms",
                 "/"
             ],
@@ -128,6 +131,7 @@ def setup_routers(container: Container, application: FastAPI):
     application.include_router(markets_router, prefix="/markets", tags=["markets"])
     application.include_router(messages_router, prefix="/messages", tags=["messages"])
     application.include_router(status_router, prefix="/status", tags=["status"])
+    application.include_router(waitlist_router, prefix="/waitlist", tags=["waitlist"])
 
 
 def setup_exception_handlers(application: FastAPI):
