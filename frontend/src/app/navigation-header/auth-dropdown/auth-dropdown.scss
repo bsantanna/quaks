@@ -1,0 +1,129 @@
+.auth-login-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  background: var(--accent-primary);
+  color: var(--surface-base);
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: var(--accent-hover);
+  }
+}
+
+.auth-avatar-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.auth-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  color: var(--surface-base);
+  font-family: var(--font-data);
+  font-size: 14px;
+  font-weight: 700;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: var(--accent-hover);
+  }
+}
+
+.auth-panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  width: 220px;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+  padding: 12px;
+  z-index: 50;
+}
+
+.auth-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.auth-username {
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.auth-email {
+  color: var(--text-muted);
+  font-family: var(--font-data);
+  font-size: 11px;
+  word-break: break-all;
+}
+
+.auth-tier {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 8px;
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  border-radius: 2px;
+  width: fit-content;
+}
+
+.auth-tier-pro {
+  background: var(--accent-primary);
+  color: var(--surface-base);
+}
+
+.auth-tier-free {
+  background: var(--surface-hover);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-primary);
+}
+
+.auth-divider {
+  height: 1px;
+  background: var(--border-primary);
+  margin: 10px 0;
+}
+
+.auth-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  border-radius: var(--radius);
+  background: none;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: var(--surface-hover);
+    color: var(--text-primary);
+  }
+}

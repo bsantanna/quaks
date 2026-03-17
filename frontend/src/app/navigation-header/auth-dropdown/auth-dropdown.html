@@ -1,0 +1,32 @@
+<div class="relative">
+    @if (authService.isLoggedIn()) {
+        <button type="button" (click)="toggleMenu()"
+                class="auth-avatar-btn"
+                aria-label="User menu">
+            <span class="auth-avatar">{{ getInitials() }}</span>
+        </button>
+
+        @if (showMenu()) {
+            <div class="auth-panel">
+                <div class="auth-user-info">
+                    <span class="auth-username">{{ authService.state()?.username }}</span>
+                    <span class="auth-email">{{ authService.state()?.email }}</span>
+                    <span class="auth-tier auth-tier-{{ authService.subscriptionTier() }}">
+                        {{ authService.subscriptionTier() | uppercase }}
+                    </span>
+                </div>
+                <div class="auth-divider"></div>
+                <button class="auth-menu-item" (click)="logout()">
+                    <img src="/svg/icon-close.svg" class="size-4" aria-hidden="true" alt="" />
+                    <span>Sign out</span>
+                </button>
+            </div>
+        }
+    } @else {
+        <button type="button" (click)="login()"
+                class="auth-login-btn"
+                aria-label="Sign in">
+            <span>Sign in</span>
+        </button>
+    }
+</div>

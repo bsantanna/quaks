@@ -45,6 +45,35 @@ class AuthService:
         except requests.exceptions.RequestException as exc:
             raise AuthenticationError(str(exc))
 
+    def exchange(
+        self, code: str, code_verifier: str, redirect_uri: str
+    ) -> AuthResponse:
+        try:
+            response = requests.post(
+                url=self.token_url,
+                data={
+                    "grant_type": "authorization_code",
+                    "client_id": self.client_id,
+                    "client_secret": self.client_secret,
+                    "code": code,
+                    "code_verifier": code_verifier,
+                    "redirect_uri": redirect_uri,
+                },
+            )
+            response.raise_for_status()
+            token_data = response.json()
+            access_token = token_data.get("access_token")
+            refresh_token = token_data.get("refresh_token")
+            if not access_token or not refresh_token:
+                raise AuthenticationError(
+                    "Access token or refresh token not found in response"
+                )
+            return AuthResponse(
+                access_token=access_token, refresh_token=refresh_token
+            )
+        except requests.exceptions.RequestException as exc:
+            raise AuthenticationError(str(exc))
+
     def renew(self, refresh_token: str) -> AuthResponse:
         try:
             response = requests.post(
@@ -60,8 +89,10 @@ class AuthService:
             token_data = response.json()
             new_access_token = token_data.get("access_token")
             new_refresh_token = token_data.get("refresh_token")
-            if not new_access_token:
-                raise AuthenticationError("Access token not found in response")
+            if not new_access_token or not new_refresh_token:
+                raise AuthenticationError(
+                    "Access token or refresh token not found in response"
+                )
             return AuthResponse(
                 access_token=new_access_token, refresh_token=new_refresh_token
             )

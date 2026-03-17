@@ -68,6 +68,26 @@
 
             <div class="hamburger-right">
                 <div class="hamburger-section">
+                    <span class="hamburger-label">Account</span>
+                    @if (authService.isLoggedIn()) {
+                        <div class="hamburger-user-info">
+                            <span class="hamburger-username">{{ authService.state()?.username }}</span>
+                            <span class="hamburger-user-tier hamburger-user-tier-{{ authService.subscriptionTier() }}">
+                                {{ authService.subscriptionTier() | uppercase }}
+                            </span>
+                        </div>
+                        <button class="hamburger-item" (click)="logout()">
+                            <img src="/svg/icon-close.svg" class="size-5" aria-hidden="true" alt="" />
+                            <span>Sign out</span>
+                        </button>
+                    } @else {
+                        <button class="hamburger-item" (click)="login()">
+                            <span>Sign in</span>
+                        </button>
+                    }
+                </div>
+
+                <div class="hamburger-section">
                     <span class="hamburger-label">Theme</span>
                     <div class="hamburger-theme-dropdown">
                         <button class="hamburger-theme-trigger" (click)="toggleThemeDropdown()">
