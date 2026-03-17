@@ -524,6 +524,11 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
             has_allocation = False
 
         # Investment Style Box
+        # Size: Morningstar uses top 70% of market cap = Large, next 20% = Mid, bottom 10% = Small
+        # Simplified: >$10B Large, >$2B Mid, else Small
+        # Value/Growth: forward P/E preferred, fall back to trailing P/E
+        # Thresholds calibrated to US large-cap median P/E (~20): <18 Value, 18-25 Blend, >25 Growth
+        # Null/zero/negative P/E → classify as Blend (insufficient data)
         style_grid = {
             (s, v): 0.0
             for s in ("Large", "Mid", "Small")
@@ -531,9 +536,12 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
         }
         for ticker, p in profiles.items():
             mc = p.get("market_capitalization") or 0
-            pe = p.get("pe_ratio") or 0
+            pe = p.get("forward_pe") or p.get("pe_ratio") or 0
             size = "Large" if mc > 10_000_000_000 else ("Mid" if mc > 2_000_000_000 else "Small")
-            style = "Value" if 0 < pe <= 15 else ("Blend" if 15 < pe <= 25 else "Growth")
+            if pe > 0:
+                style = "Value" if pe < 18 else ("Blend" if pe <= 25 else "Growth")
+            else:
+                style = "Blend"
             style_grid[(size, style)] += weights[ticker]
 
         # Stock Sectors (normalize industry names to parent sectors)
@@ -552,16 +560,20 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
 
         # Stock Stats (weighted averages)
         stat_keys = {
-            "pe_ratio": "Price/Earnings Ratio",
-            "price_to_book_ratio": "Price/Book Ratio",
-            "ev_to_ebitda": "EV/EBITDA",
+            "pe_ratio": "Trailing P/E",
+            "forward_pe": "Forward P/E",
+            "price_to_book_ratio": "Price/Book",
+            "profit_margin": "Profit Margin %",
+            "return_on_equity_ttm": "Return on Equity %",
+            "dividend_yield": "Dividend Yield %",
+            "beta": "Beta",
         }
         avg_stats = {}
         for key in stat_keys:
             w_sum, w_total = 0.0, 0.0
             for ticker, p in profiles.items():
                 val = p.get(key)
-                if val and val > 0:
+                if val is not None and val > 0:
                     w_sum += val * weights[ticker]
                     w_total += weights[ticker]
             avg_stats[key] = w_sum / w_total if w_total > 0 else 0
@@ -935,7 +947,7 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
             # Batch mode: combine consensus report + X-Ray
             report_html = consensus_html
             if xray_html:
-                report_html += "\n<hr>\n" + xray_html
+                report_html =  xray_html + "\n<hr>\n" + report_html
         else:
             # QA mode: use last message content
             report_html = workflow_state["messages"][-1].content

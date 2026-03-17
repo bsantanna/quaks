@@ -198,6 +198,4 @@ AFTER all tickers:
 <hr>
 <p>This report is a technical and fundamental combined analysis performed by an automated AI system, not financial advice. Always do your own research.</p>
 <p>Quaks Financial Analyst — {{ CURRENT_TIME }}</p>
-
-The last line MUST be a p tag with ALLOCATION: followed by TICKER=INTEGER pairs (no parentheses, no spaces). Integers must sum to 100. Use actual ticker symbols from your analysis.
 """
