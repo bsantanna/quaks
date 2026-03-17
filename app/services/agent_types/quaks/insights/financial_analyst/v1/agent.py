@@ -36,10 +36,10 @@ EXECUTION_PLAN = (
     "Financial analysis plan:\n"
     "1. coordinator: Parse ticker(s) and decide whether to proceed\n"
     "2. data_collector: Fetch company profile, price stats, technical indicators, and news for each ticker\n"
-    "3. fundamental_analyst: Evaluate valuation, profitability, and financial health → BUY/HOLD/SELL\n"
-    "4. technical_analyst: Evaluate price action, momentum, and trend signals → BUY/HOLD/SELL\n"
-    "5. consensus_reporter: Tally votes, recommend allocation, and produce the final HTML report\n"
-    "6. portfolio_xray: Generate Morningstar-style portfolio breakdown (sectors, regions, style, stats)"
+    "3. portfolio_xray: Generate Morningstar-style portfolio breakdown (sectors, regions, style, stats)\n"
+    "4. fundamental_analyst: Evaluate valuation, profitability, and financial health → BUY/HOLD/SELL\n"
+    "5. technical_analyst: Evaluate price action, momentum, and trend signals → BUY/HOLD/SELL\n"
+    "6. consensus_reporter: Produce the final HTML report with X-Ray appendix"
 )
 
 SUPERSECTOR_SECTORS = {
@@ -239,11 +239,11 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
         workflow_builder.add_node("technical_analyst", self.get_technical_analyst)
         workflow_builder.add_node("consensus_reporter", self.get_consensus_reporter)
         workflow_builder.add_node("portfolio_xray", self.get_portfolio_xray)
-        workflow_builder.add_edge("data_collector", "fundamental_analyst")
+        workflow_builder.add_edge("data_collector", "portfolio_xray")
+        workflow_builder.add_edge("portfolio_xray", "fundamental_analyst")
         workflow_builder.add_edge("fundamental_analyst", "technical_analyst")
         workflow_builder.add_edge("technical_analyst", "consensus_reporter")
-        workflow_builder.add_edge("consensus_reporter", "portfolio_xray")
-        workflow_builder.add_edge("portfolio_xray", END)
+        workflow_builder.add_edge("consensus_reporter", END)
         return workflow_builder
 
     def get_input_params(self, message_request: MessageRequest, schema: str) -> dict:
@@ -465,7 +465,8 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
         return [fetch_company_profile, fetch_stats_close, fetch_technical_indicators, fetch_latest_news, self._build_xray_tool()]
 
     def _build_xray_tool(self):
-        compute_xray = self._compute_portfolio_xray
+        compute_data = self._compute_xray_data
+        format_text = self._format_xray_text
 
         @tool("fetch_portfolio_xray")
         def fetch_portfolio_xray(tickers: str) -> str:
@@ -479,15 +480,16 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
                 tickers: Comma-separated ticker symbols (e.g. "AAPL,MSFT,NVDA").
 
             Returns:
-                HTML string with the X-Ray analysis.
+                Text summary of the X-Ray analysis.
             """
             ticker_list = [t.strip().upper() for t in tickers.split(",") if t.strip()]
-            return compute_xray(ticker_list)
+            data = compute_data(ticker_list)
+            return format_text(data)
 
         return fetch_portfolio_xray
 
-    def _compute_portfolio_xray(self, tickers: list[str], allocation: dict = None) -> str:
-        """Compute X-Ray analysis HTML from ticker metadata. Deterministic — no LLM."""
+    def _compute_xray_data(self, tickers: list[str], allocation: dict = None) -> dict:
+        """Compute X-Ray structured data from ticker metadata. Deterministic — no LLM."""
         import asyncio
 
         profiles = {}
@@ -506,45 +508,32 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
             loop.close()
 
         if not profiles:
-            return "<h2>X-Ray Analysis</h2><p>No metadata available for the requested tickers.</p>"
+            return {}
 
         n = len(profiles)
 
-        # Determine per-ticker weights (recommended allocation or equal-weight fallback)
+        # Determine per-ticker weights
         if allocation:
             raw_wt = {t: allocation.get(t, 0) for t in profiles}
             total = sum(raw_wt.values())
-            if total > 0:
-                weights = {t: w * 100.0 / total for t, w in raw_wt.items()}
-            else:
-                weights = {t: 100.0 / n for t in profiles}
+            weights = {t: w * 100.0 / total for t, w in raw_wt.items()} if total > 0 else {t: 100.0 / n for t in profiles}
             has_allocation = True
         else:
             weights = {t: 100.0 / n for t in profiles}
             has_allocation = False
 
         # Investment Style Box
-        # Size: Morningstar uses top 70% of market cap = Large, next 20% = Mid, bottom 10% = Small
-        # Simplified: >$10B Large, >$2B Mid, else Small
-        # Value/Growth: forward P/E preferred, fall back to trailing P/E
-        # Thresholds calibrated to US large-cap median P/E (~20): <18 Value, 18-25 Blend, >25 Growth
-        # Null/zero/negative P/E → classify as Blend (insufficient data)
-        style_grid = {
-            (s, v): 0.0
-            for s in ("Large", "Mid", "Small")
-            for v in ("Value", "Blend", "Growth")
-        }
+        # >$10B Large, >$2B Mid, else Small
+        # Forward P/E preferred; <18 Value, 18-25 Blend, >25 Growth; null → Blend
+        style_grid = {(s, v): 0.0 for s in ("Large", "Mid", "Small") for v in ("Value", "Blend", "Growth")}
         for ticker, p in profiles.items():
             mc = p.get("market_capitalization") or 0
             pe = p.get("forward_pe") or p.get("pe_ratio") or 0
             size = "Large" if mc > 10_000_000_000 else ("Mid" if mc > 2_000_000_000 else "Small")
-            if pe > 0:
-                style = "Value" if pe < 18 else ("Blend" if pe <= 25 else "Growth")
-            else:
-                style = "Blend"
+            style = ("Value" if pe < 18 else ("Blend" if pe <= 25 else "Growth")) if pe > 0 else "Blend"
             style_grid[(size, style)] += weights[ticker]
 
-        # Stock Sectors (normalize industry names to parent sectors)
+        # Stock Sectors
         sector_wt = {}
         for ticker, p in profiles.items():
             raw = p.get("sector") or "Not Classified"
@@ -578,14 +567,98 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
                     w_total += weights[ticker]
             avg_stats[key] = w_sum / w_total if w_total > 0 else 0
 
-        # Sorted by allocation weight (descending), then market cap
         sorted_tickers = sorted(
             profiles.keys(),
             key=lambda t: (weights[t], profiles[t].get("market_capitalization") or 0),
             reverse=True,
         )
 
-        # Build HTML
+        return {
+            "profiles": profiles,
+            "weights": weights,
+            "has_allocation": has_allocation,
+            "style_grid": style_grid,
+            "sector_wt": sector_wt,
+            "subregion_wt": subregion_wt,
+            "stat_keys": stat_keys,
+            "avg_stats": avg_stats,
+            "sorted_tickers": sorted_tickers,
+        }
+
+    @staticmethod
+    def _format_xray_text(data: dict) -> str:
+        """Format X-Ray data as compact text for LLM context."""
+        if not data:
+            return "No metadata available."
+
+        profiles = data["profiles"]
+        weights = data["weights"]
+        style_grid = data["style_grid"]
+        sector_wt = data["sector_wt"]
+        subregion_wt = data["subregion_wt"]
+        avg_stats = data["avg_stats"]
+        stat_keys = data["stat_keys"]
+        sorted_tickers = data["sorted_tickers"]
+
+        lines = [f"PORTFOLIO X-RAY ({len(profiles)} stocks, equal-weight)"]
+
+        # Style box — only non-zero cells
+        style_parts = []
+        for size in ("Large", "Mid", "Small"):
+            for val_style in ("Value", "Blend", "Growth"):
+                w = style_grid[(size, val_style)]
+                if w > 0:
+                    style_parts.append(f"{size}/{val_style}: {w:.0f}%")
+        lines.append(f"Style: {', '.join(style_parts)}")
+
+        # Sectors — only non-zero
+        sector_parts = []
+        for supersector, sectors in SUPERSECTOR_SECTORS.items():
+            total = sum(sector_wt.get(s, 0) for s in sectors)
+            if total > 0:
+                detail = ", ".join(f"{s} {sector_wt[s]:.0f}%" for s in sectors if sector_wt.get(s, 0) > 0)
+                sector_parts.append(f"{supersector} {total:.0f}% ({detail})")
+        lines.append(f"Sectors: {'; '.join(sector_parts)}")
+
+        # Regions — only non-zero
+        region_parts = []
+        for region, subregions in REGION_SUBREGIONS.items():
+            total = sum(subregion_wt.get(sr, 0) for sr in subregions)
+            if total > 0:
+                detail = ", ".join(f"{sr} {subregion_wt[sr]:.0f}%" for sr in subregions if subregion_wt.get(sr, 0) > 0)
+                region_parts.append(f"{region} {total:.0f}% ({detail})")
+        lines.append(f"Regions: {'; '.join(region_parts)}")
+
+        # Stats — only non-zero
+        stat_parts = [f"{label}: {avg_stats[key]:.2f}" for key, label in stat_keys.items() if avg_stats[key] > 0]
+        lines.append(f"Stats: {', '.join(stat_parts)}")
+
+        # Composition — one line per ticker
+        for ticker in sorted_tickers[:10]:
+            p = profiles[ticker]
+            mc = p.get("market_capitalization") or 0
+            mc_b = f"{mc / 1e9:.0f}B" if mc > 0 else "N/A"
+            lines.append(f"  ({ticker}) {p.get('name', ticker)} | {p.get('sector', '-')} | {p.get('country', '-')} | MCap {mc_b} | {weights[ticker]:.1f}%")
+
+        return "\n".join(lines)
+
+    @staticmethod
+    def _format_xray_html(data: dict) -> str:
+        """Format X-Ray data as HTML for the final report."""
+        if not data:
+            return "<h2>X-Ray Analysis</h2><p>No metadata available for the requested tickers.</p>"
+
+        profiles = data["profiles"]
+        weights = data["weights"]
+        has_allocation = data["has_allocation"]
+        style_grid = data["style_grid"]
+        sector_wt = data["sector_wt"]
+        subregion_wt = data["subregion_wt"]
+        avg_stats = data["avg_stats"]
+        stat_keys = data["stat_keys"]
+        sorted_tickers = data["sorted_tickers"]
+        n = len(profiles)
+
         h = []
         h.append("<h2>X-Ray Analysis</h2>")
         if has_allocation:
@@ -795,9 +868,13 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
             )
         )
 
-        # Pass only the collected data — not the full message history
+        # Pass collected data + X-Ray text context
         data_msg = self._get_last_named_message(state["messages"], "data_collector")
-        messages = [HumanMessage(content=data_msg.content)] if data_msg else state["messages"][-1:]
+        xray_msg = self._get_last_named_message(state["messages"], "portfolio_xray")
+        data_content = data_msg.content if data_msg else ""
+        if xray_msg:
+            data_content += f"\n\n{xray_msg.content}"
+        messages = [HumanMessage(content=data_content)]
 
         response = self._invoke_chain(
             agent_id, schema, state["fundamental_analyst_system_prompt"], messages
@@ -825,9 +902,13 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
             )
         )
 
-        # Pass only the collected data — not fundamental output or tool call history
+        # Pass collected data + X-Ray text context
         data_msg = self._get_last_named_message(state["messages"], "data_collector")
-        messages = [HumanMessage(content=data_msg.content)] if data_msg else state["messages"][-1:]
+        xray_msg = self._get_last_named_message(state["messages"], "portfolio_xray")
+        data_content = data_msg.content if data_msg else ""
+        if xray_msg:
+            data_content += f"\n\n{xray_msg.content}"
+        messages = [HumanMessage(content=data_content)]
 
         response = self._invoke_chain(
             agent_id, schema, state["technical_analyst_system_prompt"], messages
@@ -879,15 +960,17 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
             )
         )
 
-        # Pass only the two analyst recommendations — stripped of markdown
+        # Pass analyst recommendations + X-Ray text — stripped of markdown
         fundamental = self._strip_markdown_fences(state["fundamental_recommendation"])
         technical = self._strip_markdown_fences(state["technical_recommendation"])
-        messages = [
-            HumanMessage(content=(
-                f"FUNDAMENTAL ANALYSIS:\n{fundamental}\n\n"
-                f"TECHNICAL ANALYSIS:\n{technical}"
-            )),
+        xray_msg = self._get_last_named_message(state["messages"], "portfolio_xray")
+        input_parts = [
+            f"FUNDAMENTAL ANALYSIS:\n{fundamental}",
+            f"TECHNICAL ANALYSIS:\n{technical}",
         ]
+        if xray_msg:
+            input_parts.append(xray_msg.content)
+        messages = [HumanMessage(content="\n\n".join(input_parts))]
 
         response = self._invoke_chain(
             agent_id, schema, state["consensus_reporter_system_prompt"], messages
@@ -928,14 +1011,15 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
             )
         )
 
-        allocation_json = state.get("allocation_weights", "")
-        allocation = json.loads(allocation_json) if allocation_json else None
-        xray_html = self._compute_portfolio_xray(tickers, allocation)
+        # Runs before analysts — always equal-weight at this stage
+        xray_data = self._compute_xray_data(tickers)
+        xray_html = self._format_xray_html(xray_data)
+        xray_text = self._format_xray_text(xray_data)
 
         self.logger.info(f"Agent[{agent_id}] -> Portfolio X-Ray -> Complete")
         return {
-            "messages": [AIMessage(content=xray_html, name="portfolio_xray")],
             "portfolio_xray_html": xray_html,
+            "messages": [AIMessage(content=xray_text, name="portfolio_xray")],
         }
 
     def format_response(self, workflow_state: MessagesState) -> (str, dict):
@@ -944,10 +1028,11 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
         executive_summary = workflow_state.get("executive_summary", "")
 
         if consensus_html:
-            # Batch mode: combine consensus report + X-Ray
-            report_html = consensus_html
+            # Batch mode: X-Ray first, then consensus report
             if xray_html:
-                report_html =  xray_html + "\n<hr>\n" + report_html
+                report_html = xray_html + "\n<hr>\n" + consensus_html
+            else:
+                report_html = consensus_html
         else:
             # QA mode: use last message content
             report_html = workflow_state["messages"][-1].content
