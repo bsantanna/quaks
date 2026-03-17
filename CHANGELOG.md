@@ -2,6 +2,26 @@
 
 <!-- version list -->
 
+## v1.3.35 (2026-03-17)
+
+### Bug Fixes
+
+- Insights 5 / login flow ([#80](https://github.com/bsantanna/quaks/pull/80),
+  [`3bc07e7`](https://github.com/bsantanna/quaks/commit/3bc07e76ad1d7b0246ebb2c8fb08107b895dff1d))
+
+- Login flow ([#80](https://github.com/bsantanna/quaks/pull/80),
+  [`3bc07e7`](https://github.com/bsantanna/quaks/commit/3bc07e76ad1d7b0246ebb2c8fb08107b895dff1d))
+
+- Login flow (2) ([#80](https://github.com/bsantanna/quaks/pull/80),
+  [`3bc07e7`](https://github.com/bsantanna/quaks/commit/3bc07e76ad1d7b0246ebb2c8fb08107b895dff1d))
+
+- Login flow (3) ([#80](https://github.com/bsantanna/quaks/pull/80),
+  [`3bc07e7`](https://github.com/bsantanna/quaks/commit/3bc07e76ad1d7b0246ebb2c8fb08107b895dff1d))
+
+- Versions update ([#80](https://github.com/bsantanna/quaks/pull/80),
+  [`3bc07e7`](https://github.com/bsantanna/quaks/commit/3bc07e76ad1d7b0246ebb2c8fb08107b895dff1d))
+
+
 ## v1.3.34 (2026-03-17)
 
 ### Bug Fixes
