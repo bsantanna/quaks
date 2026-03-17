@@ -161,8 +161,13 @@ resource "helm_release" "airflow" {
 
       webserver = {
         defaultUser = {
-          username = var.airflow_admin_username
-          password = var.airflow_admin_password
+          enabled   = true
+          role      = "Admin"
+          username  = var.airflow_admin_username
+          password  = var.airflow_admin_password
+          email     = var.airflow_admin_email
+          firstName = "admin"
+          lastName  = "user"
         }
       }
 

@@ -25,6 +25,7 @@ def generate_insights_news():
     import hashlib
     import json
     import os
+    from datetime import datetime
     from uuid import uuid4
 
     import requests

@@ -1,0 +1,14 @@
+{
+  "name": "Quaks Financial Analyst v1",
+  "role": "AI Financial Research Analyst",
+  "avatar": "/svg/insights-agent_quaks-financial-analyst-v1.svg",
+  "ctaLabel": "Financial Insights",
+  "ctaLink": "/insights/stocks",
+  "ctaIcon": "/svg/icon-bar-chart-square.svg",
+  "referenceNotebook": "https://github.com/bsantanna/quaks/blob/main/notebooks/15_insights_quaks_financial_analyst_v1.ipynb",
+  "bio": [
+    "Quaks Financial Analyst v1 is an AI-powered multi-step research agent specialized in equity analysis across US stock markets.",
+    "The agent performs Portfolio X-Ray analysis (sector allocation, investment style box, geographic exposure, and weighted portfolio statistics), followed by mechanical fundamental scoring (valuation, profitability, growth, and risk) and technical signal confluence (ADX trend strength, RSI momentum, MACD crossovers, and 52-week range positioning).",
+    "A consensus report combines both views into a single verdict per stock with conviction-weighted allocation recommendations, plain-language explanations, and key risk factors — all grounded exclusively in collected market data."
+  ]
+}
