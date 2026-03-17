@@ -2,6 +2,35 @@
 
 <!-- version list -->
 
+## v1.3.34 (2026-03-17)
+
+### Bug Fixes
+
+- Airflow user creation ([#79](https://github.com/bsantanna/quaks/pull/79),
+  [`61179cd`](https://github.com/bsantanna/quaks/commit/61179cdff628167e1bc653a9962fe532847a307f))
+
+- Insights 4 ([#79](https://github.com/bsantanna/quaks/pull/79),
+  [`61179cd`](https://github.com/bsantanna/quaks/commit/61179cdff628167e1bc653a9962fe532847a307f))
+
+- Prototypes financial analyst (1) ([#79](https://github.com/bsantanna/quaks/pull/79),
+  [`61179cd`](https://github.com/bsantanna/quaks/commit/61179cdff628167e1bc653a9962fe532847a307f))
+
+- Prototypes financial analyst (2) ([#79](https://github.com/bsantanna/quaks/pull/79),
+  [`61179cd`](https://github.com/bsantanna/quaks/commit/61179cdff628167e1bc653a9962fe532847a307f))
+
+- Prototypes financial analyst (3) ([#79](https://github.com/bsantanna/quaks/pull/79),
+  [`61179cd`](https://github.com/bsantanna/quaks/commit/61179cdff628167e1bc653a9962fe532847a307f))
+
+- Prototypes financial analyst (4) ([#79](https://github.com/bsantanna/quaks/pull/79),
+  [`61179cd`](https://github.com/bsantanna/quaks/commit/61179cdff628167e1bc653a9962fe532847a307f))
+
+- Prototypes financial analyst (5) ([#79](https://github.com/bsantanna/quaks/pull/79),
+  [`61179cd`](https://github.com/bsantanna/quaks/commit/61179cdff628167e1bc653a9962fe532847a307f))
+
+- Prototypes financial analyst (6) ([#79](https://github.com/bsantanna/quaks/pull/79),
+  [`61179cd`](https://github.com/bsantanna/quaks/commit/61179cdff628167e1bc653a9962fe532847a307f))
+
+
 ## v1.3.33 (2026-03-13)
 
 ### Bug Fixes
