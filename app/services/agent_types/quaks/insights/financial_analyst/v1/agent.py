@@ -108,102 +108,64 @@ REGION_SUBREGIONS = {
     "Greater Asia": ["Japan", "Australasia", "Emerging 4 Tigers", "Emerging Asia - Ex 4 Tigers"],
 }
 
-# Industry-level names (from metadata) → parent sector for super-sector grouping
+# Finnhub sector values (from ES metadata) → Morningstar super-sector parent
 INDUSTRY_TO_SECTOR = {
-    # Technology
+    # Technology (Sensitive)
+    "Technology": "Technology",
     "Semiconductors": "Technology",
-    "Semiconductor Equipment & Materials": "Technology",
-    "Software—Infrastructure": "Technology",
-    "Software—Application": "Technology",
-    "Information Technology Services": "Technology",
-    "Computer Hardware": "Technology",
-    "Consumer Electronics": "Technology",
-    "Electronic Components": "Technology",
-    "Scientific & Technical Instruments": "Technology",
-    "Solar": "Technology",
-    # Communication Services
-    "Internet Content & Information": "Communication Services",
-    "Telecom Services": "Communication Services",
-    "Entertainment": "Communication Services",
-    "Electronic Gaming & Multimedia": "Communication Services",
-    "Advertising Agencies": "Communication Services",
-    "Broadcasting": "Communication Services",
-    "Publishing": "Communication Services",
-    # Healthcare
-    "Drug Manufacturers—General": "Healthcare",
-    "Drug Manufacturers—Specialty & Generic": "Healthcare",
-    "Biotechnology": "Healthcare",
-    "Medical Devices": "Healthcare",
-    "Medical Instruments & Supplies": "Healthcare",
-    "Diagnostics & Research": "Healthcare",
-    "Health Information Services": "Healthcare",
-    "Healthcare Plans": "Healthcare",
-    "Medical Care Facilities": "Healthcare",
-    # Financial Services
-    "Banks—Diversified": "Financial Services",
-    "Banks—Regional": "Financial Services",
-    "Capital Markets": "Financial Services",
-    "Insurance—Diversified": "Financial Services",
-    "Insurance—Life": "Financial Services",
-    "Insurance—Property & Casualty": "Financial Services",
-    "Credit Services": "Financial Services",
-    "Asset Management": "Financial Services",
-    "Financial Data & Stock Exchanges": "Financial Services",
-    "Financial Conglomerates": "Financial Services",
-    # Consumer Cyclical
-    "Internet Retail": "Consumer Cyclical",
-    "Auto Manufacturers": "Consumer Cyclical",
-    "Restaurants": "Consumer Cyclical",
-    "Specialty Retail": "Consumer Cyclical",
-    "Home Improvement Retail": "Consumer Cyclical",
-    "Apparel Retail": "Consumer Cyclical",
-    "Luxury Goods": "Consumer Cyclical",
-    "Travel Services": "Consumer Cyclical",
-    "Residential Construction": "Consumer Cyclical",
-    "Auto Parts": "Consumer Cyclical",
-    # Consumer Defensive
-    "Household & Personal Products": "Consumer Defensive",
-    "Packaged Foods": "Consumer Defensive",
-    "Beverages—Non-Alcoholic": "Consumer Defensive",
-    "Discount Stores": "Consumer Defensive",
-    "Grocery Stores": "Consumer Defensive",
-    "Tobacco": "Consumer Defensive",
-    "Farm Products": "Consumer Defensive",
-    # Industrials
+    "Electrical Equipment": "Technology",
+    # Communication Services (Sensitive)
+    "Media": "Communication Services",
+    "Communications": "Communication Services",
+    "Telecommunication": "Communication Services",
+    # Energy (Sensitive)
+    "Energy": "Energy",
+    # Industrials (Sensitive)
+    "Machinery": "Industrials",
     "Aerospace & Defense": "Industrials",
-    "Railroads": "Industrials",
     "Airlines": "Industrials",
-    "Integrated Freight & Logistics": "Industrials",
-    "Waste Management": "Industrials",
-    "Specialty Business Services": "Industrials",
-    "Farm & Heavy Construction Machinery": "Industrials",
-    "Conglomerates": "Industrials",
-    "Building Products & Equipment": "Industrials",
-    "Engineering & Construction": "Industrials",
-    # Energy
-    "Oil & Gas Integrated": "Energy",
-    "Oil & Gas E&P": "Energy",
-    "Oil & Gas Midstream": "Energy",
-    "Oil & Gas Equipment & Services": "Energy",
-    # Utilities
-    "Utilities—Regulated Electric": "Utilities",
-    "Utilities—Diversified": "Utilities",
-    "Utilities—Regulated Gas": "Utilities",
-    "Utilities—Renewable": "Utilities",
-    # Real Estate
-    "REIT—Diversified": "Real Estate",
-    "REIT—Industrial": "Real Estate",
-    "REIT—Residential": "Real Estate",
-    "REIT—Retail": "Real Estate",
-    "Real Estate Services": "Real Estate",
-    "Real Estate—Development": "Real Estate",
-    # Basic Materials
-    "Gold": "Basic Materials",
-    "Steel": "Basic Materials",
-    "Specialty Chemicals": "Basic Materials",
+    "Road & Rail": "Industrials",
+    "Marine": "Industrials",
+    "Logistics & Transportation": "Industrials",
+    "Transportation Infrastructure": "Industrials",
+    "Construction": "Industrials",
+    "Building": "Industrials",
+    "Industrial Conglomerates": "Industrials",
+    "Professional Services": "Industrials",
+    "Commercial Services & Supplies": "Industrials",
+    "Trading Companies & Distributors": "Industrials",
+    "Packaging": "Industrials",
+    # Financial Services (Cyclical)
+    "Financial Services": "Financial Services",
+    "Banking": "Financial Services",
+    "Insurance": "Financial Services",
+    # Consumer Cyclical (Cyclical)
+    "Retail": "Consumer Cyclical",
+    "Hotels, Restaurants & Leisure": "Consumer Cyclical",
+    "Textiles, Apparel & Luxury Goods": "Consumer Cyclical",
+    "Automobiles": "Consumer Cyclical",
+    "Auto Components": "Consumer Cyclical",
+    "Leisure Products": "Consumer Cyclical",
+    "Diversified Consumer Services": "Consumer Cyclical",
+    "Consumer products": "Consumer Cyclical",
+    # Real Estate (Cyclical)
+    "Real Estate": "Real Estate",
+    # Basic Materials (Cyclical)
+    "Metals & Mining": "Basic Materials",
     "Chemicals": "Basic Materials",
-    "Copper": "Basic Materials",
-    "Agricultural Inputs": "Basic Materials",
+    "Paper & Forest": "Basic Materials",
+    # Healthcare (Defensive)
+    "Health Care": "Healthcare",
+    "Biotechnology": "Healthcare",
+    "Pharmaceuticals": "Healthcare",
+    "Life Sciences Tools & Services": "Healthcare",
+    # Consumer Defensive (Defensive)
+    "Food Products": "Consumer Defensive",
+    "Beverages": "Consumer Defensive",
+    "Tobacco": "Consumer Defensive",
+    "Distributors": "Consumer Defensive",
+    # Utilities (Defensive)
+    "Utilities": "Utilities",
 }
 
 # Build lookup of known sector names for fast membership check
@@ -211,11 +173,34 @@ _KNOWN_SECTORS = set()
 for _sectors in SUPERSECTOR_SECTORS.values():
     _KNOWN_SECTORS.update(_sectors)
 
+# Keyword hints for fuzzy fallback when exact match fails
+_SECTOR_KEYWORDS = {
+    "Technology": ["tech", "software", "semiconductor", "computer", "electronic", "solar", "cyber"],
+    "Communication Services": ["media", "telecom", "entertainment", "gaming", "advertis", "broadcast", "publish", "streaming"],
+    "Healthcare": ["health", "drug", "biotech", "medical", "pharma", "diagnostic"],
+    "Financial Services": ["bank", "insurance", "capital", "credit", "asset management", "financial"],
+    "Consumer Cyclical": ["retail", "auto", "restaurant", "apparel", "luxury", "travel", "hotel", "leisure"],
+    "Consumer Defensive": ["food", "beverage", "grocery", "tobacco", "household", "discount"],
+    "Industrials": ["aerospace", "defense", "railroad", "airline", "freight", "waste", "construction", "industrial"],
+    "Energy": ["oil", "gas", "energy", "petroleum", "fuel"],
+    "Utilities": ["utilit", "electric", "water", "renewable"],
+    "Real Estate": ["reit", "real estate", "property"],
+    "Basic Materials": ["gold", "steel", "chemical", "copper", "mining", "lumber", "aluminum"],
+}
+
 
 def _normalize_sector(raw_sector: str) -> str:
     if raw_sector in _KNOWN_SECTORS:
         return raw_sector
-    return INDUSTRY_TO_SECTOR.get(raw_sector, "Not Classified")
+    mapped = INDUSTRY_TO_SECTOR.get(raw_sector)
+    if mapped:
+        return mapped
+    # Fuzzy fallback: match keywords in the raw sector name
+    lower = raw_sector.lower()
+    for sector, keywords in _SECTOR_KEYWORDS.items():
+        if any(kw in lower for kw in keywords):
+            return sector
+    return "Not Classified"
 
 
 class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
@@ -950,7 +935,7 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
             # Batch mode: combine consensus report + X-Ray
             report_html = consensus_html
             if xray_html:
-                report_html = "\n<hr>\n" + xray_html
+                report_html += "\n<hr>\n" + xray_html
         else:
             # QA mode: use last message content
             report_html = workflow_state["messages"][-1].content
