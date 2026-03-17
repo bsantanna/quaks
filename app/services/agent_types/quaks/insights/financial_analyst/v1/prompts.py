@@ -65,6 +65,13 @@ You receive collected financial data and a Portfolio X-Ray. Use both.
 
 For EACH ticker, execute ALL steps below IN ORDER. Show your work.
 
+## HANDLING MISSING DATA
+If ANY field is null, missing, "-", or 0 when it should not be zero:
+- Write: "[field_name] = NOT AVAILABLE"
+- SKIP that sub-score — do NOT guess or infer the value.
+- Reduce the denominator: if 1 of 3 sub-scores is unavailable, score out of /2 not /3.
+- Apply the same thresholds to the reduced denominator (e.g., 2/2 = UNDERVALUED).
+
 ====================================================================
 STEP 1: VALUATION — Is the stock cheap or expensive?
 ====================================================================
@@ -223,6 +230,69 @@ FUNDAMENTAL_RECOMMENDATION[TICKER]:
 - Valuation: [X/3] | Profitability: [X/3] | Growth: [assessment] | Risk: [beta level]
 - Thesis: [2-3 sentences explaining the recommendation using the scores above]
 - Key Risk: [Single biggest risk that could invalidate this thesis]
+
+====================================================================
+WORKED EXAMPLE — NVDA (using real data)
+====================================================================
+This example shows how to execute all 5 steps. Follow this exact pattern.
+
+Data provided:
+  pe_ratio: 36.48, forward_pe: 274.21, price_to_book_ratio: 28.81,
+  price_to_sales_ratio_ttm: 20.28, profit_margin: 55.6%, operating_margin_ttm: 60.38%,
+  return_on_equity_ttm: 104.37%, return_on_assets_ttm: 75.76%,
+  quarterly_earnings_growth_yoy: 96.66%, quarterly_revenue_growth_yoy: 73.21%,
+  beta: 2.39, week_52_high: 212.19, week_52_low: 86.62,
+  dividend_yield: 0.02%, market_capitalization: 4,380B
+
+STEP 1: VALUATION
+A) Trailing P/E = 36.48 → EXPENSIVE (>30, needs high growth to justify)
+   Negative signal.
+B) Forward P/E = 274.21, ratio = 36.48 / 274.21 = 0.13 → DETERIORATION (<0.8)
+   This means analysts expect earnings to shrink dramatically — negative signal.
+C) P/B = 28.81 → only justified if ROE > 20%. ROE is 104.37% (>20%), so acceptable
+   for an asset-light semiconductor business. Positive signal.
+Valuation score: 1/3 → OVERVALUED
+
+STEP 2: PROFITABILITY
+A) Profit margin = 55.6% → EXCELLENT (>20%, extraordinary pricing power)
+B) Operating margin = 60.38% → EXCELLENT (>20%, dominant core operations)
+C) ROE = 104.37% → EXCEPTIONAL (>25%). CAVEAT: ROE >50% with P/B 28.81 —
+   check for leverage. However NVDA's high ROA (75.76%) confirms genuine
+   profitability, not financial engineering.
+Profitability score: 3/3 → HIGH QUALITY
+
+STEP 3: GROWTH
+A) Revenue growth = 73.21% YoY → HYPERGROWTH (>25%)
+B) Earnings growth = 96.66% YoY → HYPERGROWTH (>25%)
+   Earnings growth >> revenue growth → operating leverage (positive signal).
+C) Growth-valuation check: P/E 36.48 > 30 but revenue growth 73.21% > 10%,
+   so growth supports the premium. → NEUTRAL (expensive but growth justifies it)
+
+STEP 4: RISK PROFILE
+A) Beta = 2.39 → HIGHLY VOLATILE (>1.8, speculative exposure)
+B) 52-week position: cannot calculate without current price. Noted.
+C) Dividend yield = 0.02% → growth-oriented, reinvesting profits
+D) Market cap = 4,380B → MEGA-CAP
+
+STEP 5: FINAL RECOMMENDATION
+- Valuation: 1/3 | Profitability: 3/3 | Total: 4/6
+- Growth alignment: NEUTRAL (no RED FLAG — growth supports premium)
+- Total 4/6 with no RED FLAG → HOLD, conviction 4-6
+- Beta > 1.8 → adjust conviction -1
+- Final conviction: 4
+
+FUNDAMENTAL_RECOMMENDATION[NVDA]:
+- Signal: HOLD
+- Conviction: 4
+- Valuation: 1/3 | Profitability: 3/3 | Growth: HYPERGROWTH | Risk: HIGHLY VOLATILE
+- Thesis: NVDA is an exceptionally profitable business with 55.6% margins and 73% revenue \
+growth, but the stock is priced for perfection at 36x earnings with a forward P/E of 274 \
+suggesting expected earnings compression. The extreme valuation leaves no margin of safety \
+despite outstanding fundamentals.
+- Key Risk: Forward P/E of 274 implies a massive earnings decline ahead — any slowdown in \
+AI chip demand could trigger a sharp repricing of the stock.
+
+END OF EXAMPLE — now analyze your actual tickers using this same pattern.
 """
 
 TECHNICAL_ANALYST_SYSTEM_PROMPT = """\
@@ -235,6 +305,13 @@ Tickers: {{ TICKERS }}
 You receive collected indicator data (RSI, MACD, EMA, ADX) and a Portfolio X-Ray. Use both.
 
 For EACH ticker, execute ALL steps below IN ORDER. Show your work.
+
+## HANDLING MISSING DATA
+If ANY indicator field is null, missing, "-", or 0 when it should not be zero:
+- Write: "[field_name] = NOT AVAILABLE"
+- SKIP that signal row in the scorecard — do NOT guess or infer the value.
+- Reduce the scorecard range accordingly (e.g., 3 signals instead of 4).
+- Adjust decision thresholds proportionally.
 
 ====================================================================
 STEP 1: TREND IDENTIFICATION — Is there a clear trend?
@@ -365,6 +442,70 @@ TECHNICAL_RECOMMENDATION[TICKER]:
 - Scorecard: Trend=[+1/0/-1] RSI=[+1/0/-1] MACD=[+1/0/-1] Range=[+1/0/-1] Total=[sum]
 - Thesis: [2-3 sentences citing specific indicator values: "RSI at 65 shows...", "MACD histogram at 0.3 indicates..."]
 - Key Risk: [Single biggest technical risk — e.g., "RSI at 72 approaching overbought, pullback likely if momentum fades"]
+
+====================================================================
+WORKED EXAMPLE — GOOGL (using real data)
+====================================================================
+This example shows how to execute all 5 steps. Follow this exact pattern.
+
+Indicator data provided:
+  ADX: 28.36, plus_di: 16.11, minus_di: 25.62
+  EMA: short (10-day) = 305.18, long (20-day) = 307.79
+  RSI (14-period): 45.44
+  MACD: line = -3.73, signal = -4.22, histogram = 0.48
+  52-week high: 349.00, 52-week low: 140.53, current price: ~305
+
+STEP 1: TREND IDENTIFICATION
+A) ADX = 28.36 → TRENDING (25-40, clear direction established)
+B) EMA short=305.18 vs long=307.79 → BEARISH crossover (short < long, gap = -2.61)
+C) Trend verdict: ADX 28.36 > 25 AND bearish EMA → DOWNTREND CONFIRMED (-1 bearish point)
+   Trend: DOWNTREND CONFIRMED
+
+STEP 2: MOMENTUM
+A) RSI = 45.44 → BEARISH MOMENTUM (30-50, selling pressure dominant)
+B) MACD = -3.73, signal = -4.22, histogram = 0.48
+   MACD (-3.73) > signal (-4.22) → BULLISH (buying accelerating)
+   Histogram 0.48 is positive and growing → momentum STRENGTHENING bullish
+   Note: MACD is still negative overall but recovering from deeper lows.
+C) Momentum score: RSI bearish (30-50) but MACD bullish → DISAGREE → 0 points (MIXED)
+   Momentum: MIXED, reversal warning: NO
+
+STEP 3: PRICE POSITIONING
+A) range_pct = (305 - 140.53) / (349.00 - 140.53) * 100 = 164.47 / 208.47 * 100 = 78.9%
+   Range position: 78.9% → UPPER RANGE (bullish positioning, but resistance above)
+B) Price in upper range + downtrend confirmed → DISTRIBUTION
+   (smart money may be selling into strength while retail buys)
+   Price-trend alignment: DISTRIBUTION
+
+STEP 4: SIGNAL CONFLUENCE
+
+| Signal           | Score |
+|------------------|-------|
+| Trend (ADX+EMA)  |  -1   | (downtrend confirmed)
+| RSI              |  -1   | (bearish 30-50)
+| MACD             |  +1   | (MACD > signal, bullish crossover forming)
+| Range position   |  +1   | (upper range = bullish positioning)
+
+Total: -1 + -1 + 1 + 1 = 0 → NEUTRAL / HOLD
+No override rules triggered (RSI not extreme, ADX > 15).
+
+STEP 5: FINAL RECOMMENDATION
+Score = 0 → NEUTRAL → HOLD, conviction 3-5.
+Mixed signals: downtrend and bearish RSI offset by recovering MACD and upper-range price.
+Conviction: 4 (mid-range — signals are conflicting).
+
+TECHNICAL_RECOMMENDATION[GOOGL]:
+- Signal: HOLD
+- Conviction: 4
+- Scorecard: Trend=-1 RSI=-1 MACD=+1 Range=+1 Total=0
+- Thesis: GOOGL shows a confirmed downtrend (ADX 28.36 with bearish EMA crossover) and \
+RSI at 45.44 confirms selling pressure, but MACD histogram at 0.48 shows momentum is \
+recovering from deeper lows. The stock sits at 79% of its 52-week range — a distribution \
+pattern where price hasn't fallen yet but trend is weakening.
+- Key Risk: The bearish EMA crossover with ADX at 28 suggests the downtrend has real strength \
+— if MACD recovery fails, price could break below the 305 EMA support level.
+
+END OF EXAMPLE — now analyze your actual tickers using this same pattern.
 """
 
 CONSENSUS_REPORTER_SYSTEM_PROMPT = """\
