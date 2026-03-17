@@ -35,7 +35,7 @@ The platform ingests end-of-day market data, financial statements, insider trade
 ## Architecture
 
 ```
-                      Angular 21 Frontend
+                      Angular 20 Frontend
                              |
                         FastAPI (REST / MCP)
                              |
@@ -75,6 +75,8 @@ Quaks adds the financial domain layer: market data pipelines, Elasticsearch inde
 
 | Agent | Description |
 |-------|-------------|
+| **Quaks Financial Analyst v1** | Multi-step equity research agent. Runs a linear pipeline: data collection → Portfolio X-Ray (sector allocation, style box, geographic exposure, weighted stats) → mechanical fundamental scoring (valuation, profitability, growth, risk) → technical signal confluence (ADX, RSI, MACD, EMA, 52-week range) → consensus report with conviction-weighted allocation. |
+| **Quaks News** | News aggregation and summarization agent for financial markets. |
 | **Test Echo** | Simple echo agent for testing and development purposes. |
 
 ## Market Data Pipeline

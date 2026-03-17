@@ -43,8 +43,9 @@ resource "keycloak_realm" "quaks" {
   offline_session_max_lifespan = "168h"
   refresh_token_max_reuse      = 0
 
-  ssl_required    = "external"
-  password_policy = "upperCase(1) and length(8) and forceExpiredPasswordChange(365) and notUsername"
+  ssl_required              = "external"
+  reset_credentials_allowed = true
+  password_policy           = "upperCase(1) and length(8) and forceExpiredPasswordChange(365) and notUsername"
 
   internationalization {
     supported_locales = ["en"]
@@ -84,7 +85,8 @@ resource "keycloak_openid_client" "quaks_client" {
   direct_access_grants_enabled = true
   service_accounts_enabled     = true
 
-  valid_redirect_uris = var.auth_client_redirect_uris
+  valid_redirect_uris       = var.auth_client_redirect_uris
+  pkce_code_challenge_method = "S256"
 
   login_theme = "keycloak"
 }

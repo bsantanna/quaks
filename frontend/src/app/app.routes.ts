@@ -13,6 +13,8 @@ import {InsightsProfile} from './page-insights-profile/insights-profile';
 import {InsightsNews} from './page-insights-news/insights-news';
 import {InsightsNewsItem} from './page-insights-news-item/insights-news-item';
 import {InsightsFinance} from './page-insights-finance/insights-finance';
+import {AuthCallback} from './page-auth-callback';
+import {PageWaitlist} from './page-waitlist';
 
 export const routes: Routes = [
   {
@@ -96,6 +98,16 @@ export const routes: Routes = [
     title: 'Cookie Policy',
     path: 'cookies',
     component: PageCookies
+  },
+  {
+    title: 'Sign In',
+    path: 'auth/callback',
+    component: AuthCallback
+  },
+  {
+    title: 'Waiting List',
+    path: 'waitlist',
+    component: PageWaitlist
   },
   { path: '**', redirectTo: '' }
 ];

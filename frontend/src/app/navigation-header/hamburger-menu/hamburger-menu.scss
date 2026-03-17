@@ -202,6 +202,40 @@
   background: linear-gradient(135deg, #1a0a16 50%, #FF2D8A 50%);
 }
 
+.hamburger-user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+}
+
+.hamburger-username {
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.hamburger-user-tier {
+  padding: 2px 8px;
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  border-radius: 2px;
+}
+
+.hamburger-user-tier-pro {
+  background: var(--accent-primary);
+  color: var(--surface-base);
+}
+
+.hamburger-user-tier-free {
+  background: var(--surface-hover);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-primary);
+}
+
 .hamburger-date-select {
   width: 100%;
   padding: 10px 8px;

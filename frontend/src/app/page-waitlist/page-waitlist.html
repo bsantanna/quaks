@@ -1,0 +1,68 @@
+<div class="container mx-auto sm:px-4 py-8 max-w-lg waitlist-content">
+
+  @if (state() === 'success') {
+    <div class="text-center py-16">
+      <h1 class="text-3xl font-bold mb-4">Thank you!</h1>
+      <p class="text-lg">You are on the waiting list. We will send account credentials to your email once access is granted.</p>
+    </div>
+  }
+
+  @if (state() === 'duplicate') {
+    <div class="text-center py-16">
+      <h1 class="text-3xl font-bold mb-4">Already registered</h1>
+      <p class="text-lg">This email is already on the waiting list. We will be in touch soon.</p>
+    </div>
+  }
+
+  @if (state() === 'error') {
+    <div class="mb-4 p-3 rounded error-banner">
+      <p>Something went wrong. Please try again later.</p>
+    </div>
+  }
+
+  @if (state() === 'form' || state() === 'error') {
+    <h1 class="text-3xl font-bold mb-6 text-center">Join the Waiting List</h1>
+    <p class="mb-6 text-center waitlist-description">Request early access to Quaks. We will create your account and send login instructions by email.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+
+      <div>
+        <label class="block mb-1 font-medium" for="email">Email</label>
+        <input id="email" type="email" formControlName="email" class="waitlist-field w-full" placeholder="you&#64;example.com" />
+        @if (form.controls.email.invalid && form.controls.email.touched) {
+          <p class="field-error">Valid email is required.</p>
+        }
+      </div>
+
+      <div>
+        <label class="block mb-1 font-medium" for="first_name">First Name</label>
+        <input id="first_name" type="text" formControlName="first_name" class="waitlist-field w-full" />
+        @if (form.controls.first_name.invalid && form.controls.first_name.touched) {
+          <p class="field-error">First name is required.</p>
+        }
+      </div>
+
+      <div>
+        <label class="block mb-1 font-medium" for="last_name">Last Name</label>
+        <input id="last_name" type="text" formControlName="last_name" class="waitlist-field w-full" />
+        @if (form.controls.last_name.invalid && form.controls.last_name.touched) {
+          <p class="field-error">Last name is required.</p>
+        }
+      </div>
+
+      <div>
+        <label class="block mb-1 font-medium" for="username">Username</label>
+        <input id="username" type="text" formControlName="username" class="waitlist-field w-full" placeholder="at least 3 characters" />
+        @if (form.controls.username.invalid && form.controls.username.touched) {
+          <p class="field-error">Username must be at least 3 characters.</p>
+        }
+      </div>
+
+      <button type="submit" class="waitlist-btn mt-2" [disabled]="submitting()">
+        {{ submitting() ? 'Submitting...' : 'Request Access' }}
+      </button>
+
+    </form>
+  }
+
+</div>
