@@ -28,11 +28,18 @@ class WaitlistService:
             "flag_processed": False,
         }
         try:
+            dated_index = self._dated_index()
             self.es.index(
-                index=self._dated_index(),
+                index=dated_index,
                 id=doc_id,
                 document=doc,
                 op_type="create",
             )
+            if not self.es.indices.exists_alias(
+                index=dated_index, name=self.INDEX_ALIAS
+            ):
+                self.es.indices.put_alias(
+                    index=dated_index, name=self.INDEX_ALIAS
+                )
         except ConflictError:
             raise DuplicateEntryError("Email")
