@@ -76,6 +76,10 @@
                                 {{ authService.subscriptionTier() | uppercase }}
                             </span>
                         </div>
+                        <button class="hamburger-item" (click)="navigate('/account/profile')">
+                            <img src="/svg/icon-user.svg" class="size-5" aria-hidden="true" alt="" />
+                            <span>Profile</span>
+                        </button>
                         <button class="hamburger-item" (click)="logout()">
                             <img src="/svg/icon-close.svg" class="size-5" aria-hidden="true" alt="" />
                             <span>Sign out</span>

@@ -124,9 +124,9 @@ resource "kubernetes_secret_v1" "quaks_dags_secrets" {
     QUAKS_SERVICE_ACCOUNT_SECRET   = var.auth_service_account_secret
     QUAKS_INTEGRATION_TYPE         = var.quaks_integration_type
     QUAKS_INTEGRATION_API_KEY      = var.quaks_integration_api_key
-    KEYCLOAK_ADMIN_URL             = var.keycloak_admin_url
-    KEYCLOAK_ADMIN_USERNAME        = var.keycloak_admin_username
-    KEYCLOAK_ADMIN_PASSWORD        = var.keycloak_admin_password
+    KEYCLOAK_ADMIN_URL             = var.auth_url
+    KEYCLOAK_ADMIN_USERNAME        = var.auth_admin_username
+    KEYCLOAK_ADMIN_PASSWORD        = var.auth_admin_secret
     KEYCLOAK_REALM                 = var.keycloak_realm
   }
 
