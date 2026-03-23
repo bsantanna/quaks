@@ -2,6 +2,29 @@
 
 <!-- version list -->
 
+## v1.3.36 (2026-03-23)
+
+### Bug Fixes
+
+- Account profile implementation ([#81](https://github.com/bsantanna/quaks/pull/81),
+  [`7adcb9b`](https://github.com/bsantanna/quaks/commit/7adcb9b203643368a20f38fa41d8d0f0ef5fb097))
+
+- Adjusts waitlist insertion (1) ([#81](https://github.com/bsantanna/quaks/pull/81),
+  [`7adcb9b`](https://github.com/bsantanna/quaks/commit/7adcb9b203643368a20f38fa41d8d0f0ef5fb097))
+
+- Prototypes account mgmt (1) ([#81](https://github.com/bsantanna/quaks/pull/81),
+  [`7adcb9b`](https://github.com/bsantanna/quaks/commit/7adcb9b203643368a20f38fa41d8d0f0ef5fb097))
+
+- Prototypes account mgmt (2) ([#81](https://github.com/bsantanna/quaks/pull/81),
+  [`7adcb9b`](https://github.com/bsantanna/quaks/commit/7adcb9b203643368a20f38fa41d8d0f0ef5fb097))
+
+- Prototypes account mgmt (3) ([#81](https://github.com/bsantanna/quaks/pull/81),
+  [`7adcb9b`](https://github.com/bsantanna/quaks/commit/7adcb9b203643368a20f38fa41d8d0f0ef5fb097))
+
+- Terraform scripts (1) ([#81](https://github.com/bsantanna/quaks/pull/81),
+  [`7adcb9b`](https://github.com/bsantanna/quaks/commit/7adcb9b203643368a20f38fa41d8d0f0ef5fb097))
+
+
 ## v1.3.35 (2026-03-17)
 
 ### Bug Fixes
