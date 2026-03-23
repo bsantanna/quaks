@@ -6,7 +6,7 @@ auth:
   url: "https://auth.bsantanna.me"
   realm: "quaks"
   client_id: "quaks-client"
-  client_secret: "5AZmTfxAXaFPVYFIGTJmfqsASExL02tb"
+  client_secret: "???????"
 broker:
   url: "redis://redis:6379/0"
 db:
