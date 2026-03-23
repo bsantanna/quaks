@@ -14,7 +14,6 @@
   }
 
   @if (state() === 'form') {
-    <h1 class="text-3xl font-bold mb-6 text-center">Account Profile</h1>
     <p class="mb-6 text-center profile-description">Manage your account information.</p>
 
     <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
@@ -43,13 +42,13 @@
         }
       </div>
 
-      <div>
-        <label class="block mb-1 font-medium" for="username">Username</label>
-        <input id="username" type="text" formControlName="username" class="profile-field w-full" placeholder="at least 3 characters" />
-        @if (form.controls.username.invalid && form.controls.username.touched) {
-          <p class="field-error">Username must be at least 3 characters.</p>
-        }
-      </div>
+<!--      <div>-->
+<!--        <label class="block mb-1 font-medium" for="username">Username</label>-->
+<!--        <input id="username" type="text" formControlName="username" class="profile-field w-full" placeholder="at least 3 characters" />-->
+<!--        @if (form.controls.username.invalid && form.controls.username.touched) {-->
+<!--          <p class="field-error">Username must be at least 3 characters.</p>-->
+<!--        }-->
+<!--      </div>-->
 
       <button type="submit" class="profile-btn mt-2" [disabled]="submitting()">
         {{ submitting() ? 'Saving...' : 'Save Changes' }}

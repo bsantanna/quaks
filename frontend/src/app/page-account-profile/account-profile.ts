@@ -56,7 +56,7 @@ export class AccountProfile {
     this.submitting.set(true);
     this.accountService.updateProfile(this.form.getRawValue()).subscribe({
       next: () => {
-        this.authService.renewToken().then(() => {
+        this.authService.renewToken().finally(() => {
           this.submitting.set(false);
           this.feedbackMessageService.update({
             message: 'Profile updated successfully.',
