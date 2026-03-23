@@ -161,6 +161,8 @@ export class AuthService {
       refreshToken,
       username: (payload?.['preferred_username'] as string) ?? '',
       email: (payload?.['email'] as string) ?? '',
+      firstName: (payload?.['given_name'] as string) ?? '',
+      lastName: (payload?.['family_name'] as string) ?? '',
       subscriptionTier,
       expiresAt: ((payload?.['exp'] as number) ?? 0) * 1000,
     };

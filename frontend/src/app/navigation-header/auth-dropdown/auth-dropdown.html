@@ -16,6 +16,10 @@
                     </span>
                 </div>
                 <div class="auth-divider"></div>
+                <a routerLink="/account/profile" class="auth-menu-item" (click)="showMenu.set(false)">
+                    <img src="/svg/icon-user.svg" class="size-4" aria-hidden="true" alt="" />
+                    <span>Profile</span>
+                </a>
                 <button class="auth-menu-item" (click)="logout()">
                     <img src="/svg/icon-close.svg" class="size-4" aria-hidden="true" alt="" />
                     <span>Sign out</span>

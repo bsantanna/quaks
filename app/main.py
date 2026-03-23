@@ -64,7 +64,9 @@ def setup_auth(container, application):
             application,
             keycloak_configuration=keycloak_config,
             exclude_patterns=[
-                "/auth",
+                "/auth/login",
+                "/auth/renew",
+                "/auth/exchange",
                 "/docs",
                 "/openapi.json",
                 "/status/*",

@@ -26,8 +26,9 @@ resource "keycloak_realm" "quaks" {
   realm   = var.auth_realm
   enabled = true
 
-  display_name      = "Quaks"
-  display_name_html = "<strong>Quaks</strong>"
+  display_name         = "Quaks"
+  display_name_html    = "<strong>Quaks</strong>"
+  edit_username_allowed = true
 
   login_theme   = "keycloak"
   account_theme = "keycloak.v3"
@@ -105,6 +106,24 @@ resource "keycloak_user" "service_account" {
     value     = var.auth_service_account_secret
     temporary = false
   }
+}
+
+data "keycloak_openid_client" "realm_management" {
+  realm_id  = keycloak_realm.quaks.id
+  client_id = "realm-management"
+}
+
+data "keycloak_role" "manage_users" {
+  realm_id  = keycloak_realm.quaks.id
+  client_id = data.keycloak_openid_client.realm_management.id
+  name      = "manage-users"
+}
+
+resource "keycloak_openid_client_service_account_role" "quaks_manage_users" {
+  realm_id                = keycloak_realm.quaks.id
+  service_account_user_id = keycloak_openid_client.quaks_client.service_account_user_id
+  client_id               = data.keycloak_openid_client.realm_management.id
+  role                    = data.keycloak_role.manage_users.name
 }
 
 resource "kubernetes_secret_v1" "quaks_auth" {

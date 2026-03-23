@@ -1,7 +1,7 @@
 import requests
 
 from app.domain.exceptions.base import AuthenticationError
-from app.interface.api.auth.schema import AuthResponse
+from app.interface.api.auth.schema import AuthResponse, UserProfileResponse
 
 
 class AuthService:
@@ -19,6 +19,7 @@ class AuthService:
         self.client_id = client_id
         self.client_secret = client_secret
         self.token_url = f"{self.url}/realms/{self.realm}/protocol/openid-connect/token"
+        self.admin_users_url = f"{self.url}/admin/realms/{self.realm}/users"
 
     def login(self, username: str, password: str) -> AuthResponse:
         try:
@@ -96,5 +97,84 @@ class AuthService:
             return AuthResponse(
                 access_token=new_access_token, refresh_token=new_refresh_token
             )
+        except requests.exceptions.RequestException as exc:
+            raise AuthenticationError(str(exc))
+
+    def _get_service_account_token(self) -> str:
+        try:
+            response = requests.post(
+                url=self.token_url,
+                data={
+                    "grant_type": "client_credentials",
+                    "client_id": self.client_id,
+                    "client_secret": self.client_secret,
+                },
+            )
+            response.raise_for_status()
+            token = response.json().get("access_token")
+            if not token:
+                raise AuthenticationError(
+                    "Service account token not found in response"
+                )
+            return token
+        except requests.exceptions.RequestException as exc:
+            raise AuthenticationError(str(exc))
+
+    def get_user_profile(self, user_id: str) -> UserProfileResponse:
+        raw_uuid = user_id.removeprefix("id_")
+        token = self._get_service_account_token()
+        try:
+            response = requests.get(
+                url=f"{self.admin_users_url}/{raw_uuid}",
+                headers={"Authorization": f"Bearer {token}"},
+            )
+            response.raise_for_status()
+            data = response.json()
+            return UserProfileResponse(
+                username=data.get("username", ""),
+                email=data.get("email", ""),
+                first_name=data.get("firstName", ""),
+                last_name=data.get("lastName", ""),
+            )
+        except requests.exceptions.RequestException as exc:
+            raise AuthenticationError(str(exc))
+
+    def update_user_profile(
+        self,
+        user_id: str,
+        username: str,
+        email: str,
+        first_name: str,
+        last_name: str,
+    ) -> UserProfileResponse:
+        raw_uuid = user_id.removeprefix("id_")
+        token = self._get_service_account_token()
+        try:
+            response = requests.put(
+                url=f"{self.admin_users_url}/{raw_uuid}",
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "username": username,
+                    "email": email,
+                    "firstName": first_name,
+                    "lastName": last_name,
+                },
+            )
+            response.raise_for_status()
+            return UserProfileResponse(
+                username=username,
+                email=email,
+                first_name=first_name,
+                last_name=last_name,
+            )
+        except requests.exceptions.HTTPError as exc:
+            if exc.response is not None and exc.response.status_code == 409:
+                raise AuthenticationError(
+                    "409: A user with this email or username already exists"
+                )
+            raise AuthenticationError(str(exc))
         except requests.exceptions.RequestException as exc:
             raise AuthenticationError(str(exc))
