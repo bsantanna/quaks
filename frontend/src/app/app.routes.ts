@@ -15,8 +15,22 @@ import {InsightsNewsItem} from './page-insights-news-item/insights-news-item';
 import {InsightsFinance} from './page-insights-finance/insights-finance';
 import {AuthCallback} from './page-auth-callback';
 import {PageWaitlist} from './page-waitlist';
+import {AccountProfile} from './page-account-profile/account-profile';
+import {authGuard} from './shared/guards/auth.guard';
 
 export const routes: Routes = [
+  {
+    title: 'Account',
+    path: 'account',
+    children: [
+      {
+        title: 'Account Profile',
+        path: 'profile',
+        component: AccountProfile,
+        canActivate: [authGuard]
+      }
+    ]
+  },
   {
     title: 'Insights',
     path: 'insights',

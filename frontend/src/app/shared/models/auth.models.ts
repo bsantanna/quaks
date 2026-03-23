@@ -5,6 +5,8 @@ export interface AuthSession {
   refreshToken: string;
   username: string;
   email: string;
+  firstName: string;
+  lastName: string;
   subscriptionTier: SubscriptionTier;
   expiresAt: number;
 }

@@ -615,10 +615,6 @@ resource "elasticstack_elasticsearch_index_template" "quaks_waiting-list_templat
         name = elasticstack_elasticsearch_index_lifecycle.quaks_policy.name
       }
     })
-
-    aliases = jsonencode({
-      "quaks_waiting-list_latest" = {}
-    })
   }
 }
 

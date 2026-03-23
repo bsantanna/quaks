@@ -93,19 +93,19 @@ variable "quaks_integration_api_key" {
   sensitive   = true
 }
 
-variable "keycloak_admin_url" {
+variable "auth_url" {
   description = "Keycloak base URL for admin REST API (e.g. https://auth.quaks.ai)"
   type        = string
   sensitive   = true
 }
 
-variable "keycloak_admin_username" {
+variable "auth_admin_username" {
   description = "Keycloak admin username for waiting list user provisioning"
   type        = string
   sensitive   = true
 }
 
-variable "keycloak_admin_password" {
+variable "auth_admin_secret" {
   description = "Keycloak admin password for waiting list user provisioning"
   type        = string
   sensitive   = true
