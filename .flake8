@@ -10,7 +10,11 @@ exclude =
     doc,
     notebooks,
     .eggs,
-    *.egg
+    *.egg,
+    app/static,
+    build,
+    dist,
+    *.egg-info
 ignore = C901,E203,E501,W201,W503
 max-line-length = 127
 max-complexity = 10
