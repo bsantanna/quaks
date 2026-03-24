@@ -16,6 +16,7 @@ dag = DAG(
     catchup=False,
 )
 
+
 @task.kubernetes(
     image="bsantanna/java-python-dev",
     namespace="airflow",
@@ -149,6 +150,7 @@ def load_stocks_estimated_earnings():
         except Exception as e:
             print(f"Error processing estimated earnings for {ticker}: {e}")
         time.sleep(0.5)
+
 
 with dag:
     load_stocks_estimated_earnings()

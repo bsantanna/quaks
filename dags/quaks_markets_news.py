@@ -16,6 +16,7 @@ dag = DAG(
     catchup=False,
 )
 
+
 @task.kubernetes(
     image="bsantanna/java-python-dev",
     namespace="airflow",
@@ -93,6 +94,7 @@ def load_markets_news():
     for company in indexed_key_ticker_list:
         stocks_eod_response = ingest_markets_news(company["key_ticker"], limit=20, index_suffix=company["index"])
         print(f"Ingestion complete market news for {company["key_ticker"]}, index {company["index"]}: {stocks_eod_response.json()}")
+
 
 with dag:
     load_markets_news()

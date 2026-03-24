@@ -406,7 +406,6 @@ def ingest_stocks_metadata(ticker: str, index_suffix="latest") -> Response:
 # ---------------------------------------------------------------------------
 
 def format_bulk_stocks_fundamental_income_statement(ticker: str, reports: list, index_suffix: str) -> bytes:
-    today = datetime.now().strftime('%Y-%m-%d')
     index_name = f"quaks_stocks-fundamental-income-statement_{index_suffix}"
     lines = []
 
@@ -532,7 +531,6 @@ def ingest_stocks_fundamental_income_statement(ticker: str, cutoff_days=3650, in
 # ---------------------------------------------------------------------------
 
 def format_bulk_stocks_fundamental_balance_sheet(ticker: str, reports: list, index_suffix: str) -> bytes:
-    today = datetime.now().strftime('%Y-%m-%d')
     index_name = f"quaks_stocks-fundamental-balance-sheet_{index_suffix}"
     lines = []
 
@@ -692,7 +690,6 @@ def ingest_stocks_fundamental_balance_sheet(ticker: str, cutoff_days=3650, index
 # ---------------------------------------------------------------------------
 
 def format_bulk_stocks_fundamental_cash_flow(ticker: str, reports: list, index_suffix: str) -> bytes:
-    today = datetime.now().strftime('%Y-%m-%d')
     index_name = f"quaks_stocks-fundamental-cash-flow_{index_suffix}"
     lines = []
 

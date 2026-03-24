@@ -172,6 +172,7 @@ def setup_middleware(application: FastAPI):
         allow_headers=["*"],
     )
 
+
 def setup_spa_fallback(application: FastAPI):
     static_dir = "app/static/frontend/browser"
 
@@ -188,5 +189,6 @@ def setup_spa_fallback(application: FastAPI):
         app=StaticFiles(directory=static_dir, html=True),
         name="angular"
     )
+
 
 app = create_app()
