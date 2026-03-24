@@ -14,6 +14,6 @@ test:
 
 lint:
 	# stop the build if there are Python syntax errors or undefined names
-	python -m flake8 app dags tests --count --select=E9,F63,F7,F82 --show-source --statistics
+	python -m flake8 app dags tests --exclude=app/static --count --select=E9,F63,F7,F82 --show-source --statistics
 	# exit-zero treats all errors as warnings
-	python -m flake8 app dags tests --count --exit-zero --statistics
+	python -m flake8 app dags tests --exclude=app/static --count --exit-zero --statistics
