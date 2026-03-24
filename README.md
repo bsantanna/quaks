@@ -32,32 +32,6 @@ The platform ingests end-of-day market data, financial statements, insider trade
 - **Multi-LLM Support** -- Dynamically switch between Claude, GPT, Ollama, Grok/XAI per agent.
 - **Full Observability** -- OpenTelemetry instrumentation with Prometheus, Grafana, Loki, and Tempo.
 
-## Architecture
-
-```
-                      Angular 20 Frontend
-                             |
-                        FastAPI (REST / MCP)
-                             |
-              +--------------+--------------+
-              |              |              |
-        Agent Registry   LangGraph     LLM Service
-              |           Workflows    (Claude, GPT,
-         Agent Types         |         Ollama, Grok)
-              |              |
-   +----------+            |
-   |                       |
- Agent Types               |
-              |              |
-     +--------+--------+----+----+
-     |        |         |        |
-  Postgres  Redis  Elasticsearch  Vault
-  (pgvector)       (market data)  (secrets)
-                        |
-                   Airflow DAGs
-                   (data ingestion)
-```
-
 ### Upstream: Agent-Lab
 
 Quaks inherits its core architecture from [Agent-Lab](https://github.com/bsantanna/agent-lab), an MIT-licensed cloud-native toolkit for building LLM-powered autonomous agents. Agent-Lab provides:
