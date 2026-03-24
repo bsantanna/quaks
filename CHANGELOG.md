@@ -2,6 +2,32 @@
 
 <!-- version list -->
 
+## v1.3.38 (2026-03-24)
+
+### Bug Fixes
+
+- Adjusts bugs in the previous release
+  ([`d6cd7bc`](https://github.com/bsantanna/quaks/commit/d6cd7bcf20f413f405f7ab2b7383c5a3d7f45525))
+
+- Adjusts bugs in the previous release (2)
+  ([`c8fd084`](https://github.com/bsantanna/quaks/commit/c8fd0840495a4edf24f91d36bc750371e7a1a12c))
+
+- Adjusts bugs in the previous release (3)
+  ([`5709d40`](https://github.com/bsantanna/quaks/commit/5709d4066c0bc395f3e6aa6e31e686202c0d5779))
+
+- Adjusts bugs in the previous release (4)
+  ([`9d7cd41`](https://github.com/bsantanna/quaks/commit/9d7cd4159cd8d35f65cf8888eebc2da1566465fc))
+
+- Adjusts bugs in the previous release (5)
+  ([`fbea864`](https://github.com/bsantanna/quaks/commit/fbea8645b64ea9d885a6971fbba019f4156b5ca2))
+
+- Adjusts bugs in the previous release (6)
+  ([`9edcbac`](https://github.com/bsantanna/quaks/commit/9edcbac74423df90ecccdfa9245a0c64142ad77a))
+
+- Prototypes account mgmt (5) ([#83](https://github.com/bsantanna/quaks/pull/83),
+  [`38500d4`](https://github.com/bsantanna/quaks/commit/38500d47a65c710e6c686b04b233f4bf4baa8f5a))
+
+
 ## v1.3.37 (2026-03-24)
 
 ### Bug Fixes
