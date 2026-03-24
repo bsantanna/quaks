@@ -1,0 +1,16 @@
+[flake8]
+exclude =
+    frontend,
+    node_modules,
+    __pycache__,
+    .git,
+    docker,
+    terraform,
+    otel,
+    doc,
+    notebooks,
+    .eggs,
+    *.egg
+ignore = C901,E203,E501,W201,W503
+max-line-length = 127
+max-complexity = 10

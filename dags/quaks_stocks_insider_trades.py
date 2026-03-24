@@ -16,6 +16,7 @@ dag = DAG(
     catchup=False,
 )
 
+
 @task.kubernetes(
     image="bsantanna/java-python-dev",
     namespace="airflow",
@@ -137,6 +138,7 @@ def load_stocks_insider_trades():
         except Exception as e:
             print(f"Error processing insider trades for {ticker}: {e}")
         time.sleep(0.5)
+
 
 with dag:
     load_stocks_insider_trades()

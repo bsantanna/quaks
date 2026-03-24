@@ -16,6 +16,7 @@ dag = DAG(
     catchup=False,
 )
 
+
 @task.kubernetes(
     image="bsantanna/java-python-dev",
     namespace="airflow",
@@ -25,9 +26,8 @@ def load_stocks_fundamentals():
     import os
     import time
     import math
-    import requests
     import json
-    from datetime import datetime
+    import requests
 
     def safe_float(val):
         if val is None:
@@ -267,6 +267,7 @@ def load_stocks_fundamentals():
         except Exception as e:
             print(f"Error processing fundamentals for {ticker}: {e}")
         time.sleep(0.5)
+
 
 with dag:
     load_stocks_fundamentals()

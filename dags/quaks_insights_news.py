@@ -16,6 +16,7 @@ dag = DAG(
     catchup=False,
 )
 
+
 @task.kubernetes(
     image="bsantanna/java-python-dev",
     namespace="airflow",

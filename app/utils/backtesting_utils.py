@@ -223,15 +223,15 @@ def get_bbands(
     df_bbands['position'] = 0
     # Bullish: Price was below lower, now crosses above middle
     df_bbands['position'] = np.where(
-        (df_bbands['prev_close'] < df_bbands['lower_band']) &
-        (df_bbands['prev_close'] < df_bbands['prev_middle']) &
-        (df_bbands['val_close'] > df_bbands['middle_band']), 1, df_bbands['position']
+        (df_bbands['prev_close'] < df_bbands['lower_band'])
+        & (df_bbands['prev_close'] < df_bbands['prev_middle'])
+        & (df_bbands['val_close'] > df_bbands['middle_band']), 1, df_bbands['position']
     )
     # Bearish: Price was above upper, now crosses below middle
     df_bbands['position'] = np.where(
-        (df_bbands['prev_close'] > df_bbands['upper_band']) &
-        (df_bbands['prev_close'] > df_bbands['prev_middle']) &
-        (df_bbands['val_close'] < df_bbands['middle_band']), -1, df_bbands['position']
+        (df_bbands['prev_close'] > df_bbands['upper_band'])
+        & (df_bbands['prev_close'] > df_bbands['prev_middle'])
+        & (df_bbands['val_close'] < df_bbands['middle_band']), -1, df_bbands['position']
     )
     df_bbands.dropna(inplace=True)
 
@@ -245,7 +245,7 @@ def get_ad(
     df_ad = df.copy()
     # Calculate Close Location Value (CLV)
     df_ad['clv'] = ((df_ad['val_close'] - df_ad['val_low']) - (df_ad['val_high'] - df_ad['val_close'])) / (
-            df_ad['val_high'] - df_ad['val_low'])
+        df_ad['val_high'] - df_ad['val_low'])
 
     # Handle division by zero or NaN (if high == low)
     df_ad['clv'] = df_ad['clv'].fillna(0)

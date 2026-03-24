@@ -24,7 +24,6 @@ dag = DAG(
 )
 def process_waiting_list():
     import os
-    import json
     import requests
 
     es_url = os.environ["ELASTICSEARCH_URL"]

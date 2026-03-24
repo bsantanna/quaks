@@ -16,6 +16,7 @@ dag = DAG(
     catchup=False,
 )
 
+
 @task.kubernetes(
     image="bsantanna/java-python-dev",
     namespace="airflow",
@@ -142,6 +143,7 @@ def load_stocks_eod():
     for company in indexed_key_ticker_list:
         stocks_eod_response = ingest_stocks_eod(company["key_ticker"], company["index"])
         print(f"Ingestion complete stocks EOD for {company['key_ticker']}, index {company['index']}: {stocks_eod_response.json()}")
+
 
 with dag:
     load_stocks_eod()
