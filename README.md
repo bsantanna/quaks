@@ -81,67 +81,6 @@ Terraform manages index lifecycle policies (365-day retention), index templates,
 | **Observability** | OpenTelemetry, Prometheus, Grafana, Loki, Tempo |
 | **Browser Automation** | browser-use, chromedp |
 
-## Getting Started
-
-### Prerequisites
-
-- Python 3.12+
-- Docker & Docker Compose
-- Node.js 20+ (for frontend development)
-
-### Local Development
-
-```bash
-# Start infrastructure services
-docker compose up -d postgres redis vault
-
-# Install Python dependencies
-pip install -r requirements.txt
-
-# Run the application
-uvicorn app.main:app --host 0.0.0.0 --port 18000 --reload
-```
-
-### Full Stack (Docker)
-
-```bash
-docker compose up -d
-```
-
-This starts the FastAPI app, PostgreSQL (with pgvector), Redis, Vault, headless Chrome, and the full observability stack (OTel Collector, Prometheus, Grafana, Loki, Tempo).
-
-### Terraform Setup
-
-```bash
-# Elasticsearch index templates and search scripts
-cd terraform/elasticsearch
-terraform init && terraform apply
-
-# Kibana dashboards
-cd terraform/kibana
-terraform init && terraform apply
-```
-
-## Project Structure
-
-```
-app/
-  core/              # Dependency injection container
-  domain/            # Models and repository interfaces
-  infrastructure/    # Database, auth, metrics
-  interface/api/     # REST API routers
-  services/          # Business logic and agent implementations
-    agent_types/     # Agent type registry and implementations
-  static/            # Pre-built frontend assets
-dags/                # Airflow DAGs for market data ingestion
-docker/              # Dockerfiles (app, dags)
-frontend/            # Angular 20 web application
-terraform/           # Elasticsearch and Kibana IaC
-otel/                # OpenTelemetry collector configuration
-notebooks/           # Jupyter notebooks
-tests/               # Unit and integration tests
-```
-
 ## License
 
 This project is licensed under the GPLv3 License. See the [LICENSE](doc/LICENSE.md) file for details.
