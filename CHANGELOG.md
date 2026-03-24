@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.3.37 (2026-03-24)
+
+### Bug Fixes
+
+- Prototypes account mgmt (4) ([#82](https://github.com/bsantanna/quaks/pull/82),
+  [`bab45f0`](https://github.com/bsantanna/quaks/commit/bab45f00337a372e544eb9b021523c84434bcc8e))
+
+
 ## v1.3.36 (2026-03-23)
 
 ### Bug Fixes
