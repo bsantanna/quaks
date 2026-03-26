@@ -47,6 +47,19 @@ resource "keycloak_realm" "quaks" {
   ssl_required    = "external"
   password_policy = "upperCase(1) and length(8) and forceExpiredPasswordChange(365) and notUsername"
 
+  smtp_server {
+    host     = var.smtp_host
+    port     = var.smtp_port
+    from     = var.smtp_from
+    ssl      = true
+    starttls = false
+
+    auth {
+      username = var.smtp_user
+      password = var.smtp_password
+    }
+  }
+
   internationalization {
     supported_locales = ["en"]
     default_locale    = "en"
