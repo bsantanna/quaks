@@ -2,6 +2,29 @@
 
 <!-- version list -->
 
+## v1.3.39 (2026-03-26)
+
+### Bug Fixes
+
+- Account join list email setup ([#84](https://github.com/bsantanna/quaks/pull/84),
+  [`a7df4e6`](https://github.com/bsantanna/quaks/commit/a7df4e6cce944ef2e8e61617fc6cf4960fd5cfc6))
+
+- Pin litellm in requirements.txt ([#84](https://github.com/bsantanna/quaks/pull/84),
+  [`a7df4e6`](https://github.com/bsantanna/quaks/commit/a7df4e6cce944ef2e8e61617fc6cf4960fd5cfc6))
+
+- Smtp config for keycloak realm ([#84](https://github.com/bsantanna/quaks/pull/84),
+  [`a7df4e6`](https://github.com/bsantanna/quaks/commit/a7df4e6cce944ef2e8e61617fc6cf4960fd5cfc6))
+
+- Smtp config for keycloak realm (2) ([#84](https://github.com/bsantanna/quaks/pull/84),
+  [`a7df4e6`](https://github.com/bsantanna/quaks/commit/a7df4e6cce944ef2e8e61617fc6cf4960fd5cfc6))
+
+- Smtp config for keycloak realm (3) ([#84](https://github.com/bsantanna/quaks/pull/84),
+  [`a7df4e6`](https://github.com/bsantanna/quaks/commit/a7df4e6cce944ef2e8e61617fc6cf4960fd5cfc6))
+
+- Smtp config for keycloak realm (4) ([#84](https://github.com/bsantanna/quaks/pull/84),
+  [`a7df4e6`](https://github.com/bsantanna/quaks/commit/a7df4e6cce944ef2e8e61617fc6cf4960fd5cfc6))
+
+
 ## v1.3.38 (2026-03-24)
 
 ### Bug Fixes
