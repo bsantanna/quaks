@@ -30,10 +30,10 @@ resource "keycloak_realm" "quaks" {
   display_name_html    = "<strong>Quaks</strong>"
   edit_username_allowed = true
 
-  login_theme   = "keycloak"
+  login_theme   = "quaks"
   account_theme = "keycloak.v3"
   admin_theme   = "keycloak.v2"
-  email_theme   = "keycloak"
+  email_theme   = "quaks"
 
   access_code_lifespan = "1h"
 
@@ -46,6 +46,19 @@ resource "keycloak_realm" "quaks" {
 
   ssl_required    = "external"
   password_policy = "upperCase(1) and length(8) and forceExpiredPasswordChange(365) and notUsername"
+
+  smtp_server {
+    host     = var.smtp_host
+    port     = var.smtp_port
+    from     = var.smtp_from
+    ssl      = true
+    starttls = false
+
+    auth {
+      username = var.smtp_user
+      password = var.smtp_password
+    }
+  }
 
   internationalization {
     supported_locales = ["en"]
@@ -88,7 +101,7 @@ resource "keycloak_openid_client" "quaks_client" {
   valid_redirect_uris       = var.auth_client_redirect_uris
   pkce_code_challenge_method = "S256"
 
-  login_theme = "keycloak"
+  login_theme = "quaks"
 }
 
 resource "keycloak_user" "service_account" {
