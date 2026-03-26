@@ -51,3 +51,30 @@ variable "auth_client_redirect_uris" {
   description = "Auth Client Redirect URIs"
   default     = ["*"]
 }
+
+variable "smtp_host" {
+  type        = string
+  description = "SMTP server address"
+}
+
+variable "smtp_port" {
+  type        = number
+  description = "SMTP server port"
+}
+
+variable "smtp_user" {
+  type        = string
+  description = "SMTP username"
+  sensitive   = true
+}
+
+variable "smtp_password" {
+  type        = string
+  description = "SMTP password"
+  sensitive   = true
+}
+
+variable "smtp_from" {
+  type        = string
+  description = "SMTP sender email address"
+}
