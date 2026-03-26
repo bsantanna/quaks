@@ -30,7 +30,7 @@ resource "keycloak_realm" "quaks" {
   display_name_html    = "<strong>Quaks</strong>"
   edit_username_allowed = true
 
-  login_theme   = "keycloak"
+  login_theme   = "quaks"
   account_theme = "keycloak.v3"
   admin_theme   = "keycloak.v2"
   email_theme   = "quaks"
@@ -101,7 +101,7 @@ resource "keycloak_openid_client" "quaks_client" {
   valid_redirect_uris       = var.auth_client_redirect_uris
   pkce_code_challenge_method = "S256"
 
-  login_theme = "keycloak"
+  login_theme = "quaks"
 }
 
 resource "keycloak_user" "service_account" {
