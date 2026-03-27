@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.3.40 (2026-03-27)
+
+### Bug Fixes
+
+- Smtp config for keycloak realm (5) ([#85](https://github.com/bsantanna/quaks/pull/85),
+  [`6ad6146`](https://github.com/bsantanna/quaks/commit/6ad614650cd40ce9eab7e5a83538bea1dbef391b))
+
+
 ## v1.3.39 (2026-03-26)
 
 ### Bug Fixes
