@@ -7,6 +7,7 @@ import json
 import pandas as pd
 from datetime import datetime
 from requests import Response
+from requests_oauthlib import OAuth1Session
 
 
 def _safe_float(val):
@@ -971,3 +972,48 @@ def ingest_markets_news(ticker: str, limit=20, index_suffix="latest") -> Respons
         },
         data=format_bulk_markets_news(ticker_news_series, index_suffix)
     )
+
+
+def post_to_x(
+    executive_summary: str,
+    article_url: str,
+    consumer_key: str,
+    consumer_secret: str,
+    access_token: str,
+    access_token_secret: str,
+    max_chars: int = 280,
+) -> dict | None:
+    if not executive_summary or not executive_summary.strip():
+        print("WARNING: Executive summary is empty. Skipping X post.")
+        return None
+
+    tweet_text = (
+        f"{executive_summary.strip()}\n\n"
+        f"See more: {article_url}"
+    )
+
+    if len(tweet_text) > max_chars:
+        available = max_chars - len(f"Executive Summary:\n\n\n\nSee more: {article_url}") - 3
+        tweet_text = (
+            f"Executive Summary:\n\n"
+            f"{executive_summary.strip()[:available]}...\n\n"
+            f"See more: {article_url}"
+        )
+
+    oauth = OAuth1Session(
+        consumer_key,
+        client_secret=consumer_secret,
+        resource_owner_key=access_token,
+        resource_owner_secret=access_token_secret,
+    )
+
+    print("Posting to X...")
+    response = oauth.post("https://api.x.com/2/tweets", json={"text": tweet_text})
+
+    if response.status_code == 201:
+        post_id = response.json()["data"]["id"]
+        print(f"Posted to X successfully. Post ID: {post_id}")
+        return response.json()
+    else:
+        print(f"WARNING: X post failed. Status: {response.status_code}, Response: {response.text}")
+        return None

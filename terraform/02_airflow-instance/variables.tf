@@ -116,3 +116,27 @@ variable "keycloak_realm" {
   type        = string
   default     = "quaks"
 }
+
+variable "x_consumer_key" {
+  description = "X (Twitter) OAuth 1.0a consumer key (API Key) for @quaksai"
+  type        = string
+  sensitive   = true
+}
+
+variable "x_consumer_secret" {
+  description = "X (Twitter) OAuth 1.0a consumer secret (API Key Secret) for @quaksai"
+  type        = string
+  sensitive   = true
+}
+
+variable "x_access_token" {
+  description = "X (Twitter) OAuth 1.0a access token for @quaksai"
+  type        = string
+  sensitive   = true
+}
+
+variable "x_access_token_secret" {
+  description = "X (Twitter) OAuth 1.0a access token secret for @quaksai"
+  type        = string
+  sensitive   = true
+}
