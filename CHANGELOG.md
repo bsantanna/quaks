@@ -2,6 +2,20 @@
 
 <!-- version list -->
 
+## v1.3.41 (2026-03-28)
+
+### Bug Fixes
+
+- Dag posts tweet ([#86](https://github.com/bsantanna/quaks/pull/86),
+  [`4bc0ef5`](https://github.com/bsantanna/quaks/commit/4bc0ef55748cece658b5dd1085805e297d96fa2d))
+
+- News insights social media posting ([#86](https://github.com/bsantanna/quaks/pull/86),
+  [`4bc0ef5`](https://github.com/bsantanna/quaks/commit/4bc0ef55748cece658b5dd1085805e297d96fa2d))
+
+- X post test ([#86](https://github.com/bsantanna/quaks/pull/86),
+  [`4bc0ef5`](https://github.com/bsantanna/quaks/commit/4bc0ef55748cece658b5dd1085805e297d96fa2d))
+
+
 ## v1.3.40 (2026-03-27)
 
 ### Bug Fixes
