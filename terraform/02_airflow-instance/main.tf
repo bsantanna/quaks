@@ -128,6 +128,11 @@ resource "kubernetes_secret_v1" "quaks_dags_secrets" {
     KEYCLOAK_ADMIN_USERNAME        = var.auth_admin_username
     KEYCLOAK_ADMIN_PASSWORD        = var.auth_admin_secret
     KEYCLOAK_REALM                 = var.keycloak_realm
+    X_CONSUMER_KEY                 = var.x_consumer_key
+    X_CONSUMER_SECRET              = var.x_consumer_secret
+    X_ACCESS_TOKEN                 = var.x_access_token
+    X_ACCESS_TOKEN_SECRET          = var.x_access_token_secret
+    QUAKS_ARTICLE_URL_PATTERN      = "https://${var.quaks_fqdn}/insights/news/item"
   }
 
   type = "Opaque"

@@ -26,10 +26,10 @@ def generate_insights_news():
     import hashlib
     import json
     import os
+    import requests
     from datetime import datetime
     from uuid import uuid4
 
-    import requests
 
     INTEGRATION_ENDPOINTS = {
         "xai_api_v1": "https://api.x.ai/v1/",
@@ -147,6 +147,55 @@ def generate_insights_news():
     )
     es_response.raise_for_status()
     print(f"Indexing complete: {es_response.json()}")
+
+    # 7. Post to X (@quaksai)
+    try:
+        from requests_oauthlib import OAuth1Session
+
+        x_consumer_key = os.environ.get("X_CONSUMER_KEY")
+        x_consumer_secret = os.environ.get("X_CONSUMER_SECRET")
+        x_access_token = os.environ.get("X_ACCESS_TOKEN")
+        x_access_token_secret = os.environ.get("X_ACCESS_TOKEN_SECRET")
+        article_url_pattern = os.environ.get("QUAKS_ARTICLE_URL_PATTERN")
+
+        if not executive_summary or not executive_summary.strip():
+            print("WARNING: Executive summary is empty. Skipping X post.")
+        elif not all([x_consumer_key, x_consumer_secret, x_access_token, x_access_token_secret, article_url_pattern]):
+            print("WARNING: X credentials or article URL pattern not configured. Skipping X post.")
+        else:
+            article_url = f"{article_url_pattern}/{index_name}/{doc_id}"
+
+            tweet_text = (
+                f"Executive Summary:\n\n"
+                f"{executive_summary.strip()}\n\n"
+                f"See more: {article_url}"
+            )
+
+            max_chars = 280
+            if len(tweet_text) > max_chars:
+                available = max_chars - len(f"Executive Summary:\n\n\n\nSee more: {article_url}") - 3
+                tweet_text = (
+                    f"{executive_summary.strip()[:available]}...\n\n"
+                    f"See more: {article_url}"
+                )
+
+            oauth = OAuth1Session(
+                x_consumer_key,
+                client_secret=x_consumer_secret,
+                resource_owner_key=x_access_token,
+                resource_owner_secret=x_access_token_secret,
+            )
+
+            print("Posting to X...")
+            x_response = oauth.post("https://api.x.com/2/tweets", json={"text": tweet_text})
+
+            if x_response.status_code == 201:
+                post_id = x_response.json()["data"]["id"]
+                print(f"Posted to X successfully. Post ID: {post_id}")
+            else:
+                print(f"WARNING: X post failed. Status: {x_response.status_code}, Response: {x_response.text}")
+    except Exception as e:
+        print(f"WARNING: Failed to post to X: {e}")
 
 
 with dag:
