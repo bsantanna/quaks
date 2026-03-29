@@ -12,7 +12,7 @@ export class PageCookies {
     inject(SeoService).update({
       title: 'Cookie Policy',
       description: 'Cookie policy for the Quaks quantitative finance platform.',
-      path: '/cookies',
+      path: '/privacy',
     });
   }
 }

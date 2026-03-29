@@ -166,7 +166,6 @@ def generate_insights_news():
             article_url = f"{article_url_pattern}/{index_name}/{doc_id}"
 
             tweet_text = (
-                f"Executive Summary:\n\n"
                 f"{executive_summary.strip()}\n\n"
                 f"See more: {article_url}"
             )

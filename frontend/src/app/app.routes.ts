@@ -57,7 +57,7 @@ export const routes: Routes = [
       },
       {
         title: 'Financial Insights',
-        path: 'stocks',
+        path: 'financial',
         component: InsightsFinance
       }
     ]
@@ -110,7 +110,7 @@ export const routes: Routes = [
   },
   {
     title: 'Cookie Policy',
-    path: 'cookies',
+    path: 'privacy',
     component: PageCookies
   },
   {
