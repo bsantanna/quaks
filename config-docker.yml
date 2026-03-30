@@ -1,8 +1,8 @@
 api_base_url: "http://localhost:18000"
 cdp_url: "http://headless-shell:9222"
 auth:
-#  enabled: False
-  enabled: True
+  enabled: False
+#  enabled: True
   url: "https://auth.bsantanna.me"
   realm: "quaks"
   client_id: "quaks-client"
