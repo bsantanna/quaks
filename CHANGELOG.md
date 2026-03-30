@@ -2,6 +2,29 @@
 
 <!-- version list -->
 
+## v1.3.43 (2026-03-30)
+
+### Bug Fixes
+
+- Adjust readme
+  ([`7e6e6f0`](https://github.com/bsantanna/quaks/commit/7e6e6f0c93a248f0ec788dcec3d9798677124089))
+
+- Adjusts keycloak image
+  ([`e32e8a5`](https://github.com/bsantanna/quaks/commit/e32e8a579c0372aa7630270a165dcd23ba9897b4))
+
+- Mcp authentication support with oauth flow ([#88](https://github.com/bsantanna/quaks/pull/88),
+  [`280fc09`](https://github.com/bsantanna/quaks/commit/280fc09caa56c5378de34519af150260cb9ac624))
+
+- Mcp oauth support ([#88](https://github.com/bsantanna/quaks/pull/88),
+  [`280fc09`](https://github.com/bsantanna/quaks/commit/280fc09caa56c5378de34519af150260cb9ac624))
+
+- Mcp project settings (1) ([#88](https://github.com/bsantanna/quaks/pull/88),
+  [`280fc09`](https://github.com/bsantanna/quaks/commit/280fc09caa56c5378de34519af150260cb9ac624))
+
+- Versions update ([#88](https://github.com/bsantanna/quaks/pull/88),
+  [`280fc09`](https://github.com/bsantanna/quaks/commit/280fc09caa56c5378de34519af150260cb9ac624))
+
+
 ## v1.3.42 (2026-03-30)
 
 ### Bug Fixes
