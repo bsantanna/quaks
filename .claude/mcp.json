@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "quaks": {
+      "type": "sse",
+      "url": "https://quaks.ai/sse",
+    }
+  }
+}
