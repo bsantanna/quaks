@@ -124,6 +124,10 @@ def generate_insights_news():
     executive_summary = response_data.get("executive_summary", "")
 
     # 6. Index into Elasticsearch
+    if not executive_summary or not executive_summary.strip():
+        print("WARNING: Executive summary is empty. Skipping Elasticsearch indexing and X post.")
+        return
+
     today = datetime.now().strftime("%Y-%m-%d")
     doc_id = hashlib.md5(f"insights_news_{today}_{agent_id}".encode("utf-8")).hexdigest()
     index_name = "quaks_insights-news_usa"
@@ -158,9 +162,7 @@ def generate_insights_news():
         x_access_token_secret = os.environ.get("X_ACCESS_TOKEN_SECRET")
         article_url_pattern = os.environ.get("QUAKS_ARTICLE_URL_PATTERN")
 
-        if not executive_summary or not executive_summary.strip():
-            print("WARNING: Executive summary is empty. Skipping X post.")
-        elif not all([x_consumer_key, x_consumer_secret, x_access_token, x_access_token_secret, article_url_pattern]):
+        if not all([x_consumer_key, x_consumer_secret, x_access_token, x_access_token_secret, article_url_pattern]):
             print("WARNING: X credentials or article URL pattern not configured. Skipping X post.")
         else:
             article_url = f"{article_url_pattern}/{index_name}/{doc_id}"
