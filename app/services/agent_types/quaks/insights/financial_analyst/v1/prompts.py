@@ -44,7 +44,7 @@ For EACH ticker in the list above, collect data using the available tools:
 1. Use fetch_company_profile to get metadata, valuation multiples, analyst ratings, and ownership data.
 2. Use fetch_stats_close to get latest price stats, OHLCV, and percent variance.
 3. Use fetch_technical_indicators to get RSI, MACD, EMA crossover, and ADX signals.
-4. Use fetch_latest_news to get recent news headlines for context.
+4. Use get_markets_news to get recent news headlines for context.
 
 Call tools for ALL tickers. Present all collected data structured by ticker symbol.
 

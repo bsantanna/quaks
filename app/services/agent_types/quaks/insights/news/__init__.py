@@ -3,7 +3,7 @@ NEWS_AGENT_CONFIGURATION = {
         "name": "aggregator",
         "desc": "Collects the latest news articles from the last 24 hours via Elasticsearch",
         "desc_for_llm": (
-            "Fetches market news from the Elasticsearch datasource using the fetch_latest_news tool. "
+            "Fetches market news from the Elasticsearch datasource using the get_markets_news tool."
             "Retrieves articles from the last 24 hours across all exchanges. "
             "Outputs the raw collected articles as structured data for downstream processing."
         ),

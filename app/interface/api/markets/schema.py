@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 from typing_extensions import Any, Optional
 
 from app.domain.exceptions.base import InvalidFieldError
@@ -264,3 +264,57 @@ class IndicatorResponse(BaseModel):
     key_ticker: str
     indicator: str
     data: list[Any]
+
+
+class McpNewsRequest(BaseModel):
+    search_term: Optional[str] = None
+    ticker: Optional[str] = None
+    days: int = Field(default=1, ge=1)
+    size: int = Field(default=10, ge=1, le=50)
+
+    @field_validator("search_term", "ticker")
+    @classmethod
+    def validate_empty_format(cls, v: str) -> Optional[str]:
+        if v == "":
+            return None
+        return v
+
+
+class McpNewsItem(BaseModel):
+    headline: str
+    summary: str
+    content: str
+    source: str
+    date: str
+    tickers: Optional[list[str]] = None
+
+
+class McpNewsList(BaseModel):
+    items: list[McpNewsItem]
+
+
+class McpInsightsNewsRequest(BaseModel):
+    date_from: Optional[str] = None
+    size: int = Field(default=5, ge=1, le=10)
+
+    @field_validator("date_from")
+    @classmethod
+    def validate_empty_format(cls, v: str) -> Optional[str]:
+        if v == "":
+            return None
+        return v
+
+    @field_validator("date_from")
+    @classmethod
+    def validate_date_format(cls, v: Optional[str]) -> Optional[str]:
+        return _validate_date_format(v)
+
+
+class McpInsightsNewsItem(BaseModel):
+    date: str
+    executive_summary: str
+    report_html: str
+
+
+class McpInsightsNewsList(BaseModel):
+    items: list[McpInsightsNewsItem]

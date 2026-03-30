@@ -1,10 +1,9 @@
 import json
 import re
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.tools import tool
 from langgraph.constants import START, END
 from langgraph.graph import MessagesState, StateGraph
 from langgraph.prebuilt import create_react_agent
@@ -26,6 +25,8 @@ from app.services.agent_types.quaks.insights.news.prompts import (
     REPORTER_SYSTEM_PROMPT,
 )
 from app.services.agent_types.quaks.insights.news.state import NewsAnalystState
+from app.services.agent_types.quaks.insights.tools import build_get_insights_news_tool, build_get_markets_news_tool
+from app.services.markets_insights import MarketsInsightsService
 from app.services.markets_news import MarketsNewsService
 from app.services.tasks import TaskProgress
 
@@ -38,9 +39,10 @@ EXECUTION_PLAN = (
 
 
 class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
-    def __init__(self, agent_utils: AgentUtils, markets_news_service: MarketsNewsService):
+    def __init__(self, agent_utils: AgentUtils, markets_news_service: MarketsNewsService, markets_insights_service: MarketsInsightsService):
         super().__init__(agent_utils)
         self.markets_news_service = markets_news_service
+        self.markets_insights_service = markets_insights_service
 
     def create_default_settings(self, agent_id: str, schema: str):
         prompts = {
@@ -99,56 +101,6 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
             "messages": [HumanMessage(content=message_request.message_content)],
         }
 
-    def _build_fetch_news_tool(self):
-        markets_news_service = self.markets_news_service
-
-        @tool("fetch_latest_news")
-        def fetch_latest_news(
-            search_term: str = "",
-            size: int = 50,
-        ) -> str:
-            """Fetch the latest market news articles from the last 24 hours.
-
-            Args:
-                search_term: Optional search term to filter news (e.g. sector, company, topic).
-                size: Number of articles to fetch (default 50, max 50).
-
-            Returns:
-                JSON string with the list of news articles.
-            """
-            import asyncio
-
-            actual_size = min(size, 50)
-            date_from = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-            loop = asyncio.new_event_loop()
-            try:
-                results, _ = loop.run_until_complete(
-                    markets_news_service.get_news(
-                        index_name="quaks_markets-news_latest",
-                        search_term=search_term if search_term else None,
-                        date_from=date_from,
-                        size=actual_size,
-                        include_text_content=True,
-                        include_key_ticker=True,
-                    )
-                )
-            finally:
-                loop.close()
-            articles = []
-            for hit in results:
-                source = hit["_source"]
-                articles.append({
-                    "headline": source.get("text_headline", ""),
-                    "summary": source.get("text_summary", ""),
-                    "content": source.get("text_content", ""),
-                    "source": source.get("key_source", ""),
-                    "date": source.get("date_reference", ""),
-                    "tickers": source.get("key_ticker", []),
-                })
-            return json.dumps(articles, ensure_ascii=False)
-
-        return fetch_latest_news
-
     def _invoke_chain(self, agent_id, schema, system_prompt, state):
         """Invoke a simple system+messages chain and return a single AIMessage."""
         chat_model = self.get_chat_model(agent_id, schema)
@@ -182,14 +134,18 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
             self.logger.info(f"Agent[{agent_id}] -> Coordinator -> BATCH_ETL -> aggregator")
             return Command(goto="aggregator")
 
-        # QA mode: answer the user's question directly
+        # QA mode: answer the user's question using insights news tool
         self.logger.info(f"Agent[{agent_id}] -> Coordinator -> QA mode")
-        response = self._invoke_chain(
-            agent_id, schema, state["coordinator_system_prompt"], state
+        chat_model = self.get_chat_model(agent_id, schema)
+        coordinator = create_react_agent(
+            model=chat_model,
+            tools=[build_get_insights_news_tool(self.markets_insights_service)],
+            prompt=state["coordinator_system_prompt"],
         )
+        response = coordinator.invoke(state)
         return Command(
             goto=END,
-            update={"messages": [AIMessage(content=response.content)]},
+            update={"messages": response["messages"]},
         )
 
     def get_aggregator(self, state: NewsAnalystState) -> Command[Literal["reporter"]]:
@@ -209,7 +165,7 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
         chat_model = self.get_chat_model(agent_id, schema)
         aggregator = create_react_agent(
             model=chat_model,
-            tools=[self._build_fetch_news_tool()],
+            tools=[build_get_markets_news_tool(self.markets_news_service)],
             prompt=aggregator_system_prompt,
         )
         response = aggregator.invoke(state)

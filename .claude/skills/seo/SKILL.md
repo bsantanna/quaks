@@ -154,7 +154,7 @@ Sitemap: https://quaks.example.com/sitemap.xml
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "Quaks",
-  "description": "AI-powered quantitative finance platform for market data analysis and stock insights",
+  "description": "AI-powered financial agents platform for market data analysis and stock insights",
   "applicationCategory": "FinanceApplication",
   "operatingSystem": "Web",
   "offers": {

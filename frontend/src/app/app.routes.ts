@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import {MarketsStocksDashboard} from './page-markets-stocks-dashboard';
 import {PageTerms} from './page-terms';
-import {PageCookies} from './page-cookies';
 import {MarketsNewsRelated} from './page-markets-news-related';
 import {MarketsPerformanceComparison} from './page-markets-performance-comparison';
 import {MarketsNewsItem} from './page-markets-news-item';
@@ -17,6 +16,7 @@ import {AuthCallback} from './page-auth-callback';
 import {PageWaitlist} from './page-waitlist';
 import {AccountProfile} from './page-account-profile/account-profile';
 import {authGuard} from './shared/guards/auth.guard';
+import {Privacy} from './page-privacy/privacy';
 
 export const routes: Routes = [
   {
@@ -57,7 +57,7 @@ export const routes: Routes = [
       },
       {
         title: 'Financial Insights',
-        path: 'stocks',
+        path: 'financial',
         component: InsightsFinance
       }
     ]
@@ -109,9 +109,9 @@ export const routes: Routes = [
     component: PageTerms
   },
   {
-    title: 'Cookie Policy',
-    path: 'cookies',
-    component: PageCookies
+    title: 'Privacy Policy',
+    path: 'privacy',
+    component: Privacy
   },
   {
     title: 'Sign In',

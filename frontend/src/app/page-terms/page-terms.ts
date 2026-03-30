@@ -11,7 +11,7 @@ export class PageTerms {
   constructor() {
     inject(SeoService).update({
       title: 'Terms of Service',
-      description: 'Terms of service and usage policies for the Quaks quantitative finance platform.',
+      description: 'Terms of service and usage policies for the Quaks financial agents platform.',
       path: '/terms',
     });
   }

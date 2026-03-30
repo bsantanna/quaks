@@ -82,7 +82,7 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 ## Project Overview
 
-Quaks is a multi-agent quantitative finance platform built on [Agent-Lab](https://github.com/bsantanna/agent-lab). It uses LLM-powered agents (LangChain/LangGraph) to perform asset management, market data analysis, and alpha-seeking tasks. The backend is Python/FastAPI, the frontend is Angular 20, and market data flows through Airflow DAGs into Elasticsearch.
+Quaks is a multi-agent financial agents platform built on [Agent-Lab](https://github.com/bsantanna/agent-lab). It uses LLM-powered agents (LangChain/LangGraph) to perform asset management, market data analysis, and alpha-seeking tasks. The backend is Python/FastAPI, the frontend is Angular 20, and market data flows through Airflow DAGs into Elasticsearch.
 
 ## Skills
 

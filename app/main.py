@@ -2,10 +2,9 @@ import logging
 import os
 import re
 
-from fastapi import FastAPI, HTTPException, Request, Depends
-from fastapi.security import HTTPBearer
+from fastapi import FastAPI, HTTPException, Request
 from fastapi_keycloak_middleware import KeycloakConfiguration, setup_keycloak_middleware
-from fastapi_mcp import FastApiMCP, AuthConfig
+from fastapi_mcp import FastApiMCP
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse, FileResponse
 from starlette.staticfiles import StaticFiles
@@ -26,9 +25,6 @@ from app.interface.api.waitlist.endpoints import router as waitlist_router
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-bearer_scheme = HTTPBearer()
-
-
 def create_app():
     container = Container()
 
@@ -42,7 +38,7 @@ def create_app():
     setup_tracing(container, application)
     setup_auth(container, application)
     setup_routers(container, application)
-    setup_mcp(container, application)
+    setup_mcp(application)
     setup_exception_handlers(application)
     setup_middleware(application)
     setup_spa_fallback(application)
@@ -84,7 +80,9 @@ def setup_auth(container, application):
                 "/terms(/|$)",
                 "/cookies(/|$)",
                 "/account/",
-                "^/$"
+                "^/$",
+                "/mcp",
+                "/sse"
             ],
             user_mapper=map_user,
         )
@@ -93,27 +91,14 @@ def setup_auth(container, application):
         logger.warning("Authentication disabled")
 
 
-def setup_mcp(container: Container, application: FastAPI):
-    config = container.config()
-    if config["auth"]["enabled"]:
-        mcp = FastApiMCP(
-            application,
-            name=os.getenv("SERVICE_NAME", "Quaks"),
-            include_operations=["get_agent_list", "get_message_list", "post_message"],
-            describe_all_responses=True,
-            describe_full_response_schema=True,
-            auth_config=AuthConfig(
-                dependencies=[Depends(bearer_scheme)],
-            ),
-        )
-    else:
-        mcp = FastApiMCP(
-            application,
-            name=os.getenv("SERVICE_NAME", "Quaks"),
-            include_operations=["get_agent_list", "get_message_list", "post_message"],
-            describe_all_responses=True,
-            describe_full_response_schema=True,
-        )
+def setup_mcp(application: FastAPI):
+    mcp = FastApiMCP(
+        application,
+        name=os.getenv("SERVICE_NAME", "Quaks"),
+        include_operations=["get_markets_news_mcp", "get_insights_news_mcp"],
+        describe_all_responses=True,
+        describe_full_response_schema=True,
+    )
 
     mcp.mount_http()
     mcp.mount_sse()

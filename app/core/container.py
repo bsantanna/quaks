@@ -234,6 +234,7 @@ class Container(containers.DeclarativeContainer):
         QuaksNewsAnalystAgent,
         agent_utils=agent_utils,
         markets_news_service=markets_news_service,
+        markets_insights_service=markets_insights_service,
     )
 
     quaks_financial_analyst_v1_agent = providers.Factory(
