@@ -17,7 +17,9 @@ os.environ["OLLAMA_ENDPOINT"] = "http://localhost:21434"
 
 llm_tag = "bge-m3"
 
-keycloak = KeycloakContainer(username="admin", password="admin").with_bind_ports(
+keycloak = KeycloakContainer(
+    username="admin", password="admin", image="bsantanna/quaks-keycloak:v1.3.42"
+).with_bind_ports(
     container=8080, host=18080
 )
 
