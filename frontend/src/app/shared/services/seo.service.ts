@@ -3,7 +3,7 @@ import {Meta, Title} from '@angular/platform-browser';
 import {DOCUMENT} from '@angular/common';
 
 const BASE_URL = 'https://quaks.ai';
-const DEFAULT_DESCRIPTION = 'AI-powered quantitative finance platform for real-time market data analysis, stock insights, technical indicators, and financial news.';
+const DEFAULT_DESCRIPTION = 'AI-powered financial agents platform for real-time market data analysis, stock insights, technical indicators, and financial news.';
 const DEFAULT_IMAGE = `${BASE_URL}/logo_large.png`;
 
 export interface SeoConfig {

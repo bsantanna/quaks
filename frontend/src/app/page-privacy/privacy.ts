@@ -11,7 +11,7 @@ export class Privacy {
 constructor() {
     inject(SeoService).update({
       title: 'Privacy Policy',
-      description: 'Privacy policy for the Quaks quantitative finance platform.',
+      description: 'Privacy policy for the Quaks financial agents platform.',
       path: '/privacy',
     });
   }
