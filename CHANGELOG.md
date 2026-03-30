@@ -2,6 +2,57 @@
 
 <!-- version list -->
 
+## v1.3.42 (2026-03-30)
+
+### Bug Fixes
+
+- Avatar customization base ([#87](https://github.com/bsantanna/quaks/pull/87),
+  [`712d12f`](https://github.com/bsantanna/quaks/commit/712d12fd54f37bbfb3b199eda8da38332a18b185))
+
+- Empty executive summary edge case ([#87](https://github.com/bsantanna/quaks/pull/87),
+  [`712d12f`](https://github.com/bsantanna/quaks/commit/712d12fd54f37bbfb3b199eda8da38332a18b185))
+
+- Map tool call for news, quaks-news-analyst skill
+  ([#87](https://github.com/bsantanna/quaks/pull/87),
+  [`712d12f`](https://github.com/bsantanna/quaks/commit/712d12fd54f37bbfb3b199eda8da38332a18b185))
+
+- Post x social 2 ([#87](https://github.com/bsantanna/quaks/pull/87),
+  [`712d12f`](https://github.com/bsantanna/quaks/commit/712d12fd54f37bbfb3b199eda8da38332a18b185))
+
+- Quaks-news-analyst skill (1) ([#87](https://github.com/bsantanna/quaks/pull/87),
+  [`712d12f`](https://github.com/bsantanna/quaks/commit/712d12fd54f37bbfb3b199eda8da38332a18b185))
+
+- Quaks-news-analyst skill (2) ([#87](https://github.com/bsantanna/quaks/pull/87),
+  [`712d12f`](https://github.com/bsantanna/quaks/commit/712d12fd54f37bbfb3b199eda8da38332a18b185))
+
+- Quaks-news-analyst skill (3) ([#87](https://github.com/bsantanna/quaks/pull/87),
+  [`712d12f`](https://github.com/bsantanna/quaks/commit/712d12fd54f37bbfb3b199eda8da38332a18b185))
+
+- Routes updates ([#87](https://github.com/bsantanna/quaks/pull/87),
+  [`712d12f`](https://github.com/bsantanna/quaks/commit/712d12fd54f37bbfb3b199eda8da38332a18b185))
+
+- Routes updates (2) ([#87](https://github.com/bsantanna/quaks/pull/87),
+  [`712d12f`](https://github.com/bsantanna/quaks/commit/712d12fd54f37bbfb3b199eda8da38332a18b185))
+
+- Routes updates (3) ([#87](https://github.com/bsantanna/quaks/pull/87),
+  [`712d12f`](https://github.com/bsantanna/quaks/commit/712d12fd54f37bbfb3b199eda8da38332a18b185))
+
+- Routes updates (4) ([#87](https://github.com/bsantanna/quaks/pull/87),
+  [`712d12f`](https://github.com/bsantanna/quaks/commit/712d12fd54f37bbfb3b199eda8da38332a18b185))
+
+- Routes updates (5) ([#87](https://github.com/bsantanna/quaks/pull/87),
+  [`712d12f`](https://github.com/bsantanna/quaks/commit/712d12fd54f37bbfb3b199eda8da38332a18b185))
+
+- Tools refactoring (1) ([#87](https://github.com/bsantanna/quaks/pull/87),
+  [`712d12f`](https://github.com/bsantanna/quaks/commit/712d12fd54f37bbfb3b199eda8da38332a18b185))
+
+- Tools refactoring (2) ([#87](https://github.com/bsantanna/quaks/pull/87),
+  [`712d12f`](https://github.com/bsantanna/quaks/commit/712d12fd54f37bbfb3b199eda8da38332a18b185))
+
+- Unauthenticated mcp server ([#87](https://github.com/bsantanna/quaks/pull/87),
+  [`712d12f`](https://github.com/bsantanna/quaks/commit/712d12fd54f37bbfb3b199eda8da38332a18b185))
+
+
 ## v1.3.41 (2026-03-28)
 
 ### Bug Fixes
