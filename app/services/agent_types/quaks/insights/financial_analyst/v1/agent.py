@@ -28,6 +28,7 @@ from app.services.agent_types.quaks.insights.financial_analyst.v1.prompts import
     CONSENSUS_REPORTER_SYSTEM_PROMPT,
 )
 from app.services.agent_types.quaks.insights.financial_analyst.v1.state import FinancialAnalystState
+from app.services.agent_types.quaks.insights.tools import build_get_markets_news_tool
 from app.services.markets_news import MarketsNewsService
 from app.services.markets_stats import MarketsStatsService
 from app.services.tasks import TaskProgress
@@ -424,45 +425,7 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
                 loop.close()
             return json.dumps(indicators, ensure_ascii=False, default=str)
 
-        @tool("fetch_latest_news")
-        def fetch_latest_news(ticker: str, size: int = 10) -> str:
-            """Fetch recent news headlines for a ticker.
-
-            Args:
-                ticker: Stock ticker symbol (e.g. AAPL, MSFT, NVDA).
-                size: Number of articles to fetch (default 10, max 20).
-
-            Returns:
-                JSON string with news articles.
-            """
-            import asyncio
-
-            actual_size = min(size, 20)
-            date_from = (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
-            loop = asyncio.new_event_loop()
-            try:
-                results, _ = loop.run_until_complete(
-                    markets_news_service.get_news(
-                        index_name="quaks_markets-news_latest",
-                        key_ticker=ticker,
-                        date_from=date_from,
-                        size=actual_size,
-                    )
-                )
-            finally:
-                loop.close()
-            articles = []
-            for hit in results:
-                source = hit["_source"]
-                articles.append({
-                    "headline": source.get("text_headline", ""),
-                    "summary": source.get("text_summary", ""),
-                    "source": source.get("key_source", ""),
-                    "date": source.get("date_reference", ""),
-                })
-            return json.dumps(articles, ensure_ascii=False)
-
-        return [fetch_company_profile, fetch_stats_close, fetch_technical_indicators, fetch_latest_news, self._build_xray_tool()]
+        return [fetch_company_profile, fetch_stats_close, fetch_technical_indicators, build_get_markets_news_tool(markets_news_service), self._build_xray_tool()]
 
     def _build_xray_tool(self):
         compute_data = self._compute_xray_data

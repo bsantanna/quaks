@@ -1,10 +1,9 @@
 import json
 import re
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.tools import tool
 from langgraph.constants import START, END
 from langgraph.graph import MessagesState, StateGraph
 from langgraph.prebuilt import create_react_agent
@@ -26,6 +25,7 @@ from app.services.agent_types.quaks.insights.news.prompts import (
     REPORTER_SYSTEM_PROMPT,
 )
 from app.services.agent_types.quaks.insights.news.state import NewsAnalystState
+from app.services.agent_types.quaks.insights.tools import build_get_markets_news_tool
 from app.services.markets_news import MarketsNewsService
 from app.services.tasks import TaskProgress
 
@@ -99,56 +99,6 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
             "messages": [HumanMessage(content=message_request.message_content)],
         }
 
-    def _build_fetch_news_tool(self):
-        markets_news_service = self.markets_news_service
-
-        @tool("fetch_latest_news")
-        def fetch_latest_news(
-            search_term: str = "",
-            size: int = 50,
-        ) -> str:
-            """Fetch the latest market news articles from the last 24 hours.
-
-            Args:
-                search_term: Optional search term to filter news (e.g. sector, company, topic).
-                size: Number of articles to fetch (default 50, max 50).
-
-            Returns:
-                JSON string with the list of news articles.
-            """
-            import asyncio
-
-            actual_size = min(size, 50)
-            date_from = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-            loop = asyncio.new_event_loop()
-            try:
-                results, _ = loop.run_until_complete(
-                    markets_news_service.get_news(
-                        index_name="quaks_markets-news_latest",
-                        search_term=search_term if search_term else None,
-                        date_from=date_from,
-                        size=actual_size,
-                        include_text_content=True,
-                        include_key_ticker=True,
-                    )
-                )
-            finally:
-                loop.close()
-            articles = []
-            for hit in results:
-                source = hit["_source"]
-                articles.append({
-                    "headline": source.get("text_headline", ""),
-                    "summary": source.get("text_summary", ""),
-                    "content": source.get("text_content", ""),
-                    "source": source.get("key_source", ""),
-                    "date": source.get("date_reference", ""),
-                    "tickers": source.get("key_ticker", []),
-                })
-            return json.dumps(articles, ensure_ascii=False)
-
-        return fetch_latest_news
-
     def _invoke_chain(self, agent_id, schema, system_prompt, state):
         """Invoke a simple system+messages chain and return a single AIMessage."""
         chat_model = self.get_chat_model(agent_id, schema)
@@ -209,7 +159,7 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
         chat_model = self.get_chat_model(agent_id, schema)
         aggregator = create_react_agent(
             model=chat_model,
-            tools=[self._build_fetch_news_tool()],
+            tools=[build_get_markets_news_tool(self.markets_news_service)],
             prompt=aggregator_system_prompt,
         )
         response = aggregator.invoke(state)
