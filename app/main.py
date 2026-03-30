@@ -95,7 +95,7 @@ def setup_mcp(application: FastAPI):
     mcp = FastApiMCP(
         application,
         name=os.getenv("SERVICE_NAME", "Quaks"),
-        include_operations=["get_markets_news"],
+        include_operations=["get_markets_news_mcp", "get_insights_news_mcp"],
         describe_all_responses=True,
         describe_full_response_schema=True,
     )

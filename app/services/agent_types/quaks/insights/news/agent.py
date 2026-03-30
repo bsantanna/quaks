@@ -25,7 +25,8 @@ from app.services.agent_types.quaks.insights.news.prompts import (
     REPORTER_SYSTEM_PROMPT,
 )
 from app.services.agent_types.quaks.insights.news.state import NewsAnalystState
-from app.services.agent_types.quaks.insights.tools import build_get_markets_news_tool
+from app.services.agent_types.quaks.insights.tools import build_get_insights_news_tool, build_get_markets_news_tool
+from app.services.markets_insights import MarketsInsightsService
 from app.services.markets_news import MarketsNewsService
 from app.services.tasks import TaskProgress
 
@@ -38,9 +39,10 @@ EXECUTION_PLAN = (
 
 
 class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
-    def __init__(self, agent_utils: AgentUtils, markets_news_service: MarketsNewsService):
+    def __init__(self, agent_utils: AgentUtils, markets_news_service: MarketsNewsService, markets_insights_service: MarketsInsightsService):
         super().__init__(agent_utils)
         self.markets_news_service = markets_news_service
+        self.markets_insights_service = markets_insights_service
 
     def create_default_settings(self, agent_id: str, schema: str):
         prompts = {
@@ -132,14 +134,18 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
             self.logger.info(f"Agent[{agent_id}] -> Coordinator -> BATCH_ETL -> aggregator")
             return Command(goto="aggregator")
 
-        # QA mode: answer the user's question directly
+        # QA mode: answer the user's question using insights news tool
         self.logger.info(f"Agent[{agent_id}] -> Coordinator -> QA mode")
-        response = self._invoke_chain(
-            agent_id, schema, state["coordinator_system_prompt"], state
+        chat_model = self.get_chat_model(agent_id, schema)
+        coordinator = create_react_agent(
+            model=chat_model,
+            tools=[build_get_insights_news_tool(self.markets_insights_service)],
+            prompt=state["coordinator_system_prompt"],
         )
+        response = coordinator.invoke(state)
         return Command(
             goto=END,
-            update={"messages": [AIMessage(content=response.content)]},
+            update={"messages": response["messages"]},
         )
 
     def get_aggregator(self, state: NewsAnalystState) -> Command[Literal["reporter"]]:

@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from langchain_core.tools import tool
 
+from app.services.markets_insights import MarketsInsightsService
 from app.services.markets_news import MarketsNewsService
 
 
@@ -58,3 +59,46 @@ def build_get_markets_news_tool(markets_news_service: MarketsNewsService):
         return json.dumps(articles, ensure_ascii=False)
 
     return get_markets_news
+
+
+def build_get_insights_news_tool(markets_insights_service: MarketsInsightsService):
+    @tool("get_insights_news")
+    def get_insights_news(
+        date_from: str = "",
+        size: int = 5,
+    ) -> str:
+        """Fetch AI-generated investor briefings.
+
+        Args:
+            date_from: Optional start date filter in yyyy-mm-dd format.
+            size: Number of briefings to fetch (default 5, max 10).
+
+        Returns:
+            JSON string with the list of investor briefings.
+        """
+        import asyncio
+
+        actual_size = min(size, 10)
+        loop = asyncio.new_event_loop()
+        try:
+            results, _ = loop.run_until_complete(
+                markets_insights_service.get_insights_news(
+                    index_name="quaks_insights-news_latest",
+                    date_from=date_from if date_from else None,
+                    size=actual_size,
+                    include_report_html=True,
+                )
+            )
+        finally:
+            loop.close()
+        briefings = []
+        for hit in results:
+            source = hit["_source"]
+            briefings.append({
+                "date": source.get("date_reference", ""),
+                "executive_summary": source.get("text_executive_summary", ""),
+                "report_html": source.get("text_report_html", ""),
+            })
+        return json.dumps(briefings, ensure_ascii=False)
+
+    return get_insights_news
