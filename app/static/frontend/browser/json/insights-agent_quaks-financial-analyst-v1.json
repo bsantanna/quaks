@@ -3,7 +3,7 @@
   "role": "AI Financial Research Analyst",
   "avatar": "/svg/insights-agent_quaks-financial-analyst-v1.svg",
   "ctaLabel": "Financial Insights",
-  "ctaLink": "/insights/stocks",
+  "ctaLink": "/insights/financial",
   "ctaIcon": "/svg/icon-bar-chart-square.svg",
   "referenceNotebook": "https://github.com/bsantanna/quaks/blob/main/notebooks/15_insights_quaks_financial_analyst_v1.ipynb",
   "bio": [

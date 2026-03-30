@@ -41,7 +41,7 @@ A comprehensive collection of ALL news articles from the last 24 hours, sorted b
 preceded by a 2-3 paragraph market mood briefing. Every article must appear in full.
 
 ## Instructions
-1. Use the fetch_latest_news tool to collect the latest market news articles.
+1. Use the get_markets_news tool to collect the latest market news articles.
    Call the tool multiple times with different search terms if needed to ensure comprehensive coverage.
 2. Sort the collected articles by priority of economic impact — highest impact first.
    Priority order: macroeconomic policy & central bank decisions > earnings & guidance from mega-caps > \

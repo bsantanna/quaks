@@ -1,9 +1,9 @@
 {
   "routes": {
-    "/cookies": {},
     "/markets/news": {},
     "/markets/performance": {},
     "/markets/stocks": {},
+    "/privacy": {},
     "/terms": {},
     "/waitlist": {}
   }

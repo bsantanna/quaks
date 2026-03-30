@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PageCookies } from './page-cookies';
+import { Privacy } from './privacy';
 
-describe('PageCookies', () => {
-  let component: PageCookies;
-  let fixture: ComponentFixture<PageCookies>;
+describe('Privacy', () => {
+  let component: Privacy;
+  let fixture: ComponentFixture<Privacy>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PageCookies]
+      imports: [Privacy]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PageCookies);
+    fixture = TestBed.createComponent(Privacy);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    await fixture.whenStable();
   });
 
   it('should create', () => {

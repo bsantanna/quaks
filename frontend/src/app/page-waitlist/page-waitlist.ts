@@ -26,7 +26,7 @@ export class PageWaitlist {
   constructor() {
     inject(SeoService).update({
       title: 'Join the Waiting List',
-      description: 'Sign up to get early access to the Quaks quantitative finance platform.',
+      description: 'Sign up to get early access to the Quaks financial agents platform.',
       path: '/waitlist',
     });
   }

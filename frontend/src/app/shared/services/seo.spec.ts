@@ -32,7 +32,7 @@ describe('SeoService', () => {
   it('should use default description when not provided', () => {
     service.update({title: 'Test'});
     const tag = meta.getTag('name="description"');
-    expect(tag?.content).toContain('AI-powered quantitative finance platform');
+    expect(tag?.content).toContain('AI-powered financial agents platform');
   });
 
   it('should set Open Graph tags', () => {
