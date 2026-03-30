@@ -18,6 +18,9 @@ from app.interface.api.markets.schema import (
     InsightsNewsListRequest,
     MarketCapItem,
     MarketCapsBulkResponse,
+    McpNewsItem,
+    McpNewsList,
+    McpNewsRequest,
     NewsItem,
     NewsList,
     NewsListRequest,
@@ -256,7 +259,7 @@ async def get_market_caps_bulk(
 @router.get(
     path="/news/{index_name}",
     response_model=NewsList,
-    operation_id="get_markets_news",
+    operation_id="get_news_list",
     summary="Get financial market news",
     description="""
     Returns paginated financial news headlines, summaries, and optional full content
@@ -530,3 +533,59 @@ async def get_indicator(
     return IndicatorResponse(
         key_ticker=key_ticker, indicator=indicator_name, data=data
     )
+
+
+@router.get(
+    path="/mcp/news",
+    response_model=McpNewsList,
+    operation_id="get_markets_news",
+    summary="Get recent market news articles",
+    description="""
+    Returns recent market news articles, optimized for LLM consumption.
+
+    Parameters:
+    - `search_term` (query, optional): Free-text filter (e.g. sector, company, topic).
+    - `ticker` (query, optional): Stock ticker symbol to filter by (e.g. AAPL, MSFT).
+    - `days` (query, optional): Number of days to look back (default 1).
+    - `size` (query, optional): Number of articles to return (default 50, max 50).
+    """,
+    response_description="List of news articles with headline, summary, content, source, date, and tickers",
+    dependencies=[cache_control(3600)],
+)
+@inject
+async def get_markets_news(
+    markets_news_service: Annotated[
+        MarketsNewsService, Depends(Provide[Container.markets_news_service])
+    ],
+    request: Annotated[McpNewsRequest, Depends()],
+):
+    date_from = (
+        datetime.now() - timedelta(days=request.days)
+    ).strftime("%Y-%m-%d")
+    actual_size = min(request.size, 50)
+
+    results, _ = await markets_news_service.get_news(
+        index_name="quaks_markets-news_latest",
+        search_term=request.search_term,
+        key_ticker=request.ticker,
+        date_from=date_from,
+        size=actual_size,
+        include_text_content=True,
+        include_key_ticker=True,
+    )
+
+    items = []
+    for hit in results:
+        source = hit["_source"]
+        items.append(
+            McpNewsItem(
+                headline=unescape(source.get("text_headline") or ""),
+                summary=unescape(source.get("text_summary") or ""),
+                content=unescape(source.get("text_content") or ""),
+                source=source.get("key_source", ""),
+                date=source.get("date_reference", ""),
+                tickers=source.get("key_ticker"),
+            )
+        )
+
+    return McpNewsList(items=items)
