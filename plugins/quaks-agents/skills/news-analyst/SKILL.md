@@ -13,7 +13,7 @@ This skill uses the `get_markets_news` MCP tool served at the project's MCP endp
 - `search_term` (optional): free-text filter (e.g. sector, company, topic)
 - `ticker` (optional): stock ticker symbol (e.g. AAPL, MSFT)
 - `days` (optional, default 1): lookback window in days
-- `size` (optional, default 25, max 50): number of articles
+- `size` (optional, default 5, max 50): number of articles
 
 ## Mode Selection
 

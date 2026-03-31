@@ -270,7 +270,7 @@ class McpNewsRequest(BaseModel):
     search_term: Optional[str] = None
     ticker: Optional[str] = None
     days: int = Field(default=1, ge=1)
-    size: int = Field(default=10, ge=1, le=50)
+    size: int = Field(default=5, ge=1, le=50)
 
     @field_validator("search_term", "ticker")
     @classmethod
