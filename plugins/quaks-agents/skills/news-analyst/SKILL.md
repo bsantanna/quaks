@@ -1,6 +1,6 @@
 ---
-name: quaks-news-analyst
-description: "Generates an investor briefing or answers financial questions using the Quaks MCP news tool. Invoke explicitly with /quaks-news-analyst."
+name: news-analyst
+description: "Generates an investor briefing or answers financial questions using the Quaks MCP news tool. Invoke explicitly with /quaks-agents:news-analyst."
 ---
 
 # Quaks News Analyst
@@ -13,7 +13,7 @@ This skill uses the `get_markets_news` MCP tool served at the project's MCP endp
 - `search_term` (optional): free-text filter (e.g. sector, company, topic)
 - `ticker` (optional): stock ticker symbol (e.g. AAPL, MSFT)
 - `days` (optional, default 1): lookback window in days
-- `size` (optional, default 50, max 50): number of articles
+- `size` (optional, default 25, max 50): number of articles
 
 ## Mode Selection
 
@@ -68,6 +68,7 @@ Collect and prioritize the latest market news.
    Priority order: macroeconomic policy and central bank decisions > earnings and guidance from mega-caps > M&A and major deals > regulatory and geopolitical shifts > sector-wide trends > individual stock moves.
 3. Write a general briefing section summarizing the overall market mood and the most significant themes of the last 24 hours. This sets the stage for the detailed coverage that follows.
 4. Collect ALL articles — do NOT omit, skip, or summarize away any article. The downstream report targets a 5-to-8-minute reading time, so completeness is essential.
+5. Limit the total number of articles to 15. If there are more than 15 relevant articles, prioritize based on the criteria above and include only the top 15, Collect the excluded articles as a single phrase bullet list aggregated by similarity.
 
 ### Step 2: Report
 
