@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.3.45 (2026-03-31)
+
+### Bug Fixes
+
+- Claude plugin setup (2) ([#90](https://github.com/bsantanna/quaks/pull/90),
+  [`4fb96d3`](https://github.com/bsantanna/quaks/commit/4fb96d31355149ee5f23ed682f0c1232213918d4))
+
+
 ## v1.3.44 (2026-03-31)
 
 ### Bug Fixes
