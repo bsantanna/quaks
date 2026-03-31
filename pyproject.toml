@@ -2,4 +2,6 @@
 version_variables = [
   "docker/app/Dockerfile:SERVICE_VERSION",
   "frontend/package.json:version",
+  ".claude-plugin/marketplace.json:version",
+  "plugins/quaks-agents/.claude-plugin/plugin.json:version",
 ]
