@@ -550,7 +550,7 @@ async def get_indicator(
     - `search_term` (query, optional): Free-text filter (e.g. sector, company, topic).
     - `ticker` (query, optional): Stock ticker symbol to filter by (e.g. AAPL, MSFT).
     - `days` (query, optional): Number of days to look back (default 1).
-    - `size` (query, optional): Number of articles to return (default 50, max 50).
+    - `size` (query, optional): Number of articles to return (default 5, max 50).
     """,
     response_description="List of news articles with headline, summary, content, source, date, and tickers",
     dependencies=[cache_control(3600)],
