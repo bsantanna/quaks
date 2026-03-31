@@ -2,6 +2,20 @@
 
 <!-- version list -->
 
+## v1.3.44 (2026-03-31)
+
+### Bug Fixes
+
+- Adjusts mcp config ([#89](https://github.com/bsantanna/quaks/pull/89),
+  [`ba011e4`](https://github.com/bsantanna/quaks/commit/ba011e450ec4042014017b34a51805dbe7810652))
+
+- Claude plugin setup ([#89](https://github.com/bsantanna/quaks/pull/89),
+  [`ba011e4`](https://github.com/bsantanna/quaks/commit/ba011e450ec4042014017b34a51805dbe7810652))
+
+- Versions update ([#89](https://github.com/bsantanna/quaks/pull/89),
+  [`ba011e4`](https://github.com/bsantanna/quaks/commit/ba011e450ec4042014017b34a51805dbe7810652))
+
+
 ## v1.3.43 (2026-03-30)
 
 ### Bug Fixes
