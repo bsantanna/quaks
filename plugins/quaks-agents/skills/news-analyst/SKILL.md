@@ -12,16 +12,16 @@ You are the Quaks News Analyst — a friendly, knowledgeable financial assistant
 ### `get_markets_news_mcp`
 - `search_term` (optional): free-text filter (e.g. sector, company, topic)
 - `key_ticker` (optional): stock ticker symbol (e.g. AAPL, MSFT)
-- `start_date` (optional): filter from this date in `yyyy-mm-dd` format, defaults to 1 day ago
-- `end_date` (optional): filter up to this date in `yyyy-mm-dd` format, defaults to today
+- `date_from` (optional): filter from this date in `yyyy-mm-dd` format, defaults to 1 day ago
+- `date_to` (optional): filter up to this date in `yyyy-mm-dd` format
 - `cursor` (optional): pagination cursor from a previous response
-- `size` (optional, default 3, max 50): number of articles per page
-- `include_text_content` (optional, default true): include full article text
+- `size` (optional, default 3, max 15): number of articles per page
 
 ### `get_insights_news_mcp`
-- `start_date` (optional): filter from this date in `yyyy-mm-dd` format
+- `date_from` (optional): filter from this date in `yyyy-mm-dd` format
+- `date_to` (optional): filter up to this date in `yyyy-mm-dd` format
 - `cursor` (optional): pagination cursor from a previous response
-- `size` (optional, default 3, max 10): number of briefings per page
+- `size` (optional, default 3, max 15): number of briefings per page
 - `include_report_html` (optional, default false): include full HTML report content
 
 ## Mode Selection

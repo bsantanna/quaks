@@ -14,7 +14,7 @@ def _validate_date_format(v: Optional[str]) -> Optional[str]:
         return v
     except ValueError:
         raise InvalidFieldError(
-            "start_date, end_date", "Date must be in yyyy-mm-dd format"
+            "date", "Date must be in yyyy-mm-dd format"
         )
 
 
@@ -24,7 +24,7 @@ def _validate_date_order(start_date: Optional[str], end_date: Optional[str]):
         end = datetime.strptime(end_date, "%Y-%m-%d")
         if start >= end:
             raise InvalidFieldError(
-                "start_date, end_date", "Start date must be before end date"
+                "date range", "Start date must be before end date"
             )
 
 
@@ -50,10 +50,12 @@ class NewsList(BaseModel):
 
 
 class NewsListRequest(BaseModel):
-    size: int
+    size: int = Field(ge=1, le=15)
     id: Optional[str] = None
     key_ticker: Optional[str] = None
     search_term: Optional[str] = None
+    date_from: Optional[str] = None
+    date_to: Optional[str] = None
     cursor: Optional[str] = None
     include_text_content: Optional[bool] = None
     include_key_ticker: Optional[bool] = None
@@ -65,6 +67,11 @@ class NewsListRequest(BaseModel):
         if v == "":
             return None
         return v
+
+    @field_validator("date_from", "date_to")
+    @classmethod
+    def validate_date_format(cls, v: Optional[str]) -> Optional[str]:
+        return _validate_date_format(v)
 
 
 class InsightsNewsItem(BaseModel):
@@ -80,20 +87,21 @@ class InsightsNewsList(BaseModel):
 
 
 class InsightsNewsListRequest(BaseModel):
-    size: int
+    size: int = Field(ge=1, le=15)
     id: Optional[str] = None
     date_from: Optional[str] = None
+    date_to: Optional[str] = None
     cursor: Optional[str] = None
     include_report_html: Optional[bool] = None
 
-    @field_validator("id", "date_from", "cursor")
+    @field_validator("id", "cursor")
     @classmethod
     def validate_empty_format(cls, v: str) -> Optional[str]:
         if v == "":
             return None
         return v
 
-    @field_validator("date_from")
+    @field_validator("date_from", "date_to")
     @classmethod
     def validate_date_format(cls, v: Optional[str]) -> Optional[str]:
         return _validate_date_format(v)
@@ -269,11 +277,10 @@ class IndicatorResponse(BaseModel):
 class McpNewsRequest(BaseModel):
     search_term: Optional[str] = None
     key_ticker: Optional[str] = None
-    start_date: Optional[str] = None
-    end_date: Optional[str] = None
+    date_from: Optional[str] = None
+    date_to: Optional[str] = None
     cursor: Optional[str] = None
-    size: int = Field(default=3, ge=1, le=50)
-    include_text_content: bool = True
+    size: int = Field(default=3, ge=1, le=15)
 
     @field_validator("search_term", "key_ticker", "cursor")
     @classmethod
@@ -282,14 +289,14 @@ class McpNewsRequest(BaseModel):
             return None
         return v
 
-    @field_validator("start_date", "end_date")
+    @field_validator("date_from", "date_to")
     @classmethod
     def validate_date_format(cls, v: Optional[str]) -> Optional[str]:
         return _validate_date_format(v)
 
     @model_validator(mode="after")
     def validate_dates_order(self):
-        _validate_date_order(self.start_date, self.end_date)
+        _validate_date_order(self.date_from, self.date_to)
         return self
 
 
@@ -308,22 +315,28 @@ class McpNewsList(BaseModel):
 
 
 class McpInsightsNewsRequest(BaseModel):
-    start_date: Optional[str] = None
+    date_from: Optional[str] = None
+    date_to: Optional[str] = None
     cursor: Optional[str] = None
-    size: int = Field(default=3, ge=1, le=10)
+    size: int = Field(default=3, ge=1, le=15)
     include_report_html: bool = False
 
-    @field_validator("start_date", "cursor")
+    @field_validator("cursor")
     @classmethod
     def validate_empty_format(cls, v: str) -> Optional[str]:
         if v == "":
             return None
         return v
 
-    @field_validator("start_date")
+    @field_validator("date_from", "date_to")
     @classmethod
     def validate_date_format(cls, v: Optional[str]) -> Optional[str]:
         return _validate_date_format(v)
+
+    @model_validator(mode="after")
+    def validate_dates_order(self):
+        _validate_date_order(self.date_from, self.date_to)
+        return self
 
 
 class McpInsightsNewsItem(BaseModel):

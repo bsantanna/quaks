@@ -273,10 +273,12 @@ async def get_market_caps_bulk(
 
     Parameters:
     - `index_name` (path): The Elasticsearch index to query (e.g. `markets-news`).
-    - `size` (query): Number of news items to return per page.
+    - `size` (query): Number of news items to return per page (max 15).
     - `id` (query, optional): Filter by specific document ID.
     - `key_ticker` (query, optional): Filter by ticker symbol (e.g. `AAPL`). Takes precedence over `search_term`.
     - `search_term` (query, optional): Full-text search across headline, summary, and content fields. Ignored when `key_ticker` is provided.
+    - `date_from` (query, optional): Filter articles from this date in `yyyy-mm-dd` format.
+    - `date_to` (query, optional): Filter articles up to this date in `yyyy-mm-dd` format.
     - `cursor` (query, optional): Base64-encoded pagination cursor from a previous response.
     - `include_text_content` (query, optional): Include full article text content.
     - `include_key_ticker` (query, optional): Include associated ticker symbols.
@@ -333,6 +335,8 @@ async def get_news(
         id=request.id,
         key_ticker=request.key_ticker,
         search_term=request.search_term,
+        date_from=request.date_from,
+        date_to=request.date_to,
         size=request.size,
         cursor=request.cursor,
         include_text_content=request.include_text_content,
@@ -372,9 +376,10 @@ async def get_news(
 
     Parameters:
     - `index_name` (path): The Elasticsearch index to query (e.g. `insights-news`).
-    - `size` (query): Number of briefings to return per page.
+    - `size` (query): Number of briefings to return per page (max 15).
     - `id` (query, optional): Filter by specific document ID to load a single briefing.
     - `date_from` (query, optional): Filter briefings from this date (yyyy-mm-dd).
+    - `date_to` (query, optional): Filter briefings up to this date (yyyy-mm-dd).
     - `cursor` (query, optional): Base64-encoded pagination cursor from a previous response.
     - `include_report_html` (query, optional): Include the full HTML report content.
     """,
@@ -394,6 +399,7 @@ async def get_insights_news(
         index_name=index_name,
         id=request.id,
         date_from=request.date_from,
+        date_to=request.date_to,
         size=request.size,
         cursor=request.cursor,
         include_report_html=request.include_report_html,
@@ -549,11 +555,10 @@ async def get_indicator(
     Parameters:
     - `search_term` (query, optional): Free-text filter (e.g. sector, company, topic).
     - `key_ticker` (query, optional): Stock ticker symbol to filter by (e.g. `AAPL`, `MSFT`).
-    - `start_date` (query, optional): Filter articles from this date in `yyyy-mm-dd` format. Defaults to 1 day ago.
-    - `end_date` (query, optional): Filter articles up to this date in `yyyy-mm-dd` format. Defaults to today.
+    - `date_from` (query, optional): Filter articles from this date in `yyyy-mm-dd` format. Defaults to 1 day ago.
+    - `date_to` (query, optional): Filter articles up to this date in `yyyy-mm-dd` format.
     - `cursor` (query, optional): Base64-encoded pagination cursor from a previous response.
-    - `size` (query, optional): Number of articles to return (default 3, max 50).
-    - `include_text_content` (query, optional): Include full article text content (default true).
+    - `size` (query, optional): Number of articles to return (default 3, max 15).
     """,
     response_description="List of news articles with headline, summary, source, date, tickers, and pagination cursor",
     dependencies=[cache_control(3600)],
@@ -566,16 +571,17 @@ async def get_markets_news(
     request: Annotated[McpNewsRequest, Depends()],
 ):
     today = datetime.now()
-    start_date = request.start_date or (today - timedelta(days=1)).strftime("%Y-%m-%d")
+    date_from = request.date_from or (today - timedelta(days=1)).strftime("%Y-%m-%d")
 
     results, sort = await markets_news_service.get_news(
         index_name="quaks_markets-news_latest",
         search_term=request.search_term,
         key_ticker=request.key_ticker,
-        date_from=start_date,
+        date_from=date_from,
+        date_to=request.date_to,
         size=request.size,
         cursor=request.cursor,
-        include_text_content=request.include_text_content,
+        include_text_content=True,
         include_key_ticker=True,
     )
 
@@ -605,9 +611,10 @@ async def get_markets_news(
     Returns AI-generated investor briefings, optimized for LLM consumption.
 
     Parameters:
-    - `start_date` (query, optional): Filter briefings from this date in `yyyy-mm-dd` format.
+    - `date_from` (query, optional): Filter briefings from this date in `yyyy-mm-dd` format.
+    - `date_to` (query, optional): Filter briefings up to this date in `yyyy-mm-dd` format.
     - `cursor` (query, optional): Base64-encoded pagination cursor from a previous response.
-    - `size` (query, optional): Number of briefings to return (default 3, max 10).
+    - `size` (query, optional): Number of briefings to return (default 3, max 15).
     - `include_report_html` (query, optional): Include full HTML report content (default false).
     """,
     response_description="List of investor briefings with date, executive summary, optional report HTML, and pagination cursor",
@@ -622,7 +629,8 @@ async def get_insights_news_mcp(
 ):
     results, sort = await markets_insights_service.get_insights_news(
         index_name="quaks_insights-news_latest",
-        date_from=request.start_date,
+        date_from=request.date_from,
+        date_to=request.date_to,
         size=request.size,
         cursor=request.cursor,
         include_report_html=request.include_report_html,
