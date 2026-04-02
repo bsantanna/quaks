@@ -14,6 +14,7 @@ class MarketsInsightsService:
             index_name: str,
             id: str = None,
             date_from: str = None,
+            date_to: str = None,
             size=10,
             cursor: str = None,
             include_report_html=False):
@@ -25,6 +26,8 @@ class MarketsInsightsService:
             params["id"] = id
         if date_from:
             params["date_from"] = date_from
+        if date_to:
+            params["date_to"] = date_to
         if cursor:
             params["search_after"] = json.loads(base64.urlsafe_b64decode(cursor).decode())
         search_params = {
