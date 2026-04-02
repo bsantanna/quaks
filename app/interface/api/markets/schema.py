@@ -268,16 +268,29 @@ class IndicatorResponse(BaseModel):
 
 class McpNewsRequest(BaseModel):
     search_term: Optional[str] = None
-    ticker: Optional[str] = None
-    days: int = Field(default=1, ge=1)
-    size: int = Field(default=5, ge=1, le=50)
+    key_ticker: Optional[str] = None
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+    cursor: Optional[str] = None
+    size: int = Field(default=3, ge=1, le=50)
+    include_text_content: bool = True
 
-    @field_validator("search_term", "ticker")
+    @field_validator("search_term", "key_ticker", "cursor")
     @classmethod
     def validate_empty_format(cls, v: str) -> Optional[str]:
         if v == "":
             return None
         return v
+
+    @field_validator("start_date", "end_date")
+    @classmethod
+    def validate_date_format(cls, v: Optional[str]) -> Optional[str]:
+        return _validate_date_format(v)
+
+    @model_validator(mode="after")
+    def validate_dates_order(self):
+        _validate_date_order(self.start_date, self.end_date)
+        return self
 
 
 class McpNewsItem(BaseModel):
@@ -291,20 +304,23 @@ class McpNewsItem(BaseModel):
 
 class McpNewsList(BaseModel):
     items: list[McpNewsItem]
+    cursor: Optional[str] = None
 
 
 class McpInsightsNewsRequest(BaseModel):
-    date_from: Optional[str] = None
-    size: int = Field(default=5, ge=1, le=10)
+    start_date: Optional[str] = None
+    cursor: Optional[str] = None
+    size: int = Field(default=3, ge=1, le=10)
+    include_report_html: bool = False
 
-    @field_validator("date_from")
+    @field_validator("start_date", "cursor")
     @classmethod
     def validate_empty_format(cls, v: str) -> Optional[str]:
         if v == "":
             return None
         return v
 
-    @field_validator("date_from")
+    @field_validator("start_date")
     @classmethod
     def validate_date_format(cls, v: Optional[str]) -> Optional[str]:
         return _validate_date_format(v)
@@ -313,8 +329,9 @@ class McpInsightsNewsRequest(BaseModel):
 class McpInsightsNewsItem(BaseModel):
     date: str
     executive_summary: str
-    report_html: str
+    report_html: Optional[str] = None
 
 
 class McpInsightsNewsList(BaseModel):
     items: list[McpInsightsNewsItem]
+    cursor: Optional[str] = None
