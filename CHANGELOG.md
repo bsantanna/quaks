@@ -2,6 +2,27 @@
 
 <!-- version list -->
 
+## v1.3.46 (2026-04-02)
+
+### Bug Fixes
+
+- Adjusts and aligns mcp parameters with backend systems
+  ([#91](https://github.com/bsantanna/quaks/pull/91),
+  [`a0598e6`](https://github.com/bsantanna/quaks/commit/a0598e62e4bab3b66281d404a3c6549fb8b3085c))
+
+- Adjusts skill with new mcp definitions ([#91](https://github.com/bsantanna/quaks/pull/91),
+  [`a0598e6`](https://github.com/bsantanna/quaks/commit/a0598e62e4bab3b66281d404a3c6549fb8b3085c))
+
+- Mcp refactoring (2) ([#91](https://github.com/bsantanna/quaks/pull/91),
+  [`a0598e6`](https://github.com/bsantanna/quaks/commit/a0598e62e4bab3b66281d404a3c6549fb8b3085c))
+
+- Mcp refactoring (3) ([#91](https://github.com/bsantanna/quaks/pull/91),
+  [`a0598e6`](https://github.com/bsantanna/quaks/commit/a0598e62e4bab3b66281d404a3c6549fb8b3085c))
+
+- Refactors for param alignment ([#91](https://github.com/bsantanna/quaks/pull/91),
+  [`a0598e6`](https://github.com/bsantanna/quaks/commit/a0598e62e4bab3b66281d404a3c6549fb8b3085c))
+
+
 ## v1.3.45 (2026-03-31)
 
 ### Bug Fixes
