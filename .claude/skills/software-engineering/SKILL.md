@@ -195,6 +195,56 @@ OpenTelemetry is configured in `app/infrastructure/metrics/tracer.py`. Instrumen
 
 ---
 
+## Dependency Management
+
+Dependencies are managed with [uv](https://docs.astral.sh/uv/) and declared in `pyproject.toml`.
+
+### Structure
+
+- `[project.dependencies]` — Runtime dependencies (fastapi, langchain, etc.)
+- `[dependency-groups.dev]` — Dev tools (ruff, flake8, isort, pre-commit)
+- `[dependency-groups.test]` — Test tools (pytest, testcontainers)
+- `[dependency-groups.notebooks]` — Jupyter notebook dependencies
+
+### Lock File
+
+`uv.lock` is committed to the repo and provides deterministic, reproducible installs across CI and Docker. Always run `uv lock` after modifying dependencies in `pyproject.toml`.
+
+### Adding/Removing Dependencies
+
+```bash
+# Add a runtime dependency
+uv add <package>
+
+# Add a dev dependency
+uv add --group dev <package>
+
+# Add a test dependency
+uv add --group test <package>
+
+# Remove a dependency
+uv remove <package>
+```
+
+### Local Development
+
+The project uses conda for Python version management. Install dependencies with uv:
+
+```bash
+conda activate agent-lab
+uv sync --group dev --group test
+```
+
+### Docker
+
+The Docker image uses `uv sync --frozen --no-dev` for production-only, deterministic installs from `uv.lock`.
+
+### CI
+
+CI uses `uv sync --frozen --group dev --group test` to install all dependency groups from the lock file.
+
+---
+
 ## Common Commands
 
 ### Backend
@@ -294,5 +344,6 @@ Choose the method based on the operation's semantics, not implementation conveni
 - **Pre-commit hooks**: Also run `make test` as a local hook on every commit — tests must pass before commits succeed.
 - **Config files**: YAML-based (`config-*.yml`), loaded conditionally by env var in `Container`.
 - **Agent prompts**: Use Jinja2 templates stored in agent settings, rendered via `AgentBase.parse_prompt_template()`.
-- **Versioning**: Managed by `python-semantic-release`. Version is declared in `docker/app/Dockerfile` (`SERVICE_VERSION`) and `frontend/package.json`.
+- **Dependency management**: uv with `pyproject.toml` + `uv.lock`. Runtime, dev, test, and notebook dependencies are split into groups.
+- **Versioning**: Managed by `python-semantic-release`. Version is declared in `pyproject.toml`, `docker/app/Dockerfile` (`SERVICE_VERSION`), and `frontend/package.json`.
 - **Testing**: pytest with testcontainers — tests spin up real Postgres, Redis, Vault, Keycloak, Ollama, and chromedp containers. The `conftest.py` session fixture manages container lifecycle.
