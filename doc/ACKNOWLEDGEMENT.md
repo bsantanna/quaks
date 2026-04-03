@@ -17,7 +17,7 @@ project:
 ## Third-Party Software
 
 We would like to extend our gratitude to the developers and maintainers of the
-third-party libraries listed in the `requirements.txt` file. Their invaluable
+third-party libraries listed in `pyproject.toml`. Their invaluable
 contributions to the open-source community have significantly enhanced the
 functionality and reliability of this project. Without their dedication and hard
 work, building and maintaining this project would not have been possible. Thank
