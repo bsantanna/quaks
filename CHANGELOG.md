@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.4.0 (2026-04-03)
+
+### Features
+
+- Uv project mgmt (1) ([#92](https://github.com/bsantanna/quaks/pull/92),
+  [`8ab7510`](https://github.com/bsantanna/quaks/commit/8ab751084fb458ba5ba1dd11dd929ab84201c658))
+
+
 ## v1.3.46 (2026-04-02)
 
 ### Bug Fixes
