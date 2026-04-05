@@ -5,7 +5,7 @@ import re
 from fastapi import FastAPI, HTTPException, Request
 from fastapi_keycloak_middleware import KeycloakConfiguration, setup_keycloak_middleware
 from starlette.middleware.cors import CORSMiddleware
-from starlette.responses import JSONResponse, FileResponse, RedirectResponse
+from starlette.responses import JSONResponse, FileResponse
 from starlette.staticfiles import StaticFiles
 
 from app.core.container import Container
@@ -43,14 +43,10 @@ def create_app():
     setup_auth(container, application)
     setup_routers(container, application)
     application.mount("/mcp", mcp_app)
-
-    @application.api_route("/mcp", methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
-    async def mcp_no_slash(request: Request):
-        return RedirectResponse(url="/mcp/", status_code=307)
-
     setup_resource_metadata(container, application)
     setup_exception_handlers(application)
     setup_middleware(application)
+    setup_mcp_slash_rewrite(application)
     setup_spa_fallback(application)
 
     return application
@@ -198,6 +194,16 @@ def setup_middleware(application: FastAPI):
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+
+def setup_mcp_slash_rewrite(application: FastAPI):
+    @application.middleware("http")
+    async def mcp_slash_rewrite(request: Request, call_next):
+        if request.url.path == "/mcp":
+            scope = request.scope
+            scope["path"] = "/mcp/"
+            scope["raw_path"] = b"/mcp/"
+        return await call_next(request)
 
 
 def setup_spa_fallback(application: FastAPI):
