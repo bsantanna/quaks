@@ -46,6 +46,7 @@ def create_app():
     setup_resource_metadata(container, application)
     setup_exception_handlers(application)
     setup_middleware(application)
+    setup_mcp_slash_rewrite(application)
     setup_spa_fallback(application)
 
     return application
@@ -193,6 +194,16 @@ def setup_middleware(application: FastAPI):
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+
+def setup_mcp_slash_rewrite(application: FastAPI):
+    @application.middleware("http")
+    async def mcp_slash_rewrite(request: Request, call_next):
+        if request.url.path == "/mcp":
+            scope = request.scope
+            scope["path"] = "/mcp/"
+            scope["raw_path"] = b"/mcp/"
+        return await call_next(request)
 
 
 def setup_spa_fallback(application: FastAPI):
