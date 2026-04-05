@@ -124,6 +124,7 @@ def build_mcp_server(container: Container) -> FastMCP:
 
     _register_tools(mcp, container)
     _register_prompts(mcp)
+    _register_resources(mcp)
     return mcp
 
 
@@ -296,6 +297,33 @@ def _register_tools(mcp: FastMCP, container: Container) -> None:
             for h in results
         ]
         return InsightsNewsList(items=items, cursor=sort)
+
+
+def _register_resources(mcp: FastMCP) -> None:
+
+    @mcp.resource(
+        uri="prompt://news_analyst_coordinator",
+        name="news_analyst_coordinator",
+        description="System prompt for the News Analyst coordinator step.",
+    )
+    def resource_coordinator() -> str:
+        return _render_prompt(COORDINATOR_SYSTEM_PROMPT)
+
+    @mcp.resource(
+        uri="prompt://news_analyst_aggregator",
+        name="news_analyst_aggregator",
+        description="System prompt for the News Analyst aggregator step.",
+    )
+    def resource_aggregator() -> str:
+        return _render_prompt(AGGREGATOR_SYSTEM_PROMPT)
+
+    @mcp.resource(
+        uri="prompt://news_analyst_reporter",
+        name="news_analyst_reporter",
+        description="System prompt for the News Analyst reporter step.",
+    )
+    def resource_reporter() -> str:
+        return _render_prompt(REPORTER_SYSTEM_PROMPT)
 
 
 def _render_prompt(template_str: str) -> str:
