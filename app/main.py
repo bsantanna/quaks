@@ -3,6 +3,7 @@ import os
 import re
 
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse as FastJSONResponse
 from fastapi_keycloak_middleware import KeycloakConfiguration, setup_keycloak_middleware
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse, FileResponse
@@ -43,6 +44,7 @@ def create_app():
     setup_auth(container, application)
     setup_routers(container, application)
     application.mount("/mcp", mcp_app)
+    setup_resource_metadata(container, application)
     setup_exception_handlers(application)
     setup_middleware(application)
     setup_spa_fallback(application)
@@ -93,6 +95,31 @@ def setup_auth(container, application):
 
     else:
         logger.warning("Authentication disabled")
+
+
+def setup_resource_metadata(container: Container, application: FastAPI):
+    config = container.config()
+    if not config["auth"]["enabled"]:
+        return
+
+    base_url = config["api_base_url"]
+    resource_url = f"{base_url}/mcp"
+    authorization_server = f"{base_url}/mcp"
+
+    metadata = {
+        "resource": resource_url,
+        "authorization_servers": [authorization_server],
+        "scopes_supported": ["openid", "profile", "email"],
+        "bearer_methods_supported": ["header"],
+    }
+
+    @application.get("/.well-known/oauth-protected-resource/mcp")
+    async def oauth_protected_resource_metadata():
+        return FastJSONResponse(metadata)
+
+    @application.get("/.well-known/oauth-protected-resource/mcp/")
+    async def oauth_protected_resource_metadata_slash():
+        return FastJSONResponse(metadata)
 
 
 def setup_routers(container: Container, application: FastAPI):
