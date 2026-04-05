@@ -5,6 +5,7 @@ from typing import Annotated, Optional
 
 from fastmcp import FastMCP
 from jinja2 import Template
+from mcp.types import Icon
 from pydantic import BaseModel, Field
 
 from app.core.container import Container
@@ -115,11 +116,13 @@ def build_mcp_server(container: Container) -> FastMCP:
     config = container.config()
     auth = _build_auth(config)
 
+    base_url = config.get("api_base_url", "")
     mcp = FastMCP(
         name=os.getenv("SERVICE_NAME", "Quaks"),
         version=os.getenv("SERVICE_VERSION", "snapshot"),
         instructions=_SERVER_INSTRUCTIONS,
         auth=auth,
+        icons=[Icon(src=f"{base_url}/logo.svg", mimeType="image/svg+xml")],
     )
 
     _register_tools(mcp, container)
