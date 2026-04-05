@@ -149,7 +149,7 @@ def _build_auth(config: dict):
             audience="account",
             required_scopes=["openid", "profile", "email"],
         ),
-        base_url=config["api_base_url"],
+        base_url=f"{config['api_base_url']}/mcp",
     )
 
 
