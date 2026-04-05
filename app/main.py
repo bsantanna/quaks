@@ -3,7 +3,6 @@ import os
 import re
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse as FastJSONResponse
 from fastapi_keycloak_middleware import KeycloakConfiguration, setup_keycloak_middleware
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse, FileResponse
@@ -106,7 +105,7 @@ def setup_resource_metadata(container: Container, application: FastAPI):
     resource_url = f"{base_url}/mcp"
     authorization_server = f"{base_url}/mcp"
 
-    metadata = {
+    resource_metadata = {
         "resource": resource_url,
         "authorization_servers": [authorization_server],
         "scopes_supported": ["openid", "profile", "email"],
@@ -115,11 +114,31 @@ def setup_resource_metadata(container: Container, application: FastAPI):
 
     @application.get("/.well-known/oauth-protected-resource/mcp")
     async def oauth_protected_resource_metadata():
-        return FastJSONResponse(metadata)
+        return JSONResponse(resource_metadata)
 
     @application.get("/.well-known/oauth-protected-resource/mcp/")
     async def oauth_protected_resource_metadata_slash():
-        return FastJSONResponse(metadata)
+        return JSONResponse(resource_metadata)
+
+    auth_server_metadata = {
+        "issuer": authorization_server,
+        "authorization_endpoint": f"{authorization_server}/authorize",
+        "token_endpoint": f"{authorization_server}/token",
+        "registration_endpoint": f"{authorization_server}/register",
+        "scopes_supported": ["openid", "profile", "email"],
+        "response_types_supported": ["code"],
+        "grant_types_supported": ["authorization_code", "refresh_token"],
+        "token_endpoint_auth_methods_supported": ["client_secret_post", "client_secret_basic"],
+        "code_challenge_methods_supported": ["S256"],
+    }
+
+    @application.get("/.well-known/oauth-authorization-server/mcp")
+    async def oauth_authorization_server_metadata():
+        return JSONResponse(auth_server_metadata)
+
+    @application.get("/.well-known/oauth-authorization-server/mcp/")
+    async def oauth_authorization_server_metadata_slash():
+        return JSONResponse(auth_server_metadata)
 
 
 def setup_routers(container: Container, application: FastAPI):
