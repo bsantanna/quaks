@@ -2,6 +2,25 @@
 
 <!-- version list -->
 
+## v1.5.0 (2026-04-05)
+
+### Bug Fixes
+
+- Mcp provider refactor 1 ([#98](https://github.com/bsantanna/quaks/pull/98),
+  [`22d7828`](https://github.com/bsantanna/quaks/commit/22d78287d6d5c875fd3082c423dc685132cc3692))
+
+### Features
+
+- Fast mcp implementation (1) ([#98](https://github.com/bsantanna/quaks/pull/98),
+  [`22d7828`](https://github.com/bsantanna/quaks/commit/22d78287d6d5c875fd3082c423dc685132cc3692))
+
+- Fast mcp implementation (2) ([#98](https://github.com/bsantanna/quaks/pull/98),
+  [`22d7828`](https://github.com/bsantanna/quaks/commit/22d78287d6d5c875fd3082c423dc685132cc3692))
+
+- Fast mcp implementation (3) ([#98](https://github.com/bsantanna/quaks/pull/98),
+  [`22d7828`](https://github.com/bsantanna/quaks/commit/22d78287d6d5c875fd3082c423dc685132cc3692))
+
+
 ## v1.4.0 (2026-04-03)
 
 ### Features
