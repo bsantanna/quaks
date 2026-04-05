@@ -10,5 +10,5 @@
 ## Claude Setup
 
 ```bash
-claude mcp add-json quaks-ai '{"type":"http","url":"https://quaks.ai/mcp"}'
+claude mcp add-json quaks-ai '{"type":"http","url":"https://quaks.ai/mcp/"}'
 ```

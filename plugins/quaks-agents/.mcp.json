@@ -2,7 +2,7 @@
   "mcpServers": {
     "quaks.ai": {
       "type": "http",
-      "url": "https://quaks.ai/mcp"
+      "url": "https://quaks.ai/mcp/"
     }
   }
 }
