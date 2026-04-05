@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.5.1 (2026-04-05)
+
+### Bug Fixes
+
+- Fast mcp implementation (2) ([#99](https://github.com/bsantanna/quaks/pull/99),
+  [`13f5334`](https://github.com/bsantanna/quaks/commit/13f5334488416e79ceb79dfc229c2062b7738425))
+
+
 ## v1.5.0 (2026-04-05)
 
 ### Bug Fixes
