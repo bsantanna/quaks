@@ -13,7 +13,7 @@ WORKDIR /agent-lab
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 COPY ../../pyproject.toml ../../uv.lock /agent-lab/
-RUN apt update -q && apt install -yq ffmpeg build-essential \
+RUN apt update -q && apt install -yq build-essential \
     && uv sync --frozen --no-dev --no-install-project \
     && apt clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \

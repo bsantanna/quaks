@@ -2,15 +2,14 @@ import logging
 import os
 import re
 
-from fastapi import FastAPI, HTTPException, Request, Depends
-from fastapi.security import HTTPBearer
+from fastapi import FastAPI, HTTPException, Request
 from fastapi_keycloak_middleware import KeycloakConfiguration, setup_keycloak_middleware
-from fastapi_mcp import FastApiMCP, AuthConfig
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse, FileResponse
 from starlette.staticfiles import StaticFiles
 
 from app.core.container import Container
+from app.interface.mcp.server import build_mcp_server
 from app.infrastructure.auth.user import map_user
 from app.infrastructure.metrics.logging_middleware import LoggingMiddleware
 from app.interface.api.agents.endpoints import router as agents_router
@@ -25,22 +24,25 @@ from app.interface.api.waitlist.endpoints import router as waitlist_router
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-bearer_scheme = HTTPBearer()
 
 def create_app():
     container = Container()
+
+    mcp_server = build_mcp_server(container)
+    mcp_app = mcp_server.http_app(path="/", stateless_http=True)
 
     application = FastAPI(
         title=os.getenv("SERVICE_NAME", "Quaks"),
         version=os.getenv("SERVICE_VERSION", "snapshot"),
         dependencies=[],
+        lifespan=mcp_app.lifespan,
     )
     application.container = container
 
     setup_tracing(container, application)
     setup_auth(container, application)
     setup_routers(container, application)
-    setup_mcp(container, application)
+    application.mount("/mcp", mcp_app)
     setup_exception_handlers(application)
     setup_middleware(application)
     setup_spa_fallback(application)
@@ -84,43 +86,13 @@ def setup_auth(container, application):
                 "/privacy(/|$)",
                 "/account/",
                 "^/$",
-                "/oauth/",
-                "/.well-known/oauth-authorization-server"
+                "/mcp(/.*)?$"
             ],
             user_mapper=map_user,
         )
 
     else:
         logger.warning("Authentication disabled")
-
-
-def setup_mcp(container: Container, application: FastAPI):
-    config = container.config()
-    auth_config = None
-    if config["auth"]["enabled"]:
-        auth_url = config["auth"]["url"]
-        realm = config["auth"]["realm"]
-        auth_config = AuthConfig(
-            issuer=f"{auth_url}/realms/{realm}",
-            authorize_url=f"{auth_url}/realms/{realm}/protocol/openid-connect/auth",
-            client_id=config["auth"]["client_id"],
-            client_secret=config["auth"]["client_secret"],
-            default_scope="openid profile email",
-            dependencies=[Depends(bearer_scheme)],
-            setup_proxies=True,
-            setup_fake_dynamic_registration=True,
-        )
-
-    mcp = FastApiMCP(
-        application,
-        name=os.getenv("SERVICE_NAME", "Quaks"),
-        include_operations=["get_agent_list", "get_markets_news_mcp", "get_insights_news_mcp"],
-        describe_all_responses=True,
-        describe_full_response_schema=True,
-        auth_config=auth_config,
-    )
-
-    mcp.mount_http()
 
 
 def setup_routers(container: Container, application: FastAPI):
