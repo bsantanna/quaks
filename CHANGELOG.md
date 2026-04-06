@@ -2,6 +2,20 @@
 
 <!-- version list -->
 
+## v1.5.6 (2026-04-06)
+
+### Bug Fixes
+
+- Tech debt attack (1) ([#104](https://github.com/bsantanna/quaks/pull/104),
+  [`3ebfd08`](https://github.com/bsantanna/quaks/commit/3ebfd0828b169cd9faa456815da36edf19d2e9c1))
+
+- Tech debt attack (2) ([#104](https://github.com/bsantanna/quaks/pull/104),
+  [`3ebfd08`](https://github.com/bsantanna/quaks/commit/3ebfd0828b169cd9faa456815da36edf19d2e9c1))
+
+- Tech debt attack (3) ([#104](https://github.com/bsantanna/quaks/pull/104),
+  [`3ebfd08`](https://github.com/bsantanna/quaks/commit/3ebfd0828b169cd9faa456815da36edf19d2e9c1))
+
+
 ## v1.5.5 (2026-04-05)
 
 ### Bug Fixes
