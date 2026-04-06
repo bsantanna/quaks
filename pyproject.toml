@@ -55,7 +55,7 @@ dependencies = [
   "starlette~=0.52.1",
   "typing_extensions~=4.15.0",
   "unstructured[md]~=0.18.32",
-  "uvicorn~=0.42.0",
+  "uvicorn~=0.44.0",
 ]
 
 [dependency-groups]
