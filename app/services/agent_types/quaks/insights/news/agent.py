@@ -114,6 +114,15 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
         response = chain.invoke({"messages": state["messages"]})
         return response
 
+    _BRIEFING_KEYWORDS = {
+        "briefing", "brief", "report", "summary", "recap",
+        "digest", "overview", "roundup", "round-up", "rundown",
+    }
+
+    def _is_briefing_request(self, query: str) -> bool:
+        words = set(query.lower().split())
+        return bool(words & self._BRIEFING_KEYWORDS)
+
     def get_coordinator(
         self, state: NewsAnalystState
     ) -> Command[Literal["aggregator", "__end__"]]:
@@ -130,8 +139,8 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
             )
         )
 
-        if query.strip() == "BATCH_ETL":
-            self.logger.info(f"Agent[{agent_id}] -> Coordinator -> BATCH_ETL -> aggregator")
+        if query.strip() == "BATCH_ETL" or self._is_briefing_request(query):
+            self.logger.info(f"Agent[{agent_id}] -> Coordinator -> Full report -> aggregator")
             return Command(goto="aggregator")
 
         # QA mode: answer the user's question using insights news tool

@@ -1,8 +1,8 @@
 # SEO Audit Report — Quaks Platform
 
-**Date:** 2026-03-09 (update 4)
-**Previous Audit:** 2026-03-06 (update 3)
-**Estimated Lighthouse SEO Score:** ~95/100 (up from ~92)
+**Date:** 2026-04-06 (update 5)
+**Previous Audit:** 2026-03-09 (update 4)
+**Estimated Lighthouse SEO Score:** ~96/100 (up from ~92)
 
 ---
 
@@ -21,24 +21,23 @@
 | 8 | No `<main>` landmark | `<main id="main-content">` wraps router-outlet. |
 | 9 | No canonical URLs | `SeoService` dynamically sets `<link rel="canonical">`. |
 | 10 | Static page title | `SeoService` sets unique `<title>` per route. |
+| 11 | No `prefers-reduced-motion` CSS | `@media (prefers-reduced-motion: reduce)` at line 118 in `styles.scss`. |
 | 12 | No skip-navigation link | Added `<a href="#main-content" class="sr-only focus:not-sr-only ...">Skip to main content</a>` in `app.html`. |
 | 14 | No Web App Manifest | `manifest.webmanifest` with icons (192x192, 512x512). |
 | 15 | No favicon set | Full set: 16x16, 32x32, 180x180, 192x192, 512x512, apple-touch-icon, mask-icon. |
-
-### Resolved This Session
-
-| # | Issue | What Changed |
-|---|-------|------------|
-| 22 | No `/cookies` route | Added `PageCookies` component at `/cookies` with GDPR-compliant cookie policy content. SSR prerender enabled. `SeoService.update()` called with title, description, path. |
-| 23 | No cookie management UX | Footer "Cookies" link reopens consent dialog via `CookieService.resetConsent()`. Users can switch between "Accept all" and "Reject non-essential" at any time. |
-
-### Resolved Previously
-
-| # | Issue | What Changed |
-|---|-------|------------|
 | 16 | Stub content on Stocks page | Replaced with full heatmap component (`StocksHeatmaps`). |
-| 11 | No `prefers-reduced-motion` CSS | Added `@media (prefers-reduced-motion: reduce)` to `styles.scss` — disables animations, transitions, and scroll behavior for motion-sensitive users. |
-| 6c | No BreadcrumbList schema | `SeoService.update()` now auto-generates `BreadcrumbList` JSON-LD from the `path` param. Breadcrumbs include Home + path segments + current page title. Cleaned up on `reset()`. |
+| 6c | No BreadcrumbList schema | `SeoService.update()` auto-generates `BreadcrumbList` JSON-LD from the `path` param. Cleaned up on `reset()`. |
+
+---
+
+## Audit Corrections (Update 5)
+
+| # | Issue | Resolution |
+|---|-------|------------|
+| 22 | **Cookies page** | No separate `/cookies` route needed. `/privacy` already contains the full GDPR cookie policy (ePrivacy, legal basis, cookie table, retention, rights). Audit incorrectly marked this as resolved via a new page in update 4. |
+| 23 | **Cookie management UX** | Working correctly: footer "Cookies" button opens the consent dialog via `manageCookies()`. Cookie consent dialog links to `/privacy`. No new page required. |
+| 17 | **Font loading** | Resolved: Google Fonts `@import` removed from `styles.scss`. Fonts now loaded via `<link rel="preconnect">` + `<link rel="stylesheet">` in `index.html`. |
+| 21 | **Sitemap incomplete** | Resolved: Added `/insights/agents`, `/insights/news`, `/insights/financial`, `/waitlist` to `sitemap.xml`. |
 
 ---
 
@@ -48,8 +47,7 @@
 
 | # | Issue | Location | Impact |
 |---|-------|----------|--------|
-| 17 | **No `font-display: swap`** | Global styles | Minor LCP impact if custom fonts load slowly. |
-| 19 | **No SSR/prerendering** | Entire SPA | Crawlers see empty `<app-root>` until JS executes. Google renders JS but other engines may not. |
+| 19 | **No SSR/prerendering** | Entire SPA | Crawlers see empty `<app-root>` until JS executes. Google renders JS but other engines may not. Biggest remaining SEO uplift. |
 | 20 | **No `TitleStrategy`** | `app.config.ts` | Route `title` properties don't auto-propagate. Works via manual `SeoService` calls, but no fallback for routes that forget to call it. |
 
 ### Low
@@ -58,36 +56,34 @@
 |---|-------|----------|--------|
 | 13 | `stock-eod-insights.html` img `alt=""` without `aria-hidden` | Line 5 | Minor — `alt=""` is valid per WCAG for decorative images. |
 | 18 | No `hreflang` tags | N/A | Only relevant if i18n is planned. |
-| 21 | **Sitemap missing** | `frontend/public/sitemap.xml` | File no longer exists in repo. robots.txt still references it. Needs regeneration including `/cookies` route. |
-| 24 | **`page-cookies.html` / `page-terms.html` hardcoded text colors** | `text-gray-100` | Not theme-aware. Works on dark themes but won't adapt to light themes. |
+| 24 | **`page-terms.html` hardcoded text colors** | `text-gray-100` | Not theme-aware. Works on dark themes but won't adapt to light themes. |
 
 ---
 
 ## What's Working Well
 
-- **SeoService**: Title, description, OG, Twitter, canonical, and now `NewsArticle` JSON-LD — all per-route. Used in all page components.
+- **SeoService**: Title, description, OG, Twitter, canonical, BreadcrumbList, NewsArticle JSON-LD — per-route. Used in 15+ components.
 - **Skip navigation**: Keyboard-accessible skip link to `#main-content`.
-- **Structured data**: `WebApplication` on homepage + `NewsArticle` on news item pages with proper cleanup on navigation.
+- **Structured data**: `WebApplication` on homepage + `NewsArticle` on news item pages with proper cleanup.
 - **ARIA attributes**: Well-implemented across components (39+ occurrences).
 - **Image alt text**: Good coverage — decorative images use `aria-hidden="true" alt=""`, content images use descriptive alt.
 - **Semantic HTML**: `<main>`, `<nav>`, `<footer>`, `<article>`, `<header>` used correctly.
 - **H1 hierarchy**: Single H1 per content page, none in navigation.
 - **FastAPI SPA fallback**: `StaticFiles(html=True)` for all frontend routes.
 - **Path-based routing**: Clean URLs like `/markets/stocks/AAPL`.
-- **robots.txt**: Blocks API endpoints, allows public pages.
-- **Cookie policy page**: `/cookies` route with GDPR content, SSR prerender, full SEO meta tags and breadcrumbs.
-- **Cookie consent management**: Users can re-manage preferences via footer link at any time.
-- **Full meta tag set**: Description, OG, Twitter Cards, canonical, theme-color.
+- **robots.txt**: Blocks API + internal endpoints, allows public pages. References sitemap.
+- **Full meta tag set**: Description, OG, Twitter Cards, canonical, theme-color in `index.html`.
 - **PWA-ready**: Manifest, icons, apple-touch-icon, theme-color.
 - **`lang="en"`**: Present on `<html>` tag.
+- **`prefers-reduced-motion`**: Media query in `styles.scss` disables animations for motion-sensitive users.
+- **Google Fonts**: `display=swap` parameter set in import URLs (font-display honored).
 
 ---
 
 ## Recommended Next Steps (Priority Order)
 
-1. **Add `font-display: swap`** if custom fonts are loaded
-2. **Wire up `TitleStrategy`** as a fallback for routes that don't call `SeoService` manually
-3. **Consider SSR/prerendering** for key landing pages — biggest remaining SEO uplift
+1. **Wire up `TitleStrategy`** — Fallback for routes that don't call `SeoService` manually.
+2. **Consider SSR/prerendering** — Angular Universal or static prerender for key landing pages. Biggest long-term SEO uplift.
 
 ---
 
@@ -102,15 +98,14 @@
 | `frontend/src/app/shared/services/seo.service.ts` | Dynamic SEO meta tag + JSON-LD service |
 | `frontend/src/app/page-markets-news-item/markets-news-item.component.ts` | News item — calls `setNewsArticleSchema()` |
 | `frontend/public/` | Static assets — robots.txt, sitemap.xml, manifest, icons |
-| `frontend/angular.json` | Build config — assets array |
+| `frontend/src/styles.scss` | Global styles — font imports, theme vars, a11y media queries |
 | `app/main.py` | FastAPI — static files mount with SPA fallback |
-| `frontend/src/styles.scss` | Global styles — a11y improvements needed |
 
 ## Scoring Targets
 
 | Tool | Current (est.) | Target |
 |------|----------------|--------|
-| Google Lighthouse SEO | ~90 | 100 |
+| Google Lighthouse SEO | ~92 | 100 |
 | Google Lighthouse Accessibility | ~85 | 95+ |
 | Google Lighthouse Performance | ~80 | 90+ |
 | Google PageSpeed Insights (Mobile) | ~75 | 90+ |
