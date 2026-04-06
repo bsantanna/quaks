@@ -329,10 +329,13 @@ def _register_resources(mcp: FastMCP) -> None:
         return _render_prompt(REPORTER_SYSTEM_PROMPT)
 
 
-def _render_prompt(template_str: str) -> str:
+def _render_prompt(template_str: str, current_time: str | None = None) -> str:
+    if current_time is not None and not current_time.strip():
+        raise ValueError("current_time must be a non-empty string when provided")
     template = Template(template_str)
+    resolved_time = current_time or datetime.now().strftime("%a %b %d %Y %H:%M:%S %z")
     return template.render(
-        CURRENT_TIME=datetime.now().strftime("%a %b %d %Y %H:%M:%S %z"),
+        CURRENT_TIME=resolved_time,
         EXECUTION_PLAN=_EXECUTION_PLAN,
     )
 
@@ -347,8 +350,13 @@ def _register_prompts(mcp: FastMCP) -> None:
         "In briefing mode (input 'BATCH_ETL'), it routes to the aggregator. "
         "Returns a ready-to-use system prompt with current timestamp.",
     )
-    def news_analyst_coordinator() -> str:
-        return _render_prompt(COORDINATOR_SYSTEM_PROMPT)
+    def news_analyst_coordinator(
+        current_time: Annotated[
+            Optional[str],
+            Field(description="Current timestamp to embed in the prompt (e.g. 'Mon Apr 06 2026 18:46:44'). Defaults to server time."),
+        ] = None,
+    ) -> str:
+        return _render_prompt(COORDINATOR_SYSTEM_PROMPT, current_time=current_time)
 
     @mcp.prompt(
         name="news_analyst_aggregator",
@@ -357,8 +365,13 @@ def _register_prompts(mcp: FastMCP) -> None:
         "sort articles by economic impact, and write a market mood summary. "
         "Returns a ready-to-use system prompt with current timestamp and execution plan.",
     )
-    def news_analyst_aggregator() -> str:
-        return _render_prompt(AGGREGATOR_SYSTEM_PROMPT)
+    def news_analyst_aggregator(
+        current_time: Annotated[
+            Optional[str],
+            Field(description="Current timestamp to embed in the prompt (e.g. 'Mon Apr 06 2026 18:46:44'). Defaults to server time."),
+        ] = None,
+    ) -> str:
+        return _render_prompt(AGGREGATOR_SYSTEM_PROMPT, current_time=current_time)
 
     @mcp.prompt(
         name="news_analyst_reporter",
@@ -368,5 +381,10 @@ def _register_prompts(mcp: FastMCP) -> None:
         "what to watch), and produce the final investor briefing in HTML format. "
         "Returns a ready-to-use system prompt with current timestamp and execution plan.",
     )
-    def news_analyst_reporter() -> str:
-        return _render_prompt(REPORTER_SYSTEM_PROMPT)
+    def news_analyst_reporter(
+        current_time: Annotated[
+            Optional[str],
+            Field(description="Current timestamp to embed in the prompt (e.g. 'Mon Apr 06 2026 18:46:44'). Defaults to server time."),
+        ] = None,
+    ) -> str:
+        return _render_prompt(REPORTER_SYSTEM_PROMPT, current_time=current_time)
