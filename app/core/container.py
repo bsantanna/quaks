@@ -95,9 +95,14 @@ class Container(containers.DeclarativeContainer):
     db = providers.Singleton(Database, db_url=config.db.url)
 
     es = providers.Singleton(
-        Elasticsearch,
-        hosts=[os.getenv("ELASTICSEARCH_URL")],
-        api_key=os.getenv("ELASTICSEARCH_API_KEY"),
+        lambda: Elasticsearch(
+            hosts=[os.getenv("ELASTICSEARCH_URL")],
+            **(
+                {"api_key": os.getenv("ELASTICSEARCH_API_KEY")}
+                if os.getenv("ELASTICSEARCH_API_KEY")
+                else {}
+            ),
+        )
     )
 
     graph_persistence_factory = providers.Singleton(
