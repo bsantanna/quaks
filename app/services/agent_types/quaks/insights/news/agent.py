@@ -120,7 +120,7 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
     }
 
     def _is_briefing_request(self, query: str) -> bool:
-        words = set(query.lower().split())
+        words = set(re.sub(r"[^\w\s-]", "", query.lower()).split())
         return bool(words & self._BRIEFING_KEYWORDS)
 
     def get_coordinator(

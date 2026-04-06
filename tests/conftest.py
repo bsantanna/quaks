@@ -1,11 +1,14 @@
+import gzip
 import json
 import os
 from pathlib import Path
 
 import pytest
 import requests
+from elasticsearch import Elasticsearch
 from testcontainers.core.container import DockerContainer
 from testcontainers.core.waiting_utils import wait_for_logs
+from testcontainers.elasticsearch import ElasticSearchContainer
 from testcontainers.keycloak import KeycloakContainer
 from testcontainers.ollama import OllamaContainer
 from testcontainers.postgres import PostgresContainer
@@ -16,6 +19,7 @@ os.environ["TESTING"] = "1"
 os.environ["OLLAMA_ENDPOINT"] = "http://localhost:21434"
 
 llm_tag = "bge-m3"
+es_image = "elasticsearch:9.3.1"
 
 keycloak = KeycloakContainer(
     username="admin", password="admin", image="bsantanna/quaks-keycloak:v1.3.42"
@@ -46,6 +50,13 @@ vault = (
 
 cdp = DockerContainer("chromedp/headless-shell:latest").with_bind_ports(
     container=9222, host=19222
+)
+
+elasticsearch = (
+    ElasticSearchContainer(es_image, mem_limit="2G")
+    .with_bind_ports(container=9200, host=19200)
+    .with_env("discovery.type", "single-node")
+    .with_env("xpack.security.enabled", "false")
 )
 
 
@@ -201,6 +212,77 @@ def setup_keycloak():
     response.raise_for_status()
 
 
+def setup_elasticsearch():
+    es_url = "http://localhost:19200"
+    os.environ["ELASTICSEARCH_URL"] = es_url
+    os.environ.pop("ELASTICSEARCH_API_KEY", None)
+
+    es = Elasticsearch(hosts=[es_url])
+
+    # Create indices with correct mappings
+    news_mapping = {
+        "mappings": {
+            "dynamic": "strict",
+            "properties": {
+                "key_ticker": {"type": "keyword"},
+                "key_url": {"type": "keyword"},
+                "key_source": {"type": "keyword"},
+                "date_reference": {"type": "date", "format": "yyyy-MM-dd"},
+                "obj_images": {"type": "object", "dynamic": "true"},
+                "text_headline": {"type": "text"},
+                "text_author": {"type": "text"},
+                "text_summary": {"type": "text"},
+                "text_content": {"type": "text"},
+            },
+        }
+    }
+    es.indices.create(index="quaks_markets-news_test", body=news_mapping)
+    es.indices.put_alias(index="quaks_markets-news_test", name="quaks_markets-news_latest")
+
+    insights_mapping = {
+        "mappings": {
+            "dynamic": "strict",
+            "properties": {
+                "date_reference": {"type": "date", "format": "yyyy-MM-dd"},
+                "text_executive_summary": {"type": "text"},
+                "text_report_html": {"type": "text"},
+            },
+        }
+    }
+    es.indices.create(index="quaks_insights-news_test", body=insights_mapping)
+    es.indices.put_alias(
+        index="quaks_insights-news_test", name="quaks_insights-news_latest"
+    )
+
+    # Register search templates from Mustache files
+    templates_dir = Path.cwd() / "terraform" / "01_elasticsearch" / "search_templates"
+    for template_file in templates_dir.glob("*.mustache"):
+        template_id = template_file.stem
+        source = template_file.read_text()
+        es.put_script(id=template_id, body={"script": {"lang": "mustache", "source": source}})
+
+    # Load fixture data
+    fixture_path = Path.cwd() / "tests" / "simulation" / "fixtures" / "es_fixture_data.json.gz"
+    with gzip.open(fixture_path, "rt", encoding="utf-8") as f:
+        fixture = json.load(f)
+
+    for doc in fixture["markets_news"]:
+        es.index(
+            index="quaks_markets-news_test",
+            id=doc["_id"],
+            body=doc["_source"],
+        )
+    for doc in fixture["insights_news"]:
+        es.index(
+            index="quaks_insights-news_test",
+            id=doc["_id"],
+            body=doc["_source"],
+        )
+
+    es.indices.refresh(index="quaks_markets-news_test")
+    es.indices.refresh(index="quaks_insights-news_test")
+
+
 @pytest.fixture(scope="function", autouse=True)
 def set_access_token():
     user_credentials = {
@@ -226,6 +308,7 @@ def test_config(request):
     redis.start()
     vault.start()
     cdp.start()
+    elasticsearch.start()
 
     def remove_container():
         keycloak.stop()
@@ -234,6 +317,7 @@ def test_config(request):
         redis.stop()
         vault.stop()
         cdp.stop()
+        elasticsearch.stop()
 
     request.addfinalizer(remove_container)
     wait_for_logs(keycloak, "Listening on")
@@ -248,5 +332,6 @@ def test_config(request):
     setup_keycloak()
     setup_ollama()
     setup_postgres()
+    setup_elasticsearch()
 
     yield
