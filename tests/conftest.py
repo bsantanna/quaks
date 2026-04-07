@@ -280,21 +280,26 @@ def setup_elasticsearch():
         )
 
     published_content_mapping = {
-        "mappings": {
-            "dynamic": "strict",
-            "properties": {
-                "key_skill_name": {"type": "keyword"},
-                "key_author_username": {"type": "keyword"},
-                "text_executive_summary": {"type": "text"},
-                "text_report_html": {"type": "text"},
-                "date_timestamp": {"type": "date", "format": "strict_date_optional_time"},
-                "flag_processed": {"type": "boolean"},
-            },
-        }
+        "dynamic": "strict",
+        "properties": {
+            "key_skill_name": {"type": "keyword"},
+            "key_author_username": {"type": "keyword"},
+            "text_executive_summary": {"type": "text"},
+            "text_report_html": {"type": "text"},
+            "date_timestamp": {"type": "date", "format": "strict_date_optional_time"},
+            "flag_processed": {"type": "boolean"},
+        },
     }
-    es.indices.create(index="quaks_published-content_test", body=published_content_mapping)
+    es.indices.put_index_template(
+        name="quaks_published-content_template",
+        body={
+            "index_patterns": ["quaks_published-content_*"],
+            "template": {"mappings": published_content_mapping},
+        },
+    )
+    es.indices.create(index="quaks_published-content_initial", body={"mappings": published_content_mapping})
     es.indices.put_alias(
-        index="quaks_published-content_test", name="quaks_published-content_latest"
+        index="quaks_published-content_initial", name="quaks_published-content_latest"
     )
 
     es.indices.refresh(index="quaks_markets-news_test")
