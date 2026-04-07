@@ -48,6 +48,7 @@ locals {
     get_metadata_profile_template = "get_metadata_profile.mustache"
     get_insights_news_template = "get_insights_news.mustache"
     get_waiting_list_unprocessed_template = "get_waiting_list_unprocessed.mustache"
+    get_published_content_unprocessed_template = "get_published_content_unprocessed.mustache"
   }
 }
 
@@ -625,6 +626,44 @@ resource "elasticstack_elasticsearch_index" "waiting_list_initial" {
   }]
   deletion_protection = false
   depends_on = [elasticstack_elasticsearch_index_template.quaks_waiting-list_template]
+}
+
+resource "elasticstack_elasticsearch_index_template" "quaks_published-content_template" {
+  name = "quaks_published-content_template"
+
+  index_patterns = ["quaks_published-content_*"]
+
+  template {
+    mappings = jsonencode({
+      dynamic = "strict"
+      properties = {
+        key_skill_name         = { type = "keyword" }
+        key_author_username    = { type = "keyword" }
+        text_executive_summary = { type = "text" }
+        text_report_html       = { type = "text" }
+        date_timestamp         = { type = "date", format = "strict_date_optional_time" }
+        flag_processed         = { type = "boolean" }
+      }
+    })
+
+    settings = jsonencode({
+      number_of_shards   = 1
+      number_of_replicas = 1
+
+      lifecycle = {
+        name = elasticstack_elasticsearch_index_lifecycle.quaks_policy.name
+      }
+    })
+  }
+}
+
+resource "elasticstack_elasticsearch_index" "published_content_initial" {
+  name = "quaks_published-content_initial"
+  alias = [{
+    name = "quaks_published-content_latest"
+  }]
+  deletion_protection = false
+  depends_on = [elasticstack_elasticsearch_index_template.quaks_published-content_template]
 }
 
 resource "elasticstack_elasticsearch_security_api_key" "quaks_api_key" {

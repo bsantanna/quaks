@@ -279,6 +279,24 @@ def setup_elasticsearch():
             body=doc["_source"],
         )
 
+    published_content_mapping = {
+        "mappings": {
+            "dynamic": "strict",
+            "properties": {
+                "key_skill_name": {"type": "keyword"},
+                "key_author_username": {"type": "keyword"},
+                "text_executive_summary": {"type": "text"},
+                "text_report_html": {"type": "text"},
+                "date_timestamp": {"type": "date", "format": "strict_date_optional_time"},
+                "flag_processed": {"type": "boolean"},
+            },
+        }
+    }
+    es.indices.create(index="quaks_published-content_test", body=published_content_mapping)
+    es.indices.put_alias(
+        index="quaks_published-content_test", name="quaks_published-content_latest"
+    )
+
     es.indices.refresh(index="quaks_markets-news_test")
     es.indices.refresh(index="quaks_insights-news_test")
 

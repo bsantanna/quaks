@@ -32,6 +32,7 @@ from app.services.markets_insights import MarketsInsightsService
 from app.services.markets_news import MarketsNewsService
 from app.services.markets_stats import MarketsStatsService
 from app.services.messages import MessageService
+from app.services.published_content import PublishedContentService
 from app.services.tasks import TaskNotificationService
 from app.services.waitlist import WaitlistService
 
@@ -138,6 +139,11 @@ class Container(containers.DeclarativeContainer):
 
     markets_stats_service = providers.Factory(
         MarketsStatsService,
+        es=es,
+    )
+
+    published_content_service = providers.Factory(
+        PublishedContentService,
         es=es,
     )
 
