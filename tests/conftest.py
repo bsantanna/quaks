@@ -257,7 +257,7 @@ def setup_elasticsearch():
     # Register search templates from Mustache files
     templates_dir = Path.cwd() / "terraform" / "01_elasticsearch" / "search_templates"
     for template_file in templates_dir.glob("*.mustache"):
-        template_id = template_file.stem
+        template_id = f"{template_file.stem}_template"
         source = template_file.read_text()
         es.put_script(id=template_id, body={"script": {"lang": "mustache", "source": source}})
 
@@ -278,6 +278,29 @@ def setup_elasticsearch():
             id=doc["_id"],
             body=doc["_source"],
         )
+
+    published_content_mapping = {
+        "dynamic": "strict",
+        "properties": {
+            "key_skill_name": {"type": "keyword"},
+            "key_author_username": {"type": "keyword"},
+            "text_executive_summary": {"type": "text"},
+            "text_report_html": {"type": "text"},
+            "date_timestamp": {"type": "date", "format": "strict_date_optional_time"},
+            "flag_processed": {"type": "boolean"},
+        },
+    }
+    es.indices.put_index_template(
+        name="quaks_published-content_template",
+        body={
+            "index_patterns": ["quaks_published-content_*"],
+            "template": {"mappings": published_content_mapping},
+        },
+    )
+    es.indices.create(index="quaks_published-content_initial", body={"mappings": published_content_mapping})
+    es.indices.put_alias(
+        index="quaks_published-content_initial", name="quaks_published-content_latest"
+    )
 
     es.indices.refresh(index="quaks_markets-news_test")
     es.indices.refresh(index="quaks_insights-news_test")

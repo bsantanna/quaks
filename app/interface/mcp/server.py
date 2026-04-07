@@ -8,7 +8,10 @@ from jinja2 import Template
 from mcp.types import Icon
 from pydantic import BaseModel, Field
 
+from fastmcp.server.dependencies import get_access_token
+
 from app.core.container import Container
+from app.domain.exceptions.base import DuplicateEntryError
 from app.services.agent_types.quaks.insights.news.prompts import (
     AGGREGATOR_SYSTEM_PROMPT,
     COORDINATOR_SYSTEM_PROMPT,
@@ -87,6 +90,13 @@ class InsightsNewsList(BaseModel):
     )
 
 
+class PublishContentResult(BaseModel):
+    """Result of a content publish operation."""
+
+    status: str = Field(description="Publication status: 'published' on success")
+    message: str = Field(description="Human-readable result message")
+
+
 # -- Server setup --
 
 _SERVER_INSTRUCTIONS = """Quaks is a multi-agent financial intelligence platform.
@@ -95,6 +105,7 @@ Available tools:
 - get_agent_list: Discover AI agents available on the platform.
 - get_markets_news_mcp: Search and retrieve market news articles filtered by ticker, topic, or date range.
 - get_insights_news_mcp: Retrieve AI-generated investor briefings with executive summaries.
+- publish_content_mcp: Publish AI-generated content (reports, briefings) to the platform. Requires authentication. Content must be in HTML format.
 
 Available prompts (news_analyst workflow):
 - news_analyst_coordinator: System prompt for the coordinator step — answers user questions directly (QA mode) or routes to the aggregator for briefing generation.
@@ -300,6 +311,59 @@ def _register_tools(mcp: FastMCP, container: Container) -> None:
             for h in results
         ]
         return InsightsNewsList(items=items, cursor=sort)
+
+    @mcp.tool(
+        name="publish_content_mcp",
+        description="Publish AI-generated content (reports, briefings, analysis) "
+        "to the Quaks platform. The content is queued for validation and "
+        "then routed to the appropriate index based on the skill that "
+        "produced it. Requires authentication — the author is identified "
+        "from the access token. IMPORTANT: Convert any Markdown content "
+        "to well-formed HTML before calling this tool.",
+        annotations={"readOnlyHint": False, "openWorldHint": False},
+    )
+    async def publish_content_mcp(
+        text_executive_summary: Annotated[
+            str,
+            Field(description="Concise executive summary of the content"),
+        ],
+        text_report_html: Annotated[
+            str,
+            Field(description="Full report content in HTML format. "
+                  "Convert Markdown to HTML before submitting."),
+        ],
+        key_skill_name: Annotated[
+            str,
+            Field(description="Name of the skill that generated this content "
+                  "(e.g. '/news_analyst')"),
+        ],
+    ) -> PublishContentResult:
+        access_token = get_access_token()
+        if access_token is None or not access_token.claims.get("preferred_username"):
+            raise ValueError(
+                "Authentication required. No valid access token or username found."
+            )
+        author_username = access_token.claims["preferred_username"]
+
+        try:
+            svc = container.published_content_service()
+            svc.publish(
+                executive_summary=text_executive_summary,
+                report_html=text_report_html,
+                skill_name=key_skill_name,
+                author_username=author_username,
+            )
+        except DuplicateEntryError:
+            return PublishContentResult(
+                status="duplicate",
+                message="Content with this summary from this author already exists.",
+            )
+
+        return PublishContentResult(
+            status="published",
+            message=f"Content published successfully by {author_username}. "
+            "It will be validated and routed to the appropriate index.",
+        )
 
 
 def _register_resources(mcp: FastMCP) -> None:

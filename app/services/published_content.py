@@ -1,0 +1,51 @@
+import hashlib
+from datetime import datetime, timezone
+
+from elasticsearch import ConflictError, Elasticsearch
+
+from app.domain.exceptions.base import DuplicateEntryError
+
+
+class PublishedContentService:
+    INDEX_ALIAS = "quaks_published-content_latest"
+
+    def __init__(self, es: Elasticsearch) -> None:
+        self.es = es
+
+    def _dated_index(self) -> str:
+        return f"quaks_published-content_{datetime.now(timezone.utc).strftime('%d_%m_%Y')}"
+
+    def publish(
+        self,
+        executive_summary: str,
+        report_html: str,
+        skill_name: str,
+        author_username: str,
+    ) -> None:
+        doc_id = hashlib.sha256(
+            (executive_summary + author_username + skill_name).encode()
+        ).hexdigest()
+        doc = {
+            "text_executive_summary": executive_summary,
+            "text_report_html": report_html,
+            "key_skill_name": skill_name,
+            "key_author_username": author_username,
+            "date_timestamp": datetime.now(timezone.utc).isoformat(),
+            "flag_processed": False,
+        }
+        try:
+            dated_index = self._dated_index()
+            self.es.index(
+                index=dated_index,
+                id=doc_id,
+                document=doc,
+                op_type="create",
+            )
+            if not self.es.indices.exists_alias(
+                index=dated_index, name=self.INDEX_ALIAS
+            ):
+                self.es.indices.put_alias(
+                    index=dated_index, name=self.INDEX_ALIAS
+                )
+        except ConflictError:
+            raise DuplicateEntryError("Content")
