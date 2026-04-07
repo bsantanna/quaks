@@ -257,7 +257,7 @@ def setup_elasticsearch():
     # Register search templates from Mustache files
     templates_dir = Path.cwd() / "terraform" / "01_elasticsearch" / "search_templates"
     for template_file in templates_dir.glob("*.mustache"):
-        template_id = template_file.stem
+        template_id = f"{template_file.stem}_template"
         source = template_file.read_text()
         es.put_script(id=template_id, body={"script": {"lang": "mustache", "source": source}})
 
