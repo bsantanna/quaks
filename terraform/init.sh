@@ -120,6 +120,7 @@ init_01_elasticsearch() {
 
   # Import index lifecycle policy
   tf_import "elasticstack_elasticsearch_index_lifecycle.quaks_policy" "${cluster_uuid}/quaks_policy"
+  tf_import "elasticstack_elasticsearch_index_lifecycle.quaks_ephemeral_policy" "${cluster_uuid}/quaks_ephemeral_policy"
 
   # Import index templates
   local templates=(

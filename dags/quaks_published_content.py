@@ -23,6 +23,7 @@ dag = DAG(
     secrets=[Secret('env', None, 'quaks-dags-secrets')],
 )
 def process_published_content():
+    import hashlib
     import os
     import requests
 
@@ -71,6 +72,8 @@ def process_published_content():
     # Skill name to destination index and document builder
     def build_news_analyst_doc(src):
         return {
+            "key_author_username": src["key_author_username"],
+            "key_skill_name": src["key_skill_name"],
             "date_reference": src["date_timestamp"][:10],
             "text_executive_summary": src["text_executive_summary"],
             "text_report_html": src["text_report_html"],
@@ -127,15 +130,70 @@ def process_published_content():
                 continue
 
             dest_doc = route["build_doc"](src)
+            dest_index = route["index"]
+            dest_doc_id = hashlib.md5(
+                f"{dest_doc['date_reference']}_{author_username}_{skill_name}".encode()
+            ).hexdigest()
 
-            # Index into destination
-            index_resp = requests.post(
-                f"{es_url}/{route['index']}/_doc",
+            # Index into destination with deterministic ID
+            index_resp = requests.put(
+                f"{es_url}/{dest_index}/_doc/{dest_doc_id}",
                 headers=es_headers,
                 json=dest_doc,
             )
             index_resp.raise_for_status()
-            print(f"Routed {doc_id} to {route['index']}")
+            is_new_doc = index_resp.status_code == 201
+            print(f"Routed {doc_id} to {dest_index} (dest_doc_id: {dest_doc_id}, new={is_new_doc})")
+
+            # Post to X (only for newly created documents to avoid duplicate tweets)
+            if not is_new_doc:
+                print(f"Document {dest_doc_id} already existed in {dest_index}, skipping X post.")
+            else:
+                try:
+                    from requests_oauthlib import OAuth1Session
+
+                    x_consumer_key = os.environ.get("X_CONSUMER_KEY")
+                    x_consumer_secret = os.environ.get("X_CONSUMER_SECRET")
+                    x_access_token = os.environ.get("X_ACCESS_TOKEN")
+                    x_access_token_secret = os.environ.get("X_ACCESS_TOKEN_SECRET")
+                    article_url_pattern = os.environ.get("QUAKS_ARTICLE_URL_PATTERN")
+
+                    if not all([x_consumer_key, x_consumer_secret, x_access_token, x_access_token_secret, article_url_pattern]):
+                        print("WARNING: X credentials or article URL pattern not configured. Skipping X post.")
+                    else:
+                        executive_summary = dest_doc.get("text_executive_summary", "")
+                        article_url = f"{article_url_pattern}/{dest_index}/{dest_doc_id}"
+
+                        tweet_text = (
+                            f"{executive_summary.strip()}\n\n"
+                            f"See more: {article_url}"
+                        )
+
+                        max_chars = 280
+                        if len(tweet_text) > max_chars:
+                            available = max_chars - len(f"\n\nSee more: {article_url}") - 3
+                            tweet_text = (
+                                f"{executive_summary.strip()[:available]}...\n\n"
+                                f"See more: {article_url}"
+                            )
+
+                        oauth = OAuth1Session(
+                            x_consumer_key,
+                            client_secret=x_consumer_secret,
+                            resource_owner_key=x_access_token,
+                            resource_owner_secret=x_access_token_secret,
+                        )
+
+                        print("Posting to X...")
+                        x_response = oauth.post("https://api.x.com/2/tweets", json={"text": tweet_text})
+
+                        if x_response.status_code == 201:
+                            post_id = x_response.json()["data"]["id"]
+                            print(f"Posted to X successfully. Post ID: {post_id}")
+                        else:
+                            print(f"WARNING: X post failed. Status: {x_response.status_code}, Response: {x_response.text}")
+                except Exception as e:
+                    print(f"WARNING: Failed to post to X: {e}")
 
             mark_processed(doc_index, doc_id)
 
