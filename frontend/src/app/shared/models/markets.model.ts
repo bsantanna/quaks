@@ -119,6 +119,8 @@ export interface InsightsNewsItem {
   date: string
   executive_summary: string
   report_html: string | null
+  skill_name?: string | null
+  author_username?: string | null
 }
 
 export interface InsightsNewsList {

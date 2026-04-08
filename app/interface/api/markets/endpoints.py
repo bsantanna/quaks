@@ -413,6 +413,8 @@ async def get_insights_news(
                 date=source.get("date_reference"),
                 executive_summary=source.get("text_executive_summary", ""),
                 report_html=source.get("text_report_html"),
+                skill_name=source.get("key_skill_name"),
+                author_username=source.get("key_author_username"),
             )
         )
 
