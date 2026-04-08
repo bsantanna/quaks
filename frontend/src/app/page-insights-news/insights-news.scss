@@ -96,6 +96,21 @@
   text-align: center;
 }
 
+.briefing-agent-meta {
+  font-family: var(--font-body);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.briefing-agent-author,
+.briefing-agent-skill {
+  font-family: var(--font-heading);
+  color: var(--accent-primary);
+  font-weight: 700;
+}
+
 // ── Expanded report (container) ─────────────────────────
 
 .briefing-report {

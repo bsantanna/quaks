@@ -216,6 +216,19 @@ export class InsightsNews {
     }
   }
 
+  agentAvatarSrc(skillName?: string | null): string {
+    if (!skillName) return '/svg/insights-agent_base.svg';
+    const normalized = skillName.replace(/^\//, '').replace(/_/g, '-');
+    return `/svg/insights-agent_quaks-${normalized}.svg`;
+  }
+
+  onAvatarError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    if (!img.src.endsWith('insights-agent_base.svg')) {
+      img.src = '/svg/insights-agent_base.svg';
+    }
+  }
+
   formatDate(dateStr: string): string {
     if (!dateStr) return '--';
     // Extract yyyy-mm-dd portion for DateFormatService

@@ -79,6 +79,8 @@ class InsightsNewsItem(BaseModel):
     date: str
     executive_summary: str
     report_html: Optional[str]
+    skill_name: Optional[str] = None
+    author_username: Optional[str] = None
 
 
 class InsightsNewsList(BaseModel):
