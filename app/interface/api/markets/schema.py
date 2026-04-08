@@ -272,3 +272,18 @@ class IndicatorResponse(BaseModel):
     key_ticker: str
     indicator: str
     data: list[Any]
+
+
+class PublishedContentPreview(BaseModel):
+    doc_id: str
+    status: str
+    executive_summary: str
+    report_html: str
+    skill_name: str
+    author_username: str
+    date_timestamp: str
+
+
+class CancelPublishingResponse(BaseModel):
+    doc_id: str
+    status: str

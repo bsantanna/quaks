@@ -1,0 +1,155 @@
+// ── Avatar ──────────────────────────────────────────────
+
+.briefing-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 2px solid var(--border-primary);
+  background: var(--surface-elevated);
+  object-fit: cover;
+}
+
+// ── Card (header) ──────────────────────────────────────
+
+.briefing-card {
+  background: var(--surface-panel);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  padding: 1rem 1.25rem;
+}
+
+.briefing-summary-text {
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+.briefing-date-label {
+  font-family: var(--font-data);
+  color: var(--accent-primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.briefing-agent-name {
+  font-family: var(--font-heading);
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+// ── Status badge ──────────────────────────────────────
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-data);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.3em 0.75em;
+  border-radius: 999px;
+  border: 1px solid;
+}
+
+.status-badge--pending { color: var(--status-warning, #f59e0b); border-color: var(--status-warning, #f59e0b); }
+.status-badge--processed { color: var(--status-positive); border-color: var(--status-positive); }
+.status-badge--cancelled { color: var(--text-muted); border-color: var(--border-primary); }
+
+// ── Action toolbar ────────────────────────────────────
+
+.preview-actions {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--surface-panel);
+  border: 1px solid var(--border-accent);
+  border-top: none;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.btn-cancel,
+.btn-download {
+  font-family: var(--font-data);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.5em 1.25em;
+  border-radius: var(--radius);
+  border: 1px solid;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.btn-cancel {
+  color: var(--status-negative);
+  border-color: var(--status-negative);
+  background: transparent;
+  &:hover:not(:disabled) { background: var(--status-negative); color: var(--surface-base); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.btn-download {
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  background: transparent;
+  &:hover { background: var(--accent-primary); color: var(--surface-base); }
+}
+
+.cancel-error-text {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--status-negative);
+}
+
+// ── Report (body) ──────────────────────────────────────
+
+.briefing-report {
+  background: var(--surface-panel);
+  border: 1px solid var(--border-accent);
+  border-top: none;
+  border-bottom-left-radius: var(--radius);
+  border-bottom-right-radius: var(--radius);
+  padding: 2.5rem 2.5rem 3rem;
+  font-family: var(--font-body);
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.9;
+  letter-spacing: 0.01em;
+  overflow-x: auto;
+  @media (max-width: 640px) { padding: 1.5rem 1.25rem 2rem; font-size: 0.95rem; }
+}
+
+// ── Print cover (hidden on screen) ────────────────────
+
+.print-cover { display: none; }
+
+// ── States ─────────────────────────────────────────────
+
+.loading-text {
+  font-family: var(--font-body);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+// ── Print styles ──────────────────────────────────────
+
+@media print {
+  .print-hide { display: none !important; }
+  .print-cover { display: block !important; margin-bottom: 2rem; }
+  .print-cover-brand { font-family: var(--font-heading); font-size: 2.5rem; font-weight: 800; letter-spacing: 0.15em; color: #000; margin-bottom: 0.25rem; }
+  .print-cover-title { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 300; color: #333; margin-bottom: 1rem; }
+  .print-cover-meta { font-family: var(--font-data); font-size: 0.8rem; color: #666; margin-bottom: 1rem; }
+  .print-cover-summary { font-family: var(--font-body); font-size: 1.1rem; line-height: 1.6; color: #222; margin-bottom: 1.5rem; }
+  .print-cover-rule { border: none; height: 2px; background: #000; margin-bottom: 2rem; }
+  .briefing-card { border: none !important; background: none !important; padding: 0 !important; }
+  .briefing-avatar, .briefing-agent-name, .briefing-date-label { display: none; }
+  .briefing-report { border: none !important; background: none !important; padding: 0 !important; color: #222 !important; font-size: 11pt !important; line-height: 1.6 !important; }
+}

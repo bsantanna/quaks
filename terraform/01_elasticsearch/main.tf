@@ -660,6 +660,7 @@ resource "elasticstack_elasticsearch_index_template" "quaks_published-content_te
         text_report_html       = { type = "text" }
         date_timestamp         = { type = "date", format = "strict_date_optional_time" }
         flag_processed         = { type = "boolean" }
+        flag_cancelled         = { type = "boolean" }
       }
     })
 

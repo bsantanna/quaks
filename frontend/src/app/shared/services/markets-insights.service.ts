@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
-import {InsightsNewsList} from '../models/markets.model';
+import {InsightsNewsList, InsightsPreviewItem} from '../models/markets.model';
 import {catchError, Observable, of, timeout} from 'rxjs';
 import {REQUEST_TIMEOUT} from '../../constants';
 
@@ -60,6 +60,26 @@ export class MarketsInsightsService {
         console.error(`Failed to fetch insights news item ${id} @ ${indexName}`, error);
         return of(MarketsInsightsService.INITIAL_LIST);
       })
+    );
+  }
+
+  private readonly insightsPreviewUrl = `${environment.apiBaseUrl}/markets/insights/preview`;
+
+  getInsightsPreview(docId: string): Observable<InsightsPreviewItem | null> {
+    const url = `${this.insightsPreviewUrl}/${encodeURIComponent(docId)}`;
+    return this.httpClient.get<InsightsPreviewItem>(url).pipe(
+      timeout(REQUEST_TIMEOUT),
+      catchError((error) => {
+        console.error(`Failed to fetch preview ${docId}`, error);
+        return of(null);
+      })
+    );
+  }
+
+  cancelInsightsPreview(docId: string): Observable<void> {
+    const url = `${this.insightsPreviewUrl}/${encodeURIComponent(docId)}/cancel`;
+    return this.httpClient.post<void>(url, {}).pipe(
+      timeout(REQUEST_TIMEOUT),
     );
   }
 }

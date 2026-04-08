@@ -1,0 +1,67 @@
+@if (loading()) {
+  <div class="container mx-auto sm:px-4 py-8 max-w-4xl">
+    <div class="text-center py-16">
+      <p class="loading-text">Loading preview…</p>
+    </div>
+  </div>
+} @else if (item(); as item) {
+  <div class="container mx-auto sm:px-4 py-8 max-w-4xl">
+
+    <!-- Print-only cover header -->
+    <div class="print-cover">
+      <div class="print-cover-brand">QUAKS</div>
+      <div class="print-cover-title">Investor Briefing</div>
+      <div class="print-cover-meta">{{ formatDate(item.date_timestamp) }}</div>
+      <div class="print-cover-summary">{{ item.executive_summary }}</div>
+      <hr class="print-cover-rule">
+    </div>
+
+    <!-- Status badge -->
+    <div class="flex justify-center mb-4 print-hide">
+      <span class="status-badge status-badge--{{ item.status }}">
+        {{ statusLabel(item.status) }}
+      </span>
+    </div>
+
+    <div class="briefing-card">
+      <div class="briefing-card-top flex flex-col items-center">
+        <img src="/svg/insights-agent_quaks-news-analyst.svg"
+             alt="News Analyst"
+             class="briefing-avatar">
+        <span class="briefing-agent-name mt-1.5">Quaks News Analyst</span>
+        <time class="briefing-date-label">{{ formatDate(item.date_timestamp) }}</time>
+      </div>
+      <p class="briefing-summary-text text-lg mt-4">{{ item.executive_summary }}</p>
+    </div>
+
+    <!-- Action toolbar -->
+    <div class="preview-actions print-hide">
+      @if (cancelError()) {
+        <span class="cancel-error-text">Failed to cancel. Please sign in and try again.</span>
+      }
+      @if (item.status === 'pending') {
+        <button class="btn-cancel" (click)="cancelDocument()" [disabled]="cancelling()">
+          @if (cancelling()) {
+            Cancelling…
+          } @else {
+            Cancel Publishing
+          }
+        </button>
+      }
+      <button class="btn-download" (click)="downloadPdf()">
+        Download PDF
+      </button>
+    </div>
+
+    @if (item.report_html) {
+      <div class="briefing-report" [innerHTML]="item.report_html"></div>
+    }
+
+  </div>
+} @else {
+  <div class="container mx-auto sm:px-4 py-8 max-w-4xl">
+    <div class="text-center py-16">
+      <p class="loading-text">Preview not found.</p>
+    </div>
+  </div>
+}

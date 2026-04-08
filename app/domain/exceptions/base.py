@@ -59,3 +59,7 @@ class DuplicateEntryError(HTTPException):
         super().__init__(
             status_code=409, detail=f"{field_name} already registered"
         )
+
+
+class PublishedContentNotFoundError(NotFoundError):
+    entity_name = "PublishedContent"

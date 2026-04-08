@@ -2,8 +2,9 @@ import hashlib
 from datetime import datetime, timezone
 
 from elasticsearch import ConflictError, Elasticsearch
+from elasticsearch import NotFoundError as ESNotFoundError
 
-from app.domain.exceptions.base import DuplicateEntryError
+from app.domain.exceptions.base import DuplicateEntryError, PublishedContentNotFoundError
 
 
 class PublishedContentService:
@@ -21,7 +22,7 @@ class PublishedContentService:
         report_html: str,
         skill_name: str,
         author_username: str,
-    ) -> None:
+    ) -> str:
         doc_id = hashlib.sha256(
             (executive_summary + author_username + skill_name).encode()
         ).hexdigest()
@@ -49,3 +50,23 @@ class PublishedContentService:
                 )
         except ConflictError:
             raise DuplicateEntryError("Content")
+        return doc_id
+
+    def get_by_id(self, doc_id: str) -> dict:
+        try:
+            resp = self.es.get(index=self.INDEX_ALIAS, id=doc_id)
+            return resp["_source"]
+        except ESNotFoundError:
+            raise PublishedContentNotFoundError(doc_id)
+
+    def cancel_publishing(self, doc_id: str) -> None:
+        try:
+            resp = self.es.get(index=self.INDEX_ALIAS, id=doc_id)
+            concrete_index = resp["_index"]
+            self.es.update(
+                index=concrete_index,
+                id=doc_id,
+                doc={"flag_cancelled": True},
+            )
+        except ESNotFoundError:
+            raise PublishedContentNotFoundError(doc_id)
