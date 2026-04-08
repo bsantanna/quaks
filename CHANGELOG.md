@@ -2,6 +2,20 @@
 
 <!-- version list -->
 
+## v1.5.11 (2026-04-08)
+
+### Bug Fixes
+
+- Issues in publish content MCP tool ([#109](https://github.com/bsantanna/quaks/pull/109),
+  [`3dd51bd`](https://github.com/bsantanna/quaks/commit/3dd51bdf7e59c4c8ffebd387d49db166f3350f8f))
+
+- Publish content mcp tool (7) ([#109](https://github.com/bsantanna/quaks/pull/109),
+  [`3dd51bd`](https://github.com/bsantanna/quaks/commit/3dd51bdf7e59c4c8ffebd387d49db166f3350f8f))
+
+- Publish content mcp tool (8) ([#109](https://github.com/bsantanna/quaks/pull/109),
+  [`3dd51bd`](https://github.com/bsantanna/quaks/commit/3dd51bdf7e59c4c8ffebd387d49db166f3350f8f))
+
+
 ## v1.5.10 (2026-04-08)
 
 ### Bug Fixes
