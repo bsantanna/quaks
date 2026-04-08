@@ -2,6 +2,23 @@
 
 <!-- version list -->
 
+## v1.5.9 (2026-04-08)
+
+### Bug Fixes
+
+- Insights preview implementation ([#107](https://github.com/bsantanna/quaks/pull/107),
+  [`5a8f897`](https://github.com/bsantanna/quaks/commit/5a8f89767b5ef45056d2c2024e4ac1ad42ffda42))
+
+- Publish content mcp tool (4) ([#107](https://github.com/bsantanna/quaks/pull/107),
+  [`5a8f897`](https://github.com/bsantanna/quaks/commit/5a8f89767b5ef45056d2c2024e4ac1ad42ffda42))
+
+- Publish content mcp tool (5) ([#107](https://github.com/bsantanna/quaks/pull/107),
+  [`5a8f897`](https://github.com/bsantanna/quaks/commit/5a8f89767b5ef45056d2c2024e4ac1ad42ffda42))
+
+- Publish content mcp tool (6) ([#107](https://github.com/bsantanna/quaks/pull/107),
+  [`5a8f897`](https://github.com/bsantanna/quaks/commit/5a8f89767b5ef45056d2c2024e4ac1ad42ffda42))
+
+
 ## v1.5.8 (2026-04-07)
 
 ### Bug Fixes
