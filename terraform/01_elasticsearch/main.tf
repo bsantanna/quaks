@@ -603,6 +603,16 @@ resource "elasticstack_elasticsearch_index" "insights_news_usa" {
   alias = [{
     name = "quaks_insights-news_latest"
   }]
+  mappings = jsonencode({
+    dynamic = "strict"
+    properties = {
+      key_author_username    = { type = "keyword" }
+      key_skill_name         = { type = "keyword" }
+      date_reference         = { type = "date", format = "yyyy-MM-dd" }
+      text_executive_summary = { type = "text" }
+      text_report_html       = { type = "text" }
+    }
+  })
   deletion_protection = false
   depends_on = [elasticstack_elasticsearch_index_template.quaks_insights-news_template]
 }

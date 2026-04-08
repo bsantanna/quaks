@@ -49,13 +49,15 @@
         </button>
       }
       <button class="btn-download" (click)="downloadPdf()">
-        Download PDF
+        Print / PDF
       </button>
     </div>
 
     @if (item.report_html) {
       <div class="briefing-report" [innerHTML]="item.report_html"></div>
     }
+
+    <img src="/logo.svg" alt="Quaks" class="print-logo hidden">
 
   </div>
 } @else {
