@@ -125,3 +125,15 @@ export interface InsightsNewsList {
   items: InsightsNewsItem[]
   cursor: string | null
 }
+
+export type InsightsPreviewStatus = 'pending' | 'processed' | 'cancelled';
+
+export interface InsightsPreviewItem {
+  doc_id: string;
+  executive_summary: string;
+  report_html: string | null;
+  skill_name: string;
+  author_username: string;
+  date_timestamp: string;
+  status: InsightsPreviewStatus;
+}

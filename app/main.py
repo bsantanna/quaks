@@ -74,7 +74,7 @@ def setup_auth(container, application):
                 "/redoc",
                 "/openapi.json(/|$)",
                 "/status/",
-                "/markets/",
+                "/markets/(?!insights/preview/.+/cancel)",
                 ".*well-known/",
                 ".*\\.css$",
                 ".*\\.js$",

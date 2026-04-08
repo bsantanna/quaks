@@ -11,6 +11,7 @@ import {InsightsAgents} from './page-insights-agents/insights-agents';
 import {InsightsProfile} from './page-insights-profile/insights-profile';
 import {InsightsNews} from './page-insights-news/insights-news';
 import {InsightsNewsItem} from './page-insights-news-item/insights-news-item';
+import {InsightsPreview} from './page-insights-preview/insights-preview';
 import {InsightsFinance} from './page-insights-finance/insights-finance';
 import {AuthCallback} from './page-auth-callback';
 import {PageWaitlist} from './page-waitlist';
@@ -54,6 +55,11 @@ export const routes: Routes = [
         title: 'News Insight',
         path: 'news/item/:indexName/:newsItemId',
         component: InsightsNewsItem
+      },
+      {
+        title: 'Content Preview',
+        path: 'preview/:docId',
+        component: InsightsPreview
       },
       {
         title: 'Financial Insights',

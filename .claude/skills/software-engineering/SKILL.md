@@ -59,8 +59,36 @@ Three PostgreSQL databases:
 
 - Airflow DAGs in `dags/` fetch data from Alpaca Markets API on schedule
 - Data lands in Elasticsearch indices: `stocks-eod`, `stocks-metadata`, `stocks-financial-statements`, `stocks-insider-trades`, `stocks-estimated-earnings`, `markets-news`
-- Terraform in `terraform/elasticsearch/` manages index lifecycle policies (365-day retention), index templates, and Mustache search templates for technical indicators (RSI, MACD, EMA, ADX, OBV, Stochastic, CCI, AD)
+- Terraform in `terraform/01_elasticsearch/` manages index lifecycle policies (365-day retention for persistent indices, 48-hour ephemeral policy for temporary indices like waiting-list and published-content), index templates, and Mustache search templates for technical indicators (RSI, MACD, EMA, ADX, OBV, Stochastic, CCI, AD)
 - `MarketsNewsService` and `MarketsStatsService` query Elasticsearch and are injected via the Container
+
+### Airflow DAG Conventions
+
+- All DAGs use `@task.kubernetes` — tasks run in isolated K8s pods with image `bsantanna/java-python-dev`
+- **CRITICAL: All imports used inside a `@task.kubernetes` function MUST be placed inside the function body, not at module top level.** The K8s executor serializes and runs only the function in the pod — module-level imports are not available in the pod's execution context. Only Airflow SDK imports (`DAG`, `task`, `Secret`) and stdlib used in DAG definition (`datetime`) belong at the top level.
+- Secrets are mounted as env vars from the `quaks-dags-secrets` K8s secret via `Secret('env', None, 'quaks-dags-secrets')`
+- Each DAG is self-contained — no shared utility modules across DAGs
+- Error handling: individual record failures are caught and printed, the loop continues
+- `default_args` block is identical across all DAGs (`owner: airflow`, `retries: 0`, `start_date: 2025-01-01`)
+
+### Terraform Infrastructure
+
+Six modules in `terraform/`, applied in numbered order:
+
+| Module | Provider(s) | Manages |
+|--------|-------------|---------|
+| `01_elasticsearch` | elasticstack, kubernetes | ES indices, index templates, ILM policies, search templates, API key, k8s secret |
+| `02_airflow-instance` | helm, kubernetes, time | Airflow namespace, Helm releases (pg, redis, airflow), DAG secrets |
+| `03_quaks-auth-realm` | keycloak, kubernetes | Keycloak realm, OIDC client, service account, k8s auth secret |
+| `04_quaks-dependencies` | helm, kubernetes, time, vault | PostgreSQL clusters (app, vectors, checkpoints), Redis, Vault secrets |
+| `05_quaks-instance` | helm | Quaks application Helm release |
+| `06_kibana` | elasticstack, helm, kubernetes | Kibana Helm release, ES security roles/users, saved objects |
+
+Key details:
+- All modules use **local state** (no remote backend). `.terraform/`, `*.tfstate*`, and `*.tfvars` are gitignored.
+- A single shared `quaks.tfvars` file (outside the repo) provides variables to all modules.
+- `terraform/init.sh` initializes all modules and imports existing resources from the live environment. **When adding, removing, or renaming terraform resources in any module, update `init.sh` to include the corresponding `tf_import` call.** The import ID format varies by provider (elasticstack resources require `<cluster_uuid>/<name>`, helm releases use `<namespace>/<release_name>`, k8s resources use `<namespace>/<name>`).
+- Module `01_elasticsearch` uses username/password auth via the `elastic` k8s secret. The `ELASTICSEARCH_API_KEY` env var (used by module `06_kibana`) conflicts with this — `init.sh` handles this by unsetting the env var during module 01 operations.
 
 ### Frontend
 

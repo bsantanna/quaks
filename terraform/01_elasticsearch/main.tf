@@ -74,6 +74,21 @@ resource "elasticstack_elasticsearch_index_lifecycle" "quaks_policy" {
   }
 }
 
+resource "elasticstack_elasticsearch_index_lifecycle" "quaks_ephemeral_policy" {
+  name = "quaks_ephemeral_policy"
+
+  hot {
+    set_priority {
+      priority = 50
+    }
+  }
+
+  delete {
+    min_age = "2d"
+    delete {}
+  }
+}
+
 resource "elasticstack_elasticsearch_index_template" "quaks_markets-news_template" {
   name = "quaks_markets-news_template"
 
@@ -564,6 +579,8 @@ resource "elasticstack_elasticsearch_index_template" "quaks_insights-news_templa
     mappings = jsonencode({
       dynamic = "strict"
       properties = {
+        key_author_username    = { type = "keyword" }
+        key_skill_name         = { type = "keyword" }
         date_reference         = { type = "date", format = "yyyy-MM-dd" }
         text_executive_summary = { type = "text" }
         text_report_html       = { type = "text" }
@@ -613,7 +630,7 @@ resource "elasticstack_elasticsearch_index_template" "quaks_waiting-list_templat
       number_of_replicas = 1
 
       lifecycle = {
-        name = elasticstack_elasticsearch_index_lifecycle.quaks_policy.name
+        name = elasticstack_elasticsearch_index_lifecycle.quaks_ephemeral_policy.name
       }
     })
   }
@@ -643,6 +660,7 @@ resource "elasticstack_elasticsearch_index_template" "quaks_published-content_te
         text_report_html       = { type = "text" }
         date_timestamp         = { type = "date", format = "strict_date_optional_time" }
         flag_processed         = { type = "boolean" }
+        flag_cancelled         = { type = "boolean" }
       }
     })
 
@@ -651,7 +669,7 @@ resource "elasticstack_elasticsearch_index_template" "quaks_published-content_te
       number_of_replicas = 1
 
       lifecycle = {
-        name = elasticstack_elasticsearch_index_lifecycle.quaks_policy.name
+        name = elasticstack_elasticsearch_index_lifecycle.quaks_ephemeral_policy.name
       }
     })
   }

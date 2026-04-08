@@ -4,12 +4,14 @@ from html import unescape
 
 from dependency_injector.wiring import inject, Provide
 from fastapi import APIRouter, Depends
+from fastapi.security import HTTPBearer
 from typing_extensions import Annotated, Optional
 
 from app.core.container import Container
 from app.domain.exceptions.base import InvalidFieldError
 from app.interface.api.cache_control import cache_control
 from app.interface.api.markets.schema import (
+    CancelPublishingResponse,
     CompanyProfile,
     IndicatorRequest,
     IndicatorResponse,
@@ -21,6 +23,7 @@ from app.interface.api.markets.schema import (
     NewsItem,
     NewsList,
     NewsListRequest,
+    PublishedContentPreview,
     StatsClose,
     StatsCloseBulkResponse,
     StatsCloseRequest,
@@ -28,8 +31,10 @@ from app.interface.api.markets.schema import (
 from app.services.markets_insights import MarketsInsightsService
 from app.services.markets_news import MarketsNewsService
 from app.services.markets_stats import MarketsStatsService
+from app.services.published_content import PublishedContentService
 
 router = APIRouter()
+bearer_scheme = HTTPBearer()
 
 _INDEX_NAME_PATTERN = re.compile(r"^[a-z0-9\-_]+$")
 
@@ -415,6 +420,62 @@ async def get_insights_news(
         items=items,
         cursor=sort,
     )
+
+
+@router.get(
+    path="/insights/preview/{doc_id}",
+    response_model=PublishedContentPreview,
+    operation_id="get_published_content_preview",
+    summary="Preview a published content document by ID",
+    description="""
+    Returns a single published content document from the staging index.
+
+    Parameters:
+    - `doc_id` (path): The document ID (SHA-256 hash).
+    """,
+    response_description="Published content preview with status",
+)
+@inject
+async def get_published_content_preview(
+    doc_id: str,
+    published_content_service: Annotated[
+        PublishedContentService, Depends(Provide[Container.published_content_service])
+    ],
+):
+    src = published_content_service.get_by_id(doc_id)
+    if src.get("flag_cancelled"):
+        status = "cancelled"
+    elif src.get("flag_processed"):
+        status = "processed"
+    else:
+        status = "pending"
+    return PublishedContentPreview(
+        doc_id=doc_id,
+        status=status,
+        executive_summary=src.get("text_executive_summary", ""),
+        report_html=src.get("text_report_html", ""),
+        skill_name=src.get("key_skill_name", ""),
+        author_username=src.get("key_author_username", ""),
+        date_timestamp=src.get("date_timestamp", ""),
+    )
+
+
+@router.post(
+    path="/insights/preview/{doc_id}/cancel",
+    response_model=CancelPublishingResponse,
+    operation_id="cancel_published_content",
+    summary="Cancel a pending published content document",
+    dependencies=[Depends(bearer_scheme)],
+)
+@inject
+async def cancel_published_content(
+    doc_id: str,
+    published_content_service: Annotated[
+        PublishedContentService, Depends(Provide[Container.published_content_service])
+    ],
+):
+    published_content_service.cancel_publishing(doc_id)
+    return CancelPublishingResponse(doc_id=doc_id, status="cancelled")
 
 
 # Indicator configuration: maps indicator name to its service method suffix

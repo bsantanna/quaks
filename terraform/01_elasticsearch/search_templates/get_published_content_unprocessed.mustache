@@ -4,6 +4,9 @@
     "bool": {
       "must": [
         {"term": {"flag_processed": false}}
+      ],
+      "must_not": [
+        {"term": {"flag_cancelled": true}}
       ]
     }
   },

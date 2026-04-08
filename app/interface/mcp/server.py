@@ -95,6 +95,10 @@ class PublishContentResult(BaseModel):
 
     status: str = Field(description="Publication status: 'published' on success")
     message: str = Field(description="Human-readable result message")
+    doc_id: Optional[str] = Field(
+        default=None,
+        description="Document ID of the published content, for constructing the preview URL",
+    )
 
 
 # -- Server setup --
@@ -347,7 +351,7 @@ def _register_tools(mcp: FastMCP, container: Container) -> None:
 
         try:
             svc = container.published_content_service()
-            svc.publish(
+            doc_id = svc.publish(
                 executive_summary=text_executive_summary,
                 report_html=text_report_html,
                 skill_name=key_skill_name,
@@ -361,6 +365,7 @@ def _register_tools(mcp: FastMCP, container: Container) -> None:
 
         return PublishContentResult(
             status="published",
+            doc_id=doc_id,
             message=f"Content published successfully by {author_username}. "
             "It will be validated and routed to the appropriate index.",
         )

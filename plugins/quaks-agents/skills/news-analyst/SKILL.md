@@ -121,7 +121,21 @@ After generating the briefing, publish it to the Quaks platform so it becomes av
    - `text_executive_summary`: the extracted one-sentence summary
    - `text_report_html`: the full report converted to HTML
    - `key_skill_name`: `/news_analyst`
-4. **Confirm**: Tell the user the result:
-   - **Published**: the briefing was submitted and will be validated before appearing on the platform.
-   - **Duplicate**: the briefing was already published (same summary from this author).
-   - **Auth error**: the briefing was generated successfully but could not be published because authentication is required. Show the briefing to the user and suggest they authenticate and retry.
+4. **Present the result** to the user. The response includes a `doc_id` field — use it to construct the preview URL as `https://quaks.ai/insights/preview/{doc_id}`. Format your response as follows:
+
+   - **Published successfully**:
+     ```
+     **Executive Summary:** [the one-sentence summary]
+
+     **Sections covered:**
+     - [Section 1 headline] — [one-sentence description]
+     - [Section 2 headline] — [one-sentence description]
+     - ...
+
+     Your briefing has been generated and is under review. You can preview it here:
+     https://quaks.ai/insights/preview/{doc_id}
+     ```
+
+   - **Duplicate**: the briefing was already published (same summary from this author). Inform the user.
+
+   - **Auth error**: the briefing was generated successfully but could not be published because authentication is required. Show the full briefing to the user and suggest they authenticate and retry.
