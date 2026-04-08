@@ -45,8 +45,11 @@ class PublishedContentService:
             if not self.es.indices.exists_alias(
                 index=dated_index, name=self.INDEX_ALIAS
             ):
-                self.es.indices.put_alias(
-                    index=dated_index, name=self.INDEX_ALIAS
+                self.es.indices.update_aliases(
+                    actions=[
+                        {"remove": {"index": "quaks_published-content_*", "alias": self.INDEX_ALIAS}},
+                        {"add": {"index": dated_index, "alias": self.INDEX_ALIAS}},
+                    ]
                 )
         except ConflictError:
             raise DuplicateEntryError("Content")

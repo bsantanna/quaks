@@ -677,9 +677,6 @@ resource "elasticstack_elasticsearch_index_template" "quaks_published-content_te
 
 resource "elasticstack_elasticsearch_index" "published_content_initial" {
   name = "quaks_published-content_initial"
-  alias = [{
-    name = "quaks_published-content_latest"
-  }]
   deletion_protection = false
   depends_on = [elasticstack_elasticsearch_index_template.quaks_published-content_template]
 }
