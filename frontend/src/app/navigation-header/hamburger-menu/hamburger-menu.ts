@@ -64,7 +64,7 @@ export class HamburgerMenuComponent {
   }
 
   onKeyTickerSelected(indexedKeyTicker: IndexedKeyTicker): void {
-    if (STOCK_MARKETS.filter(market => market === indexedKeyTicker.index)) {
+    if (STOCK_MARKETS.includes(indexedKeyTicker.index)) {
       this.stockSelected.emit(indexedKeyTicker);
       this.close();
     }

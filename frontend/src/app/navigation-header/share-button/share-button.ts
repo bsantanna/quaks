@@ -1,5 +1,6 @@
 import {ChangeDetectorRef, Component, effect, HostListener, inject, signal} from '@angular/core';
 import {ShareUrlService, FeedbackMessageService} from '../../shared';
+import {buildShareAction, SharePlatform} from '../../shared/utils/social-share.utils';
 
 @Component({
   selector: 'app-share-button',
@@ -26,49 +27,27 @@ export class ShareButtonComponent {
     this.showMenu.update((val) => !val);
   }
 
-  share(platform: string) {
+  share(platform: SharePlatform) {
     this.showMenu.set(false);
-    const currentShareUrl = this.shareUrl();
-    const urlEncoded = encodeURIComponent(currentShareUrl.url);
-    const text = encodeURIComponent(currentShareUrl.title);
-    let targetUrl: string;
+    const action = buildShareAction(platform, this.shareUrl());
+    if (!action) return;
 
-    switch (platform) {
-      case 'facebook':
-        targetUrl = `https://www.facebook.com/sharer.php?u=${urlEncoded}`;
-        break;
-      case 'x':
-        targetUrl = `https://twitter.com/intent/tweet?url=${urlEncoded}&text=${text}`;
-        break;
-      case 'whatsapp':
-        targetUrl = `https://api.whatsapp.com/send?text=${text}%20${urlEncoded}`;
-        break;
-      case 'threads':
-        targetUrl = `https://www.threads.net/intent/post?text=${text}&url=${urlEncoded}`;
-        break;
-      case 'linkedin':
-        targetUrl = `https://www.linkedin.com/shareArticle?url=${urlEncoded}&title=${text}`;
-        break;
-      case 'reddit':
-        targetUrl = `https://reddit.com/submit?url=${urlEncoded}&title=${text}`;
-        break;
-      case 'email':
-        targetUrl = `mailto:?subject=Quaks&body=${text}%20${urlEncoded}`;
-        window.location.href = targetUrl;
-        return; // No new tab for email
-      case 'copy':
-        navigator.clipboard.writeText(currentShareUrl.url);
-        this.feedbackMessageService.update({
-          message: 'Link copied',
-          type: 'info',
-          timeout: 3000,
-        });
-        return; // No new tab for clipboard copy
-      default:
-        return;
+    if (action.kind === 'clipboard') {
+      navigator.clipboard.writeText(action.text);
+      this.feedbackMessageService.update({
+        message: 'Link copied',
+        type: 'info',
+        timeout: 3000,
+      });
+      return;
     }
 
-    window.open(targetUrl, '_blank');
+    if (action.kind === 'redirect') {
+      window.location.href = action.targetUrl;
+      return;
+    }
+
+    window.open(action.targetUrl, '_blank');
   }
 
   @HostListener('document:click', ['$event'])

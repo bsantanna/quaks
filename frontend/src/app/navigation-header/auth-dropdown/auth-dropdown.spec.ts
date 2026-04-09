@@ -18,6 +18,8 @@ describe('AuthDropdownComponent', () => {
   };
 
   beforeEach(async () => {
+    jest.clearAllMocks();
+    mockAuthService.state.set(null);
     await TestBed.configureTestingModule({
       imports: [AuthDropdownComponent],
       providers: [
@@ -48,5 +50,26 @@ describe('AuthDropdownComponent', () => {
 
   it('should return ? for initials when no session', () => {
     expect(component.getInitials()).toBe('?');
+  });
+
+  it('toggles and closes the menu', () => {
+    component.toggleMenu();
+    expect(component.showMenu()).toBe(true);
+
+    component.onDocumentClick({target: document.createElement('div')} as Event);
+    expect(component.showMenu()).toBe(false);
+  });
+
+  it('logs out and closes the menu', () => {
+    component.showMenu.set(true);
+    component.logout();
+
+    expect(component.showMenu()).toBe(false);
+    expect(mockAuthService.logout).toHaveBeenCalled();
+  });
+
+  it('returns the uppercase user initial', () => {
+    mockAuthService.state.set({username: 'bruno'});
+    expect(component.getInitials()).toBe('B');
   });
 });

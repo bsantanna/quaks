@@ -34,4 +34,30 @@ describe('SettingsDropdownComponent', () => {
     expect(component.themeService.state().theme).toBe('bloomnerd');
     expect(component.showMenu()).toBe(false);
   });
+
+  it('should toggle the theme dropdown', () => {
+    component.toggleThemeDropdown();
+    expect(component.themeOpen()).toBe(true);
+
+    component.toggleThemeDropdown();
+    expect(component.themeOpen()).toBe(false);
+  });
+
+  it('should select a date format and close the menu', () => {
+    component.showMenu.set(true);
+    component.selectDateFormat('YY/MM/DD');
+
+    expect(component.dateFormatService.state().dateFormat).toBe('YY/MM/DD');
+    expect(component.showMenu()).toBe(false);
+  });
+
+  it('should close both dropdowns on outside click', () => {
+    component.showMenu.set(true);
+    component.themeOpen.set(true);
+
+    component.onDocumentClick({target: document.createElement('div')} as Event);
+
+    expect(component.showMenu()).toBe(false);
+    expect(component.themeOpen()).toBe(false);
+  });
 });

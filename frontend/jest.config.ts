@@ -7,6 +7,14 @@ const config: Config = {
   collectCoverage: true,
   coverageDirectory: 'coverage',
   coverageReporters: ['lcov', 'text'],
+  coverageThreshold: {
+    global: {
+      branches: 70,
+      functions: 85,
+      lines: 85,
+      statements: 85,
+    },
+  },
 };
 
 export default config;
