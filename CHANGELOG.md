@@ -2,6 +2,32 @@
 
 <!-- version list -->
 
+## v1.5.13 (2026-04-09)
+
+### Bug Fixes
+
+- Codex compatibility layer ([#111](https://github.com/bsantanna/quaks/pull/111),
+  [`1caadf1`](https://github.com/bsantanna/quaks/commit/1caadf19ca5a2233a181224d418720aaa8a62dec))
+
+- Codex compatibility layer (1) ([#111](https://github.com/bsantanna/quaks/pull/111),
+  [`1caadf1`](https://github.com/bsantanna/quaks/commit/1caadf19ca5a2233a181224d418720aaa8a62dec))
+
+- Mcp multi teancy (1) ([#111](https://github.com/bsantanna/quaks/pull/111),
+  [`1caadf1`](https://github.com/bsantanna/quaks/commit/1caadf19ca5a2233a181224d418720aaa8a62dec))
+
+- Tech debt attack (2) ([#111](https://github.com/bsantanna/quaks/pull/111),
+  [`1caadf1`](https://github.com/bsantanna/quaks/commit/1caadf19ca5a2233a181224d418720aaa8a62dec))
+
+- Tech debt attack (3) ([#111](https://github.com/bsantanna/quaks/pull/111),
+  [`1caadf1`](https://github.com/bsantanna/quaks/commit/1caadf19ca5a2233a181224d418720aaa8a62dec))
+
+- Tech debt attack (4) ([#111](https://github.com/bsantanna/quaks/pull/111),
+  [`1caadf1`](https://github.com/bsantanna/quaks/commit/1caadf19ca5a2233a181224d418720aaa8a62dec))
+
+- Tech debt attack (5) ([#111](https://github.com/bsantanna/quaks/pull/111),
+  [`1caadf1`](https://github.com/bsantanna/quaks/commit/1caadf19ca5a2233a181224d418720aaa8a62dec))
+
+
 ## v1.5.12 (2026-04-09)
 
 ### Bug Fixes
