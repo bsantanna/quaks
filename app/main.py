@@ -70,8 +70,6 @@ def setup_auth(container, application):
                 "/auth/renew(/|$)",
                 "/auth/exchange(/|$)",
                 "/auth/callback",
-                "/docs",
-                "/redoc",
                 "/openapi.json(/|$)",
                 "/status/",
                 "/markets/(?!insights/preview/.+/cancel)",

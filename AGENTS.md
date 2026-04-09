@@ -35,9 +35,12 @@ Use the adapter that matches the current tool:
   Read `.claude/CLAUDE.md`.
   Treat `.claude/skills/*/SKILL.md` as the skill system.
 
-- Gemini or another future CLI:
-  Do not reuse Codex- or Claude-specific UX conventions blindly.
-  Create a dedicated adapter directory for that tool and map the same source-of-truth files into the tool's native instruction system.
+- Gemini CLI:
+  Read `GEMINI.md`.
+  Use `.gemini/skills/<name>/SKILL.md` for skill activation.
+  Follow behavioral mandates in `GEMINI.md` for tool-specific alignment.
+
+- another future CLI:
 
 ## Adapter Policy
 

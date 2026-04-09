@@ -139,3 +139,73 @@ class TestOptimizeAudio:
 
         with pytest.raises(AudioOptimizationError):
             service.optimize_audio("/tmp/test.wav")
+
+
+class TestCreateAttachmentWithFile:
+    @pytest.mark.asyncio
+    @patch("app.services.attachments.MarkItDown")
+    @patch("app.services.attachments.anyio.open_file")
+    @patch("app.services.attachments.os.remove")
+    async def test_creates_from_markdown(self, mock_remove, mock_open, mock_mid, service, mock_deps):
+        from unittest.mock import AsyncMock
+        mock_file = MagicMock()
+        mock_file.filename = "test.md"
+        mock_file.content_type = "text/markdown"
+        mock_file.read = AsyncMock(return_value=b"markdown content")
+        
+        mock_mid_inst = mock_mid.return_value
+        mock_mid_inst.convert.return_value.text_content = "parsed markdown"
+        
+        expected = _make_attachment(file_name="test.md", parsed_content="parsed markdown")
+        mock_deps["attachment_repository"].add.return_value = expected
+        
+        # Mock anyio.open_file
+        mock_buffer = MagicMock()
+        mock_buffer.write = AsyncMock()
+        mock_open.return_value.__aenter__.return_value = mock_buffer
+
+        result = await service.create_attachment_with_file(mock_file, "public")
+
+        assert result == expected
+        mock_deps["attachment_repository"].add.assert_called_once()
+        mock_remove.assert_called_once()
+
+class TestCreateEmbeddings:
+    @pytest.mark.asyncio
+    @patch("app.services.attachments.OpenAIEmbeddings")
+    @patch("app.services.attachments.UnstructuredMarkdownLoader")
+    @patch("app.services.attachments.CharacterTextSplitter")
+    @patch("app.services.attachments.anyio.open_file")
+    @patch("app.services.attachments.os.remove")
+    async def test_creates_openai_embeddings(self, mock_remove, mock_open, mock_splitter, mock_loader, mock_openai, service, mock_deps):
+        from unittest.mock import AsyncMock
+        schema = "public"
+        lm_id = "lm-1"
+        att_id = "att-1"
+        col_name = "collection"
+        
+        mock_deps["language_model_service"].get_language_model_by_id.return_value = MagicMock(id=lm_id, integration_id="int-1")
+        mock_deps["language_model_setting_service"].get_language_model_settings.return_value = [
+            MagicMock(setting_key="embeddings", setting_value="text-embedding-3-large")
+        ]
+        mock_deps["integration_service"].get_integration_by_id.return_value = MagicMock(id="int-1", integration_type="openai_api_v1")
+        mock_deps["vault_client"].secrets.kv.read_secret_version.return_value = {
+            "data": {"data": {"api_endpoint": "http://api", "api_key": "key"}}
+        }
+        
+        att = _make_attachment(id=att_id, parsed_content="content")
+        mock_deps["attachment_repository"].get_by_id.return_value = att
+        
+        mock_buffer = MagicMock()
+        mock_buffer.write = AsyncMock()
+        mock_open.return_value.__aenter__.return_value = mock_buffer
+        
+        expected_updated = _make_attachment(id=att_id, embeddings_collection=col_name)
+        mock_deps["attachment_repository"].update_attachment.return_value = expected_updated
+        
+        result = await service.create_embeddings(att_id, lm_id, col_name, schema)
+        
+        assert result == expected_updated
+        mock_openai.assert_called_once()
+        mock_deps["document_repository"].add.assert_called_once()
+        mock_remove.assert_called_once()
