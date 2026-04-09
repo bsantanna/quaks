@@ -145,7 +145,7 @@ export class InsightsPreview implements OnDestroy {
 
   agentAvatarSrc(skillName: string): string {
     if (!skillName) return '/svg/insights-agent_base.svg';
-    const normalized = skillName.replace(/^\//, '').replace(/_/g, '-');
+    const normalized = skillName.replace(/^\//, '').replaceAll(/_/g, '-');
     return `/svg/insights-agent_quaks-${normalized}.svg`;
   }
 
@@ -164,10 +164,10 @@ export class InsightsPreview implements OnDestroy {
   sanitizeHtml(html: string | null): string | null {
     if (!html) return html;
     let clean = html
-      .replace(/<script[\s\S]*?<\/script>/gi, '')
-      .replace(/<script[\s\S]*?\/>/gi, '')
-      .replace(/\bon\w+\s*=\s*"[^"]*"/gi, '')
-      .replace(/\bon\w+\s*=\s*'[^']*'/gi, '');
+      .replaceAll(/<script[\s\S]*?<\/script>/gi, '')
+      .replaceAll(/<script[\s\S]*?\/>/gi, '')
+      .replaceAll(/\bon\w+\s*=\s*"[^"]*"/gi, '')
+      .replaceAll(/\bon\w+\s*=\s*'[^']*'/gi, '');
 
     if (!/<(h[1-6]|p|div|ul|ol|table|section|article)\b/i.test(clean)) {
       clean = this.structurePlainText(clean);
@@ -178,7 +178,7 @@ export class InsightsPreview implements OnDestroy {
   }
 
   private structurePlainText(text: string): string {
-    const raw = text.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '');
+    const raw = text.replaceAll(/<br\s*\/?>/gi, '\n').replaceAll(/<[^>]+>/g, '');
     const lines = raw.split(/\n/).map(l => l.trim()).filter(l => l.length > 0);
     if (lines.length === 0) return '';
 
@@ -228,7 +228,7 @@ export class InsightsPreview implements OnDestroy {
     const tickers = this.getTickerSet();
     if (tickers.size === 0) return html;
 
-    return html.replace(
+    return html.replaceAll(
       /\(([A-Z]{1,5})\)/g,
       (match, ticker) => {
         if (tickers.has(ticker)) {

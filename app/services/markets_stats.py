@@ -7,7 +7,7 @@ class MarketsStatsService:
     def __init__(self, es: Elasticsearch) -> None:
         self.es = es
 
-    async def get_company_profile(
+    def get_company_profile(
             self,
             index_name: str,
             key_ticker: str,
@@ -25,7 +25,7 @@ class MarketsStatsService:
             return {}
         return hits[0]['_source']
 
-    async def get_market_caps_bulk(
+    def get_market_caps_bulk(
             self,
             index_name: str,
             key_tickers: list[str],
@@ -51,7 +51,7 @@ class MarketsStatsService:
                 })
         return results
 
-    async def get_stats_close_bulk(
+    def get_stats_close_bulk(
             self,
             index_name: str,
             key_tickers: list[str],
@@ -78,7 +78,7 @@ class MarketsStatsService:
                 results.append(stats)
         return results
 
-    async def get_stats_close(
+    def get_stats_close(
             self,
             index_name: str,
             key_ticker: str,
@@ -97,7 +97,7 @@ class MarketsStatsService:
         response = self.es.search_template(index=index_name, body=search_params)
         return response['aggregations']['recent_stats']['value']
 
-    async def get_indicator_ad(self, index_name: str, key_ticker: str, start_date: str, end_date: str) -> list[dict]:
+    def get_indicator_ad(self, index_name: str, key_ticker: str, start_date: str, end_date: str) -> list[dict]:
         search_params = {
             "id": "get_eod_indicator_ad_template",
             "params": {
@@ -109,7 +109,7 @@ class MarketsStatsService:
         response = self.es.search_template(index=index_name, body=search_params)
         return response['aggregations']['ad_stats']['value']
 
-    async def get_indicator_adx(
+    def get_indicator_adx(
             self,
             index_name: str,
             key_ticker: str,
@@ -129,7 +129,7 @@ class MarketsStatsService:
         response = self.es.search_template(index=index_name, body=search_params)
         return response['aggregations']['adx_stats']['value']
 
-    async def get_indicator_cci(
+    def get_indicator_cci(
             self,
             index_name: str,
             key_ticker: str,
@@ -151,7 +151,7 @@ class MarketsStatsService:
         response = self.es.search_template(index=index_name, body=search_params)
         return response['aggregations']['cci_stats']['value']
 
-    async def get_indicator_ema(
+    def get_indicator_ema(
             self,
             index_name: str,
             key_ticker: str,
@@ -173,7 +173,7 @@ class MarketsStatsService:
         response = self.es.search_template(index=index_name, body=search_params)
         return response['aggregations']['ema_stats']['value']
 
-    async def get_indicator_macd(
+    def get_indicator_macd(
             self,
             index_name: str,
             key_ticker: str,
@@ -197,7 +197,7 @@ class MarketsStatsService:
         response = self.es.search_template(index=index_name, body=search_params)
         return response['aggregations']['macd_stats']['value']
 
-    async def get_indicator_obv(self, index_name: str, key_ticker: str, start_date: str, end_date: str) -> list[dict]:
+    def get_indicator_obv(self, index_name: str, key_ticker: str, start_date: str, end_date: str) -> list[dict]:
         search_params = {
             "id": "get_eod_indicator_obv_template",
             "params": {
@@ -209,7 +209,7 @@ class MarketsStatsService:
         response = self.es.search_template(index=index_name, body=search_params)
         return response['aggregations']['obv_stats']['value']
 
-    async def get_indicator_rsi(
+    def get_indicator_rsi(
             self,
             index_name: str,
             key_ticker: str,
@@ -229,7 +229,7 @@ class MarketsStatsService:
         response = self.es.search_template(index=index_name, body=search_params)
         return response['aggregations']['rsi_stats']['value']
 
-    async def get_indicator_stoch(
+    def get_indicator_stoch(
             self,
             index_name: str,
             key_ticker: str,

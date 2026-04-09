@@ -110,7 +110,7 @@ async def get_stats_close(
     today = datetime.now()
     end_date = request.end_date or today.strftime("%Y-%m-%d")
     start_date = request.start_date or (today - timedelta(days=90)).strftime("%Y-%m-%d")
-    result = await markets_stats_service.get_stats_close(
+    result = markets_stats_service.get_stats_close(
         index_name=index_name,
         key_ticker=key_ticker,
         start_date=start_date,
@@ -154,7 +154,7 @@ async def get_company_profile(
     ],
 ):
     _validate_index_name(index_name)
-    result = await markets_stats_service.get_company_profile(
+    result = markets_stats_service.get_company_profile(
         index_name=index_name,
         key_ticker=key_ticker,
     )
@@ -196,7 +196,7 @@ async def get_stats_close_bulk(
     today = datetime.now()
     end_date = end_date or today.strftime("%Y-%m-%d")
     start_date = start_date or (today - timedelta(days=7)).strftime("%Y-%m-%d")
-    results = await markets_stats_service.get_stats_close_bulk(
+    results = markets_stats_service.get_stats_close_bulk(
         index_name=index_name,
         key_tickers=tickers,
         start_date=start_date,
@@ -244,7 +244,7 @@ async def get_market_caps_bulk(
 ):
     _validate_index_name(index_name)
     tickers = [t.strip() for t in key_tickers.split(",") if t.strip()]
-    results = await markets_stats_service.get_market_caps_bulk(
+    results = markets_stats_service.get_market_caps_bulk(
         index_name=index_name,
         key_tickers=tickers,
     )
@@ -329,7 +329,7 @@ async def get_news(
     request: Annotated[NewsListRequest, Depends()],
 ):
     _validate_index_name(index_name)
-    results, sort = await markets_news_service.get_news(
+    results, sort = markets_news_service.get_news(
         index_name=index_name,
         id=request.id,
         key_ticker=request.key_ticker,
@@ -394,7 +394,7 @@ async def get_insights_news(
     request: Annotated[InsightsNewsListRequest, Depends()],
 ):
     _validate_index_name(index_name)
-    results, sort = await markets_insights_service.get_insights_news(
+    results, sort = markets_insights_service.get_insights_news(
         index_name=index_name,
         id=request.id,
         date_from=request.date_from,
@@ -594,7 +594,7 @@ async def get_indicator(
         kwargs[param] = getattr(request, param) or default
 
     method = getattr(markets_stats_service, f"get_indicator_{indicator_name}")
-    data = await method(**kwargs)
+    data = method(**kwargs)
 
     return IndicatorResponse(
         key_ticker=key_ticker, indicator=indicator_name, data=data

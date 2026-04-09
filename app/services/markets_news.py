@@ -9,7 +9,7 @@ class MarketsNewsService:
     def __init__(self, es: Elasticsearch) -> None:
         self.es = es
 
-    async def get_news(
+    def get_news(
             self,
             index_name: str,
             id: str = None,

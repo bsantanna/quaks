@@ -236,7 +236,7 @@ def _register_tools(mcp: FastMCP, container: Container) -> None:
         svc = container.markets_news_service()
         resolved_from = date_from or (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 
-        results, sort = await svc.get_news(
+        results, sort = svc.get_news(
             index_name="quaks_markets-news_latest",
             search_term=search_term,
             key_ticker=key_ticker,
@@ -295,7 +295,7 @@ def _register_tools(mcp: FastMCP, container: Container) -> None:
     ) -> InsightsNewsList:
         svc = container.markets_insights_service()
 
-        results, sort = await svc.get_insights_news(
+        results, sort = svc.get_insights_news(
             index_name="quaks_insights-news_latest",
             date_from=date_from,
             date_to=date_to,

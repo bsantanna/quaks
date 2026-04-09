@@ -9,7 +9,7 @@
 </button>
 
 @if (menuOpen()) {
-    <div class="hamburger-backdrop" (click)="close()"></div>
+    <div class="hamburger-backdrop" (click)="close()" (keydown.escape)="close()"></div>
     <div class="hamburger-panel">
         <div class="hamburger-layout">
 
