@@ -33,6 +33,9 @@ from app.services.markets_news import MarketsNewsService
 from app.services.markets_stats import MarketsStatsService
 from app.services.tasks import TaskProgress
 
+_TABLE_OPEN = "<table>"
+_TABLE_CLOSE = "</table>"
+
 EXECUTION_PLAN = (
     "Financial analysis plan:\n"
     "1. coordinator: Parse ticker(s) and decide whether to proceed\n"
@@ -223,17 +226,17 @@ def _normalize_sector(raw_sector: str) -> str:
 
 
 def _build_style_table(style_grid: dict) -> list[str]:
-    rows = ["<h3>Investment Style</h3>", "<table>",
+    rows = ["<h3>Investment Style</h3>", _TABLE_OPEN,
             "<tr><th></th><th>Value</th><th>Blend</th><th>Growth</th></tr>"]
     for size in ("Large", "Mid", "Small"):
         v, b, g = [f"{style_grid[(size, st)]:.0f}" for st in ("Value", "Blend", "Growth")]
         rows.append(f"<tr><td><b>{size}</b></td><td>{v}</td><td>{b}</td><td>{g}</td></tr>")
-    rows.append("</table>")
+    rows.append(_TABLE_CLOSE)
     return rows
 
 
 def _build_sector_table(sector_wt: dict) -> list[str]:
-    rows = ["<h3>Stock Sectors</h3>", "<table>",
+    rows = ["<h3>Stock Sectors</h3>", _TABLE_OPEN,
             "<tr><th>Sector</th><th>Weight %</th></tr>"]
     for supersector, sectors in SUPERSECTOR_SECTORS.items():
         total = sum(sector_wt.get(s, 0) for s in sectors)
@@ -245,12 +248,12 @@ def _build_sector_table(sector_wt: dict) -> list[str]:
     nc = sector_wt.get("Not Classified", 0)
     if nc > 0:
         rows.append(f"<tr><td><b>Not Classified</b></td><td><b>{nc:.2f}</b></td></tr>")
-    rows.append("</table>")
+    rows.append(_TABLE_CLOSE)
     return rows
 
 
 def _build_region_table(subregion_wt: dict) -> list[str]:
-    rows = ["<h3>World Regions</h3>", "<table>",
+    rows = ["<h3>World Regions</h3>", _TABLE_OPEN,
             "<tr><th>Region</th><th>Weight %</th></tr>"]
     for region, subregions in REGION_SUBREGIONS.items():
         total = sum(subregion_wt.get(sr, 0) for sr in subregions)
@@ -263,22 +266,22 @@ def _build_region_table(subregion_wt: dict) -> list[str]:
     nc = subregion_wt.get("Not Classified", 0)
     if nc > 0:
         rows.append(f"<tr><td><b>Not Classified</b></td><td><b>{nc:.2f}</b></td></tr>")
-    rows.append("</table>")
+    rows.append(_TABLE_CLOSE)
     return rows
 
 
 def _build_stats_table(stat_keys: dict, avg_stats: dict) -> list[str]:
-    rows = ["<h3>Stock Stats</h3>", "<table>",
+    rows = ["<h3>Stock Stats</h3>", _TABLE_OPEN,
             "<tr><th>Metric</th><th>Average</th></tr>"]
     for key, label in stat_keys.items():
         val = f"{avg_stats[key]:.2f}" if avg_stats[key] > 0 else "-"
         rows.append(f"<tr><td>{label}</td><td>{val}</td></tr>")
-    rows.append("</table>")
+    rows.append(_TABLE_CLOSE)
     return rows
 
 
 def _build_composition_table(sorted_tickers: list, profiles: dict, weights: dict) -> list[str]:
-    rows = ["<h3>Composition</h3>", "<table>",
+    rows = ["<h3>Composition</h3>", _TABLE_OPEN,
             "<tr><th>Name</th><th>Ticker</th><th>Sector</th><th>Country</th><th>Weight %</th></tr>"]
     for ticker in sorted_tickers[:10]:
         p = profiles[ticker]
@@ -287,7 +290,7 @@ def _build_composition_table(sorted_tickers: list, profiles: dict, weights: dict
             f"<td>{p.get('sector', '-')}</td><td>{p.get('country', '-')}</td>"
             f"<td>{weights[ticker]:.2f}</td></tr>"
         )
-    rows.append("</table>")
+    rows.append(_TABLE_CLOSE)
     return rows
 
 

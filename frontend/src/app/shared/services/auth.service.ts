@@ -172,7 +172,7 @@ export class AuthService {
     try {
       const parts = token.split('.');
       if (parts.length !== 3) return {};
-      const payload = parts[1].replaceAll(/-/g, '+').replaceAll(/_/g, '/');
+      const payload = parts[1].replaceAll('-', '+').replaceAll('_', '/');
       return JSON.parse(atob(payload));
     } catch {
       return {};
@@ -219,6 +219,6 @@ export class AuthService {
     for (let i = 0; i < buffer.byteLength; i++) {
       binary += String.fromCodePoint(buffer[i]);
     }
-    return btoa(binary).replaceAll(/\+/g, '-').replaceAll(/\//g, '_').replace(/=+$/, '');
+    return btoa(binary).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '');
   }
 }

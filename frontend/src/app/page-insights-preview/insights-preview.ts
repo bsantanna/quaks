@@ -145,7 +145,7 @@ export class InsightsPreview implements OnDestroy {
 
   agentAvatarSrc(skillName: string): string {
     if (!skillName) return '/svg/insights-agent_base.svg';
-    const normalized = skillName.replace(/^\//, '').replaceAll(/_/g, '-');
+    const normalized = skillName.replace(/^\//, '').replaceAll('_', '-');
     return `/svg/insights-agent_quaks-${normalized}.svg`;
   }
 

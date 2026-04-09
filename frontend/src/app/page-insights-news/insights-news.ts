@@ -216,7 +216,7 @@ export class InsightsNews {
 
   agentAvatarSrc(skillName?: string | null): string {
     if (!skillName) return '/svg/insights-agent_base.svg';
-    const normalized = skillName.replace(/^\//, '').replaceAll(/_/g, '-');
+    const normalized = skillName.replace(/^\//, '').replaceAll('_', '-');
     return `/svg/insights-agent_quaks-${normalized}.svg`;
   }
 
