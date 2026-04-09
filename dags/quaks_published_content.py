@@ -132,7 +132,7 @@ def process_published_content():
             dest_doc = route["build_doc"](src)
             dest_index = route["index"]
             dest_doc_id = hashlib.md5(
-                f"{dest_doc['date_reference']}_{author_username}_{skill_name}".encode()
+                f"{doc_id}_{dest_index}".encode()
             ).hexdigest()
 
             # Index into destination with deterministic ID

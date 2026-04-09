@@ -48,7 +48,7 @@ export class InsightsPreview implements OnDestroy {
             const path = `/insights/preview/${docId}`;
             this.shareUrlService.update({
               title,
-              url: `${window.location.origin}${path}`,
+              url: `${globalThis.location.origin}${path}`,
             });
             this.seoService.update({title, path});
           }
@@ -125,8 +125,8 @@ export class InsightsPreview implements OnDestroy {
     }
 
     const cleanup = () => this.removePrintStyle();
-    window.addEventListener('afterprint', cleanup, {once: true});
-    window.print();
+    globalThis.addEventListener('afterprint', cleanup, {once: true});
+    globalThis.print();
   }
 
   private removePrintStyle(): void {
@@ -145,7 +145,7 @@ export class InsightsPreview implements OnDestroy {
 
   agentAvatarSrc(skillName: string): string {
     if (!skillName) return '/svg/insights-agent_base.svg';
-    const normalized = skillName.replace(/^\//, '').replace(/_/g, '-');
+    const normalized = skillName.replace(/^\//, '').replaceAll('_', '-');
     return `/svg/insights-agent_quaks-${normalized}.svg`;
   }
 
@@ -164,10 +164,10 @@ export class InsightsPreview implements OnDestroy {
   sanitizeHtml(html: string | null): string | null {
     if (!html) return html;
     let clean = html
-      .replace(/<script[\s\S]*?<\/script>/gi, '')
-      .replace(/<script[\s\S]*?\/>/gi, '')
-      .replace(/\bon\w+\s*=\s*"[^"]*"/gi, '')
-      .replace(/\bon\w+\s*=\s*'[^']*'/gi, '');
+      .replaceAll(/<script[\s\S]*?<\/script>/gi, '')
+      .replaceAll(/<script[\s\S]*?\/>/gi, '')
+      .replaceAll(/\bon\w+\s*=\s*"[^"]*"/gi, '')
+      .replaceAll(/\bon\w+\s*=\s*'[^']*'/gi, '');
 
     if (!/<(h[1-6]|p|div|ul|ol|table|section|article)\b/i.test(clean)) {
       clean = this.structurePlainText(clean);
@@ -178,7 +178,7 @@ export class InsightsPreview implements OnDestroy {
   }
 
   private structurePlainText(text: string): string {
-    const raw = text.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '');
+    const raw = text.replaceAll(/<br\s*\/?>/gi, '\n').replaceAll(/<[^>]+>/g, '');
     const lines = raw.split(/\n/).map(l => l.trim()).filter(l => l.length > 0);
     if (lines.length === 0) return '';
 
@@ -216,11 +216,9 @@ export class InsightsPreview implements OnDestroy {
   }
 
   private getTickerSet(): Set<string> {
-    if (!this.tickerSet) {
-      this.tickerSet = new Set(
-        this.tickerService.indexedKeyTickers().map(t => t.key_ticker)
-      );
-    }
+    this.tickerSet ??= new Set(
+      this.tickerService.indexedKeyTickers().map(t => t.key_ticker)
+    );
     return this.tickerSet;
   }
 
@@ -228,7 +226,7 @@ export class InsightsPreview implements OnDestroy {
     const tickers = this.getTickerSet();
     if (tickers.size === 0) return html;
 
-    return html.replace(
+    return html.replaceAll(
       /\(([A-Z]{1,5})\)/g,
       (match, ticker) => {
         if (tickers.has(ticker)) {

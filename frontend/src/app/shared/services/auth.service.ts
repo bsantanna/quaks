@@ -172,7 +172,7 @@ export class AuthService {
     try {
       const parts = token.split('.');
       if (parts.length !== 3) return {};
-      const payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      const payload = parts[1].replaceAll('-', '+').replaceAll('_', '/');
       return JSON.parse(atob(payload));
     } catch {
       return {};
@@ -217,8 +217,8 @@ export class AuthService {
   private base64UrlEncode(buffer: Uint8Array): string {
     let binary = '';
     for (let i = 0; i < buffer.byteLength; i++) {
-      binary += String.fromCharCode(buffer[i]);
+      binary += String.fromCodePoint(buffer[i]);
     }
-    return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    return btoa(binary).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '');
   }
 }

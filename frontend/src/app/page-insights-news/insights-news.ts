@@ -75,10 +75,10 @@ export class InsightsNews {
   private sanitizeHtml(html: string | null): string | null {
     if (!html) return html;
     let clean = html
-      .replace(/<script[\s\S]*?<\/script>/gi, '')
-      .replace(/<script[\s\S]*?\/>/gi, '')
-      .replace(/\bon\w+\s*=\s*"[^"]*"/gi, '')
-      .replace(/\bon\w+\s*=\s*'[^']*'/gi, '');
+      .replaceAll(/<script[\s\S]*?<\/script>/gi, '')
+      .replaceAll(/<script[\s\S]*?\/>/gi, '')
+      .replaceAll(/\bon\w+\s*=\s*"[^"]*"/gi, '')
+      .replaceAll(/\bon\w+\s*=\s*'[^']*'/gi, '');
 
     // If content has no HTML block tags, it's plain text — add structure
     if (!/<(h[1-6]|p|div|ul|ol|table|section|article)\b/i.test(clean)) {
@@ -92,7 +92,7 @@ export class InsightsNews {
 
   private structurePlainText(text: string): string {
     // Strip any stray tags, normalize line breaks
-    const raw = text.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '');
+    const raw = text.replaceAll(/<br\s*\/?>/gi, '\n').replaceAll(/<[^>]+>/g, '');
     const lines = raw.split(/\n/).map(l => l.trim()).filter(l => l.length > 0);
     if (lines.length === 0) return '';
 
@@ -136,11 +136,9 @@ export class InsightsNews {
   }
 
   private getTickerSet(): Set<string> {
-    if (!this.tickerSet) {
-      this.tickerSet = new Set(
-        this.tickerService.indexedKeyTickers().map(t => t.key_ticker)
-      );
-    }
+    this.tickerSet ??= new Set(
+      this.tickerService.indexedKeyTickers().map(t => t.key_ticker)
+    );
     return this.tickerSet;
   }
 
@@ -149,7 +147,7 @@ export class InsightsNews {
     if (tickers.size === 0) return html;
 
     // Match parenthesized uppercase symbols: (AAPL), (NVDA), (A)
-    return html.replace(
+    return html.replaceAll(
       /\(([A-Z]{1,5})\)/g,
       (match, ticker) => {
         if (tickers.has(ticker)) {
@@ -165,7 +163,7 @@ export class InsightsNews {
   }
 
   getShareUrl(item: InsightsNewsItem): string {
-    return `${window.location.origin}/insights/news/item/${this.indexName}/${item.id}`;
+    return `${globalThis.location.origin}/insights/news/item/${this.indexName}/${item.id}`;
   }
 
   share(platform: string, item: InsightsNewsItem): void {
@@ -195,7 +193,7 @@ export class InsightsNews {
         targetUrl = `https://reddit.com/submit?url=${urlEncoded}&title=${text}`;
         break;
       case 'email':
-        window.location.href = `mailto:?subject=Quaks&body=${text}%20${urlEncoded}`;
+        globalThis.location.href = `mailto:?subject=Quaks&body=${text}%20${urlEncoded}`;
         return;
       case 'copy':
         navigator.clipboard.writeText(url);
@@ -204,7 +202,7 @@ export class InsightsNews {
       default:
         return;
     }
-    window.open(targetUrl, '_blank');
+    globalThis.open(targetUrl, '_blank');
   }
 
   @HostListener('document:click', ['$event'])
@@ -218,7 +216,7 @@ export class InsightsNews {
 
   agentAvatarSrc(skillName?: string | null): string {
     if (!skillName) return '/svg/insights-agent_base.svg';
-    const normalized = skillName.replace(/^\//, '').replace(/_/g, '-');
+    const normalized = skillName.replace(/^\//, '').replaceAll('_', '-');
     return `/svg/insights-agent_quaks-${normalized}.svg`;
   }
 

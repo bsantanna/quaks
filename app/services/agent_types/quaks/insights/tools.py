@@ -26,25 +26,17 @@ def build_get_markets_news_tool(markets_news_service: MarketsNewsService):
         Returns:
             JSON string with the list of news articles.
         """
-        import asyncio
-
         actual_size = min(size, 50)
         date_from = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
-        loop = asyncio.new_event_loop()
-        try:
-            results, _ = loop.run_until_complete(
-                markets_news_service.get_news(
-                    index_name="quaks_markets-news_latest",
-                    search_term=search_term if search_term else None,
-                    key_ticker=ticker if ticker else None,
-                    date_from=date_from,
-                    size=actual_size,
-                    include_text_content=True,
-                    include_key_ticker=True,
-                )
-            )
-        finally:
-            loop.close()
+        results, _ = markets_news_service.get_news(
+            index_name="quaks_markets-news_latest",
+            search_term=search_term if search_term else None,
+            key_ticker=ticker if ticker else None,
+            date_from=date_from,
+            size=actual_size,
+            include_text_content=True,
+            include_key_ticker=True,
+        )
         articles = []
         for hit in results:
             source = hit["_source"]
@@ -76,21 +68,13 @@ def build_get_insights_news_tool(markets_insights_service: MarketsInsightsServic
         Returns:
             JSON string with the list of investor briefings.
         """
-        import asyncio
-
         actual_size = min(size, 10)
-        loop = asyncio.new_event_loop()
-        try:
-            results, _ = loop.run_until_complete(
-                markets_insights_service.get_insights_news(
-                    index_name="quaks_insights-news_latest",
-                    date_from=date_from if date_from else None,
-                    size=actual_size,
-                    include_report_html=True,
-                )
-            )
-        finally:
-            loop.close()
+        results, _ = markets_insights_service.get_insights_news(
+            index_name="quaks_insights-news_latest",
+            date_from=date_from if date_from else None,
+            size=actual_size,
+            include_report_html=True,
+        )
         briefings = []
         for hit in results:
             source = hit["_source"]

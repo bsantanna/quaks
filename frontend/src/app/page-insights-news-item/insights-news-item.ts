@@ -49,7 +49,7 @@ export class InsightsNewsItem implements OnDestroy {
             const path = `/insights/news/item/${indexName}/${id}`;
             this.shareUrlService.update({
               title,
-              url: `${window.location.origin}${path}`,
+              url: `${globalThis.location.origin}${path}`,
             });
             this.seoService.update({title, path});
           }
@@ -61,6 +61,51 @@ export class InsightsNewsItem implements OnDestroy {
   ngOnDestroy(): void {
     this.shareUrlService.update({title: '', url: ''});
     this.seoService.reset();
+    this.removePrintStyle();
+  }
+
+  downloadPdf(): void {
+    if (!this.isBrowser) return;
+
+    const styleId = 'quaks-print-style';
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement('style');
+      style.id = styleId;
+      style.textContent = `
+        @media print {
+          app-navigation-header,
+          app-navigation-footer,
+          .print-hide { display: none !important; }
+          .print-cover { display: block !important; }
+          .print-cover-summary { display: none !important; }
+          .briefing-card { display: none !important; }
+          .briefing-report { border: none !important; }
+          @page {
+            margin: 2cm 1.5cm 2.5cm;
+            size: A4;
+          }
+          .print-logo {
+            display: block !important;
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 48px;
+            height: 48px;
+            opacity: 0.6;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    const cleanup = () => this.removePrintStyle();
+    globalThis.addEventListener('afterprint', cleanup, {once: true});
+    globalThis.print();
+  }
+
+  private removePrintStyle(): void {
+    const style = document.getElementById('quaks-print-style');
+    if (style) style.remove();
   }
 
   formatDate(dateStr: string): string {
@@ -71,10 +116,10 @@ export class InsightsNewsItem implements OnDestroy {
   sanitizeHtml(html: string | null): string | null {
     if (!html) return html;
     let clean = html
-      .replace(/<script[\s\S]*?<\/script>/gi, '')
-      .replace(/<script[\s\S]*?\/>/gi, '')
-      .replace(/\bon\w+\s*=\s*"[^"]*"/gi, '')
-      .replace(/\bon\w+\s*=\s*'[^']*'/gi, '');
+      .replaceAll(/<script[\s\S]*?<\/script>/gi, '')
+      .replaceAll(/<script[\s\S]*?\/>/gi, '')
+      .replaceAll(/\bon\w+\s*=\s*"[^"]*"/gi, '')
+      .replaceAll(/\bon\w+\s*=\s*'[^']*'/gi, '');
 
     if (!/<(h[1-6]|p|div|ul|ol|table|section|article)\b/i.test(clean)) {
       clean = this.structurePlainText(clean);
@@ -85,7 +130,7 @@ export class InsightsNewsItem implements OnDestroy {
   }
 
   private structurePlainText(text: string): string {
-    const raw = text.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '');
+    const raw = text.replaceAll(/<br\s*\/?>/gi, '\n').replaceAll(/<[^>]+>/g, '');
     const lines = raw.split(/\n/).map(l => l.trim()).filter(l => l.length > 0);
     if (lines.length === 0) return '';
 
@@ -123,11 +168,9 @@ export class InsightsNewsItem implements OnDestroy {
   }
 
   private getTickerSet(): Set<string> {
-    if (!this.tickerSet) {
-      this.tickerSet = new Set(
-        this.tickerService.indexedKeyTickers().map(t => t.key_ticker)
-      );
-    }
+    this.tickerSet ??= new Set(
+      this.tickerService.indexedKeyTickers().map(t => t.key_ticker)
+    );
     return this.tickerSet;
   }
 
@@ -135,7 +178,7 @@ export class InsightsNewsItem implements OnDestroy {
     const tickers = this.getTickerSet();
     if (tickers.size === 0) return html;
 
-    return html.replace(
+    return html.replaceAll(
       /\(([A-Z]{1,5})\)/g,
       (match, ticker) => {
         if (tickers.has(ticker)) {

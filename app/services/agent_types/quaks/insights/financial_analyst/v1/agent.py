@@ -33,6 +33,9 @@ from app.services.markets_news import MarketsNewsService
 from app.services.markets_stats import MarketsStatsService
 from app.services.tasks import TaskProgress
 
+_TABLE_OPEN = "<table>"
+_TABLE_CLOSE = "</table>"
+
 EXECUTION_PLAN = (
     "Financial analysis plan:\n"
     "1. coordinator: Parse ticker(s) and decide whether to proceed\n"
@@ -190,6 +193,24 @@ _SECTOR_KEYWORDS = {
 }
 
 
+def _classify_size(market_cap: float) -> str:
+    if market_cap > 10_000_000_000:
+        return "Large"
+    if market_cap > 2_000_000_000:
+        return "Mid"
+    return "Small"
+
+
+def _classify_style(pe_ratio: float) -> str:
+    if pe_ratio <= 0:
+        return "Blend"
+    if pe_ratio < 18:
+        return "Value"
+    if pe_ratio <= 25:
+        return "Blend"
+    return "Growth"
+
+
 def _normalize_sector(raw_sector: str) -> str:
     if raw_sector in _KNOWN_SECTORS:
         return raw_sector
@@ -202,6 +223,75 @@ def _normalize_sector(raw_sector: str) -> str:
         if any(kw in lower for kw in keywords):
             return sector
     return "Not Classified"
+
+
+def _build_style_table(style_grid: dict) -> list[str]:
+    rows = ["<h3>Investment Style</h3>", _TABLE_OPEN,
+            "<tr><th></th><th>Value</th><th>Blend</th><th>Growth</th></tr>"]
+    for size in ("Large", "Mid", "Small"):
+        v, b, g = [f"{style_grid[(size, st)]:.0f}" for st in ("Value", "Blend", "Growth")]
+        rows.append(f"<tr><td><b>{size}</b></td><td>{v}</td><td>{b}</td><td>{g}</td></tr>")
+    rows.append(_TABLE_CLOSE)
+    return rows
+
+
+def _build_sector_table(sector_wt: dict) -> list[str]:
+    rows = ["<h3>Stock Sectors</h3>", _TABLE_OPEN,
+            "<tr><th>Sector</th><th>Weight %</th></tr>"]
+    for supersector, sectors in SUPERSECTOR_SECTORS.items():
+        total = sum(sector_wt.get(s, 0) for s in sectors)
+        rows.append(f"<tr><td><b>{supersector}</b></td><td><b>{total:.2f}</b></td></tr>")
+        for s in sectors:
+            w = sector_wt.get(s, 0)
+            if w > 0:
+                rows.append(f"<tr><td>&nbsp;&nbsp;{s}</td><td>{w:.2f}</td></tr>")
+    nc = sector_wt.get("Not Classified", 0)
+    if nc > 0:
+        rows.append(f"<tr><td><b>Not Classified</b></td><td><b>{nc:.2f}</b></td></tr>")
+    rows.append(_TABLE_CLOSE)
+    return rows
+
+
+def _build_region_table(subregion_wt: dict) -> list[str]:
+    rows = ["<h3>World Regions</h3>", _TABLE_OPEN,
+            "<tr><th>Region</th><th>Weight %</th></tr>"]
+    for region, subregions in REGION_SUBREGIONS.items():
+        total = sum(subregion_wt.get(sr, 0) for sr in subregions)
+        if total > 0:
+            rows.append(f"<tr><td><b>{region}</b></td><td><b>{total:.2f}</b></td></tr>")
+            for sr in subregions:
+                w = subregion_wt.get(sr, 0)
+                if w > 0:
+                    rows.append(f"<tr><td>&nbsp;&nbsp;{sr}</td><td>{w:.2f}</td></tr>")
+    nc = subregion_wt.get("Not Classified", 0)
+    if nc > 0:
+        rows.append(f"<tr><td><b>Not Classified</b></td><td><b>{nc:.2f}</b></td></tr>")
+    rows.append(_TABLE_CLOSE)
+    return rows
+
+
+def _build_stats_table(stat_keys: dict, avg_stats: dict) -> list[str]:
+    rows = ["<h3>Stock Stats</h3>", _TABLE_OPEN,
+            "<tr><th>Metric</th><th>Average</th></tr>"]
+    for key, label in stat_keys.items():
+        val = f"{avg_stats[key]:.2f}" if avg_stats[key] > 0 else "-"
+        rows.append(f"<tr><td>{label}</td><td>{val}</td></tr>")
+    rows.append(_TABLE_CLOSE)
+    return rows
+
+
+def _build_composition_table(sorted_tickers: list, profiles: dict, weights: dict) -> list[str]:
+    rows = ["<h3>Composition</h3>", _TABLE_OPEN,
+            "<tr><th>Name</th><th>Ticker</th><th>Sector</th><th>Country</th><th>Weight %</th></tr>"]
+    for ticker in sorted_tickers[:10]:
+        p = profiles[ticker]
+        rows.append(
+            f"<tr><td>{p.get('name', ticker)}</td><td>({ticker})</td>"
+            f"<td>{p.get('sector', '-')}</td><td>{p.get('country', '-')}</td>"
+            f"<td>{weights[ticker]:.2f}</td></tr>"
+        )
+    rows.append(_TABLE_CLOSE)
+    return rows
 
 
 class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
@@ -323,18 +413,10 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
             Returns:
                 JSON string with company profile data.
             """
-            import asyncio
-
-            loop = asyncio.new_event_loop()
-            try:
-                result = loop.run_until_complete(
-                    markets_stats_service.get_company_profile(
-                        index_name="quaks_stocks-metadata_latest",
-                        key_ticker=ticker,
-                    )
-                )
-            finally:
-                loop.close()
+            result = markets_stats_service.get_company_profile(
+                index_name="quaks_stocks-metadata_latest",
+                key_ticker=ticker,
+            )
             return json.dumps(result, ensure_ascii=False, default=str)
 
         @tool("fetch_stats_close")
@@ -347,22 +429,14 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
             Returns:
                 JSON string with price stats.
             """
-            import asyncio
-
             end_date = datetime.now().strftime("%Y-%m-%d")
             start_date = (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
-            loop = asyncio.new_event_loop()
-            try:
-                result = loop.run_until_complete(
-                    markets_stats_service.get_stats_close(
-                        index_name="quaks_stocks-eod_latest",
-                        key_ticker=ticker,
-                        start_date=start_date,
-                        end_date=end_date,
-                    )
-                )
-            finally:
-                loop.close()
+            result = markets_stats_service.get_stats_close(
+                index_name="quaks_stocks-eod_latest",
+                key_ticker=ticker,
+                start_date=start_date,
+                end_date=end_date,
+            )
             return json.dumps(result, ensure_ascii=False, default=str)
 
         @tool("fetch_technical_indicators")
@@ -375,54 +449,41 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
             Returns:
                 JSON string with technical indicator values.
             """
-            import asyncio
-
             end_date = datetime.now().strftime("%Y-%m-%d")
             start_date = (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
-            loop = asyncio.new_event_loop()
-            try:
-                indicators = {}
-                indicators["rsi"] = loop.run_until_complete(
-                    markets_stats_service.get_indicator_rsi(
-                        index_name="quaks_stocks-eod_latest",
-                        key_ticker=ticker,
-                        start_date=start_date,
-                        end_date=end_date,
-                        period=14,
-                    )
-                )
-                indicators["macd"] = loop.run_until_complete(
-                    markets_stats_service.get_indicator_macd(
-                        index_name="quaks_stocks-eod_latest",
-                        key_ticker=ticker,
-                        start_date=start_date,
-                        end_date=end_date,
-                        short_window=12,
-                        long_window=26,
-                        signal_window=9,
-                    )
-                )
-                indicators["ema"] = loop.run_until_complete(
-                    markets_stats_service.get_indicator_ema(
-                        index_name="quaks_stocks-eod_latest",
-                        key_ticker=ticker,
-                        start_date=start_date,
-                        end_date=end_date,
-                        short_window=10,
-                        long_window=20,
-                    )
-                )
-                indicators["adx"] = loop.run_until_complete(
-                    markets_stats_service.get_indicator_adx(
-                        index_name="quaks_stocks-eod_latest",
-                        key_ticker=ticker,
-                        start_date=start_date,
-                        end_date=end_date,
-                        period=14,
-                    )
-                )
-            finally:
-                loop.close()
+            indicators = {
+                "rsi": markets_stats_service.get_indicator_rsi(
+                    index_name="quaks_stocks-eod_latest",
+                    key_ticker=ticker,
+                    start_date=start_date,
+                    end_date=end_date,
+                    period=14,
+                ),
+                "macd": markets_stats_service.get_indicator_macd(
+                    index_name="quaks_stocks-eod_latest",
+                    key_ticker=ticker,
+                    start_date=start_date,
+                    end_date=end_date,
+                    short_window=12,
+                    long_window=26,
+                    signal_window=9,
+                ),
+                "ema": markets_stats_service.get_indicator_ema(
+                    index_name="quaks_stocks-eod_latest",
+                    key_ticker=ticker,
+                    start_date=start_date,
+                    end_date=end_date,
+                    short_window=10,
+                    long_window=20,
+                ),
+                "adx": markets_stats_service.get_indicator_adx(
+                    index_name="quaks_stocks-eod_latest",
+                    key_ticker=ticker,
+                    start_date=start_date,
+                    end_date=end_date,
+                    period=14,
+                ),
+            }
             return json.dumps(indicators, ensure_ascii=False, default=str)
 
         return [fetch_company_profile, fetch_stats_close, fetch_technical_indicators, build_get_markets_news_tool(markets_news_service), self._build_xray_tool()]
@@ -453,64 +514,39 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
 
     def _compute_xray_data(self, tickers: list[str], allocation: dict = None) -> dict:
         """Compute X-Ray structured data from ticker metadata. Deterministic — no LLM."""
-        import asyncio
-
         profiles = {}
-        loop = asyncio.new_event_loop()
-        try:
-            for ticker in tickers:
-                profile = loop.run_until_complete(
-                    self.markets_stats_service.get_company_profile(
-                        index_name="quaks_stocks-metadata_latest",
-                        key_ticker=ticker,
-                    )
-                )
-                if profile:
-                    profiles[ticker] = profile
-        finally:
-            loop.close()
+        for ticker in tickers:
+            profile = self.markets_stats_service.get_company_profile(
+                index_name="quaks_stocks-metadata_latest",
+                key_ticker=ticker,
+            )
+            if profile:
+                profiles[ticker] = profile
 
         if not profiles:
             return {}
 
         n = len(profiles)
+        weights, has_allocation = self._compute_weights(profiles, allocation, n)
 
-        # Determine per-ticker weights
-        if allocation:
-            raw_wt = {t: allocation.get(t, 0) for t in profiles}
-            total = sum(raw_wt.values())
-            weights = {t: w * 100.0 / total for t, w in raw_wt.items()} if total > 0 else {t: 100.0 / n for t in profiles}
-            has_allocation = True
-        else:
-            weights = {t: 100.0 / n for t in profiles}
-            has_allocation = False
-
-        # Investment Style Box
-        # >$10B Large, >$2B Mid, else Small
-        # Forward P/E preferred; <18 Value, 18-25 Blend, >25 Growth; null → Blend
         style_grid = {(s, v): 0.0 for s in ("Large", "Mid", "Small") for v in ("Value", "Blend", "Growth")}
         for ticker, p in profiles.items():
             mc = p.get("market_capitalization") or 0
             pe = p.get("forward_pe") or p.get("pe_ratio") or 0
-            size = "Large" if mc > 10_000_000_000 else ("Mid" if mc > 2_000_000_000 else "Small")
-            style = ("Value" if pe < 18 else ("Blend" if pe <= 25 else "Growth")) if pe > 0 else "Blend"
-            style_grid[(size, style)] += weights[ticker]
+            style_grid[(_classify_size(mc), _classify_style(pe))] += weights[ticker]
 
-        # Stock Sectors
         sector_wt = {}
         for ticker, p in profiles.items():
             raw = p.get("sector") or "Not Classified"
             s = _normalize_sector(raw)
             sector_wt[s] = sector_wt.get(s, 0) + weights[ticker]
 
-        # World Regions
         subregion_wt = {}
         for ticker, p in profiles.items():
             c = p.get("country") or "Not Classified"
             _, sr = COUNTRY_REGION.get(c, ("Not Classified", "Not Classified"))
             subregion_wt[sr] = subregion_wt.get(sr, 0) + weights[ticker]
 
-        # Stock Stats (weighted averages)
         stat_keys = {
             "pe_ratio": "Trailing P/E",
             "forward_pe": "Forward P/E",
@@ -520,15 +556,7 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
             "dividend_yield": "Dividend Yield %",
             "beta": "Beta",
         }
-        avg_stats = {}
-        for key in stat_keys:
-            w_sum, w_total = 0.0, 0.0
-            for ticker, p in profiles.items():
-                val = p.get(key)
-                if val is not None and val > 0:
-                    w_sum += val * weights[ticker]
-                    w_total += weights[ticker]
-            avg_stats[key] = w_sum / w_total if w_total > 0 else 0
+        avg_stats = self._compute_avg_stats(profiles, weights, stat_keys)
 
         sorted_tickers = sorted(
             profiles.keys(),
@@ -547,6 +575,28 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
             "avg_stats": avg_stats,
             "sorted_tickers": sorted_tickers,
         }
+
+    @staticmethod
+    def _compute_weights(profiles, allocation, n):
+        if allocation:
+            raw_wt = {t: allocation.get(t, 0) for t in profiles}
+            total = sum(raw_wt.values())
+            weights = {t: w * 100.0 / total for t, w in raw_wt.items()} if total > 0 else {t: 100.0 / n for t in profiles}
+            return weights, True
+        return {t: 100.0 / n for t in profiles}, False
+
+    @staticmethod
+    def _compute_avg_stats(profiles, weights, stat_keys):
+        avg_stats = {}
+        for key in stat_keys:
+            w_sum, w_total = 0.0, 0.0
+            for ticker, p in profiles.items():
+                val = p.get(key)
+                if val is not None and val > 0:
+                    w_sum += val * weights[ticker]
+                    w_total += weights[ticker]
+            avg_stats[key] = w_sum / w_total if w_total > 0 else 0
+        return avg_stats
 
     @staticmethod
     def _format_xray_text(data: dict) -> str:
@@ -622,76 +672,17 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
         sorted_tickers = data["sorted_tickers"]
         n = len(profiles)
 
-        h = []
-        h.append("<h2>X-Ray Analysis</h2>")
+        h = ["<h2>X-Ray Analysis</h2>"]
         if has_allocation:
             h.append(f"<p>Weighted breakdown of {n} stocks based on recommended allocation.</p>")
         else:
             h.append(f"<p>Equal-weight breakdown of {n} stocks under analysis.</p>")
 
-        # Investment Style
-        h.append("<h3>Investment Style</h3>")
-        h.append("<table>")
-        h.append("<tr><th></th><th>Value</th><th>Blend</th><th>Growth</th></tr>")
-        for size in ("Large", "Mid", "Small"):
-            v, b, g = [f"{style_grid[(size, st)]:.0f}" for st in ("Value", "Blend", "Growth")]
-            h.append(f"<tr><td><b>{size}</b></td><td>{v}</td><td>{b}</td><td>{g}</td></tr>")
-        h.append("</table>")
-
-        # Stock Sectors
-        h.append("<h3>Stock Sectors</h3>")
-        h.append("<table>")
-        h.append("<tr><th>Sector</th><th>Weight %</th></tr>")
-        for supersector, sectors in SUPERSECTOR_SECTORS.items():
-            total = sum(sector_wt.get(s, 0) for s in sectors)
-            h.append(f"<tr><td><b>{supersector}</b></td><td><b>{total:.2f}</b></td></tr>")
-            for s in sectors:
-                w = sector_wt.get(s, 0)
-                if w > 0:
-                    h.append(f"<tr><td>&nbsp;&nbsp;{s}</td><td>{w:.2f}</td></tr>")
-        nc = sector_wt.get("Not Classified", 0)
-        if nc > 0:
-            h.append(f"<tr><td><b>Not Classified</b></td><td><b>{nc:.2f}</b></td></tr>")
-        h.append("</table>")
-
-        # World Regions
-        h.append("<h3>World Regions</h3>")
-        h.append("<table>")
-        h.append("<tr><th>Region</th><th>Weight %</th></tr>")
-        for region, subregions in REGION_SUBREGIONS.items():
-            total = sum(subregion_wt.get(sr, 0) for sr in subregions)
-            if total > 0:
-                h.append(f"<tr><td><b>{region}</b></td><td><b>{total:.2f}</b></td></tr>")
-                for sr in subregions:
-                    w = subregion_wt.get(sr, 0)
-                    if w > 0:
-                        h.append(f"<tr><td>&nbsp;&nbsp;{sr}</td><td>{w:.2f}</td></tr>")
-        nc = subregion_wt.get("Not Classified", 0)
-        if nc > 0:
-            h.append(f"<tr><td><b>Not Classified</b></td><td><b>{nc:.2f}</b></td></tr>")
-        h.append("</table>")
-
-        # Stock Stats
-        h.append("<h3>Stock Stats</h3>")
-        h.append("<table>")
-        h.append("<tr><th>Metric</th><th>Average</th></tr>")
-        for key, label in stat_keys.items():
-            val = f"{avg_stats[key]:.2f}" if avg_stats[key] > 0 else "-"
-            h.append(f"<tr><td>{label}</td><td>{val}</td></tr>")
-        h.append("</table>")
-
-        # Composition
-        h.append("<h3>Composition</h3>")
-        h.append("<table>")
-        h.append("<tr><th>Name</th><th>Ticker</th><th>Sector</th><th>Country</th><th>Weight %</th></tr>")
-        for ticker in sorted_tickers[:10]:
-            p = profiles[ticker]
-            h.append(
-                f"<tr><td>{p.get('name', ticker)}</td><td>({ticker})</td>"
-                f"<td>{p.get('sector', '-')}</td><td>{p.get('country', '-')}</td>"
-                f"<td>{weights[ticker]:.2f}</td></tr>"
-            )
-        h.append("</table>")
+        h.extend(_build_style_table(style_grid))
+        h.extend(_build_sector_table(sector_wt))
+        h.extend(_build_region_table(subregion_wt))
+        h.extend(_build_stats_table(stat_keys, avg_stats))
+        h.extend(_build_composition_table(sorted_tickers, profiles, weights))
 
         return "\n".join(h)
 

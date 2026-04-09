@@ -55,7 +55,7 @@ export class StocksHeatmaps implements OnDestroy {
   readonly mouseX = signal(0);
   readonly mouseY = signal(0);
   readonly heatmapDate = signal<string>('');
-  readonly hasPointer = this.isBrowser && typeof window.matchMedia === 'function' && window.matchMedia('(hover: hover)').matches;
+  readonly hasPointer = this.isBrowser && typeof globalThis.matchMedia === 'function' && globalThis.matchMedia('(hover: hover)').matches;
 
   readonly tooltipStyle = computed(() => {
     const x = this.mouseX();
@@ -168,7 +168,7 @@ export class StocksHeatmaps implements OnDestroy {
     if (this.isBrowser) {
       this.shareUrlService.update({
         title: `Stocks Heatmap - ${this.formatDate(this.heatmapDate())}`,
-        url: `${window.location.origin}/markets/stocks?date=${this.heatmapDate()}`,
+        url: `${globalThis.location.origin}/markets/stocks?date=${this.heatmapDate()}`,
       });
     }
   }

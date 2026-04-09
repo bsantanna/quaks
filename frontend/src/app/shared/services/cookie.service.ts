@@ -39,7 +39,7 @@ export class CookieService implements SharedStateService<CookieConsent> {
   }
 
   resetConsent(): void {
-    this.document.documentElement.removeAttribute('data-cookie-consent');
+    delete this.document.documentElement.dataset['cookieConsent'];
     this.state.set(CookieService.INITIAL_COOKIE_CONSENT);
   }
 
