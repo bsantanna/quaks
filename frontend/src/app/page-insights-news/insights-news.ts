@@ -136,11 +136,9 @@ export class InsightsNews {
   }
 
   private getTickerSet(): Set<string> {
-    if (!this.tickerSet) {
-      this.tickerSet = new Set(
-        this.tickerService.indexedKeyTickers().map(t => t.key_ticker)
-      );
-    }
+    this.tickerSet ??= new Set(
+      this.tickerService.indexedKeyTickers().map(t => t.key_ticker)
+    );
     return this.tickerSet;
   }
 
@@ -165,7 +163,7 @@ export class InsightsNews {
   }
 
   getShareUrl(item: InsightsNewsItem): string {
-    return `${window.location.origin}/insights/news/item/${this.indexName}/${item.id}`;
+    return `${globalThis.location.origin}/insights/news/item/${this.indexName}/${item.id}`;
   }
 
   share(platform: string, item: InsightsNewsItem): void {
@@ -195,7 +193,7 @@ export class InsightsNews {
         targetUrl = `https://reddit.com/submit?url=${urlEncoded}&title=${text}`;
         break;
       case 'email':
-        window.location.href = `mailto:?subject=Quaks&body=${text}%20${urlEncoded}`;
+        globalThis.location.href = `mailto:?subject=Quaks&body=${text}%20${urlEncoded}`;
         return;
       case 'copy':
         navigator.clipboard.writeText(url);
@@ -204,7 +202,7 @@ export class InsightsNews {
       default:
         return;
     }
-    window.open(targetUrl, '_blank');
+    globalThis.open(targetUrl, '_blank');
   }
 
   @HostListener('document:click', ['$event'])

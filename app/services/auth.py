@@ -4,6 +4,9 @@ from app.domain.exceptions.base import AuthenticationError
 from app.interface.api.auth.schema import AuthResponse, UserProfileResponse
 
 
+_TOKEN_NOT_FOUND = "Access token or refresh token not found in response"
+
+
 class AuthService:
     def __init__(
         self,
@@ -39,9 +42,7 @@ class AuthService:
             access_token = token_data.get("access_token")
             refresh_token = token_data.get("refresh_token")
             if not access_token or not refresh_token:
-                raise AuthenticationError(
-                    "Access token or refresh token not found in response"
-                )
+                raise AuthenticationError(_TOKEN_NOT_FOUND)
             return AuthResponse(access_token=access_token, refresh_token=refresh_token)
         except requests.exceptions.RequestException as exc:
             raise AuthenticationError(str(exc))
@@ -66,9 +67,7 @@ class AuthService:
             access_token = token_data.get("access_token")
             refresh_token = token_data.get("refresh_token")
             if not access_token or not refresh_token:
-                raise AuthenticationError(
-                    "Access token or refresh token not found in response"
-                )
+                raise AuthenticationError(_TOKEN_NOT_FOUND)
             return AuthResponse(
                 access_token=access_token, refresh_token=refresh_token
             )
@@ -91,9 +90,7 @@ class AuthService:
             new_access_token = token_data.get("access_token")
             new_refresh_token = token_data.get("refresh_token")
             if not new_access_token or not new_refresh_token:
-                raise AuthenticationError(
-                    "Access token or refresh token not found in response"
-                )
+                raise AuthenticationError(_TOKEN_NOT_FOUND)
             return AuthResponse(
                 access_token=new_access_token, refresh_token=new_refresh_token
             )

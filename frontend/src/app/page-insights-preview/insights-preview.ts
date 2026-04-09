@@ -48,7 +48,7 @@ export class InsightsPreview implements OnDestroy {
             const path = `/insights/preview/${docId}`;
             this.shareUrlService.update({
               title,
-              url: `${window.location.origin}${path}`,
+              url: `${globalThis.location.origin}${path}`,
             });
             this.seoService.update({title, path});
           }
@@ -125,8 +125,8 @@ export class InsightsPreview implements OnDestroy {
     }
 
     const cleanup = () => this.removePrintStyle();
-    window.addEventListener('afterprint', cleanup, {once: true});
-    window.print();
+    globalThis.addEventListener('afterprint', cleanup, {once: true});
+    globalThis.print();
   }
 
   private removePrintStyle(): void {
@@ -216,11 +216,9 @@ export class InsightsPreview implements OnDestroy {
   }
 
   private getTickerSet(): Set<string> {
-    if (!this.tickerSet) {
-      this.tickerSet = new Set(
-        this.tickerService.indexedKeyTickers().map(t => t.key_ticker)
-      );
-    }
+    this.tickerSet ??= new Set(
+      this.tickerService.indexedKeyTickers().map(t => t.key_ticker)
+    );
     return this.tickerSet;
   }
 
