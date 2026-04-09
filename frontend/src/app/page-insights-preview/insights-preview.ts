@@ -7,6 +7,14 @@ import {MarketsInsightsService} from '../shared/services/markets-insights.servic
 import {IndexedKeyTickerService} from '../shared/services/indexed-key-ticker.service';
 import {DateFormatService, ShareUrlService, SeoService} from '../shared';
 import {InsightsPreviewItem} from '../shared/models/markets.model';
+import {
+  applyInsightsAvatarFallback,
+  ensureInsightsPrintStyle,
+  formatInsightsDate,
+  getInsightsAgentAvatarSrc,
+  removeInsightsPrintStyle,
+  sanitizeInsightsReportHtml,
+} from '../shared/utils/content-format.utils';
 
 @Component({
   selector: 'app-insights-preview',
@@ -41,7 +49,7 @@ export class InsightsPreview implements OnDestroy {
         .pipe(take(1))
         .subscribe(result => {
           if (result) {
-            result.report_html = this.sanitizeHtml(result.report_html);
+            result.report_html = sanitizeInsightsReportHtml(result.report_html, this.getTickerSet());
             this.item.set(result);
 
             const title = result.executive_summary || 'Quaks Content Preview';
@@ -60,7 +68,7 @@ export class InsightsPreview implements OnDestroy {
   ngOnDestroy(): void {
     this.shareUrlService.update({title: '', url: ''});
     this.seoService.reset();
-    this.removePrintStyle();
+    removeInsightsPrintStyle(document);
   }
 
   cancelDocument(): void {
@@ -77,7 +85,7 @@ export class InsightsPreview implements OnDestroy {
             .pipe(take(1))
             .subscribe(result => {
               if (result) {
-                result.report_html = this.sanitizeHtml(result.report_html);
+                result.report_html = sanitizeInsightsReportHtml(result.report_html, this.getTickerSet());
                 this.item.set(result);
               }
               this.cancelling.set(false);
@@ -93,45 +101,10 @@ export class InsightsPreview implements OnDestroy {
   downloadPdf(): void {
     if (!this.isBrowser) return;
 
-    const styleId = 'quaks-print-style';
-    if (!document.getElementById(styleId)) {
-      const style = document.createElement('style');
-      style.id = styleId;
-      style.textContent = `
-        @media print {
-          app-navigation-header,
-          app-navigation-footer,
-          .print-hide { display: none !important; }
-          .print-cover { display: block !important; }
-          .print-cover-summary { display: none !important; }
-          .briefing-card { display: none !important; }
-          .briefing-report { border: none !important; }
-          @page {
-            margin: 2cm 1.5cm 2.5cm;
-            size: A4;
-          }
-          .print-logo {
-            display: block !important;
-            position: fixed;
-            bottom: 0;
-            right: 0;
-            width: 48px;
-            height: 48px;
-            opacity: 0.6;
-          }
-        }
-      `;
-      document.head.appendChild(style);
-    }
-
-    const cleanup = () => this.removePrintStyle();
+    ensureInsightsPrintStyle(document);
+    const cleanup = () => removeInsightsPrintStyle(document);
     globalThis.addEventListener('afterprint', cleanup, {once: true});
     globalThis.print();
-  }
-
-  private removePrintStyle(): void {
-    const style = document.getElementById('quaks-print-style');
-    if (style) style.remove();
   }
 
   statusLabel(status: string): string {
@@ -144,75 +117,15 @@ export class InsightsPreview implements OnDestroy {
   }
 
   agentAvatarSrc(skillName: string): string {
-    if (!skillName) return '/svg/insights-agent_base.svg';
-    const normalized = skillName.replace(/^\//, '').replaceAll('_', '-');
-    return `/svg/insights-agent_quaks-${normalized}.svg`;
+    return getInsightsAgentAvatarSrc(skillName);
   }
 
   onAvatarError(event: Event): void {
-    const img = event.target as HTMLImageElement;
-    if (!img.src.endsWith('insights-agent_base.svg')) {
-      img.src = '/svg/insights-agent_base.svg';
-    }
+    applyInsightsAvatarFallback(event.target as HTMLImageElement);
   }
 
   formatDate(dateStr: string): string {
-    if (!dateStr) return '--';
-    return this.dateFormatService.format(dateStr.substring(0, 10));
-  }
-
-  sanitizeHtml(html: string | null): string | null {
-    if (!html) return html;
-    let clean = html
-      .replaceAll(/<script[\s\S]*?<\/script>/gi, '')
-      .replaceAll(/<script[\s\S]*?\/>/gi, '')
-      .replaceAll(/\bon\w+\s*=\s*"[^"]*"/gi, '')
-      .replaceAll(/\bon\w+\s*=\s*'[^']*'/gi, '');
-
-    if (!/<(h[1-6]|p|div|ul|ol|table|section|article)\b/i.test(clean)) {
-      clean = this.structurePlainText(clean);
-    }
-
-    clean = this.linkifyTickers(clean);
-    return clean;
-  }
-
-  private structurePlainText(text: string): string {
-    const raw = text.replaceAll(/<br\s*\/?>/gi, '\n').replaceAll(/<[^>]+>/g, '');
-    const lines = raw.split(/\n/).map(l => l.trim()).filter(l => l.length > 0);
-    if (lines.length === 0) return '';
-
-    const parts: string[] = [];
-    parts.push(`<h2>${lines[0]}</h2>`);
-
-    let start = 1;
-    if (lines.length > 2 && lines[1].length < 200) {
-      parts.push(`<p class="report-lede"><em>${lines[1]}</em></p>`);
-      start = 2;
-    }
-
-    for (let i = start; i < lines.length; i++) {
-      const line = lines[i];
-      const isHeader = line.length < 100
-        && !line.endsWith('.')
-        && !line.endsWith(',')
-        && !line.endsWith(':')
-        && !/\d+%/.test(line)
-        && (
-          line === line.toUpperCase()
-          || /^[A-Z][^.]*[A-Z][^.]*$/.test(line)
-          || line.includes('—')
-          || line.includes(' — ')
-        );
-
-      if (isHeader) {
-        parts.push(`<h3>${line}</h3>`);
-      } else {
-        parts.push(`<p>${line}</p>`);
-      }
-    }
-
-    return parts.join('\n');
+    return formatInsightsDate(dateStr, value => this.dateFormatService.format(value));
   }
 
   private getTickerSet(): Set<string> {
@@ -220,20 +133,5 @@ export class InsightsPreview implements OnDestroy {
       this.tickerService.indexedKeyTickers().map(t => t.key_ticker)
     );
     return this.tickerSet;
-  }
-
-  private linkifyTickers(html: string): string {
-    const tickers = this.getTickerSet();
-    if (tickers.size === 0) return html;
-
-    return html.replaceAll(
-      /\(([A-Z]{1,5})\)/g,
-      (match, ticker) => {
-        if (tickers.has(ticker)) {
-          return `(<a href="/markets/stocks/${ticker}" class="ticker-link">${ticker}</a>)`;
-        }
-        return match;
-      }
-    );
   }
 }

@@ -12,6 +12,7 @@ from fastmcp.server.dependencies import get_access_token
 
 from app.core.container import Container
 from app.domain.exceptions.base import DuplicateEntryError
+from app.infrastructure.auth.user import get_schema
 from app.services.agent_types.quaks.insights.news.prompts import (
     AGGREGATOR_SYSTEM_PROMPT,
     COORDINATOR_SYSTEM_PROMPT,
@@ -172,6 +173,16 @@ def _build_auth(config: dict):
     )
 
 
+def _get_mcp_schema() -> str:
+    """Derive the tenant DB schema from the MCP access token."""
+    access_token = get_access_token()
+    if access_token is None:
+        return "public"
+    sub = access_token.claims.get("sub")
+    user_id = f"id_{sub}" if sub else None
+    return get_schema(user_id)
+
+
 def _register_tools(mcp: FastMCP, container: Container) -> None:
 
     @mcp.tool(
@@ -183,8 +194,9 @@ def _register_tools(mcp: FastMCP, container: Container) -> None:
         annotations={"readOnlyHint": True, "openWorldHint": False},
     )
     async def get_agent_list() -> list[AgentItem]:
+        schema = _get_mcp_schema()
         agent_service = container.agent_service()
-        agents = agent_service.get_agents("public")
+        agents = agent_service.get_agents(schema)
         return [
             AgentItem(
                 id=a.id,

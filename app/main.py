@@ -25,6 +25,7 @@ from app.interface.api.waitlist.endpoints import router as waitlist_router
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+
 def create_app():
     container = Container()
 
@@ -70,8 +71,6 @@ def setup_auth(container, application):
                 "/auth/renew(/|$)",
                 "/auth/exchange(/|$)",
                 "/auth/callback",
-                "/docs",
-                "/redoc",
                 "/openapi.json(/|$)",
                 "/status/",
                 "/markets/(?!insights/preview/.+/cancel)",
@@ -82,13 +81,16 @@ def setup_auth(container, application):
                 ".*\\.ico$",
                 ".*\\.svg$",
                 ".*\\.json$",
+                ".*\\.png$",
+                ".*\\.webmanifest$",
+                ".*\\.txt$",
                 "/insights/",
                 "/waitlist(/|$)",
                 "/terms(/|$)",
                 "/privacy(/|$)",
                 "/account/",
                 "^/$",
-                "/mcp(/.*)?$"
+                "/mcp(/.*)?$",
             ],
             user_mapper=map_user,
         )
@@ -129,7 +131,10 @@ def setup_resource_metadata(container: Container, application: FastAPI):
         "scopes_supported": ["openid", "profile", "email"],
         "response_types_supported": ["code"],
         "grant_types_supported": ["authorization_code", "refresh_token"],
-        "token_endpoint_auth_methods_supported": ["client_secret_post", "client_secret_basic"],
+        "token_endpoint_auth_methods_supported": [
+            "client_secret_post",
+            "client_secret_basic",
+        ],
         "code_challenge_methods_supported": ["S256"],
     }
 
@@ -218,9 +223,7 @@ def setup_spa_fallback(application: FastAPI):
         return response
 
     application.mount(
-        path="/",
-        app=StaticFiles(directory=static_dir, html=True),
-        name="angular"
+        path="/", app=StaticFiles(directory=static_dir, html=True), name="angular"
     )
 
 

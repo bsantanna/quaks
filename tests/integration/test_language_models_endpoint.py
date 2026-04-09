@@ -21,7 +21,7 @@ def create_integration(client) -> str:
         headers=auth_headers(),
         json={
             "integration_type": "ollama_api_v1",
-            "api_endpoint": "http://localhost:11434",
+            "api_endpoint": "http://localhost:21434",
             "api_key": "test-key",
         },
     )
@@ -122,9 +122,7 @@ class TestLanguageModelsCRUD:
         )
         assert response.status_code == 200
         settings = response.json()["lm_settings"]
-        setting = next(
-            (s for s in settings if s["setting_key"] == "embeddings"), None
-        )
+        setting = next((s for s in settings if s["setting_key"] == "embeddings"), None)
         assert setting is not None
         assert setting["setting_value"] == "nomic-embed-text"
 

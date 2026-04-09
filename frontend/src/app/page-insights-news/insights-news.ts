@@ -6,6 +6,13 @@ import {DateFormatService} from '../shared/services/date-format.service';
 import {FeedbackMessageService} from '../shared';
 import {InsightsNewsItem} from '../shared/models/markets.model';
 import {take} from 'rxjs';
+import {
+  applyInsightsAvatarFallback,
+  formatInsightsDate,
+  getInsightsAgentAvatarSrc,
+  sanitizeInsightsReportHtml,
+} from '../shared/utils/content-format.utils';
+import {buildShareAction, SharePlatform} from '../shared/utils/social-share.utils';
 
 @Component({
   selector: 'app-insights-news',
@@ -62,7 +69,7 @@ export class InsightsNews {
       .subscribe(result => {
         if (result.items.length > 0) {
           const fetched = result.items[0];
-          const sanitized = this.sanitizeHtml(fetched.report_html);
+          const sanitized = sanitizeInsightsReportHtml(fetched.report_html, this.getTickerSet());
           this.items.update(current =>
             current.map(i => i.id === item.id ? {...i, report_html: sanitized} : i)
           );
@@ -72,90 +79,11 @@ export class InsightsNews {
       });
   }
 
-  private sanitizeHtml(html: string | null): string | null {
-    if (!html) return html;
-    let clean = html
-      .replaceAll(/<script[\s\S]*?<\/script>/gi, '')
-      .replaceAll(/<script[\s\S]*?\/>/gi, '')
-      .replaceAll(/\bon\w+\s*=\s*"[^"]*"/gi, '')
-      .replaceAll(/\bon\w+\s*=\s*'[^']*'/gi, '');
-
-    // If content has no HTML block tags, it's plain text — add structure
-    if (!/<(h[1-6]|p|div|ul|ol|table|section|article)\b/i.test(clean)) {
-      clean = this.structurePlainText(clean);
-    }
-
-    clean = this.linkifyTickers(clean);
-
-    return clean;
-  }
-
-  private structurePlainText(text: string): string {
-    // Strip any stray tags, normalize line breaks
-    const raw = text.replaceAll(/<br\s*\/?>/gi, '\n').replaceAll(/<[^>]+>/g, '');
-    const lines = raw.split(/\n/).map(l => l.trim()).filter(l => l.length > 0);
-    if (lines.length === 0) return '';
-
-    const parts: string[] = [];
-
-    // First line is the title
-    parts.push(`<h2>${lines[0]}</h2>`);
-
-    // Second line is often a subtitle/lede if it's short
-    let start = 1;
-    if (lines.length > 2 && lines[1].length < 200) {
-      parts.push(`<p class="report-lede"><em>${lines[1]}</em></p>`);
-      start = 2;
-    }
-
-    // Group remaining lines into paragraphs
-    for (let i = start; i < lines.length; i++) {
-      const line = lines[i];
-      // Detect section headers: short lines (under 80 chars) that end without punctuation
-      // or lines that are ALL CAPS or Title-Like
-      const isHeader = line.length < 100
-        && !line.endsWith('.')
-        && !line.endsWith(',')
-        && !line.endsWith(':')
-        && !/\d+%/.test(line)
-        && (
-          line === line.toUpperCase()
-          || /^[A-Z][^.]*[A-Z][^.]*$/.test(line)
-          || line.includes('—')
-          || line.includes(' — ')
-        );
-
-      if (isHeader) {
-        parts.push(`<h3>${line}</h3>`);
-      } else {
-        parts.push(`<p>${line}</p>`);
-      }
-    }
-
-    return parts.join('\n');
-  }
-
   private getTickerSet(): Set<string> {
     this.tickerSet ??= new Set(
       this.tickerService.indexedKeyTickers().map(t => t.key_ticker)
     );
     return this.tickerSet;
-  }
-
-  private linkifyTickers(html: string): string {
-    const tickers = this.getTickerSet();
-    if (tickers.size === 0) return html;
-
-    // Match parenthesized uppercase symbols: (AAPL), (NVDA), (A)
-    return html.replaceAll(
-      /\(([A-Z]{1,5})\)/g,
-      (match, ticker) => {
-        if (tickers.has(ticker)) {
-          return `(<a href="/markets/stocks/${ticker}" class="ticker-link">${ticker}</a>)`;
-        }
-        return match;
-      }
-    );
   }
 
   toggleShare(itemId: string): void {
@@ -166,43 +94,26 @@ export class InsightsNews {
     return `${globalThis.location.origin}/insights/news/item/${this.indexName}/${item.id}`;
   }
 
-  share(platform: string, item: InsightsNewsItem): void {
+  share(platform: SharePlatform, item: InsightsNewsItem): void {
     this.shareOpenId.set(null);
-    const url = this.getShareUrl(item);
-    const urlEncoded = encodeURIComponent(url);
-    const text = encodeURIComponent(item.executive_summary || 'Quaks News Insight');
-    let targetUrl: string;
+    const action = buildShareAction(platform, {
+      url: this.getShareUrl(item),
+      title: item.executive_summary || 'Quaks News Insight',
+    });
+    if (!action) return;
 
-    switch (platform) {
-      case 'x':
-        targetUrl = `https://twitter.com/intent/tweet?url=${urlEncoded}&text=${text}`;
-        break;
-      case 'facebook':
-        targetUrl = `https://www.facebook.com/sharer.php?u=${urlEncoded}`;
-        break;
-      case 'whatsapp':
-        targetUrl = `https://api.whatsapp.com/send?text=${text}%20${urlEncoded}`;
-        break;
-      case 'threads':
-        targetUrl = `https://www.threads.net/intent/post?text=${text}&url=${urlEncoded}`;
-        break;
-      case 'linkedin':
-        targetUrl = `https://www.linkedin.com/shareArticle?url=${urlEncoded}&title=${text}`;
-        break;
-      case 'reddit':
-        targetUrl = `https://reddit.com/submit?url=${urlEncoded}&title=${text}`;
-        break;
-      case 'email':
-        globalThis.location.href = `mailto:?subject=Quaks&body=${text}%20${urlEncoded}`;
-        return;
-      case 'copy':
-        navigator.clipboard.writeText(url);
-        this.feedbackMessageService.update({message: 'Link copied', type: 'info', timeout: 3000});
-        return;
-      default:
-        return;
+    if (action.kind === 'clipboard') {
+      navigator.clipboard.writeText(action.text);
+      this.feedbackMessageService.update({message: 'Link copied', type: 'info', timeout: 3000});
+      return;
     }
-    globalThis.open(targetUrl, '_blank');
+
+    if (action.kind === 'redirect') {
+      globalThis.location.href = action.targetUrl;
+      return;
+    }
+
+    globalThis.open(action.targetUrl, '_blank');
   }
 
   @HostListener('document:click', ['$event'])
@@ -215,23 +126,15 @@ export class InsightsNews {
   }
 
   agentAvatarSrc(skillName?: string | null): string {
-    if (!skillName) return '/svg/insights-agent_base.svg';
-    const normalized = skillName.replace(/^\//, '').replaceAll('_', '-');
-    return `/svg/insights-agent_quaks-${normalized}.svg`;
+    return getInsightsAgentAvatarSrc(skillName);
   }
 
   onAvatarError(event: Event): void {
-    const img = event.target as HTMLImageElement;
-    if (!img.src.endsWith('insights-agent_base.svg')) {
-      img.src = '/svg/insights-agent_base.svg';
-    }
+    applyInsightsAvatarFallback(event.target as HTMLImageElement);
   }
 
   formatDate(dateStr: string): string {
-    if (!dateStr) return '--';
-    // Extract yyyy-mm-dd portion for DateFormatService
-    const datePart = dateStr.substring(0, 10);
-    return this.dateFormatService.format(datePart);
+    return formatInsightsDate(dateStr, value => this.dateFormatService.format(value));
   }
 
   formatTime(dateStr: string): string {

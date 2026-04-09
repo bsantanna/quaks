@@ -1,6 +1,6 @@
 <div class="news-list-container flex flex-col">
     @for (item of newsItems(); track item.id) {
-        <a [href]="`/markets/news/item/${indexName()}/${item.id}`" target="_blank"
+        <a [href]="`/markets/news/item/${indexName()}/${item.id}`" target="_blank" rel="noopener noreferrer"
            class="news-list-item flex flex-col md:flex-row gap-4 py-4 px-3 transition-colors group">
             <img [src]="item.images[1]?.url || item.images[0]?.url"
                  alt="{{item.headline}}"
