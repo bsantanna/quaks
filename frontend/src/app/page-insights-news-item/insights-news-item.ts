@@ -61,6 +61,51 @@ export class InsightsNewsItem implements OnDestroy {
   ngOnDestroy(): void {
     this.shareUrlService.update({title: '', url: ''});
     this.seoService.reset();
+    this.removePrintStyle();
+  }
+
+  downloadPdf(): void {
+    if (!this.isBrowser) return;
+
+    const styleId = 'quaks-print-style';
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement('style');
+      style.id = styleId;
+      style.textContent = `
+        @media print {
+          app-navigation-header,
+          app-navigation-footer,
+          .print-hide { display: none !important; }
+          .print-cover { display: block !important; }
+          .print-cover-summary { display: none !important; }
+          .briefing-card { display: none !important; }
+          .briefing-report { border: none !important; }
+          @page {
+            margin: 2cm 1.5cm 2.5cm;
+            size: A4;
+          }
+          .print-logo {
+            display: block !important;
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 48px;
+            height: 48px;
+            opacity: 0.6;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    const cleanup = () => this.removePrintStyle();
+    window.addEventListener('afterprint', cleanup, {once: true});
+    window.print();
+  }
+
+  private removePrintStyle(): void {
+    const style = document.getElementById('quaks-print-style');
+    if (style) style.remove();
   }
 
   formatDate(dateStr: string): string {

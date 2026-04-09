@@ -7,6 +7,15 @@
 } @else if (item(); as item) {
   <div class="container mx-auto sm:px-4 py-8 max-w-4xl">
 
+    <!-- Print-only cover header -->
+    <div class="print-cover">
+      <div class="print-cover-brand">QUAKS</div>
+      <div class="print-cover-title">Investor Briefing</div>
+      <div class="print-cover-meta">{{ formatDate(item.date) }}</div>
+      <div class="print-cover-summary">{{ item.executive_summary }}</div>
+      <hr class="print-cover-rule">
+    </div>
+
     <div class="briefing-card">
       <div class="briefing-card-top flex flex-col items-center">
         <img src="/svg/insights-agent_quaks-news-analyst.svg"
@@ -18,9 +27,18 @@
       <p class="briefing-summary-text text-lg mt-4">{{ item.executive_summary }}</p>
     </div>
 
+    <!-- Action toolbar -->
+    <div class="preview-actions print-hide">
+      <button class="btn-download" (click)="downloadPdf()">
+        Print / PDF
+      </button>
+    </div>
+
     @if (item.report_html) {
       <div class="briefing-report" [innerHTML]="item.report_html"></div>
     }
+
+    <img src="/logo.svg" alt="Quaks" class="print-logo hidden">
 
   </div>
 } @else {
