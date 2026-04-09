@@ -122,20 +122,21 @@ export function sanitizeMarketsNewsHtml(
 ): string {
   if (!htmlContent) return '';
 
-  const tempDiv = doc.createElement('div');
-  tempDiv.innerHTML = htmlContent;
+  const parser = new DOMParser();
+  const tempDoc = parser.parseFromString(htmlContent, 'text/html');
+  const root = tempDoc.body;
 
-  tempDiv.querySelectorAll('script, style, iframe, noscript, object, embed, form, input, button')
+  root.querySelectorAll('script, style, iframe, noscript, object, embed, form, input, button')
     .forEach(el => el.remove());
 
-  tempDiv.querySelectorAll('*').forEach(el => {
+  root.querySelectorAll('*').forEach(el => {
     for (const attr of Array.from(el.attributes)) {
       if (attr.name.startsWith('on') || attr.name === 'srcdoc') {
         el.removeAttribute(attr.name);
       }
     }
 
-    if (el.hasAttribute('href')) {
+    if (el instanceof HTMLAnchorElement && el.hasAttribute('href')) {
       const href = el.getAttribute('href') ?? '';
       if (href.trim().toLowerCase().startsWith('javascript:')) {
         el.removeAttribute('href');
@@ -143,9 +144,10 @@ export function sanitizeMarketsNewsHtml(
     }
   });
 
-  tempDiv.querySelectorAll('a[href]').forEach(el => {
-    const href = el.getAttribute('href') ?? '';
-    const text = (el.textContent ?? '').trim();
+  root.querySelectorAll('a[href]').forEach(el => {
+    const anchor = el as HTMLAnchorElement;
+    const href = anchor.getAttribute('href') ?? '';
+    const text = (anchor.textContent ?? '').trim();
     const hrefMatch = href.match(/\/quote\/([A-Z]+)$/);
     const tickerFromHref = hrefMatch ? hrefMatch[1] : '';
     const ticker = tickers.has(tickerFromHref) ? tickerFromHref
@@ -153,9 +155,9 @@ export function sanitizeMarketsNewsHtml(
       : '';
 
     if (ticker) {
-      el.setAttribute('href', `/markets/stocks/${ticker}`);
+      anchor.setAttribute('href', `/markets/stocks/${ticker}`);
     }
   });
 
-  return tempDiv.innerHTML;
+  return root.innerHTML;
 }

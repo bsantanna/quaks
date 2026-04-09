@@ -29,7 +29,7 @@ async def test_news_analyst_daily_briefing(client):
 
     result = await scenario.run(
         name="Simulation: Quaks News Analyst daily briefing",
-        description="Generate a daily investor briefing from latest market news",
+        description="Generate a investor briefing from market news available",
         agents=[
             NewsAnalystAgent(),
             scenario.UserSimulatorAgent(),
@@ -46,7 +46,7 @@ async def test_news_analyst_daily_briefing(client):
             ),
         ],
         script=[
-            scenario.user("Give me today's market news briefing."),
+            scenario.user("Give market news briefing from news you have available."),
             scenario.agent(),
             scenario.judge(),
         ],
@@ -146,7 +146,9 @@ def news_analyst_agent(client, message_content) -> scenario.AgentReturnTypes:
 
 
 @scenario.cache()
-def news_analyst_agent_full_response(client, message_content) -> scenario.AgentReturnTypes:
+def news_analyst_agent_full_response(
+    client, message_content
+) -> scenario.AgentReturnTypes:
     agent_id = _setup_agent(client)
 
     response = client.post(
@@ -163,10 +165,7 @@ def news_analyst_agent_full_response(client, message_content) -> scenario.AgentR
     executive_summary = response_data.get("executive_summary", "")
     report_html = response_data.get("report_html", "")
 
-    return (
-        f"executive_summary: {executive_summary}\n\n"
-        f"report_html: {report_html}"
-    )
+    return f"executive_summary: {executive_summary}\n\n" f"report_html: {report_html}"
 
 
 def _setup_agent(client):

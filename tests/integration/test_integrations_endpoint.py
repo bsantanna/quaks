@@ -29,7 +29,7 @@ class TestIntegrationsCRUD:
             headers=auth_headers(),
             json={
                 "integration_type": "ollama_api_v1",
-                "api_endpoint": "http://localhost:11434",
+                "api_endpoint": "http://localhost:21434",
                 "api_key": "test-key",
             },
         )
@@ -68,7 +68,7 @@ class TestIntegrationsCRUD:
             headers=auth_headers(),
             json={
                 "integration_type": "invalid_type",
-                "api_endpoint": "http://localhost:11434",
+                "api_endpoint": "http://localhost:21434",
                 "api_key": "test-key",
             },
         )
