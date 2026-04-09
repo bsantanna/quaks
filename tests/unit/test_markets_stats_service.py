@@ -38,13 +38,12 @@ def _make_stats(close=150.0, open_=148.0, high=152.0, low=147.0, volume=1000000.
 
 
 class TestGetStatsClose:
-    @pytest.mark.asyncio
-    async def test_calls_template_with_correct_params(self, service, mock_es):
+    def test_calls_template_with_correct_params(self, service, mock_es):
         mock_es.search_template.return_value = {
             "aggregations": {"recent_stats": {"value": _make_stats()}}
         }
 
-        await service.get_stats_close(
+        service.get_stats_close(
             index_name="stocks-eod",
             key_ticker="AAPL",
             start_date="2026-01-01",
@@ -56,14 +55,13 @@ class TestGetStatsClose:
         assert params["date_gte"] == "2026-01-01"
         assert params["date_lte"] == "2026-03-05"
 
-    @pytest.mark.asyncio
-    async def test_returns_stats_value(self, service, mock_es):
+    def test_returns_stats_value(self, service, mock_es):
         expected = _make_stats()
         mock_es.search_template.return_value = {
             "aggregations": {"recent_stats": {"value": expected}}
         }
 
-        result = await service.get_stats_close(
+        result = service.get_stats_close(
             index_name="stocks-eod",
             key_ticker="AAPL",
             start_date="2026-01-01",
@@ -74,13 +72,12 @@ class TestGetStatsClose:
 
 
 class TestGetStatsCloseBulk:
-    @pytest.mark.asyncio
-    async def test_calls_template_with_correct_params(self, service, mock_es):
+    def test_calls_template_with_correct_params(self, service, mock_es):
         mock_es.search_template.return_value = {
             "aggregations": {"by_ticker": {"buckets": []}}
         }
 
-        await service.get_stats_close_bulk(
+        service.get_stats_close_bulk(
             index_name="stocks-eod",
             key_tickers=["AAPL", "MSFT"],
             start_date="2026-02-27",
@@ -93,8 +90,7 @@ class TestGetStatsCloseBulk:
         assert params["date_lte"] == "2026-03-06"
         assert params["size"] == 2
 
-    @pytest.mark.asyncio
-    async def test_returns_results_with_ticker_key(self, service, mock_es):
+    def test_returns_results_with_ticker_key(self, service, mock_es):
         mock_es.search_template.return_value = {
             "aggregations": {
                 "by_ticker": {
@@ -106,7 +102,7 @@ class TestGetStatsCloseBulk:
             }
         }
 
-        results = await service.get_stats_close_bulk(
+        results = service.get_stats_close_bulk(
             index_name="stocks-eod",
             key_tickers=["AAPL", "MSFT"],
             start_date="2026-02-27",
@@ -120,8 +116,7 @@ class TestGetStatsCloseBulk:
         assert results[1]["key_ticker"] == "MSFT"
         assert results[1]["percent_variance"] == -0.5
 
-    @pytest.mark.asyncio
-    async def test_skips_buckets_with_null_stats(self, service, mock_es):
+    def test_skips_buckets_with_null_stats(self, service, mock_es):
         mock_es.search_template.return_value = {
             "aggregations": {
                 "by_ticker": {
@@ -133,7 +128,7 @@ class TestGetStatsCloseBulk:
             }
         }
 
-        results = await service.get_stats_close_bulk(
+        results = service.get_stats_close_bulk(
             index_name="stocks-eod",
             key_tickers=["AAPL", "BADTICKER"],
             start_date="2026-02-27",
@@ -143,13 +138,12 @@ class TestGetStatsCloseBulk:
         assert len(results) == 1
         assert results[0]["key_ticker"] == "AAPL"
 
-    @pytest.mark.asyncio
-    async def test_empty_tickers_returns_empty(self, service, mock_es):
+    def test_empty_tickers_returns_empty(self, service, mock_es):
         mock_es.search_template.return_value = {
             "aggregations": {"by_ticker": {"buckets": []}}
         }
 
-        results = await service.get_stats_close_bulk(
+        results = service.get_stats_close_bulk(
             index_name="stocks-eod",
             key_tickers=[],
             start_date="2026-02-27",
@@ -158,13 +152,12 @@ class TestGetStatsCloseBulk:
 
         assert results == []
 
-    @pytest.mark.asyncio
-    async def test_queries_correct_index(self, service, mock_es):
+    def test_queries_correct_index(self, service, mock_es):
         mock_es.search_template.return_value = {
             "aggregations": {"by_ticker": {"buckets": []}}
         }
 
-        await service.get_stats_close_bulk(
+        service.get_stats_close_bulk(
             index_name="stocks-eod",
             key_tickers=["AAPL"],
             start_date="2026-02-27",
@@ -187,13 +180,12 @@ def _make_market_cap_bucket(ticker, market_cap):
 
 
 class TestGetMarketCapsBulk:
-    @pytest.mark.asyncio
-    async def test_calls_template_with_correct_params(self, service, mock_es):
+    def test_calls_template_with_correct_params(self, service, mock_es):
         mock_es.search_template.return_value = {
             "aggregations": {"by_ticker": {"buckets": []}}
         }
 
-        await service.get_market_caps_bulk(
+        service.get_market_caps_bulk(
             index_name="quaks_stocks-metadata_latest",
             key_tickers=["AAPL", "MSFT"],
         )
@@ -202,8 +194,7 @@ class TestGetMarketCapsBulk:
         assert params["key_tickers"] == ["AAPL", "MSFT"]
         assert params["size"] == 2
 
-    @pytest.mark.asyncio
-    async def test_returns_market_caps(self, service, mock_es):
+    def test_returns_market_caps(self, service, mock_es):
         mock_es.search_template.return_value = {
             "aggregations": {
                 "by_ticker": {
@@ -215,7 +206,7 @@ class TestGetMarketCapsBulk:
             }
         }
 
-        results = await service.get_market_caps_bulk(
+        results = service.get_market_caps_bulk(
             index_name="quaks_stocks-metadata_latest",
             key_tickers=["AAPL", "MSFT"],
         )
@@ -226,8 +217,7 @@ class TestGetMarketCapsBulk:
         assert results[1]["key_ticker"] == "MSFT"
         assert results[1]["market_capitalization"] == 2800000000000
 
-    @pytest.mark.asyncio
-    async def test_skips_tickers_with_no_hits(self, service, mock_es):
+    def test_skips_tickers_with_no_hits(self, service, mock_es):
         mock_es.search_template.return_value = {
             "aggregations": {
                 "by_ticker": {
@@ -239,7 +229,7 @@ class TestGetMarketCapsBulk:
             }
         }
 
-        results = await service.get_market_caps_bulk(
+        results = service.get_market_caps_bulk(
             index_name="quaks_stocks-metadata_latest",
             key_tickers=["AAPL", "UNKNOWN"],
         )
@@ -247,13 +237,12 @@ class TestGetMarketCapsBulk:
         assert len(results) == 1
         assert results[0]["key_ticker"] == "AAPL"
 
-    @pytest.mark.asyncio
-    async def test_empty_tickers_returns_empty(self, service, mock_es):
+    def test_empty_tickers_returns_empty(self, service, mock_es):
         mock_es.search_template.return_value = {
             "aggregations": {"by_ticker": {"buckets": []}}
         }
 
-        results = await service.get_market_caps_bulk(
+        results = service.get_market_caps_bulk(
             index_name="quaks_stocks-metadata_latest",
             key_tickers=[],
         )

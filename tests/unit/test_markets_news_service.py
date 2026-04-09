@@ -39,11 +39,10 @@ def _extract_template_params(mock_es):
 
 
 class TestGetNewsParams:
-    @pytest.mark.asyncio
-    async def test_match_all_when_no_key_ticker_no_search_term(self, service, mock_es):
+    def test_match_all_when_no_key_ticker_no_search_term(self, service, mock_es):
         mock_es.search_template.return_value = {"hits": {"hits": []}}
 
-        await service.get_news(index_name="test-index", size=5)
+        service.get_news(index_name="test-index", size=5)
 
         params = _extract_template_params(mock_es)
         assert "key_ticker" not in params
@@ -51,31 +50,28 @@ class TestGetNewsParams:
         assert "id" not in params
         assert params["size"] == 5
 
-    @pytest.mark.asyncio
-    async def test_key_ticker_included_when_provided(self, service, mock_es):
+    def test_key_ticker_included_when_provided(self, service, mock_es):
         mock_es.search_template.return_value = {"hits": {"hits": []}}
 
-        await service.get_news(index_name="test-index", key_ticker="AAPL")
+        service.get_news(index_name="test-index", key_ticker="AAPL")
 
         params = _extract_template_params(mock_es)
         assert params["key_ticker"] == "AAPL"
         assert "search_term" not in params
 
-    @pytest.mark.asyncio
-    async def test_search_term_included_when_no_key_ticker(self, service, mock_es):
+    def test_search_term_included_when_no_key_ticker(self, service, mock_es):
         mock_es.search_template.return_value = {"hits": {"hits": []}}
 
-        await service.get_news(index_name="test-index", search_term="Bezos")
+        service.get_news(index_name="test-index", search_term="Bezos")
 
         params = _extract_template_params(mock_es)
         assert "key_ticker" not in params
         assert params["search_term"] == "Bezos"
 
-    @pytest.mark.asyncio
-    async def test_key_ticker_takes_precedence_over_search_term(self, service, mock_es):
+    def test_key_ticker_takes_precedence_over_search_term(self, service, mock_es):
         mock_es.search_template.return_value = {"hits": {"hits": []}}
 
-        await service.get_news(
+        service.get_news(
             index_name="test-index", key_ticker="AAPL", search_term="Bezos"
         )
 
@@ -83,39 +79,35 @@ class TestGetNewsParams:
         assert params["key_ticker"] == "AAPL"
         assert "search_term" not in params
 
-    @pytest.mark.asyncio
-    async def test_id_included_when_provided(self, service, mock_es):
+    def test_id_included_when_provided(self, service, mock_es):
         mock_es.search_template.return_value = {"hits": {"hits": []}}
 
-        await service.get_news(index_name="test-index", id="doc-123")
+        service.get_news(index_name="test-index", id="doc-123")
 
         params = _extract_template_params(mock_es)
         assert params["id"] == "doc-123"
 
-    @pytest.mark.asyncio
-    async def test_cursor_decoded_into_search_after(self, service, mock_es):
+    def test_cursor_decoded_into_search_after(self, service, mock_es):
         mock_es.search_template.return_value = {"hits": {"hits": []}}
         cursor = _make_cursor(1704067200000)
 
-        await service.get_news(index_name="test-index", cursor=cursor)
+        service.get_news(index_name="test-index", cursor=cursor)
 
         params = _extract_template_params(mock_es)
         assert params["search_after"] == [1704067200000]
 
-    @pytest.mark.asyncio
-    async def test_no_search_after_when_cursor_is_none(self, service, mock_es):
+    def test_no_search_after_when_cursor_is_none(self, service, mock_es):
         mock_es.search_template.return_value = {"hits": {"hits": []}}
 
-        await service.get_news(index_name="test-index")
+        service.get_news(index_name="test-index")
 
         params = _extract_template_params(mock_es)
         assert "search_after" not in params
 
-    @pytest.mark.asyncio
-    async def test_include_flags_passed_through(self, service, mock_es):
+    def test_include_flags_passed_through(self, service, mock_es):
         mock_es.search_template.return_value = {"hits": {"hits": []}}
 
-        await service.get_news(
+        service.get_news(
             index_name="test-index",
             include_text_content=True,
             include_key_ticker=True,
@@ -129,13 +121,12 @@ class TestGetNewsParams:
 
 
 class TestGetNewsResults:
-    @pytest.mark.asyncio
-    async def test_returns_hits_and_cursor(self, service, mock_es):
+    def test_returns_hits_and_cursor(self, service, mock_es):
         hit1 = _make_hit("1", 1704067200000)
         hit2 = _make_hit("2", 1704153600000)
         mock_es.search_template.return_value = {"hits": {"hits": [hit1, hit2]}}
 
-        results, last_sort = await service.get_news(index_name="test-index")
+        results, last_sort = service.get_news(index_name="test-index")
 
         assert len(results) == 2
         assert results[0]["_id"] == "1"
@@ -145,11 +136,10 @@ class TestGetNewsResults:
         ).decode()
         assert last_sort == expected_cursor
 
-    @pytest.mark.asyncio
-    async def test_returns_none_cursor_when_no_hits(self, service, mock_es):
+    def test_returns_none_cursor_when_no_hits(self, service, mock_es):
         mock_es.search_template.return_value = {"hits": {"hits": []}}
 
-        results, last_sort = await service.get_news(index_name="test-index")
+        results, last_sort = service.get_news(index_name="test-index")
 
         assert results == []
         assert last_sort is None
