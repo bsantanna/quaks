@@ -2,6 +2,32 @@
 
 <!-- version list -->
 
+## v1.5.12 (2026-04-09)
+
+### Bug Fixes
+
+- Publish content mcp tool (10) ([#110](https://github.com/bsantanna/quaks/pull/110),
+  [`b64cdcf`](https://github.com/bsantanna/quaks/commit/b64cdcf5cabdc6c879f6ec0a3a0bb2154377cbd6))
+
+- Publish content mcp tool (9) ([#110](https://github.com/bsantanna/quaks/pull/110),
+  [`b64cdcf`](https://github.com/bsantanna/quaks/commit/b64cdcf5cabdc6c879f6ec0a3a0bb2154377cbd6))
+
+- Tech debt attack (1) ([#110](https://github.com/bsantanna/quaks/pull/110),
+  [`b64cdcf`](https://github.com/bsantanna/quaks/commit/b64cdcf5cabdc6c879f6ec0a3a0bb2154377cbd6))
+
+- Tech debt attack (2) ([#110](https://github.com/bsantanna/quaks/pull/110),
+  [`b64cdcf`](https://github.com/bsantanna/quaks/commit/b64cdcf5cabdc6c879f6ec0a3a0bb2154377cbd6))
+
+- Tech debt attack (3) ([#110](https://github.com/bsantanna/quaks/pull/110),
+  [`b64cdcf`](https://github.com/bsantanna/quaks/commit/b64cdcf5cabdc6c879f6ec0a3a0bb2154377cbd6))
+
+- Tech debt attack (4) ([#110](https://github.com/bsantanna/quaks/pull/110),
+  [`b64cdcf`](https://github.com/bsantanna/quaks/commit/b64cdcf5cabdc6c879f6ec0a3a0bb2154377cbd6))
+
+- Tech debt attack (5) ([#110](https://github.com/bsantanna/quaks/pull/110),
+  [`b64cdcf`](https://github.com/bsantanna/quaks/commit/b64cdcf5cabdc6c879f6ec0a3a0bb2154377cbd6))
+
+
 ## v1.5.11 (2026-04-08)
 
 ### Bug Fixes
