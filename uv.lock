@@ -7969,7 +7969,7 @@ test = [
     { name = "testcontainers", extras = ["elasticsearch"], specifier = "~=4.14.1" },
     { name = "testcontainers", extras = ["keycloak"], specifier = "~=4.14.1" },
     { name = "testcontainers", extras = ["ollama"], specifier = "~=4.14.1" },
-    { name = "testcontainers", extras = ["postgres"], specifier = "~=4.14.1" },
+    { name = "testcontainers", extras = ["postgres"], specifier = "~=4.14.2" },
     { name = "testcontainers", extras = ["redis"], specifier = "~=4.14.1" },
     { name = "testcontainers", extras = ["vault"], specifier = "~=4.14.1" },
 ]
