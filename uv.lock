@@ -2694,7 +2694,7 @@ wheels = [
 
 [[package]]
 name = "langwatch-scenario"
-version = "0.7.22"
+version = "0.7.23"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
@@ -2716,9 +2716,9 @@ dependencies = [
     { name = "termcolor" },
     { name = "wrapt" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/6c/13/467b86618870b4a83fd6e3894185f0483aff554ab4650eb2ebfa5c18b155/langwatch_scenario-0.7.22.tar.gz", hash = "sha256:991b4eb1f303e16963722df15a7864301fbf9c645f6d18480c35605fb17c8f4e", size = 185556, upload-time = "2026-03-22T23:58:27.295Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/27/21/41cdf158605ebaaa4609b7f64f4ce538d0b7772b430b841a86c11fed784c/langwatch_scenario-0.7.23.tar.gz", hash = "sha256:da75fcda72fd51708b964d88e9eb53ee3507ab277cf131e8297cb66a9f169364", size = 197809, upload-time = "2026-04-10T11:12:53.83Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f1/4d/ce0294062b0973c9fd967733554a8bb4e11c2226dd336554e26e617d4c58/langwatch_scenario-0.7.22-py3-none-any.whl", hash = "sha256:a9802304b2692778266270cd9974de0afbbbba84a72afc4f7b6f66c4f6ec90ef", size = 316445, upload-time = "2026-03-22T23:58:25.865Z" },
+    { url = "https://files.pythonhosted.org/packages/f6/5b/2ebc92f32d06a859144525a9eacd820e54a1284473587e24fb2c409ff3c3/langwatch_scenario-0.7.23-py3-none-any.whl", hash = "sha256:b38dd3ad2c90d08d26639e9294814636c49bc1fd70e0f64f6726c62109e0562e", size = 318323, upload-time = "2026-04-10T11:12:52.359Z" },
 ]
 
 [[package]]
@@ -7920,7 +7920,7 @@ requires-dist = [
     { name = "langgraph-checkpoint-postgres", specifier = "~=3.0.4" },
     { name = "langgraph-prebuilt", specifier = "~=1.0.8" },
     { name = "langwatch", specifier = "~=0.16.0" },
-    { name = "langwatch-scenario", specifier = "~=0.7.15" },
+    { name = "langwatch-scenario", specifier = "~=0.7.23" },
     { name = "litellm", specifier = "==1.83.0" },
     { name = "markitdown", extras = ["all"], specifier = "~=0.1.5" },
     { name = "msal", specifier = "~=1.35.1" },
