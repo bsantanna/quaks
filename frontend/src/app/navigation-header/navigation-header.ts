@@ -36,7 +36,7 @@ export class NavigationHeader implements AfterViewInit, OnDestroy {
         let route = this.router.routerState.root;
         while (route.firstChild) route = route.firstChild!;
         return {
-          path: route.snapshot.url.join('/') || '',
+          path: this.router.url,
           title: (route.snapshot.title as string) || '',
         };
       })
