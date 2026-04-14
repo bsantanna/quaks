@@ -1,0 +1,44 @@
+.login-required-img {
+  width: 160px;
+  height: auto;
+  margin-bottom: 1.5rem;
+  opacity: 0.85;
+}
+
+.login-required-title {
+  color: var(--text-primary);
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.login-required-notice {
+  color: var(--text-muted);
+  font-family: var(--font-data);
+  font-size: 0.8125rem;
+  text-align: center;
+  max-width: 280px;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+.login-required-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 24px;
+  font-family: var(--font-data);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-accent);
+  }
+}
