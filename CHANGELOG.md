@@ -2,6 +2,20 @@
 
 <!-- version list -->
 
+## v1.5.14 (2026-04-14)
+
+### Bug Fixes
+
+- Mcp multi teancy (2) ([#117](https://github.com/bsantanna/quaks/pull/117),
+  [`d0c5deb`](https://github.com/bsantanna/quaks/commit/d0c5deb6b1c1791d1697f44af0442c4fba060c8c))
+
+- Mcp resource registration ([#117](https://github.com/bsantanna/quaks/pull/117),
+  [`d0c5deb`](https://github.com/bsantanna/quaks/commit/d0c5deb6b1c1791d1697f44af0442c4fba060c8c))
+
+- Mcp resource registry (1) ([#117](https://github.com/bsantanna/quaks/pull/117),
+  [`d0c5deb`](https://github.com/bsantanna/quaks/commit/d0c5deb6b1c1791d1697f44af0442c4fba060c8c))
+
+
 ## v1.5.13 (2026-04-09)
 
 ### Bug Fixes
