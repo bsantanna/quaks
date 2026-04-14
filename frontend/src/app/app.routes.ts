@@ -8,6 +8,7 @@ import {MarketsStocks} from './page-markets-stocks';
 import {MarketsNews} from './page-markets-news';
 import {MarketsProfile} from './page-markets-profile/markets-profile';
 import {InsightsAgents} from './page-insights-agents/insights-agents';
+import {InsightsAgentsPersonal} from './page-insights-personal/insights-agents-personal';
 import {InsightsProfile} from './page-insights-profile/insights-profile';
 import {InsightsNews} from './page-insights-news/insights-news';
 import {InsightsNewsItem} from './page-insights-news-item/insights-news-item';
@@ -40,6 +41,11 @@ export const routes: Routes = [
         title: 'Insights Agents',
         path: 'agents',
         component: InsightsAgents
+      },
+      {
+        title: 'Setup Personal Agent',
+        path: 'agents/personal/:agentType',
+        component: InsightsAgentsPersonal
       },
       {
         title: 'Insights Agent Profile',

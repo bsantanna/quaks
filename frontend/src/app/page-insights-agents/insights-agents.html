@@ -6,16 +6,13 @@
     </div>
 
     <div class="agents-grid">
-        <a href="/insights/profile/quaks-news-analyst" class="agent-card">
-            <img src="/svg/insights-agent_quaks-news-analyst.svg" alt="Quaks News Analyst" class="agent-avatar" />
-            <span class="agent-name">Quaks News Analyst</span>
-            <span class="agent-role">AI Market News Analyst</span>
-        </a>
-        <a href="/insights/profile/quaks-financial-analyst-v1" class="agent-card">
-            <img src="/svg/insights-agent_quaks-financial-analyst-v1.svg" alt="Quaks Financial Analyst v1" class="agent-avatar" />
-            <span class="agent-name">Quaks Financial Analyst v1</span>
-            <span class="agent-role">AI Financial Research Analyst</span>
-        </a>
+        @for (agent of agents(); track agent.type) {
+            <a [href]="'/insights/profile/' + agentSlug(agent)" class="agent-card">
+                <img [src]="agent.avatar" [alt]="agent.name" class="agent-avatar" />
+                <span class="agent-name">{{ agent.name }}</span>
+                <span class="agent-role">{{ agent.role }}</span>
+            </a>
+        }
     </div>
 
 </div>
