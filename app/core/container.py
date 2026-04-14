@@ -16,10 +16,14 @@ from app.infrastructure.database.checkpoints import GraphPersistenceFactory
 from app.infrastructure.database.sql import Database
 from app.infrastructure.database.vectors import DocumentRepository
 from app.infrastructure.metrics.tracer import Tracer
+from app.interface.mcp.default_tool_registrar import DefaultToolRegistrar
+from app.interface.mcp.news_tool_registrar import NewsToolRegistrar
 from app.services.agent_settings import AgentSettingService
 from app.services.agent_types.base import AgentUtils
 from app.services.agent_types.registry import AgentRegistry
-from app.services.agent_types.quaks.insights.financial_analyst.v1.agent import QuaksFinancialAnalystV1Agent
+from app.services.agent_types.quaks.insights.financial_analyst.v1.agent import (
+    QuaksFinancialAnalystV1Agent,
+)
 from app.services.agent_types.quaks.insights.news.agent import QuaksNewsAnalystAgent
 from app.services.agent_types.test_echo.test_echo_agent import TestEchoAgent
 from app.services.agents import AgentService
@@ -79,7 +83,9 @@ class Container(containers.DeclarativeContainer):
         config.set("auth.url", app_secrets["data"]["data"]["auth_url"])
         config.set("auth.realm", app_secrets["data"]["data"]["auth_realm"])
         config.set("auth.client_id", app_secrets["data"]["data"]["auth_client_id"])
-        config.set("auth.client_secret", app_secrets["data"]["data"]["auth_client_secret"])
+        config.set(
+            "auth.client_secret", app_secrets["data"]["data"]["auth_client_secret"]
+        )
         config.set("cdp_url", app_secrets["data"]["data"]["cdp_url"])
         config.set("vault.url", vault_url)
         config.set("vault.token", vault_token)
@@ -90,8 +96,12 @@ class Container(containers.DeclarativeContainer):
 
         # dependencies environment variables
         os.environ["TAVILY_API_KEY"] = app_secrets["data"]["data"]["tavily_api_key"]
-        os.environ["ELASTICSEARCH_URL"] = app_secrets["data"]["data"]["elasticsearch_url"]
-        os.environ["ELASTICSEARCH_API_KEY"] = app_secrets["data"]["data"]["elasticsearch_api_key"]
+        os.environ["ELASTICSEARCH_URL"] = app_secrets["data"]["data"][
+            "elasticsearch_url"
+        ]
+        os.environ["ELASTICSEARCH_API_KEY"] = app_secrets["data"]["data"][
+            "elasticsearch_api_key"
+        ]
 
     db = providers.Singleton(Database, db_url=config.db.url)
 
@@ -261,5 +271,10 @@ class Container(containers.DeclarativeContainer):
         quaks_news_analyst_agent=quaks_news_analyst_agent,
         quaks_financial_analyst_v1_agent=quaks_financial_analyst_v1_agent,
     )
+
+    default_tool_registrar = providers.Singleton(DefaultToolRegistrar)
+    news_tool_registrar = providers.Singleton(NewsToolRegistrar)
+
+    mcp_registrars = providers.List(default_tool_registrar, news_tool_registrar)
 
     tracer = providers.Singleton(Tracer)

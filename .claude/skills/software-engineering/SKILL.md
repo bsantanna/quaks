@@ -48,6 +48,16 @@ API keys and endpoints are stored in Vault under `integration_{id}` and retrieve
 4. Agent builds a LangGraph workflow, invokes it with PostgreSQL checkpointing
 5. Progress updates publish to Redis; final result returns as JSON
 
+### Multitenancy
+
+The app uses PostgreSQL schema-per-user isolation. Each authenticated user gets a dedicated schema derived from their Keycloak `sub` claim.
+
+- **Schema derivation**: `get_schema(user_id)` in `app/infrastructure/auth/user.py` is the single source of truth. It takes a prefixed user ID (`"id_<uuid>"`) and replaces hyphens with underscores to produce a valid PostgreSQL schema name. Returns `"public"` when `user_id` is `None` (auth disabled).
+- **FastAPI endpoints**: Use `get_schema(user.id if user is not None else None)` where `user` comes from `Depends(get_user)` (Keycloak middleware).
+- **MCP tools**: Use `_get_mcp_schema()` in `app/interface/mcp/server.py`, which calls `get_access_token()` from FastMCP to extract the JWT `sub` claim, builds `f"id_{sub}"`, and delegates to `get_schema()`.
+- **DB session**: `Database.session(schema_name=)` in `app/infrastructure/database/sql.py` issues `SET search_path TO {schema}` per session. Schema and tables are lazily created via `CREATE SCHEMA IF NOT EXISTS` + `create_all`.
+- **When adding new MCP tools** that need tenant-scoped DB access, call `_get_mcp_schema()` to get the schema string and pass it to services/repositories.
+
 ### Database Schema
 
 Three PostgreSQL databases:
