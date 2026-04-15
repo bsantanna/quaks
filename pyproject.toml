@@ -92,3 +92,8 @@ version_variables = [
   "plugins/quaks-agents/.claude-plugin/plugin.json:version",
   "pyproject.toml:version",
 ]
+
+[tool.coverage.run]
+omit = [
+  "app/static/frontend/*"
+]
