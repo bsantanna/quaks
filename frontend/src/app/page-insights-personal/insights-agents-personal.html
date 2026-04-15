@@ -1,0 +1,7 @@
+@if (isLoggedIn()) {
+    @if (agentProfile(); as agent) {
+        <p>{{ agent.name }}</p>
+    }
+} @else {
+    <app-login-required-message notice="Please log in to set up a personal agent." />
+}

@@ -376,6 +376,49 @@ Choose the method based on the operation's semantics, not implementation conveni
 
 ---
 
+## SonarCloud
+
+The project uses SonarCloud for static analysis. Config is in `sonar-project.properties` (project key: `bsantanna_quant-agents`, org: `bsantanna`). Scans run in CI via the `SonarSource/sonarqube-scan-action` GitHub Action.
+
+### Querying the API
+
+The repo is public, so read-only API calls require no authentication. Base URL: `https://sonarcloud.io/api/`
+
+#### Fetch Security Hotspots
+
+```
+GET https://sonarcloud.io/api/hotspots/search?projectKey=bsantanna_quant-agents&ps=500&status=TO_REVIEW
+```
+
+- `ps` — page size (max 500)
+- `status` — `TO_REVIEW` (open), `REVIEWED` (resolved)
+- Response includes `hotspots[]` with: `key`, `component`, `securityCategory`, `vulnerabilityProbability` (HIGH/MEDIUM/LOW), `line`, `message`, `ruleKey`
+
+#### Fetch Issues (Bugs, Code Smells, Vulnerabilities)
+
+```
+GET https://sonarcloud.io/api/issues/search?projectKey=bsantanna_quant-agents&ps=500&statuses=OPEN,CONFIRMED
+```
+
+Useful query parameters:
+- `types` — `BUG`, `VULNERABILITY`, `CODE_SMELL` (comma-separated)
+- `severities` — `BLOCKER`, `CRITICAL`, `MAJOR`, `MINOR`, `INFO`
+- `statuses` — `OPEN`, `CONFIRMED`, `REOPENED`, `RESOLVED`, `CLOSED`
+- `resolved` — `false` to get only unresolved issues
+- `facets` — `severities,types` to get aggregated counts
+- Response includes `issues[]` with: `key`, `component`, `line`, `message`, `severity`, `type`, `rule`, `status`
+
+#### Common Rule Keys
+
+| Rule | Category | Description |
+|------|----------|-------------|
+| `typescript:S6268` | XSS | `bypassSecurityTrustResourceUrl` usage |
+| `typescript:S5852` / `python:S5852` | DoS | Regex vulnerable to backtracking |
+| `python:S4790` | Crypto | Weak hash function (e.g. MD5) |
+| `Web:S5725` | Integrity | Missing SRI `integrity` attribute on external `<link>`/`<script>` |
+
+---
+
 ## Code Conventions
 
 - **Linting**: flake8 (ignores E203, E501, W201, W503) + ruff (auto-fix + format). Both run as pre-commit hooks.

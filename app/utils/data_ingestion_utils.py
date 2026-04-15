@@ -927,7 +927,7 @@ def format_bulk_markets_news(df: pd.DataFrame, index_suffix: str) -> bytes:
         symbols = row.get('symbols')
         source = row.get('source')
 
-        id_str = f"{hashlib.md5(url.encode('utf-8')).hexdigest()}"
+        id_str = f"{hashlib.sha256(url.encode('utf-8')).hexdigest()}"
         meta = {"index": {"_index": index_name, "_id": id_str}}
 
         doc = {

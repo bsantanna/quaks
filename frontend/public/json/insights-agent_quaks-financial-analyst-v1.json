@@ -1,5 +1,6 @@
 {
   "name": "Quaks Financial Analyst v1",
+  "type": "quaks_financial_analyst_v1",
   "role": "AI Financial Research Analyst",
   "avatar": "/svg/insights-agent_quaks-financial-analyst-v1.svg",
   "ctaLabel": "Financial Insights",

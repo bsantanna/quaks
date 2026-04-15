@@ -1,0 +1,8 @@
+<div class="login-required-message flex flex-col items-center justify-center py-12 px-6">
+  <img src="/svg/error-anonymous.svg" alt="Login required" class="login-required-img" />
+  <p class="login-required-title">Login required</p>
+  <p class="login-required-notice">{{ notice() }}</p>
+  <button class="login-required-btn" (click)="login()">
+    Log in
+  </button>
+</div>

@@ -37,7 +37,7 @@ export class StockComparisonCharts {
     });
 
     const fullUrl = `${DASHBOARDS_ENDPOINT}?auth_provider_hint=anonymous1#/view/${dashboardId}?${embedParams.toString()}`;
-    return this.sanitizer.bypassSecurityTrustResourceUrl(fullUrl);
+    return this.sanitizer.bypassSecurityTrustResourceUrl(fullUrl); // NOSONAR — safe: URL built from app constants + encodeURIComponent'd ticker symbols
   });
 
   onIframeLoad(iframe: HTMLIFrameElement) {

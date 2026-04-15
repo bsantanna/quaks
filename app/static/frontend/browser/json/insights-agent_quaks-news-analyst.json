@@ -1,5 +1,6 @@
 {
   "name": "Quaks News Analyst",
+  "type": "quaks_news_analyst",
   "role": "AI Market News Analyst",
   "avatar": "/svg/insights-agent_quaks-news-analyst.svg",
   "ctaLabel": "News Insights",

@@ -46,7 +46,7 @@
                     </button>
                 </div>
 
-                @if (path().indexOf('stocks') > -1) {
+                @if (path().indexOf('markets/stocks') > -1) {
                     <div class="hamburger-section">
                         <span class="hamburger-label">Search Stocks</span>
                         <app-stock-autocomplete
@@ -56,7 +56,7 @@
                     </div>
                 }
 
-                @if (path().indexOf('news') > -1) {
+                @if (path().indexOf('markets/news') > -1) {
                     <div class="hamburger-section">
                         <span class="hamburger-label">Search News</span>
                         <app-news-autocomplete

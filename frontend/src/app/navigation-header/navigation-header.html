@@ -26,13 +26,13 @@
 
                     <div class="flex items-center gap-2 px-2 lg:px-0">
                         @if (stickyVisible()) {
-                            @if (path().indexOf('stocks') > -1) {
+                            @if (path().indexOf('markets/stocks') > -1) {
                                 <app-stock-autocomplete
                                         [inputPlaceholder]="'Search stock symbols'"
                                         (stockSelected)="onKeyTickerSelected($event)">
                                 </app-stock-autocomplete>
                             }
-                            @if (path().indexOf('news') > -1) {
+                            @if (path().indexOf('markets/news') > -1) {
                                 <app-news-autocomplete
                                         [inputPlaceholder]="'Search news'">
                                 </app-news-autocomplete>
@@ -74,7 +74,7 @@
                                 (stockSelected)="onKeyTickerSelected($event)">
                         </app-stock-autocomplete>
                     }
-                    @if (path().indexOf('news') > -1) {
+                    @if (path().indexOf('markets/news') > -1) {
                         <app-news-autocomplete
                                 [inputPlaceholder]="'Search news (e.g., Tesla, earnings)'">
                         </app-news-autocomplete>

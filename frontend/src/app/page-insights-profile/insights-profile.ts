@@ -1,18 +1,8 @@
 import {Component, inject, PLATFORM_ID, signal} from '@angular/core';
 import {isPlatformBrowser} from '@angular/common';
-import {HttpClient} from '@angular/common/http';
 import {ActivatedRoute} from '@angular/router';
-
-interface AgentProfile {
-  name: string;
-  role: string;
-  avatar: string;
-  bio: string[];
-  ctaLabel?: string;
-  ctaLink?: string;
-  ctaIcon?: string;
-  referenceNotebook?: string;
-}
+import {AgentProfile} from '../shared/models/insights.model';
+import {InsightsAgentProfileService} from '../shared/services/insights-agent-profile.service';
 
 @Component({
   selector: 'app-insights-profile',
@@ -22,16 +12,20 @@ interface AgentProfile {
 })
 export class InsightsProfile {
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
-  private readonly httpClient = inject(HttpClient);
   private readonly route = inject(ActivatedRoute);
+  private readonly agentProfileService = inject(InsightsAgentProfileService);
 
   readonly profile = signal<AgentProfile | null>(null);
+
+  agentSlug(agent: AgentProfile): string {
+    return agent.type.replace(/_/g, '-');
+  }
 
   constructor() {
     if (this.isBrowser) {
       const agentName = this.route.snapshot.paramMap.get('agentName');
       if (agentName) {
-        this.httpClient.get<AgentProfile>(`/json/insights-agent_${agentName}.json`)
+        this.agentProfileService.getAgentProfile(agentName)
           .subscribe(data => this.profile.set(data));
       }
     }
