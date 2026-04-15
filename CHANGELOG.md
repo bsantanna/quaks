@@ -2,6 +2,32 @@
 
 <!-- version list -->
 
+## v1.5.15 (2026-04-15)
+
+### Bug Fixes
+
+- Insights agent setup personal (1) ([#118](https://github.com/bsantanna/quaks/pull/118),
+  [`811ff94`](https://github.com/bsantanna/quaks/commit/811ff9400ec72251334ce8b113ac3f105bc72296))
+
+- Insights agent setup personal (2) ([#118](https://github.com/bsantanna/quaks/pull/118),
+  [`811ff94`](https://github.com/bsantanna/quaks/commit/811ff9400ec72251334ce8b113ac3f105bc72296))
+
+- Insights agent setup personal (3) ([#118](https://github.com/bsantanna/quaks/pull/118),
+  [`811ff94`](https://github.com/bsantanna/quaks/commit/811ff9400ec72251334ce8b113ac3f105bc72296))
+
+- Tech debt attach (1) ([#118](https://github.com/bsantanna/quaks/pull/118),
+  [`811ff94`](https://github.com/bsantanna/quaks/commit/811ff9400ec72251334ce8b113ac3f105bc72296))
+
+- Tech debt attach (2) ([#118](https://github.com/bsantanna/quaks/pull/118),
+  [`811ff94`](https://github.com/bsantanna/quaks/commit/811ff9400ec72251334ce8b113ac3f105bc72296))
+
+- Tech debt attach (3) ([#118](https://github.com/bsantanna/quaks/pull/118),
+  [`811ff94`](https://github.com/bsantanna/quaks/commit/811ff9400ec72251334ce8b113ac3f105bc72296))
+
+- Tech debt attack / quality gate (1) ([#118](https://github.com/bsantanna/quaks/pull/118),
+  [`811ff94`](https://github.com/bsantanna/quaks/commit/811ff9400ec72251334ce8b113ac3f105bc72296))
+
+
 ## v1.5.14 (2026-04-14)
 
 ### Bug Fixes
