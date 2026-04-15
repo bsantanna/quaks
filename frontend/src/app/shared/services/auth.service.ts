@@ -219,6 +219,6 @@ export class AuthService {
     for (let i = 0; i < buffer.byteLength; i++) {
       binary += String.fromCodePoint(buffer[i]);
     }
-    return btoa(binary).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '');
+    return btoa(binary).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
   }
 }

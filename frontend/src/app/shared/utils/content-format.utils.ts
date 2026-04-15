@@ -59,7 +59,7 @@ export function sanitizeInsightsReportHtml(html: string | null, tickers: Set<str
 }
 
 export function structurePlainTextReport(text: string): string {
-  const raw = text.replaceAll(/<br\s*\/?>/gi, '\n').replaceAll(/<[^>]+>/g, '');
+  const raw = stripHtmlTags(text.replaceAll(/<br\s*\/?>/gi, '\n'));
   const lines = raw.split(/\n/).map(line => line.trim()).filter(Boolean);
   if (lines.length === 0) return '';
 
@@ -77,10 +77,10 @@ export function structurePlainTextReport(text: string): string {
       && !line.endsWith('.')
       && !line.endsWith(',')
       && !line.endsWith(':')
-      && !/\d+%/.test(line)
+      && !/\d%/.test(line)
       && (
         line === line.toUpperCase()
-        || /^[A-Z][^.]*[A-Z][^.]*$/.test(line)
+        || (/^[A-Z]/.test(line) && !line.includes('.') && /[A-Z]/.test(line.substring(1)))
         || line.includes('—')
         || line.includes(' — ')
       );
@@ -89,6 +89,17 @@ export function structurePlainTextReport(text: string): string {
   }
 
   return parts.join('\n');
+}
+
+function stripHtmlTags(text: string): string {
+  let result = '';
+  let inTag = false;
+  for (const ch of text) {
+    if (ch === '<') inTag = true;
+    else if (ch === '>' && inTag) inTag = false;
+    else if (!inTag) result += ch;
+  }
+  return result;
 }
 
 export function linkifyTickersInHtml(html: string, tickers: Set<string>): string {
