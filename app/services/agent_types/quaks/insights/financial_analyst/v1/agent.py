@@ -35,6 +35,7 @@ from app.services.tasks import TaskProgress
 
 _TABLE_OPEN = "<table>"
 _TABLE_CLOSE = "</table>"
+_NOT_CLASSIFIED = "Not Classified"
 
 EXECUTION_PLAN = (
     "Financial analysis plan:\n"
@@ -222,7 +223,7 @@ def _normalize_sector(raw_sector: str) -> str:
     for sector, keywords in _SECTOR_KEYWORDS.items():
         if any(kw in lower for kw in keywords):
             return sector
-    return "Not Classified"
+    return _NOT_CLASSIFIED
 
 
 def _build_style_table(style_grid: dict) -> list[str]:
@@ -245,9 +246,9 @@ def _build_sector_table(sector_wt: dict) -> list[str]:
             w = sector_wt.get(s, 0)
             if w > 0:
                 rows.append(f"<tr><td>&nbsp;&nbsp;{s}</td><td>{w:.2f}</td></tr>")
-    nc = sector_wt.get("Not Classified", 0)
+    nc = sector_wt.get(_NOT_CLASSIFIED, 0)
     if nc > 0:
-        rows.append(f"<tr><td><b>Not Classified</b></td><td><b>{nc:.2f}</b></td></tr>")
+        rows.append(f"<tr><td><b>{_NOT_CLASSIFIED}</b></td><td><b>{nc:.2f}</b></td></tr>")
     rows.append(_TABLE_CLOSE)
     return rows
 
@@ -263,9 +264,9 @@ def _build_region_table(subregion_wt: dict) -> list[str]:
                 w = subregion_wt.get(sr, 0)
                 if w > 0:
                     rows.append(f"<tr><td>&nbsp;&nbsp;{sr}</td><td>{w:.2f}</td></tr>")
-    nc = subregion_wt.get("Not Classified", 0)
+    nc = subregion_wt.get(_NOT_CLASSIFIED, 0)
     if nc > 0:
-        rows.append(f"<tr><td><b>Not Classified</b></td><td><b>{nc:.2f}</b></td></tr>")
+        rows.append(f"<tr><td><b>{_NOT_CLASSIFIED}</b></td><td><b>{nc:.2f}</b></td></tr>")
     rows.append(_TABLE_CLOSE)
     return rows
 
@@ -537,14 +538,14 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
 
         sector_wt = {}
         for ticker, p in profiles.items():
-            raw = p.get("sector") or "Not Classified"
+            raw = p.get("sector") or _NOT_CLASSIFIED
             s = _normalize_sector(raw)
             sector_wt[s] = sector_wt.get(s, 0) + weights[ticker]
 
         subregion_wt = {}
         for ticker, p in profiles.items():
-            c = p.get("country") or "Not Classified"
-            _, sr = COUNTRY_REGION.get(c, ("Not Classified", "Not Classified"))
+            c = p.get("country") or _NOT_CLASSIFIED
+            _, sr = COUNTRY_REGION.get(c, (_NOT_CLASSIFIED, _NOT_CLASSIFIED))
             subregion_wt[sr] = subregion_wt.get(sr, 0) + weights[ticker]
 
         stat_keys = {
@@ -599,6 +600,26 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
         return avg_stats
 
     @staticmethod
+    def _format_style_text(style_grid: dict) -> str:
+        parts = [
+            f"{size}/{val}: {style_grid[(size, val)]:.0f}%"
+            for size in ("Large", "Mid", "Small")
+            for val in ("Value", "Blend", "Growth")
+            if style_grid[(size, val)] > 0
+        ]
+        return f"Style: {', '.join(parts)}"
+
+    @staticmethod
+    def _format_weighted_groups_text(label: str, groups: dict, weight_map: dict) -> str:
+        parts = []
+        for group, members in groups.items():
+            total = sum(weight_map.get(m, 0) for m in members)
+            if total > 0:
+                detail = ", ".join(f"{m} {weight_map[m]:.0f}%" for m in members if weight_map.get(m, 0) > 0)
+                parts.append(f"{group} {total:.0f}% ({detail})")
+        return f"{label}: {'; '.join(parts)}"
+
+    @staticmethod
     def _format_xray_text(data: dict) -> str:
         """Format X-Ray data as compact text for LLM context."""
         if not data:
@@ -606,47 +627,18 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
 
         profiles = data["profiles"]
         weights = data["weights"]
-        style_grid = data["style_grid"]
-        sector_wt = data["sector_wt"]
-        subregion_wt = data["subregion_wt"]
         avg_stats = data["avg_stats"]
         stat_keys = data["stat_keys"]
         sorted_tickers = data["sorted_tickers"]
 
         lines = [f"PORTFOLIO X-RAY ({len(profiles)} stocks, equal-weight)"]
+        lines.append(QuaksFinancialAnalystV1Agent._format_style_text(data["style_grid"]))
+        lines.append(QuaksFinancialAnalystV1Agent._format_weighted_groups_text("Sectors", SUPERSECTOR_SECTORS, data["sector_wt"]))
+        lines.append(QuaksFinancialAnalystV1Agent._format_weighted_groups_text("Regions", REGION_SUBREGIONS, data["subregion_wt"]))
 
-        # Style box — only non-zero cells
-        style_parts = []
-        for size in ("Large", "Mid", "Small"):
-            for val_style in ("Value", "Blend", "Growth"):
-                w = style_grid[(size, val_style)]
-                if w > 0:
-                    style_parts.append(f"{size}/{val_style}: {w:.0f}%")
-        lines.append(f"Style: {', '.join(style_parts)}")
-
-        # Sectors — only non-zero
-        sector_parts = []
-        for supersector, sectors in SUPERSECTOR_SECTORS.items():
-            total = sum(sector_wt.get(s, 0) for s in sectors)
-            if total > 0:
-                detail = ", ".join(f"{s} {sector_wt[s]:.0f}%" for s in sectors if sector_wt.get(s, 0) > 0)
-                sector_parts.append(f"{supersector} {total:.0f}% ({detail})")
-        lines.append(f"Sectors: {'; '.join(sector_parts)}")
-
-        # Regions — only non-zero
-        region_parts = []
-        for region, subregions in REGION_SUBREGIONS.items():
-            total = sum(subregion_wt.get(sr, 0) for sr in subregions)
-            if total > 0:
-                detail = ", ".join(f"{sr} {subregion_wt[sr]:.0f}%" for sr in subregions if subregion_wt.get(sr, 0) > 0)
-                region_parts.append(f"{region} {total:.0f}% ({detail})")
-        lines.append(f"Regions: {'; '.join(region_parts)}")
-
-        # Stats — only non-zero
         stat_parts = [f"{label}: {avg_stats[key]:.2f}" for key, label in stat_keys.items() if avg_stats[key] > 0]
         lines.append(f"Stats: {', '.join(stat_parts)}")
 
-        # Composition — one line per ticker
         for ticker in sorted_tickers[:10]:
             p = profiles[ticker]
             mc = p.get("market_capitalization") or 0

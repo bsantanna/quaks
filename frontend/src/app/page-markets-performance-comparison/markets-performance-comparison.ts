@@ -48,8 +48,8 @@ export class MarketsPerformanceComparison implements OnDestroy {
       const useInterval = this.useIntervalInDates();
       if (this.isBrowser) {
         const url = useInterval
-          ? window.location.href
-          : `${window.location.href.split('?')[0]}?q=${syms.join(',')}&interval=${this.shareUrlService.getPastDateInDays(this.intervalInDays())}_${this.shareUrlService.getPastDateInDays(1)}`;
+          ? globalThis.location.href
+          : `${globalThis.location.href.split('?')[0]}?q=${syms.join(',')}&interval=${this.shareUrlService.getPastDateInDays(this.intervalInDays())}_${this.shareUrlService.getPastDateInDays(1)}`;
         this.shareUrlService.update({title: linkTitle, url});
       }
       this.seoService.update({

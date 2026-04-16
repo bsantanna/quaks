@@ -44,6 +44,11 @@ export class ThemeService implements SharedStateService<ThemePreference> {
   }
 
   private applyTheme(theme: ThemeName): void {
-    this.document.documentElement.setAttribute('data-theme', theme);
+    const el = this.document.documentElement;
+    if (el.dataset) {
+      el.dataset['theme'] = theme;
+    } else {
+      el.setAttribute('data-theme', theme);
+    }
   }
 }

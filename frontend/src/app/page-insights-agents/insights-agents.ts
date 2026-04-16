@@ -23,6 +23,6 @@ export class InsightsAgents {
   }
 
   agentSlug(agent: AgentProfile): string {
-    return agent.type.replace(/_/g, '-');
+    return agent.type.replaceAll('_', '-');
   }
 }

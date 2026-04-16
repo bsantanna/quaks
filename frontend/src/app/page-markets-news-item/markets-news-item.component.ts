@@ -42,7 +42,7 @@ export class MarketsNewsItem implements OnDestroy {
         if (this.isBrowser) {
           this.shareUrlService.update({
             title: linkTitle,
-            url: `${window.location.href.split('?')[0]}`
+            url: `${globalThis.location.href.split('?')[0]}`
           });
         }
         const path = `/markets/news/item/${this.indexName()}/${this.newsItemId()}`;

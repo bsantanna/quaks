@@ -27,10 +27,10 @@ export class CookieService implements SharedStateService<CookieConsent> {
     });
 
     const storedConsent = this.getCookie(CookieService.COOKIE_CONSENT_KEY);
-    if (storedConsent !== null) {
-      this.state = signal(JSON.parse(storedConsent));
-    } else {
+    if (storedConsent === null) {
       this.state = signal(CookieService.INITIAL_COOKIE_CONSENT);
+    } else {
+      this.state = signal(JSON.parse(storedConsent));
     }
   }
 
@@ -49,7 +49,7 @@ export class CookieService implements SharedStateService<CookieConsent> {
     date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
     const expires = '; expires=' + date.toUTCString();
     let cookie = name + '=' + value + expires + '; path=/; SameSite=Lax';
-    if (this.isBrowser && window.isSecureContext) {
+    if (this.isBrowser && globalThis.isSecureContext) {
       cookie += '; Secure';
     }
     document.cookie = cookie;
@@ -59,10 +59,9 @@ export class CookieService implements SharedStateService<CookieConsent> {
     if (!this.isBrowser) return null;
     const nameEQ = name + '=';
     const ca = document.cookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-      if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    for (const entry of ca) {
+      const c = entry.trimStart();
+      if (c.startsWith(nameEQ)) return c.substring(nameEQ.length);
     }
     return null;
   }

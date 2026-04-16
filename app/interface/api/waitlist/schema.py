@@ -13,7 +13,7 @@ class WaitlistRequest(BaseModel):
     @classmethod
     def validate_email(cls, v: str) -> str:
         v = v.strip().lower()
-        if not re.match(r"^[^\s@]+@[^\s@]+\.[^\s@]{2,}$", v):
+        if not re.match(r"^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$", v):
             raise ValueError("Invalid email format")
         return v
 

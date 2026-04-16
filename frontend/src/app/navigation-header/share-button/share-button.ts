@@ -43,11 +43,11 @@ export class ShareButtonComponent {
     }
 
     if (action.kind === 'redirect') {
-      window.location.href = action.targetUrl;
+      globalThis.location.href = action.targetUrl;
       return;
     }
 
-    window.open(action.targetUrl, '_blank');
+    globalThis.open(action.targetUrl, '_blank');
   }
 
   @HostListener('document:click', ['$event'])

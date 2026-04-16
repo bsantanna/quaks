@@ -25,4 +25,9 @@ describe('InsightsAgents', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('converts agent type underscores to hyphens via agentSlug', () => {
+    expect(component.agentSlug({type: 'financial_analyst'} as any)).toBe('financial-analyst');
+    expect(component.agentSlug({type: 'no_underscores_here'} as any)).toBe('no-underscores-here');
+  });
 });

@@ -66,6 +66,25 @@ describe('content-format utils', () => {
     expect(document.getElementById(INSIGHTS_PRINT_STYLE_ID)).toBeNull();
   });
 
+  it('rewrites ticker links matched by anchor text when href has no /quote/ path', () => {
+    const clean = sanitizeMarketsNewsHtml(
+      '<a href="https://example.com/other">MSFT</a>',
+      new Set(['MSFT']),
+      document,
+    );
+    expect(clean).toContain('href="/markets/stocks/MSFT"');
+  });
+
+  it('does not rewrite links when neither href nor text match a known ticker', () => {
+    const clean = sanitizeMarketsNewsHtml(
+      '<a href="https://example.com/page">click here</a>',
+      new Set(['AAPL']),
+      document,
+    );
+    expect(clean).toContain('href="https://example.com/page"');
+    expect(clean).not.toContain('/markets/stocks/');
+  });
+
   it('sanitizes markets news html and rewrites known ticker links', () => {
     const clean = sanitizeMarketsNewsHtml(
       [

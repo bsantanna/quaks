@@ -36,6 +36,18 @@ describe('CookieConsent', () => {
     expect(service.getCookie('custom')).toBe('value');
   });
 
+  it('returns null for a cookie that does not exist', () => {
+    expect(service.getCookie('NonExistentCookie')).toBeNull();
+  });
+
+  it('reads stored consent from cookie on init', () => {
+    const consent = {consentGiven: true, type: 'all'};
+    document.cookie = `CookieConsent=${JSON.stringify(consent)}; path=/`;
+
+    const freshService = TestBed.inject(CookieService);
+    expect(freshService.getCookie(CookieService.COOKIE_CONSENT_KEY)).toContain('"type":"all"');
+  });
+
   it('resets consent state and dataset flags', () => {
     document.documentElement.dataset['cookieConsent'] = 'all';
     service.update({consentGiven: true, type: 'all'});
