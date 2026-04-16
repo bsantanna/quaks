@@ -27,4 +27,8 @@ describe('InsightsProfile', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('converts agent type underscores to hyphens via agentSlug', () => {
+    expect(component.agentSlug({type: 'macro_research'} as any)).toBe('macro-research');
+  });
 });

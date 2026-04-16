@@ -41,4 +41,23 @@ describe('ThemeService', () => {
     const stored = localStorage.getItem(ThemeService.STORAGE_KEY);
     expect(stored).toBe(JSON.stringify({theme: 'bloomnerd'}));
   });
+
+  it('falls back to setAttribute when dataset is unavailable', () => {
+    const origDataset = Object.getOwnPropertyDescriptor(document.documentElement, 'dataset');
+    Object.defineProperty(document.documentElement, 'dataset', {
+      value: undefined,
+      configurable: true,
+    });
+
+    service.update({theme: 'matrix'});
+    TestBed.flushEffects();
+
+    expect(document.documentElement.getAttribute('data-theme')).toBe('matrix');
+
+    if (origDataset) {
+      Object.defineProperty(document.documentElement, 'dataset', origDataset);
+    } else {
+      delete (document.documentElement as any).dataset;
+    }
+  });
 });
