@@ -56,4 +56,55 @@ describe('PageWaitlist', () => {
     expect(component.submitting()).toBe(false);
     expect(component.state()).toBe('form');
   });
+
+  it('should not submit when already submitting', () => {
+    component.form.setValue({email: 'a@b.com', first_name: 'A', last_name: 'B', username: 'abc'});
+    component.submitting.set(true);
+    component.submit();
+    // submitting was already true, no new call
+    expect(component.submitting()).toBe(true);
+  });
+
+  it('should submit valid form and transition to success', () => {
+    const {HttpTestingController} = jest.requireActual('@angular/common/http/testing');
+    const httpTesting = TestBed.inject(HttpTestingController);
+
+    component.form.setValue({email: 'test@test.com', first_name: 'John', last_name: 'Doe', username: 'jdoe'});
+    component.submit();
+    expect(component.submitting()).toBe(true);
+
+    const req = httpTesting.expectOne((r: any) => r.url.includes('/waitlist'));
+    req.flush({});
+
+    expect(component.submitting()).toBe(false);
+    expect(component.state()).toBe('success');
+  });
+
+  it('should transition to duplicate on 409 error', () => {
+    const {HttpTestingController} = jest.requireActual('@angular/common/http/testing');
+    const httpTesting = TestBed.inject(HttpTestingController);
+
+    component.form.setValue({email: 'test@test.com', first_name: 'John', last_name: 'Doe', username: 'jdoe'});
+    component.submit();
+
+    const req = httpTesting.expectOne((r: any) => r.url.includes('/waitlist'));
+    req.flush('Conflict', {status: 409, statusText: 'Conflict'});
+
+    expect(component.submitting()).toBe(false);
+    expect(component.state()).toBe('duplicate');
+  });
+
+  it('should transition to error on non-409 error', () => {
+    const {HttpTestingController} = jest.requireActual('@angular/common/http/testing');
+    const httpTesting = TestBed.inject(HttpTestingController);
+
+    component.form.setValue({email: 'test@test.com', first_name: 'John', last_name: 'Doe', username: 'jdoe'});
+    component.submit();
+
+    const req = httpTesting.expectOne((r: any) => r.url.includes('/waitlist'));
+    req.flush('Error', {status: 500, statusText: 'Server Error'});
+
+    expect(component.submitting()).toBe(false);
+    expect(component.state()).toBe('error');
+  });
 });

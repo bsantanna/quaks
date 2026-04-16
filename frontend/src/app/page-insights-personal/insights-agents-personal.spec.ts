@@ -1,9 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideRouter } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { signal } from '@angular/core';
+import { of } from 'rxjs';
 import { AuthService } from '../shared/services/auth.service';
+import { InsightsAgentProfileService } from '../shared/services/insights-agent-profile.service';
 
 import { InsightsAgentsPersonal } from './insights-agents-personal';
 
@@ -14,6 +16,10 @@ describe('InsightsAgentsPersonal', () => {
     isLoggedIn: signal(false),
     initiateLogin: jest.fn(),
   };
+  const mockProfile = {type: 'news_analyst', name: 'NA', role: 'Reporter', avatar: '/b.svg', bio: []};
+  const mockProfileService = {
+    getAgentProfile: jest.fn().mockReturnValue(of(mockProfile)),
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -21,8 +27,9 @@ describe('InsightsAgentsPersonal', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        provideRouter([]),
-        { provide: AuthService, useValue: mockAuthService }
+        {provide: AuthService, useValue: mockAuthService},
+        {provide: InsightsAgentProfileService, useValue: mockProfileService},
+        {provide: ActivatedRoute, useValue: {snapshot: {paramMap: {get: () => 'news-analyst'}}}},
       ]
     }).compileComponents();
 
@@ -33,5 +40,14 @@ describe('InsightsAgentsPersonal', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should expose isLoggedIn from auth service', () => {
+    expect(component.isLoggedIn()).toBe(false);
+  });
+
+  it('should load agent profile based on route param', () => {
+    expect(mockProfileService.getAgentProfile).toHaveBeenCalledWith('news-analyst');
+    expect(component.agentProfile()).toEqual(mockProfile);
   });
 });

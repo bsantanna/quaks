@@ -145,4 +145,51 @@ describe('MarketsInsightsService', () => {
       consoleSpy.mockRestore();
     });
   });
+
+  describe('getInsightsPreview', () => {
+    it('should make GET request for preview', () => {
+      const mockPreview = {doc_id: 'doc-1', status: 'ready', executive_summary: 'Summary', report_html: '<p>Report</p>'};
+
+      service.getInsightsPreview('doc-1').subscribe(result => {
+        expect(result).toEqual(mockPreview);
+      });
+
+      const req = httpTesting.expectOne(
+        (r) => r.url === `${environment.apiBaseUrl}/markets/insights/preview/doc-1`
+      );
+      expect(req.request.method).toBe('GET');
+      req.flush(mockPreview);
+    });
+
+    it('should return null on HTTP error', () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      service.getInsightsPreview('bad-id').subscribe(result => {
+        expect(result).toBeNull();
+      });
+
+      const req = httpTesting.expectOne(
+        (r) => r.url === `${environment.apiBaseUrl}/markets/insights/preview/bad-id`
+      );
+      req.flush('Not found', {status: 404, statusText: 'Not Found'});
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Failed to fetch preview bad-id'),
+        expect.anything()
+      );
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe('cancelInsightsPreview', () => {
+    it('should make POST request to cancel', () => {
+      service.cancelInsightsPreview('doc-1').subscribe();
+
+      const req = httpTesting.expectOne(
+        (r) => r.url === `${environment.apiBaseUrl}/markets/insights/preview/doc-1/cancel`
+      );
+      expect(req.request.method).toBe('POST');
+      req.flush(null);
+    });
+  });
 });
