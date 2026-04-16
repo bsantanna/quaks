@@ -159,11 +159,14 @@ export function sanitizeMarketsNewsHtml(
     const anchor = el as HTMLAnchorElement;
     const href = anchor.getAttribute('href') ?? '';
     const text = (anchor.textContent ?? '').trim();
-    const hrefMatch = href.match(/\/quote\/([A-Z]+)$/);
+    const hrefMatch = /\/quote\/([A-Z]+)$/.exec(href);
     const tickerFromHref = hrefMatch ? hrefMatch[1] : '';
-    const ticker = tickers.has(tickerFromHref) ? tickerFromHref
-      : tickers.has(text) ? text
-      : '';
+    let ticker = '';
+    if (tickers.has(tickerFromHref)) {
+      ticker = tickerFromHref;
+    } else if (tickers.has(text)) {
+      ticker = text;
+    }
 
     if (ticker) {
       anchor.setAttribute('href', `/markets/stocks/${ticker}`);

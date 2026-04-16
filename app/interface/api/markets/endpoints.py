@@ -584,12 +584,12 @@ async def get_indicator(
     start_date = request.start_date or (today - timedelta(days=90)).strftime("%Y-%m-%d")
 
     extra_params = INDICATOR_CONFIG[indicator_name]
-    kwargs = dict(
-        index_name=index_name,
-        key_ticker=key_ticker,
-        start_date=start_date,
-        end_date=end_date,
-    )
+    kwargs = {
+        "index_name": index_name,
+        "key_ticker": key_ticker,
+        "start_date": start_date,
+        "end_date": end_date,
+    }
     for param, default in extra_params.items():
         kwargs[param] = getattr(request, param) or default
 

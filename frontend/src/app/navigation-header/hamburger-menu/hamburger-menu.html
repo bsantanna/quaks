@@ -1,10 +1,11 @@
 <button type="button" (click)="toggle()"
-        class="hamburger-btn"
-        aria-label="Open menu">
+        class="hamburger-btn">
     @if (menuOpen()) {
         <img src="/svg/icon-close.svg" class="size-5" aria-hidden="true" alt="" />
+        <span class="sr-only">Close menu</span>
     } @else {
         <img src="/svg/icon-hamburger.svg" class="size-5" aria-hidden="true" alt="" />
+        <span class="sr-only">Open menu</span>
     }
 </button>
 

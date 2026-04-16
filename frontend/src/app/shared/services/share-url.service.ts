@@ -1,5 +1,5 @@
 import {Injectable, signal, WritableSignal} from '@angular/core';
-import {NavigationModel, SharedStateService, ShareUrl} from '../models/navigation.models';
+import {SharedStateService, ShareUrl} from '../models/navigation.models';
 
 @Injectable({
   providedIn: 'root',

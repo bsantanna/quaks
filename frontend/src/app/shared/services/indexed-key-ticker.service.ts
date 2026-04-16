@@ -17,7 +17,7 @@ export class IndexedKeyTickerService {
   }
 
   findKeyTicker(keyTicker: string): IndexedKeyTicker | null {
-    return this.indexedKeyTickers().filter((i: IndexedKeyTicker) => i.key_ticker === keyTicker).at(0) ?? null;
+    return this.indexedKeyTickers().find((i: IndexedKeyTicker) => i.key_ticker === keyTicker) ?? null;
   }
 
 }

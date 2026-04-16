@@ -3,8 +3,7 @@ import {isPlatformBrowser} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
 import {forkJoin} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
-import {HeatmapConstituent} from '../../shared';
-import {MarketsStatsService, DateFormatService, ShareUrlService} from '../../shared';
+import {HeatmapConstituent, MarketsStatsService, DateFormatService, ShareUrlService} from '../../shared';
 import {
   buildHeatmapTiles,
   getStartDateFor,

@@ -43,6 +43,8 @@ def _epoch_to_month_name(epoch_val):
         return None
 
 
+_FINNHUB_FINANCIALS_REPORTED_PATH = '/stock/financials-reported'
+
 _finnhub_request_times = []
 
 
@@ -84,7 +86,7 @@ def _es_bulk_post(data: bytes) -> Response:
 # Helper: extract a value from financials-reported line items
 # ---------------------------------------------------------------------------
 
-def _find_financial_value(items: list, concept: str, label_contains: str = None) -> float:
+def _find_financial_value(items: list, concept: str, label_contains: str = None) -> float | None:
     """Search a list of SEC filing line items for a matching concept or label."""
     if not items:
         return None
@@ -98,7 +100,7 @@ def _find_financial_value(items: list, concept: str, label_contains: str = None)
     return None
 
 
-def _find_financial_value_multi(items: list, concepts: list) -> float:
+def _find_financial_value_multi(items: list, concepts: list) -> float | None:
     """Try multiple concept names, return first match."""
     for concept in concepts:
         val = _find_financial_value(items, concept)
@@ -509,7 +511,7 @@ def format_bulk_stocks_fundamental_income_statement(ticker: str, reports: list, 
 
 def ingest_stocks_fundamental_income_statement(ticker: str, cutoff_days=3650, index_suffix="latest", reports=None) -> Response:
     if reports is None:
-        result = _finnhub_get('/stock/financials-reported', {
+        result = _finnhub_get(_FINNHUB_FINANCIALS_REPORTED_PATH, {
             'symbol': ticker,
             'freq': 'quarterly',
         })
@@ -669,7 +671,7 @@ def format_bulk_stocks_fundamental_balance_sheet(ticker: str, reports: list, ind
 
 def ingest_stocks_fundamental_balance_sheet(ticker: str, cutoff_days=3650, index_suffix="latest", reports=None) -> Response:
     if reports is None:
-        result = _finnhub_get('/stock/financials-reported', {
+        result = _finnhub_get(_FINNHUB_FINANCIALS_REPORTED_PATH, {
             'symbol': ticker,
             'freq': 'quarterly',
         })
@@ -801,7 +803,7 @@ def format_bulk_stocks_fundamental_cash_flow(ticker: str, reports: list, index_s
 
 def ingest_stocks_fundamental_cash_flow(ticker: str, cutoff_days=3650, index_suffix="latest", reports=None) -> Response:
     if reports is None:
-        result = _finnhub_get('/stock/financials-reported', {
+        result = _finnhub_get(_FINNHUB_FINANCIALS_REPORTED_PATH, {
             'symbol': ticker,
             'freq': 'quarterly',
         })
@@ -820,7 +822,7 @@ def ingest_stocks_fundamental_cash_flow(ticker: str, cutoff_days=3650, index_suf
 
 def ingest_stocks_fundamentals(ticker: str, cutoff_days=3650, index_suffix="latest") -> list:
     """Unified fundamentals ingestion: single API call for IC, BS, and CF."""
-    result = _finnhub_get('/stock/financials-reported', {
+    result = _finnhub_get(_FINNHUB_FINANCIALS_REPORTED_PATH, {
         'symbol': ticker,
         'freq': 'quarterly',
     })
@@ -896,7 +898,7 @@ def format_bulk_stocks_fundamental_earnings_estimates(ticker: str, eps_data: lis
     return (("\n".join(lines)) + "\n").encode("utf-8") if lines else b""
 
 
-def ingest_stocks_fundamental_earnings_estimates(ticker: str, cutoff_days=3650, index_suffix="latest") -> Response:
+def ingest_stocks_fundamental_earnings_estimates(ticker: str, index_suffix="latest") -> Response:
     eps_data = _finnhub_get('/stock/eps-estimate', {'symbol': ticker}).get('data', [])
     revenue_data = _finnhub_get('/stock/revenue-estimate', {'symbol': ticker}).get('data', [])
 

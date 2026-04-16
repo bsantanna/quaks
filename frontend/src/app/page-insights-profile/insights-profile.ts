@@ -18,7 +18,7 @@ export class InsightsProfile {
   readonly profile = signal<AgentProfile | null>(null);
 
   agentSlug(agent: AgentProfile): string {
-    return agent.type.replace(/_/g, '-');
+    return agent.type.replaceAll('_', '-');
   }
 
   constructor() {

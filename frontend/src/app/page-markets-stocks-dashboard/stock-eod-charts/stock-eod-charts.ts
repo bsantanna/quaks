@@ -1,4 +1,4 @@
-import {Component, computed, effect, inject, input, model, signal, WritableSignal} from '@angular/core';
+import {Component, computed, inject, input, model, signal, WritableSignal} from '@angular/core';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import {DASHBOARDS_IDS, IFRAME_STYLE, DASHBOARDS_ENDPOINT} from '../../constants';
 

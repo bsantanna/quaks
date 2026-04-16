@@ -45,12 +45,12 @@ export class MarketsStocksDashboard implements OnDestroy {
         if (this.useIntervalInDates()) {
           this.shareUrlService.update({
             title: linkTitle,
-            url: window.location.href
+            url: globalThis.location.href
           });
         } else {
           this.shareUrlService.update({
             title: linkTitle,
-            url: `${window.location.href.split('?')[0]}?interval=${this.shareUrlService.getPastDateInDays(this.intervalInDays())}_${this.shareUrlService.getPastDateInDays(1)}`
+            url: `${globalThis.location.href.split('?')[0]}?interval=${this.shareUrlService.getPastDateInDays(this.intervalInDays())}_${this.shareUrlService.getPastDateInDays(1)}`
           });
         }
       }
