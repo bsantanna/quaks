@@ -1,6 +1,6 @@
 ---
 name: software-engineering
-description: Use when the user asks about architecture, running, testing, linting, or building the project, or about code conventions.
+description: Use when the user asks about architecture, running, testing, linting, building, or code conventions. Also use for SonarCloud issues, quality gate failures, dependency updates (dependabot, uv, npm), CI/CD debugging, Terraform infrastructure, Airflow DAGs, or any operational question about the quaks codebase. Trigger even if the user doesn't say "software engineering" — questions like "fix the sonar issues", "update dependencies", "why is CI failing", or "how does X work in this repo" all belong here.
 ---
 
 # Software Engineering
@@ -163,7 +163,7 @@ Every theme MUST define all of these tokens:
 3. **Add UI option** — Add a button in `settings-dropdown.html` with a `.theme-swatch-<name>` color swatch
 4. **Add swatch style** — Add `.theme-swatch-<name>` in `settings-dropdown.scss` with a representative gradient
 5. **Import fonts** — If using custom fonts, add the `@import url(...)` to `styles.scss`
-6. **Run tests** — `npx jest` (all 159+ tests should pass unchanged)
+6. **Run tests** — `npx jest` (all 400+ tests should pass unchanged)
 
 #### Styling Conventions
 
@@ -378,44 +378,42 @@ Choose the method based on the operation's semantics, not implementation conveni
 
 ## SonarCloud
 
-The project uses SonarCloud for static analysis. Config is in `sonar-project.properties` (project key: `bsantanna_quant-agents`, org: `bsantanna`). Scans run in CI via the `SonarSource/sonarqube-scan-action` GitHub Action.
+Config: `sonar-project.properties` (project key: `bsantanna_quant-agents`, org: `bsantanna`). Scans run in CI via `SonarSource/sonarqube-scan-action`.
 
-### Querying the API
+**For API queries, curl one-liners, and PR quality gate debugging, read `references/sonar-api.md`.** It contains copy-paste commands for fetching issues, checking quality gates, finding uncovered lines, and common rule keys.
 
-The repo is public, so read-only API calls require no authentication. Base URL: `https://sonarcloud.io/api/`
+Key points:
+- `organization=bsantanna` is **required** on all API calls (400 error without it)
+- Quality gate thresholds: coverage ≥80%, duplications ≤3%, no new bugs/vulnerabilities
+- Exclusions configured in `sonar-project.properties`: `app/static/**`, `frontend/src/index.html`, agent implementation files (coverage only)
+- When a PR fails the Sonar check, start by checking the quality gate status (Step 1 in the reference), then drill into the specific failure type
 
-#### Fetch Security Hotspots
+---
 
-```
-GET https://sonarcloud.io/api/hotspots/search?projectKey=bsantanna_quant-agents&ps=500&status=TO_REVIEW
-```
+## Dependabot & Dependency Updates
 
-- `ps` — page size (max 500)
-- `status` — `TO_REVIEW` (open), `REVIEWED` (resolved)
-- Response includes `hotspots[]` with: `key`, `component`, `securityCategory`, `vulnerabilityProbability` (HIGH/MEDIUM/LOW), `line`, `message`, `ruleKey`
+Dependabot opens PRs for outdated Python dependencies. These PRs often fail CI because they're based on an older `main`. The preferred workflow is to batch-update locally:
 
-#### Fetch Issues (Bugs, Code Smells, Vulnerabilities)
+### Batch Update Workflow
 
-```
-GET https://sonarcloud.io/api/issues/search?projectKey=bsantanna_quant-agents&ps=500&statuses=OPEN,CONFIRMED
-```
+1. **List open dependabot PRs:**
+   ```bash
+   gh pr list --label dependencies --state open --json number,title,headRefName
+   ```
 
-Useful query parameters:
-- `types` — `BUG`, `VULNERABILITY`, `CODE_SMELL` (comma-separated)
-- `severities` — `BLOCKER`, `CRITICAL`, `MAJOR`, `MINOR`, `INFO`
-- `statuses` — `OPEN`, `CONFIRMED`, `REOPENED`, `RESOLVED`, `CLOSED`
-- `resolved` — `false` to get only unresolved issues
-- `facets` — `severities,types` to get aggregated counts
-- Response includes `issues[]` with: `key`, `component`, `line`, `message`, `severity`, `type`, `rule`, `status`
+2. **Bump versions in `pyproject.toml`** — update the `~=` version constraints to match or exceed the dependabot targets. Bump all `testcontainers[*]` extras together since they share the same package.
 
-#### Common Rule Keys
+3. **Regenerate the lock file and sync:**
+   ```bash
+   conda run -n agent-lab uv lock
+   conda run -n agent-lab uv sync --group dev --group test
+   ```
 
-| Rule | Category | Description |
-|------|----------|-------------|
-| `typescript:S6268` | XSS | `bypassSecurityTrustResourceUrl` usage |
-| `typescript:S5852` / `python:S5852` | DoS | Regex vulnerable to backtracking |
-| `python:S4790` | Crypto | Weak hash function (e.g. MD5) |
-| `Web:S5725` | Integrity | Missing SRI `integrity` attribute on external `<link>`/`<script>` |
+4. **Verify** — run `ruff check app/` and `npx jest` (frontend) to catch regressions.
+
+5. **After merging**, close the superseded dependabot PRs (they're no longer needed).
+
+Note: `uv lock` resolves the latest compatible version within each `~=` range, so the actual installed version may be newer than the dependabot PR target.
 
 ---
 

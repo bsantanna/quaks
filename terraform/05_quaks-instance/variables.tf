@@ -7,13 +7,12 @@ variable "quaks_namespace" {
 variable "agent_lab_chart_version" {
   description = "Helm chart version for Quaks"
   type        = string
-  default     = "1.6.0"
 }
 
 variable "quaks_image_tag" {
   description = "Docker image tag for Quaks application"
   type        = string
-  default     = "1.5.16"
+  default     = "1.5.17"
 }
 
 variable "quaks_image_repository" {
