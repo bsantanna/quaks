@@ -358,12 +358,13 @@ class TestGetBashTool:
         result = tool.invoke("echo 'unterminated")
         assert "Parse error" in result
 
-    def test_tool_handles_non_string_input(self):
+    def test_tool_with_subshell(self):
         utils = _make_agent_utils()
         agent = _StubWorkflowAgent(utils)
         tool = agent.get_bash_tool()
-        result = tool.invoke({"cmd": 123})
-        assert "Error analyzing script" in result
+        result = tool.invoke("echo $(whoami)")
+        assert "Syntax: valid" in result
+        assert "Subshells: 1" in result
 
 
 class TestGetLastInteractionMessages:

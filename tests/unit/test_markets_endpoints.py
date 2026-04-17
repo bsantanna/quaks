@@ -1,6 +1,6 @@
 """Tests for markets API endpoints."""
 import pytest
-from unittest.mock import MagicMock, AsyncMock
+from unittest.mock import MagicMock
 
 from app.domain.exceptions.base import InvalidFieldError
 from app.interface.api.markets.endpoints import (
@@ -23,6 +23,19 @@ from app.interface.api.markets.schema import (
     InsightsNewsListRequest,
     IndicatorRequest,
 )
+
+
+# The FastAPI endpoints are decorated with @inject which wraps them.
+# Access the original function via __wrapped__ to call directly.
+_get_stats_close = get_stats_close.__wrapped__
+_get_company_profile = get_company_profile.__wrapped__
+_get_stats_close_bulk = get_stats_close_bulk.__wrapped__
+_get_market_caps_bulk = get_market_caps_bulk.__wrapped__
+_get_news = get_news.__wrapped__
+_get_insights_news = get_insights_news.__wrapped__
+_get_published_content_preview = get_published_content_preview.__wrapped__
+_cancel_published_content = cancel_published_content.__wrapped__
+_get_indicator = get_indicator.__wrapped__
 
 
 class TestValidateIndexName:
@@ -70,7 +83,7 @@ class TestGetStatsClose:
             "percent_variance": 1.5,
         }
         request = StatsCloseRequest(start_date="2025-01-01", end_date="2025-01-10")
-        result = await get_stats_close("stocks-eod", "AAPL", mock_service, request)
+        result = await _get_stats_close("stocks-eod", "AAPL", mock_service, request)
         assert result.key_ticker == "AAPL"
         assert result.most_recent_close == 150.0
 
@@ -79,16 +92,20 @@ class TestGetStatsClose:
         mock_service = MagicMock()
         mock_service.get_stats_close.return_value = {
             "most_recent_close": 150.0,
-            "most_recent_open": None,
-            "most_recent_high": None,
-            "most_recent_low": None,
-            "most_recent_volume": None,
-            "most_recent_date": None,
-            "percent_variance": None,
+            "most_recent_open": 148.0,
+            "most_recent_high": 152.0,
+            "most_recent_low": 147.0,
+            "most_recent_volume": 1000000,
+            "most_recent_date": "2025-01-10",
+            "percent_variance": 1.0,
         }
         request = StatsCloseRequest()
-        result = await get_stats_close("stocks-eod", "AAPL", mock_service, request)
+        result = await _get_stats_close("stocks-eod", "AAPL", mock_service, request)
         assert result.key_ticker == "AAPL"
+        # Verify default dates were passed (start_date ~90 days ago, end_date ~today)
+        call_kwargs = mock_service.get_stats_close.call_args[1]
+        assert call_kwargs["start_date"] is not None
+        assert call_kwargs["end_date"] is not None
 
 
 class TestGetCompanyProfile:
@@ -101,7 +118,7 @@ class TestGetCompanyProfile:
             "exchange": "NASDAQ",
             "sector": "Technology",
         }
-        result = await get_company_profile("stocks-metadata", "AAPL", mock_service)
+        result = await _get_company_profile("stocks-metadata", "AAPL", mock_service)
         assert result.key_ticker == "AAPL"
 
 
@@ -131,7 +148,7 @@ class TestGetStatsCloseBulk:
                 "percent_variance": 0.5,
             },
         ]
-        result = await get_stats_close_bulk("stocks-eod", "AAPL,MSFT", mock_service)
+        result = await _get_stats_close_bulk("stocks-eod", "AAPL,MSFT", mock_service)
         assert len(result.items) == 2
         assert result.items[0].key_ticker == "AAPL"
         assert result.items[1].key_ticker == "MSFT"
@@ -144,7 +161,7 @@ class TestGetMarketCapsBulk:
         mock_service.get_market_caps_bulk.return_value = [
             {"key_ticker": "AAPL", "market_capitalization": 3000000000000},
         ]
-        result = await get_market_caps_bulk("stocks-metadata", "AAPL", mock_service)
+        result = await _get_market_caps_bulk("stocks-metadata", "AAPL", mock_service)
         assert len(result.items) == 1
         assert result.items[0].market_capitalization == 3000000000000
 
@@ -171,7 +188,7 @@ class TestGetNews:
             "cursor123",
         )
         request = NewsListRequest(size=5)
-        result = await get_news("markets-news", mock_service, request)
+        result = await _get_news("markets-news", mock_service, request)
         assert len(result.items) == 1
         assert result.items[0].headline == "Tech Rally"
         assert result.cursor == "cursor123"
@@ -197,7 +214,7 @@ class TestGetInsightsNews:
             None,
         )
         request = InsightsNewsListRequest(size=5, include_report_html=True)
-        result = await get_insights_news("insights-news", mock_service, request)
+        result = await _get_insights_news("insights-news", mock_service, request)
         assert len(result.items) == 1
         assert result.items[0].executive_summary == "Market summary"
 
@@ -215,7 +232,7 @@ class TestGetPublishedContentPreview:
             "key_author_username": "user",
             "date_timestamp": "2025-01-10",
         }
-        result = await get_published_content_preview("doc1", mock_service)
+        result = await _get_published_content_preview("doc1", mock_service)
         assert result.status == "pending"
 
     @pytest.mark.asyncio
@@ -230,7 +247,7 @@ class TestGetPublishedContentPreview:
             "key_author_username": "",
             "date_timestamp": "",
         }
-        result = await get_published_content_preview("doc1", mock_service)
+        result = await _get_published_content_preview("doc1", mock_service)
         assert result.status == "processed"
 
     @pytest.mark.asyncio
@@ -245,7 +262,7 @@ class TestGetPublishedContentPreview:
             "key_author_username": "",
             "date_timestamp": "",
         }
-        result = await get_published_content_preview("doc1", mock_service)
+        result = await _get_published_content_preview("doc1", mock_service)
         assert result.status == "cancelled"
 
 
@@ -253,7 +270,7 @@ class TestCancelPublishedContent:
     @pytest.mark.asyncio
     async def test_cancels(self):
         mock_service = MagicMock()
-        result = await cancel_published_content("doc1", mock_service)
+        result = await _cancel_published_content("doc1", mock_service)
         assert result.status == "cancelled"
         assert result.doc_id == "doc1"
         mock_service.cancel_publishing.assert_called_once_with("doc1")
@@ -271,7 +288,7 @@ class TestGetIndicator:
             end_date="2025-01-10",
             period=14,
         )
-        result = await get_indicator("rsi", "stocks-eod", "AAPL", mock_service, request)
+        result = await _get_indicator("rsi", "stocks-eod", "AAPL", mock_service, request)
         assert result.indicator == "rsi"
         assert result.key_ticker == "AAPL"
         assert len(result.data) == 1
@@ -281,14 +298,14 @@ class TestGetIndicator:
         mock_service = MagicMock()
         request = IndicatorRequest()
         with pytest.raises(InvalidFieldError):
-            await get_indicator("xyz", "stocks-eod", "AAPL", mock_service, request)
+            await _get_indicator("xyz", "stocks-eod", "AAPL", mock_service, request)
 
     @pytest.mark.asyncio
     async def test_uses_default_dates(self):
         mock_service = MagicMock()
         mock_service.get_indicator_ad.return_value = []
         request = IndicatorRequest()
-        result = await get_indicator("ad", "stocks-eod", "AAPL", mock_service, request)
+        result = await _get_indicator("ad", "stocks-eod", "AAPL", mock_service, request)
         assert result.indicator == "ad"
 
     @pytest.mark.asyncio
@@ -296,7 +313,7 @@ class TestGetIndicator:
         mock_service = MagicMock()
         mock_service.get_indicator_ema.return_value = []
         request = IndicatorRequest(short_window=12, long_window=26)
-        result = await get_indicator("ema", "stocks-eod", "AAPL", mock_service, request)
+        result = await _get_indicator("ema", "stocks-eod", "AAPL", mock_service, request)
         assert result.indicator == "ema"
 
     @pytest.mark.asyncio
@@ -304,7 +321,7 @@ class TestGetIndicator:
         mock_service = MagicMock()
         mock_service.get_indicator_macd.return_value = []
         request = IndicatorRequest(short_window=12, long_window=26, signal_window=9)
-        result = await get_indicator("macd", "stocks-eod", "AAPL", mock_service, request)
+        result = await _get_indicator("macd", "stocks-eod", "AAPL", mock_service, request)
         assert result.indicator == "macd"
 
     @pytest.mark.asyncio
@@ -312,5 +329,5 @@ class TestGetIndicator:
         mock_service = MagicMock()
         mock_service.get_indicator_stoch.return_value = []
         request = IndicatorRequest(lookback=14, smooth_k=3, smooth_d=3)
-        result = await get_indicator("stoch", "stocks-eod", "AAPL", mock_service, request)
+        result = await _get_indicator("stoch", "stocks-eod", "AAPL", mock_service, request)
         assert result.indicator == "stoch"

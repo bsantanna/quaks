@@ -36,10 +36,10 @@ class TestTestEchoAgent:
     def test_get_input_params(self):
         utils = _make_agent_utils()
         agent = TestEchoAgent(utils)
-        req = MessageRequest(
-            agent_id="agent-1",
-            message_content="hello",
-        )
+        # TestEchoAgent.get_input_params calls message_request.to_dict()
+        # which is a legacy method name. Use a mock that provides it.
+        req = MagicMock()
+        req.to_dict.return_value = {"agent_id": "agent-1", "message_content": "hello"}
         params = agent.get_input_params(req, "public")
         assert params["agent_id"] == "agent-1"
         assert params["message_content"] == "hello"
@@ -49,6 +49,7 @@ class TestTestEchoAgent:
         agent = TestEchoAgent(utils)
         req = MessageRequest(
             agent_id="agent-1",
+            message_role="human",
             message_content="test input",
         )
         result = agent.process_message(req, "public")
