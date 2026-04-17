@@ -37,6 +37,7 @@
         <!-- Sector label -->
         <div
           class="sector-label cursor-pointer hover:bg-white/5 transition-colors"
+          role="button" tabindex="0"
           [style.left.px]="group.x"
           [style.top.px]="group.y"
           [style.width.px]="group.w"
@@ -51,6 +52,7 @@
         @for (tile of group.tiles; track tile.ticker) {
           <div
             class="stock-tile"
+            role="button" tabindex="0"
             [style.left.px]="tile.x"
             [style.top.px]="tile.y"
             [style.width.px]="tile.w"
@@ -59,6 +61,8 @@
             [style.font-size.px]="tileFontSize(tile)"
             (mouseenter)="hasPointer && hoveredTile.set(tile)"
             (mouseleave)="hasPointer && hoveredTile.set(null)"
+            (focus)="hoveredTile.set(tile)"
+            (blur)="hoveredTile.set(null)"
             (click)="navigateToStock(tile.ticker)"
             (keydown.enter)="navigateToStock(tile.ticker)">
             @if (showTicker(tile)) {
