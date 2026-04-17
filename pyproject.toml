@@ -91,6 +91,7 @@ version_variables = [
   ".claude-plugin/marketplace.json:version",
   "plugins/quaks-agents/.claude-plugin/plugin.json:version",
   "pyproject.toml:version",
+  "terraform/02_airflow-instance/variables:default",
 ]
 
 [tool.coverage.run]

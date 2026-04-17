@@ -12,7 +12,7 @@ variable "airflow_fqdn" {
 variable "quaks_dags_image_tag" {
   description = "Docker image tag for quaks-dags"
   type        = string
-  default     = "v1.5.16"
+  default     = "1.5.17"
 }
 
 variable "airflow_admin_username" {

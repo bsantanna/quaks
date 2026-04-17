@@ -118,10 +118,8 @@ export function buildHeatmapTiles(
       h: 0,
     }));
 
-  const mostRecentDate = tiles.reduce(
-    (latest, tile) => tile.mostRecentDate > latest ? tile.mostRecentDate : latest,
-    '',
-  );
+  const dates = tiles.map(tile => tile.mostRecentDate).filter(Boolean);
+  const mostRecentDate = dates.length > 0 ? dates.sort().pop()! : '';
 
   return {tiles, mostRecentDate};
 }

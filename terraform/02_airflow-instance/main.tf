@@ -158,7 +158,7 @@ resource "helm_release" "airflow" {
       executor = "CeleryExecutor"
 
       defaultAirflowRepository = "bsantanna/quaks-dags"
-      defaultAirflowTag        = var.quaks_dags_image_tag
+      defaultAirflowTag        = "v${var.quaks_dags_image_tag}"
 
       createUserJob = {
         useHelmHooks = false

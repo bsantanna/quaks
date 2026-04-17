@@ -47,8 +47,6 @@ export class ThemeService implements SharedStateService<ThemePreference> {
     const el = this.document.documentElement;
     if (el.dataset) {
       el.dataset['theme'] = theme;
-    } else {
-      el.setAttribute('data-theme', theme);
     }
   }
 }

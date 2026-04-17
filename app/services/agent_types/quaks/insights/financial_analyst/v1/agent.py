@@ -27,7 +27,9 @@ from app.services.agent_types.quaks.insights.financial_analyst.v1.prompts import
     TECHNICAL_ANALYST_SYSTEM_PROMPT,
     CONSENSUS_REPORTER_SYSTEM_PROMPT,
 )
-from app.services.agent_types.quaks.insights.financial_analyst.v1.state import FinancialAnalystState
+from app.services.agent_types.quaks.insights.financial_analyst.v1.state import (
+    FinancialAnalystState,
+)
 from app.services.agent_types.quaks.insights.tools import build_get_markets_news_tool
 from app.services.markets_news import MarketsNewsService
 from app.services.markets_stats import MarketsStatsService
@@ -36,6 +38,28 @@ from app.services.tasks import TaskProgress
 _TABLE_OPEN = "<table>"
 _TABLE_CLOSE = "</table>"
 _NOT_CLASSIFIED = "Not Classified"
+
+# --- Sector constants ---
+_BASIC_MATERIALS = "Basic Materials"
+_COMMUNICATION_SERVICES = "Communication Services"
+_CONSUMER_CYCLICAL = "Consumer Cyclical"
+_CONSUMER_DEFENSIVE = "Consumer Defensive"
+_FINANCIAL_SERVICES = "Financial Services"
+_REAL_ESTATE = "Real Estate"
+
+# --- Region constants ---
+_AMERICAS = "Americas"
+_UNITED_STATES = "United States"
+_CENTRAL_LATIN_AMERICA = "Central & Latin America"
+_GREATER_EUROPE = "Greater Europe"
+_UNITED_KINGDOM = "United Kingdom"
+_WESTERN_EUROPE_EURO = "Western Europe - Euro"
+_WESTERN_EUROPE_NON_EURO = "Western Europe - Non Euro"
+_EMERGING_EUROPE = "Emerging Europe"
+_MIDDLE_EAST_AFRICA = "Middle East / Africa"
+_GREATER_ASIA = "Greater Asia"
+_EMERGING_4_TIGERS = "Emerging 4 Tigers"
+_EMERGING_ASIA_EX_4_TIGERS = "Emerging Asia - Ex 4 Tigers"
 
 EXECUTION_PLAN = (
     "Financial analysis plan:\n"
@@ -48,69 +72,82 @@ EXECUTION_PLAN = (
 )
 
 SUPERSECTOR_SECTORS = {
-    "Cyclical": ["Basic Materials", "Consumer Cyclical", "Financial Services", "Real Estate"],
-    "Sensitive": ["Communication Services", "Energy", "Industrials", "Technology"],
-    "Defensive": ["Consumer Defensive", "Healthcare", "Utilities"],
+    "Cyclical": [
+        _BASIC_MATERIALS,
+        _CONSUMER_CYCLICAL,
+        _FINANCIAL_SERVICES,
+        _REAL_ESTATE,
+    ],
+    "Sensitive": [_COMMUNICATION_SERVICES, "Energy", "Industrials", "Technology"],
+    "Defensive": [_CONSUMER_DEFENSIVE, "Healthcare", "Utilities"],
 }
 
 COUNTRY_REGION = {
-    "US": ("Americas", "United States"),
-    "USA": ("Americas", "United States"),
-    "United States": ("Americas", "United States"),
-    "Canada": ("Americas", "Canada"),
-    "CA": ("Americas", "Canada"),
-    "Brazil": ("Americas", "Central & Latin America"),
-    "Mexico": ("Americas", "Central & Latin America"),
-    "Argentina": ("Americas", "Central & Latin America"),
-    "Chile": ("Americas", "Central & Latin America"),
-    "Colombia": ("Americas", "Central & Latin America"),
-    "Peru": ("Americas", "Central & Latin America"),
-    "United Kingdom": ("Greater Europe", "United Kingdom"),
-    "Germany": ("Greater Europe", "Western Europe - Euro"),
-    "France": ("Greater Europe", "Western Europe - Euro"),
-    "Netherlands": ("Greater Europe", "Western Europe - Euro"),
-    "Spain": ("Greater Europe", "Western Europe - Euro"),
-    "Italy": ("Greater Europe", "Western Europe - Euro"),
-    "Belgium": ("Greater Europe", "Western Europe - Euro"),
-    "Ireland": ("Greater Europe", "Western Europe - Euro"),
-    "Finland": ("Greater Europe", "Western Europe - Euro"),
-    "Austria": ("Greater Europe", "Western Europe - Euro"),
-    "Portugal": ("Greater Europe", "Western Europe - Euro"),
-    "Switzerland": ("Greater Europe", "Western Europe - Non Euro"),
-    "Sweden": ("Greater Europe", "Western Europe - Non Euro"),
-    "Norway": ("Greater Europe", "Western Europe - Non Euro"),
-    "Denmark": ("Greater Europe", "Western Europe - Non Euro"),
-    "Poland": ("Greater Europe", "Emerging Europe"),
-    "Czech Republic": ("Greater Europe", "Emerging Europe"),
-    "Hungary": ("Greater Europe", "Emerging Europe"),
-    "Russia": ("Greater Europe", "Emerging Europe"),
-    "Turkey": ("Greater Europe", "Emerging Europe"),
-    "Israel": ("Greater Europe", "Middle East / Africa"),
-    "South Africa": ("Greater Europe", "Middle East / Africa"),
-    "Saudi Arabia": ("Greater Europe", "Middle East / Africa"),
-    "Japan": ("Greater Asia", "Japan"),
-    "Australia": ("Greater Asia", "Australasia"),
-    "New Zealand": ("Greater Asia", "Australasia"),
-    "Taiwan": ("Greater Asia", "Emerging 4 Tigers"),
-    "South Korea": ("Greater Asia", "Emerging 4 Tigers"),
-    "Hong Kong": ("Greater Asia", "Emerging 4 Tigers"),
-    "Singapore": ("Greater Asia", "Emerging 4 Tigers"),
-    "China": ("Greater Asia", "Emerging Asia - Ex 4 Tigers"),
-    "India": ("Greater Asia", "Emerging Asia - Ex 4 Tigers"),
-    "Indonesia": ("Greater Asia", "Emerging Asia - Ex 4 Tigers"),
-    "Malaysia": ("Greater Asia", "Emerging Asia - Ex 4 Tigers"),
-    "Thailand": ("Greater Asia", "Emerging Asia - Ex 4 Tigers"),
-    "Philippines": ("Greater Asia", "Emerging Asia - Ex 4 Tigers"),
-    "Vietnam": ("Greater Asia", "Emerging Asia - Ex 4 Tigers"),
+    "US": (_AMERICAS, _UNITED_STATES),
+    "USA": (_AMERICAS, _UNITED_STATES),
+    "United States": (_AMERICAS, _UNITED_STATES),
+    "Canada": (_AMERICAS, "Canada"),
+    "CA": (_AMERICAS, "Canada"),
+    "Brazil": (_AMERICAS, _CENTRAL_LATIN_AMERICA),
+    "Mexico": (_AMERICAS, _CENTRAL_LATIN_AMERICA),
+    "Argentina": (_AMERICAS, _CENTRAL_LATIN_AMERICA),
+    "Chile": (_AMERICAS, _CENTRAL_LATIN_AMERICA),
+    "Colombia": (_AMERICAS, _CENTRAL_LATIN_AMERICA),
+    "Peru": (_AMERICAS, _CENTRAL_LATIN_AMERICA),
+    "United Kingdom": (_GREATER_EUROPE, _UNITED_KINGDOM),
+    "Germany": (_GREATER_EUROPE, _WESTERN_EUROPE_EURO),
+    "France": (_GREATER_EUROPE, _WESTERN_EUROPE_EURO),
+    "Netherlands": (_GREATER_EUROPE, _WESTERN_EUROPE_EURO),
+    "Spain": (_GREATER_EUROPE, _WESTERN_EUROPE_EURO),
+    "Italy": (_GREATER_EUROPE, _WESTERN_EUROPE_EURO),
+    "Belgium": (_GREATER_EUROPE, _WESTERN_EUROPE_EURO),
+    "Ireland": (_GREATER_EUROPE, _WESTERN_EUROPE_EURO),
+    "Finland": (_GREATER_EUROPE, _WESTERN_EUROPE_EURO),
+    "Austria": (_GREATER_EUROPE, _WESTERN_EUROPE_EURO),
+    "Portugal": (_GREATER_EUROPE, _WESTERN_EUROPE_EURO),
+    "Switzerland": (_GREATER_EUROPE, _WESTERN_EUROPE_NON_EURO),
+    "Sweden": (_GREATER_EUROPE, _WESTERN_EUROPE_NON_EURO),
+    "Norway": (_GREATER_EUROPE, _WESTERN_EUROPE_NON_EURO),
+    "Denmark": (_GREATER_EUROPE, _WESTERN_EUROPE_NON_EURO),
+    "Poland": (_GREATER_EUROPE, _EMERGING_EUROPE),
+    "Czech Republic": (_GREATER_EUROPE, _EMERGING_EUROPE),
+    "Hungary": (_GREATER_EUROPE, _EMERGING_EUROPE),
+    "Russia": (_GREATER_EUROPE, _EMERGING_EUROPE),
+    "Turkey": (_GREATER_EUROPE, _EMERGING_EUROPE),
+    "Israel": (_GREATER_EUROPE, _MIDDLE_EAST_AFRICA),
+    "South Africa": (_GREATER_EUROPE, _MIDDLE_EAST_AFRICA),
+    "Saudi Arabia": (_GREATER_EUROPE, _MIDDLE_EAST_AFRICA),
+    "Japan": (_GREATER_ASIA, "Japan"),
+    "Australia": (_GREATER_ASIA, "Australasia"),
+    "New Zealand": (_GREATER_ASIA, "Australasia"),
+    "Taiwan": (_GREATER_ASIA, _EMERGING_4_TIGERS),
+    "South Korea": (_GREATER_ASIA, _EMERGING_4_TIGERS),
+    "Hong Kong": (_GREATER_ASIA, _EMERGING_4_TIGERS),
+    "Singapore": (_GREATER_ASIA, _EMERGING_4_TIGERS),
+    "China": (_GREATER_ASIA, _EMERGING_ASIA_EX_4_TIGERS),
+    "India": (_GREATER_ASIA, _EMERGING_ASIA_EX_4_TIGERS),
+    "Indonesia": (_GREATER_ASIA, _EMERGING_ASIA_EX_4_TIGERS),
+    "Malaysia": (_GREATER_ASIA, _EMERGING_ASIA_EX_4_TIGERS),
+    "Thailand": (_GREATER_ASIA, _EMERGING_ASIA_EX_4_TIGERS),
+    "Philippines": (_GREATER_ASIA, _EMERGING_ASIA_EX_4_TIGERS),
+    "Vietnam": (_GREATER_ASIA, _EMERGING_ASIA_EX_4_TIGERS),
 }
 
 REGION_SUBREGIONS = {
-    "Americas": ["United States", "Canada", "Central & Latin America"],
-    "Greater Europe": [
-        "United Kingdom", "Western Europe - Euro", "Western Europe - Non Euro",
-        "Emerging Europe", "Middle East / Africa",
+    _AMERICAS: [_UNITED_STATES, "Canada", _CENTRAL_LATIN_AMERICA],
+    _GREATER_EUROPE: [
+        _UNITED_KINGDOM,
+        _WESTERN_EUROPE_EURO,
+        _WESTERN_EUROPE_NON_EURO,
+        _EMERGING_EUROPE,
+        _MIDDLE_EAST_AFRICA,
     ],
-    "Greater Asia": ["Japan", "Australasia", "Emerging 4 Tigers", "Emerging Asia - Ex 4 Tigers"],
+    _GREATER_ASIA: [
+        "Japan",
+        "Australasia",
+        _EMERGING_4_TIGERS,
+        _EMERGING_ASIA_EX_4_TIGERS,
+    ],
 }
 
 # Finnhub sector values (from ES metadata) → Morningstar super-sector parent
@@ -120,9 +157,9 @@ INDUSTRY_TO_SECTOR = {
     "Semiconductors": "Technology",
     "Electrical Equipment": "Technology",
     # Communication Services (Sensitive)
-    "Media": "Communication Services",
-    "Communications": "Communication Services",
-    "Telecommunication": "Communication Services",
+    "Media": _COMMUNICATION_SERVICES,
+    "Communications": _COMMUNICATION_SERVICES,
+    "Telecommunication": _COMMUNICATION_SERVICES,
     # Energy (Sensitive)
     "Energy": "Energy",
     # Industrials (Sensitive)
@@ -141,34 +178,34 @@ INDUSTRY_TO_SECTOR = {
     "Trading Companies & Distributors": "Industrials",
     "Packaging": "Industrials",
     # Financial Services (Cyclical)
-    "Financial Services": "Financial Services",
-    "Banking": "Financial Services",
-    "Insurance": "Financial Services",
+    _FINANCIAL_SERVICES: _FINANCIAL_SERVICES,
+    "Banking": _FINANCIAL_SERVICES,
+    "Insurance": _FINANCIAL_SERVICES,
     # Consumer Cyclical (Cyclical)
-    "Retail": "Consumer Cyclical",
-    "Hotels, Restaurants & Leisure": "Consumer Cyclical",
-    "Textiles, Apparel & Luxury Goods": "Consumer Cyclical",
-    "Automobiles": "Consumer Cyclical",
-    "Auto Components": "Consumer Cyclical",
-    "Leisure Products": "Consumer Cyclical",
-    "Diversified Consumer Services": "Consumer Cyclical",
-    "Consumer products": "Consumer Cyclical",
+    "Retail": _CONSUMER_CYCLICAL,
+    "Hotels, Restaurants & Leisure": _CONSUMER_CYCLICAL,
+    "Textiles, Apparel & Luxury Goods": _CONSUMER_CYCLICAL,
+    "Automobiles": _CONSUMER_CYCLICAL,
+    "Auto Components": _CONSUMER_CYCLICAL,
+    "Leisure Products": _CONSUMER_CYCLICAL,
+    "Diversified Consumer Services": _CONSUMER_CYCLICAL,
+    "Consumer products": _CONSUMER_CYCLICAL,
     # Real Estate (Cyclical)
-    "Real Estate": "Real Estate",
+    _REAL_ESTATE: _REAL_ESTATE,
     # Basic Materials (Cyclical)
-    "Metals & Mining": "Basic Materials",
-    "Chemicals": "Basic Materials",
-    "Paper & Forest": "Basic Materials",
+    "Metals & Mining": _BASIC_MATERIALS,
+    "Chemicals": _BASIC_MATERIALS,
+    "Paper & Forest": _BASIC_MATERIALS,
     # Healthcare (Defensive)
     "Health Care": "Healthcare",
     "Biotechnology": "Healthcare",
     "Pharmaceuticals": "Healthcare",
     "Life Sciences Tools & Services": "Healthcare",
     # Consumer Defensive (Defensive)
-    "Food Products": "Consumer Defensive",
-    "Beverages": "Consumer Defensive",
-    "Tobacco": "Consumer Defensive",
-    "Distributors": "Consumer Defensive",
+    "Food Products": _CONSUMER_DEFENSIVE,
+    "Beverages": _CONSUMER_DEFENSIVE,
+    "Tobacco": _CONSUMER_DEFENSIVE,
+    "Distributors": _CONSUMER_DEFENSIVE,
     # Utilities (Defensive)
     "Utilities": "Utilities",
 }
@@ -180,17 +217,74 @@ for _sectors in SUPERSECTOR_SECTORS.values():
 
 # Keyword hints for fuzzy fallback when exact match fails
 _SECTOR_KEYWORDS = {
-    "Technology": ["tech", "software", "semiconductor", "computer", "electronic", "solar", "cyber"],
-    "Communication Services": ["media", "telecom", "entertainment", "gaming", "advertis", "broadcast", "publish", "streaming"],
+    "Technology": [
+        "tech",
+        "software",
+        "semiconductor",
+        "computer",
+        "electronic",
+        "solar",
+        "cyber",
+    ],
+    _COMMUNICATION_SERVICES: [
+        "media",
+        "telecom",
+        "entertainment",
+        "gaming",
+        "advertis",
+        "broadcast",
+        "publish",
+        "streaming",
+    ],
     "Healthcare": ["health", "drug", "biotech", "medical", "pharma", "diagnostic"],
-    "Financial Services": ["bank", "insurance", "capital", "credit", "asset management", "financial"],
-    "Consumer Cyclical": ["retail", "auto", "restaurant", "apparel", "luxury", "travel", "hotel", "leisure"],
-    "Consumer Defensive": ["food", "beverage", "grocery", "tobacco", "household", "discount"],
-    "Industrials": ["aerospace", "defense", "railroad", "airline", "freight", "waste", "construction", "industrial"],
+    _FINANCIAL_SERVICES: [
+        "bank",
+        "insurance",
+        "capital",
+        "credit",
+        "asset management",
+        "financial",
+    ],
+    _CONSUMER_CYCLICAL: [
+        "retail",
+        "auto",
+        "restaurant",
+        "apparel",
+        "luxury",
+        "travel",
+        "hotel",
+        "leisure",
+    ],
+    _CONSUMER_DEFENSIVE: [
+        "food",
+        "beverage",
+        "grocery",
+        "tobacco",
+        "household",
+        "discount",
+    ],
+    "Industrials": [
+        "aerospace",
+        "defense",
+        "railroad",
+        "airline",
+        "freight",
+        "waste",
+        "construction",
+        "industrial",
+    ],
     "Energy": ["oil", "gas", "energy", "petroleum", "fuel"],
     "Utilities": ["utilit", "electric", "water", "renewable"],
-    "Real Estate": ["reit", "real estate", "property"],
-    "Basic Materials": ["gold", "steel", "chemical", "copper", "mining", "lumber", "aluminum"],
+    _REAL_ESTATE: ["reit", "real estate", "property"],
+    _BASIC_MATERIALS: [
+        "gold",
+        "steel",
+        "chemical",
+        "copper",
+        "mining",
+        "lumber",
+        "aluminum",
+    ],
 }
 
 
@@ -227,35 +321,52 @@ def _normalize_sector(raw_sector: str) -> str:
 
 
 def _build_style_table(style_grid: dict) -> list[str]:
-    rows = ["<h3>Investment Style</h3>", _TABLE_OPEN,
-            "<tr><th></th><th>Value</th><th>Blend</th><th>Growth</th></tr>"]
+    rows = [
+        "<h3>Investment Style</h3>",
+        _TABLE_OPEN,
+        "<tr><th></th><th>Value</th><th>Blend</th><th>Growth</th></tr>",
+    ]
     for size in ("Large", "Mid", "Small"):
-        v, b, g = [f"{style_grid[(size, st)]:.0f}" for st in ("Value", "Blend", "Growth")]
-        rows.append(f"<tr><td><b>{size}</b></td><td>{v}</td><td>{b}</td><td>{g}</td></tr>")
+        v, b, g = [
+            f"{style_grid[(size, st)]:.0f}" for st in ("Value", "Blend", "Growth")
+        ]
+        rows.append(
+            f"<tr><td><b>{size}</b></td><td>{v}</td><td>{b}</td><td>{g}</td></tr>"
+        )
     rows.append(_TABLE_CLOSE)
     return rows
 
 
 def _build_sector_table(sector_wt: dict) -> list[str]:
-    rows = ["<h3>Stock Sectors</h3>", _TABLE_OPEN,
-            "<tr><th>Sector</th><th>Weight %</th></tr>"]
+    rows = [
+        "<h3>Stock Sectors</h3>",
+        _TABLE_OPEN,
+        "<tr><th>Sector</th><th>Weight %</th></tr>",
+    ]
     for supersector, sectors in SUPERSECTOR_SECTORS.items():
         total = sum(sector_wt.get(s, 0) for s in sectors)
-        rows.append(f"<tr><td><b>{supersector}</b></td><td><b>{total:.2f}</b></td></tr>")
+        rows.append(
+            f"<tr><td><b>{supersector}</b></td><td><b>{total:.2f}</b></td></tr>"
+        )
         for s in sectors:
             w = sector_wt.get(s, 0)
             if w > 0:
                 rows.append(f"<tr><td>&nbsp;&nbsp;{s}</td><td>{w:.2f}</td></tr>")
     nc = sector_wt.get(_NOT_CLASSIFIED, 0)
     if nc > 0:
-        rows.append(f"<tr><td><b>{_NOT_CLASSIFIED}</b></td><td><b>{nc:.2f}</b></td></tr>")
+        rows.append(
+            f"<tr><td><b>{_NOT_CLASSIFIED}</b></td><td><b>{nc:.2f}</b></td></tr>"
+        )
     rows.append(_TABLE_CLOSE)
     return rows
 
 
 def _build_region_table(subregion_wt: dict) -> list[str]:
-    rows = ["<h3>World Regions</h3>", _TABLE_OPEN,
-            "<tr><th>Region</th><th>Weight %</th></tr>"]
+    rows = [
+        "<h3>World Regions</h3>",
+        _TABLE_OPEN,
+        "<tr><th>Region</th><th>Weight %</th></tr>",
+    ]
     for region, subregions in REGION_SUBREGIONS.items():
         total = sum(subregion_wt.get(sr, 0) for sr in subregions)
         if total > 0:
@@ -266,14 +377,19 @@ def _build_region_table(subregion_wt: dict) -> list[str]:
                     rows.append(f"<tr><td>&nbsp;&nbsp;{sr}</td><td>{w:.2f}</td></tr>")
     nc = subregion_wt.get(_NOT_CLASSIFIED, 0)
     if nc > 0:
-        rows.append(f"<tr><td><b>{_NOT_CLASSIFIED}</b></td><td><b>{nc:.2f}</b></td></tr>")
+        rows.append(
+            f"<tr><td><b>{_NOT_CLASSIFIED}</b></td><td><b>{nc:.2f}</b></td></tr>"
+        )
     rows.append(_TABLE_CLOSE)
     return rows
 
 
 def _build_stats_table(stat_keys: dict, avg_stats: dict) -> list[str]:
-    rows = ["<h3>Stock Stats</h3>", _TABLE_OPEN,
-            "<tr><th>Metric</th><th>Average</th></tr>"]
+    rows = [
+        "<h3>Stock Stats</h3>",
+        _TABLE_OPEN,
+        "<tr><th>Metric</th><th>Average</th></tr>",
+    ]
     for key, label in stat_keys.items():
         val = f"{avg_stats[key]:.2f}" if avg_stats[key] > 0 else "-"
         rows.append(f"<tr><td>{label}</td><td>{val}</td></tr>")
@@ -281,9 +397,14 @@ def _build_stats_table(stat_keys: dict, avg_stats: dict) -> list[str]:
     return rows
 
 
-def _build_composition_table(sorted_tickers: list, profiles: dict, weights: dict) -> list[str]:
-    rows = ["<h3>Composition</h3>", _TABLE_OPEN,
-            "<tr><th>Name</th><th>Ticker</th><th>Sector</th><th>Country</th><th>Weight %</th></tr>"]
+def _build_composition_table(
+    sorted_tickers: list, profiles: dict, weights: dict
+) -> list[str]:
+    rows = [
+        "<h3>Composition</h3>",
+        _TABLE_OPEN,
+        "<tr><th>Name</th><th>Ticker</th><th>Sector</th><th>Country</th><th>Weight %</th></tr>",
+    ]
     for ticker in sorted_tickers[:10]:
         p = profiles[ticker]
         rows.append(
@@ -351,7 +472,9 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
         template_vars = {
             "CURRENT_TIME": datetime.now().strftime("%a %b %d %Y %H:%M:%S %z"),
             "EXECUTION_PLAN": EXECUTION_PLAN,
-            "TICKERS": ", ".join(tickers) if tickers else "To be determined from user query",
+            "TICKERS": ", ".join(tickers)
+            if tickers
+            else "To be determined from user query",
             "FINANCIAL_ANALYST_AGENTS": FINANCIAL_ANALYST_V1_AGENTS,
             "FINANCIAL_ANALYST_AGENT_CONFIGURATION": FINANCIAL_ANALYST_V1_AGENT_CONFIGURATION,
         }
@@ -487,7 +610,13 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
             }
             return json.dumps(indicators, ensure_ascii=False, default=str)
 
-        return [fetch_company_profile, fetch_stats_close, fetch_technical_indicators, build_get_markets_news_tool(markets_news_service), self._build_xray_tool()]
+        return [
+            fetch_company_profile,
+            fetch_stats_close,
+            fetch_technical_indicators,
+            build_get_markets_news_tool(markets_news_service),
+            self._build_xray_tool(),
+        ]
 
     def _build_xray_tool(self):
         compute_data = self._compute_xray_data
@@ -530,7 +659,11 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
         n = len(profiles)
         weights, has_allocation = self._compute_weights(profiles, allocation, n)
 
-        style_grid = {(s, v): 0.0 for s in ("Large", "Mid", "Small") for v in ("Value", "Blend", "Growth")}
+        style_grid = {
+            (s, v): 0.0
+            for s in ("Large", "Mid", "Small")
+            for v in ("Value", "Blend", "Growth")
+        }
         for ticker, p in profiles.items():
             mc = p.get("market_capitalization") or 0
             pe = p.get("forward_pe") or p.get("pe_ratio") or 0
@@ -582,7 +715,11 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
         if allocation:
             raw_wt = {t: allocation.get(t, 0) for t in profiles}
             total = sum(raw_wt.values())
-            weights = {t: w * 100.0 / total for t, w in raw_wt.items()} if total > 0 else {t: 100.0 / n for t in profiles}
+            weights = (
+                {t: w * 100.0 / total for t, w in raw_wt.items()}
+                if total > 0
+                else {t: 100.0 / n for t in profiles}
+            )
             return weights, True
         return {t: 100.0 / n for t in profiles}, False
 
@@ -615,7 +752,11 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
         for group, members in groups.items():
             total = sum(weight_map.get(m, 0) for m in members)
             if total > 0:
-                detail = ", ".join(f"{m} {weight_map[m]:.0f}%" for m in members if weight_map.get(m, 0) > 0)
+                detail = ", ".join(
+                    f"{m} {weight_map[m]:.0f}%"
+                    for m in members
+                    if weight_map.get(m, 0) > 0
+                )
                 parts.append(f"{group} {total:.0f}% ({detail})")
         return f"{label}: {'; '.join(parts)}"
 
@@ -632,18 +773,34 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
         sorted_tickers = data["sorted_tickers"]
 
         lines = [f"PORTFOLIO X-RAY ({len(profiles)} stocks, equal-weight)"]
-        lines.append(QuaksFinancialAnalystV1Agent._format_style_text(data["style_grid"]))
-        lines.append(QuaksFinancialAnalystV1Agent._format_weighted_groups_text("Sectors", SUPERSECTOR_SECTORS, data["sector_wt"]))
-        lines.append(QuaksFinancialAnalystV1Agent._format_weighted_groups_text("Regions", REGION_SUBREGIONS, data["subregion_wt"]))
+        lines.append(
+            QuaksFinancialAnalystV1Agent._format_style_text(data["style_grid"])
+        )
+        lines.append(
+            QuaksFinancialAnalystV1Agent._format_weighted_groups_text(
+                "Sectors", SUPERSECTOR_SECTORS, data["sector_wt"]
+            )
+        )
+        lines.append(
+            QuaksFinancialAnalystV1Agent._format_weighted_groups_text(
+                "Regions", REGION_SUBREGIONS, data["subregion_wt"]
+            )
+        )
 
-        stat_parts = [f"{label}: {avg_stats[key]:.2f}" for key, label in stat_keys.items() if avg_stats[key] > 0]
+        stat_parts = [
+            f"{label}: {avg_stats[key]:.2f}"
+            for key, label in stat_keys.items()
+            if avg_stats[key] > 0
+        ]
         lines.append(f"Stats: {', '.join(stat_parts)}")
 
         for ticker in sorted_tickers[:10]:
             p = profiles[ticker]
             mc = p.get("market_capitalization") or 0
             mc_b = f"{mc / 1e9:.0f}B" if mc > 0 else "N/A"
-            lines.append(f"  ({ticker}) {p.get('name', ticker)} | {p.get('sector', '-')} | {p.get('country', '-')} | MCap {mc_b} | {weights[ticker]:.1f}%")
+            lines.append(
+                f"  ({ticker}) {p.get('name', ticker)} | {p.get('sector', '-')} | {p.get('country', '-')} | MCap {mc_b} | {weights[ticker]:.1f}%"
+            )
 
         return "\n".join(lines)
 
@@ -666,7 +823,9 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
 
         h = ["<h2>X-Ray Analysis</h2>"]
         if has_allocation:
-            h.append(f"<p>Weighted breakdown of {n} stocks based on recommended allocation.</p>")
+            h.append(
+                f"<p>Weighted breakdown of {n} stocks based on recommended allocation.</p>"
+            )
         else:
             h.append(f"<p>Equal-weight breakdown of {n} stocks under analysis.</p>")
 
@@ -730,23 +889,35 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
         is_batch = query.strip().startswith("BATCH_ETL")
 
         if tickers:
-            self.logger.info(f"Agent[{agent_id}] -> Coordinator -> Tickers: {tickers} -> data_collector")
+            self.logger.info(
+                f"Agent[{agent_id}] -> Coordinator -> Tickers: {tickers} -> data_collector"
+            )
             return Command(
                 goto="data_collector",
-                update={"messages": [AIMessage(
-                    content=f"Proceeding with financial analysis for: {', '.join(tickers)}",
-                    name="coordinator",
-                )]},
+                update={
+                    "messages": [
+                        AIMessage(
+                            content=f"Proceeding with financial analysis for: {', '.join(tickers)}",
+                            name="coordinator",
+                        )
+                    ]
+                },
             )
 
         if is_batch:
-            self.logger.info(f"Agent[{agent_id}] -> Coordinator -> BATCH_ETL without tickers")
+            self.logger.info(
+                f"Agent[{agent_id}] -> Coordinator -> BATCH_ETL without tickers"
+            )
             return Command(
                 goto=END,
-                update={"messages": [AIMessage(
-                    content="BATCH_ETL requires ticker symbols. Example: BATCH_ETL AAPL,MSFT,NVDA",
-                    name="coordinator",
-                )]},
+                update={
+                    "messages": [
+                        AIMessage(
+                            content="BATCH_ETL requires ticker symbols. Example: BATCH_ETL AAPL,MSFT,NVDA",
+                            name="coordinator",
+                        )
+                    ]
+                },
             )
 
         # QA mode: answer directly, with portfolio X-ray tool available
@@ -763,7 +934,9 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
             update={"messages": response["messages"]},
         )
 
-    def get_data_collector(self, state: FinancialAnalystState) -> Command[Literal["fundamental_analyst"]]:
+    def get_data_collector(
+        self, state: FinancialAnalystState
+    ) -> Command[Literal["fundamental_analyst"]]:
         agent_id = state["agent_id"]
         schema = state["schema"]
 
@@ -786,7 +959,9 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
         response = data_collector.invoke(state)
 
         # Extract the final summary (last AI message) from the react agent
-        collected_data = response["messages"][-1].content if response["messages"] else ""
+        collected_data = (
+            response["messages"][-1].content if response["messages"] else ""
+        )
 
         self.logger.info(f"Agent[{agent_id}] -> Data Collector -> Complete")
         self.task_notification_service.publish_update(
@@ -797,11 +972,15 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
             )
         )
         return Command(
-            update={"messages": [AIMessage(content=collected_data, name="data_collector")]},
+            update={
+                "messages": [AIMessage(content=collected_data, name="data_collector")]
+            },
             goto="fundamental_analyst",
         )
 
-    def get_fundamental_analyst(self, state: FinancialAnalystState) -> Command[Literal["technical_analyst"]]:
+    def get_fundamental_analyst(
+        self, state: FinancialAnalystState
+    ) -> Command[Literal["technical_analyst"]]:
         agent_id = state["agent_id"]
         schema = state["schema"]
 
@@ -829,13 +1008,17 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
         self.logger.info(f"Agent[{agent_id}] -> Fundamental Analyst -> Complete")
         return Command(
             update={
-                "messages": [AIMessage(content=response.content, name="fundamental_analyst")],
+                "messages": [
+                    AIMessage(content=response.content, name="fundamental_analyst")
+                ],
                 "fundamental_recommendation": response.content,
             },
             goto="technical_analyst",
         )
 
-    def get_technical_analyst(self, state: FinancialAnalystState) -> Command[Literal["consensus_reporter"]]:
+    def get_technical_analyst(
+        self, state: FinancialAnalystState
+    ) -> Command[Literal["consensus_reporter"]]:
         agent_id = state["agent_id"]
         schema = state["schema"]
 
@@ -863,7 +1046,9 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
         self.logger.info(f"Agent[{agent_id}] -> Technical Analyst -> Complete")
         return Command(
             update={
-                "messages": [AIMessage(content=response.content, name="technical_analyst")],
+                "messages": [
+                    AIMessage(content=response.content, name="technical_analyst")
+                ],
                 "technical_recommendation": response.content,
             },
             goto="consensus_reporter",
@@ -931,7 +1116,9 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
             task_progress=TaskProgress(
                 agent_id=agent_id,
                 status="in_progress",
-                message_content=executive_summary[:200] if executive_summary else report_html[:200],
+                message_content=executive_summary[:200]
+                if executive_summary
+                else report_html[:200],
             )
         )
         return {
@@ -986,8 +1173,12 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
         response_data = {
             "executive_summary": executive_summary,
             "report_html": report_html,
-            "fundamental_recommendation": workflow_state.get("fundamental_recommendation", ""),
-            "technical_recommendation": workflow_state.get("technical_recommendation", ""),
+            "fundamental_recommendation": workflow_state.get(
+                "fundamental_recommendation", ""
+            ),
+            "technical_recommendation": workflow_state.get(
+                "technical_recommendation", ""
+            ),
             "consensus_verdict": consensus_html,
             "allocation_weights": workflow_state.get("allocation_weights", ""),
             "portfolio_xray_html": xray_html,
@@ -1000,11 +1191,15 @@ class QuaksFinancialAnalystV1Agent(SupervisedWorkflowAgentBase):
 
     # --- Abstract method stubs (not used — graph uses deterministic edges) ---
 
-    def get_planner(self, state: FinancialAnalystState) -> Command[Literal["supervisor"]]:
+    def get_planner(
+        self, state: FinancialAnalystState
+    ) -> Command[Literal["supervisor"]]:
         return Command(goto="supervisor")
 
     def get_supervisor(self, state: FinancialAnalystState) -> Command:
         return Command(goto=END)
 
-    def get_reporter(self, state: FinancialAnalystState) -> Command[Literal["supervisor"]]:
+    def get_reporter(
+        self, state: FinancialAnalystState
+    ) -> Command[Literal["supervisor"]]:
         return Command(goto="supervisor")
