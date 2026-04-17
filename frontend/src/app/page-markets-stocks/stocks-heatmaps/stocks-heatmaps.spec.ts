@@ -164,4 +164,45 @@ describe('StocksHeatmaps', () => {
     component.ngOnDestroy();
     expect(shareUrlService.update).toHaveBeenLastCalledWith({title: '', url: ''});
   });
+
+  it('filters visible groups by zoomed sector', () => {
+    const groups = component.sectorGroups();
+    if (groups.length > 0) {
+      const sectorName = groups[0].sector;
+      component.zoomedSector.set(sectorName);
+      const visible = component.visibleGroups();
+      expect(visible.every(g => g.sector === sectorName)).toBe(true);
+    }
+  });
+
+  it('shows all groups when no zoom', () => {
+    component.zoomedSector.set(null);
+    expect(component.visibleGroups()).toEqual(component.sectorGroups());
+  });
+
+  it('tileFontSize returns a number', () => {
+    const tile = {ticker: 'AAPL', w: 100, h: 80, x: 0, y: 0, pv: 2, cap: 100, name: 'Apple', sector: 'Tech', industry: 'HW'};
+    const size = component.tileFontSize(tile as any);
+    expect(typeof size).toBe('number');
+  });
+
+  it('showTicker returns a boolean', () => {
+    const tile = {ticker: 'AAPL', w: 100, h: 80, x: 0, y: 0, pv: 2, cap: 100, name: 'Apple', sector: 'Tech', industry: 'HW'};
+    expect(typeof component.showTicker(tile as any)).toBe('boolean');
+  });
+
+  it('showVariance returns a boolean', () => {
+    const tile = {ticker: 'AAPL', w: 100, h: 80, x: 0, y: 0, pv: 2, cap: 100, name: 'Apple', sector: 'Tech', industry: 'HW'};
+    expect(typeof component.showVariance(tile as any)).toBe('boolean');
+  });
+
+  it('formatDate formats a date string', () => {
+    const result = component.formatDate('2026-04-09');
+    expect(result).toBeTruthy();
+  });
+
+  it('tooltipStyle returns style object', () => {
+    const style = component.tooltipStyle();
+    expect(style).toBeTruthy();
+  });
 });

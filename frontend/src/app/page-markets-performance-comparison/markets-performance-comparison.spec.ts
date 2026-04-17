@@ -84,4 +84,22 @@ describe('MarketsPerformanceComparison', () => {
     component.ngOnDestroy();
     expect(mockShareUrlService.update).toHaveBeenCalledWith({ title: '', url: '' });
   });
+
+  it('should format interval dates when interval contains underscore', () => {
+    queryParams$.next({ q: 'AAPL', interval: '2025-01-01_2025-06-01' });
+    const formatted = component.formattedInterval();
+    expect(formatted.from).toBeTruthy();
+    expect(formatted.to).toBeTruthy();
+  });
+
+  it('should return empty formatted interval when no underscore', () => {
+    queryParams$.next({ q: 'AAPL', interval: 'invalid' });
+    const formatted = component.formattedInterval();
+    expect(formatted.from).toBe('');
+    expect(formatted.to).toBe('');
+  });
+
+  it('should expose isProduction flag', () => {
+    expect(typeof component.isProduction).toBe('boolean');
+  });
 });

@@ -115,5 +115,105 @@ def test_update_user_profile_conflict(mock_put, mock_post, service):
 
     with pytest.raises(AuthenticationError) as excinfo:
         service.update_user_profile("id_uuid", "user1", "user1@test.com", "First", "Last")
-    
+
     assert "409" in str(excinfo.value)
+
+
+@patch("requests.post")
+def test_login_missing_tokens(mock_post, service):
+    mock_response = MagicMock()
+    mock_response.json.return_value = {"access_token": None, "refresh_token": None}
+    mock_post.return_value = mock_response
+
+    with pytest.raises(AuthenticationError):
+        service.login("user", "pass")
+
+
+@patch("requests.post")
+def test_exchange_failure(mock_post, service):
+    mock_post.side_effect = requests.exceptions.RequestException("network error")
+
+    with pytest.raises(AuthenticationError):
+        service.exchange("code", "verifier", "uri")
+
+
+@patch("requests.post")
+def test_exchange_missing_tokens(mock_post, service):
+    mock_response = MagicMock()
+    mock_response.json.return_value = {"access_token": "", "refresh_token": ""}
+    mock_post.return_value = mock_response
+
+    with pytest.raises(AuthenticationError):
+        service.exchange("code", "verifier", "uri")
+
+
+@patch("requests.post")
+def test_renew_failure(mock_post, service):
+    mock_post.side_effect = requests.exceptions.RequestException("error")
+
+    with pytest.raises(AuthenticationError):
+        service.renew("rt-old")
+
+
+@patch("requests.post")
+def test_renew_missing_tokens(mock_post, service):
+    mock_response = MagicMock()
+    mock_response.json.return_value = {"access_token": None, "refresh_token": None}
+    mock_post.return_value = mock_response
+
+    with pytest.raises(AuthenticationError):
+        service.renew("rt-old")
+
+
+@patch("requests.post")
+def test_get_service_account_token_failure(mock_post, service):
+    mock_post.side_effect = requests.exceptions.RequestException("error")
+
+    with pytest.raises(AuthenticationError):
+        service._get_service_account_token()
+
+
+@patch("requests.post")
+def test_get_service_account_token_missing(mock_post, service):
+    mock_response = MagicMock()
+    mock_response.json.return_value = {}
+    mock_post.return_value = mock_response
+
+    with pytest.raises(AuthenticationError):
+        service._get_service_account_token()
+
+
+@patch("requests.post")
+@patch("requests.get")
+def test_get_user_profile_failure(mock_get, mock_post, service):
+    mock_post_resp = MagicMock()
+    mock_post_resp.json.return_value = {"access_token": "sa-token"}
+    mock_post.return_value = mock_post_resp
+
+    mock_get.side_effect = requests.exceptions.RequestException("error")
+
+    with pytest.raises(AuthenticationError):
+        service.get_user_profile("id_uuid")
+
+
+@patch("requests.post")
+@patch("requests.put")
+def test_update_user_profile_request_error(mock_put, mock_post, service):
+    mock_post_resp = MagicMock()
+    mock_post_resp.json.return_value = {"access_token": "sa-token"}
+    mock_post.return_value = mock_post_resp
+
+    mock_put.side_effect = requests.exceptions.RequestException("error")
+
+    with pytest.raises(AuthenticationError):
+        service.update_user_profile("id_uuid", "u", "e@e.com", "F", "L")
+
+
+def test_service_initialization(service):
+    assert service.enabled is True
+    assert service.url == "http://auth"
+    assert service.realm == "realm"
+    assert service.client_id == "client"
+    assert service.client_secret == "secret"
+    assert "openid-connect/token" in service.token_url
+    assert "admin/realms/realm/users" in service.admin_users_url

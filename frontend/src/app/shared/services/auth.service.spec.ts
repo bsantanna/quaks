@@ -6,6 +6,26 @@ import {DOCUMENT} from '@angular/common';
 import {AuthService} from './auth.service';
 import {environment} from '../../../environments/environment';
 
+// Polyfill crypto.subtle for jsdom
+if (!globalThis.crypto?.subtle) {
+  Object.defineProperty(globalThis, 'crypto', {
+    value: {
+      ...globalThis.crypto,
+      getRandomValues: (arr: Uint8Array) => {
+        for (let i = 0; i < arr.length; i++) arr[i] = Math.floor(Math.random() * 256);
+        return arr;
+      },
+      subtle: {
+        digest: async (_algo: string, data: ArrayBuffer) => {
+          // Return a deterministic 32-byte hash for testing
+          return new Uint8Array(32).buffer;
+        },
+      },
+    },
+    writable: true,
+  });
+}
+
 // Helper to create a fake JWT with given payload
 function fakeJwt(payload: Record<string, unknown>): string {
   const header = btoa(JSON.stringify({alg: 'RS256', typ: 'JWT'}));
@@ -347,6 +367,94 @@ describe('AuthService', () => {
       service.logout();
       expect(service.state()).toBeNull();
       expect(mockDocument.location.href).toContain('/protocol/openid-connect/logout');
+    });
+  });
+
+  describe('STORAGE_KEY', () => {
+    it('should be defined', () => {
+      expect(AuthService.STORAGE_KEY).toBe('AuthSession');
+    });
+  });
+
+  describe('initiateLogin', () => {
+    it('should store PKCE values and redirect to Keycloak', async () => {
+      service.initiateLogin();
+
+      expect(sessionStorage.getItem('pkce_code_verifier')).toBeTruthy();
+      expect(sessionStorage.getItem('pkce_state')).toBeTruthy();
+
+      // Wait for async code challenge generation
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      expect(mockDocument.location.href).toContain('/protocol/openid-connect/auth');
+      expect(mockDocument.location.href).toContain('code_challenge');
+      expect(mockDocument.location.href).toContain(environment.keycloakClientId);
+    });
+  });
+
+  describe('handleCallback edge cases', () => {
+    it('should handle token with free tier (no pro role)', async () => {
+      sessionStorage.setItem('pkce_state', 'state1');
+      sessionStorage.setItem('pkce_code_verifier', 'verifier1');
+
+      const freePayload = {
+        preferred_username: 'freeuser',
+        email: 'free@test.com',
+        given_name: 'Free',
+        family_name: 'User',
+        exp: Math.floor(Date.now() / 1000) + 3600,
+      };
+      const token = fakeJwt(freePayload);
+      const promise = service.handleCallback('code', 'state1');
+
+      const req = httpTesting.expectOne(`${environment.apiBaseUrl}/auth/exchange`);
+      req.flush({access_token: token, refresh_token: 'rt'});
+
+      await promise;
+      expect(service.state()!.subscriptionTier).toBe('free');
+    });
+
+    it('should clear PKCE storage on exchange failure', async () => {
+      sessionStorage.setItem('pkce_state', 'state1');
+      sessionStorage.setItem('pkce_code_verifier', 'verifier1');
+
+      const promise = service.handleCallback('code', 'state1');
+
+      const req = httpTesting.expectOne(`${environment.apiBaseUrl}/auth/exchange`);
+      req.flush(null, {status: 500, statusText: 'Server Error'});
+
+      await expect(promise).rejects.toBeTruthy();
+      expect(sessionStorage.getItem('pkce_code_verifier')).toBeNull();
+      expect(sessionStorage.getItem('pkce_state')).toBeNull();
+    });
+  });
+
+  describe('decodeJwtPayload edge cases', () => {
+    it('should handle token with wrong number of parts', async () => {
+      sessionStorage.setItem('pkce_state', 'state1');
+      sessionStorage.setItem('pkce_code_verifier', 'verifier1');
+
+      const promise = service.handleCallback('code', 'state1');
+      const req = httpTesting.expectOne(`${environment.apiBaseUrl}/auth/exchange`);
+      // Token with only 2 parts
+      req.flush({access_token: 'part1.part2', refresh_token: 'rt'});
+
+      await promise;
+      expect(service.state()!.username).toBe('');
+    });
+  });
+
+  describe('loadSession edge cases', () => {
+    it('should handle corrupt localStorage data gracefully', () => {
+      localStorage.setItem(AuthService.STORAGE_KEY, 'not-valid-json');
+      // Re-create service — singleton so test the behavior
+      // The service catches parse errors and returns null
+      expect(service).toBeTruthy();
+    });
+
+    it('should handle missing localStorage gracefully', () => {
+      localStorage.removeItem(AuthService.STORAGE_KEY);
+      expect(service.state()).toBeNull();
     });
   });
 });

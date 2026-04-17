@@ -248,3 +248,65 @@ class TestGetMarketCapsBulk:
         )
 
         assert results == []
+
+
+class TestGetCompanyProfile:
+    def test_returns_profile(self, service, mock_es):
+        mock_es.search_template.return_value = {
+            "hits": {"hits": [{"_source": {"key_ticker": "AAPL", "name": "Apple Inc"}}]}
+        }
+        result = service.get_company_profile("stocks-metadata", "AAPL")
+        assert result["key_ticker"] == "AAPL"
+        assert result["name"] == "Apple Inc"
+
+    def test_returns_empty_when_no_hits(self, service, mock_es):
+        mock_es.search_template.return_value = {"hits": {"hits": []}}
+        result = service.get_company_profile("stocks-metadata", "UNKNOWN")
+        assert result == {}
+
+
+class TestIndicators:
+    def _mock_indicator_response(self, mock_es, agg_key, value):
+        mock_es.search_template.return_value = {
+            "aggregations": {agg_key: {"value": value}}
+        }
+
+    def test_get_indicator_ad(self, service, mock_es):
+        self._mock_indicator_response(mock_es, "ad_stats", [{"date": "2025-01-10", "ad": 100}])
+        result = service.get_indicator_ad("stocks-eod", "AAPL", "2025-01-01", "2025-01-10")
+        assert result == [{"date": "2025-01-10", "ad": 100}]
+
+    def test_get_indicator_adx(self, service, mock_es):
+        self._mock_indicator_response(mock_es, "adx_stats", [{"date": "2025-01-10", "adx": 25}])
+        result = service.get_indicator_adx("stocks-eod", "AAPL", "2025-01-01", "2025-01-10", 14)
+        assert result == [{"date": "2025-01-10", "adx": 25}]
+
+    def test_get_indicator_cci(self, service, mock_es):
+        self._mock_indicator_response(mock_es, "cci_stats", [{"date": "2025-01-10", "cci": 50}])
+        result = service.get_indicator_cci("stocks-eod", "AAPL", "2025-01-01", "2025-01-10", 20, 0.015)
+        assert result == [{"date": "2025-01-10", "cci": 50}]
+
+    def test_get_indicator_ema(self, service, mock_es):
+        self._mock_indicator_response(mock_es, "ema_stats", [{"date": "2025-01-10", "ema": 150}])
+        result = service.get_indicator_ema("stocks-eod", "AAPL", "2025-01-01", "2025-01-10", 12, 26)
+        assert result == [{"date": "2025-01-10", "ema": 150}]
+
+    def test_get_indicator_macd(self, service, mock_es):
+        self._mock_indicator_response(mock_es, "macd_stats", [{"date": "2025-01-10", "macd": 1.5}])
+        result = service.get_indicator_macd("stocks-eod", "AAPL", "2025-01-01", "2025-01-10", 12, 26, 9)
+        assert result == [{"date": "2025-01-10", "macd": 1.5}]
+
+    def test_get_indicator_obv(self, service, mock_es):
+        self._mock_indicator_response(mock_es, "obv_stats", [{"date": "2025-01-10", "obv": 500000}])
+        result = service.get_indicator_obv("stocks-eod", "AAPL", "2025-01-01", "2025-01-10")
+        assert result == [{"date": "2025-01-10", "obv": 500000}]
+
+    def test_get_indicator_rsi(self, service, mock_es):
+        self._mock_indicator_response(mock_es, "rsi_stats", [{"date": "2025-01-10", "rsi": 62.35}])
+        result = service.get_indicator_rsi("stocks-eod", "AAPL", "2025-01-01", "2025-01-10", 14)
+        assert result == [{"date": "2025-01-10", "rsi": 62.35}]
+
+    def test_get_indicator_stoch(self, service, mock_es):
+        self._mock_indicator_response(mock_es, "stoch_stats", [{"date": "2025-01-10", "stoch_k": 75}])
+        result = service.get_indicator_stoch("stocks-eod", "AAPL", "2025-01-01", "2025-01-10", 14, 3, 3)
+        assert result == [{"date": "2025-01-10", "stoch_k": 75}]
