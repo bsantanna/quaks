@@ -11,7 +11,8 @@
 
 @if (menuOpen()) {
     <div class="hamburger-backdrop" role="button" tabindex="-1"
-         (click)="close()" (keydown.escape)="close()" (keydown.enter)="close()"></div>
+         (click)="close()" (keydown.escape)="close()" (keydown.enter)="close()"
+         onkeydown=""></div>
     <div class="hamburger-panel">
         <div class="hamburger-layout">
 

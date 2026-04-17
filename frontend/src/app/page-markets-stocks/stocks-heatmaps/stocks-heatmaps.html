@@ -42,7 +42,8 @@
           [style.top.px]="group.y"
           [style.width.px]="group.w"
           (click)="toggleZoom(group.sector)"
-          (keydown.enter)="toggleZoom(group.sector)">
+          (keydown.enter)="toggleZoom(group.sector)"
+          onkeydown="">
           @if (group.w > 80) {
             <span class="truncate">{{ group.sector }}</span>
           }
@@ -64,7 +65,8 @@
             (focus)="hoveredTile.set(tile)"
             (blur)="hoveredTile.set(null)"
             (click)="navigateToStock(tile.ticker)"
-            (keydown.enter)="navigateToStock(tile.ticker)">
+            (keydown.enter)="navigateToStock(tile.ticker)"
+            onkeydown="">
             @if (showTicker(tile)) {
               <span class="tile-ticker">{{ tile.ticker }}</span>
             }
