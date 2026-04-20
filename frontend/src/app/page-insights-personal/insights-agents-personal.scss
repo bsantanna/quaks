@@ -57,64 +57,6 @@
   border: 1px solid var(--border-primary);
 }
 
-.wizard-progress {
-  display: flex;
-  gap: 4px;
-  list-style: none;
-  padding: 0;
-  margin: 0 0 24px 0;
-  border-bottom: 1px solid var(--border-primary);
-}
-
-.wizard-progress-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  font-family: var(--font-data);
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  border-bottom: 2px solid transparent;
-
-  &.wizard-progress-active {
-    color: var(--text-primary);
-    border-bottom-color: var(--accent-primary);
-  }
-
-  &.wizard-progress-complete {
-    color: var(--text-secondary);
-  }
-}
-
-.wizard-progress-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.75rem;
-  height: 1.75rem;
-  border-radius: 50%;
-  background: var(--surface-elevated);
-  border: 1px solid var(--border-primary);
-  font-weight: 600;
-
-  .wizard-progress-active & {
-    background: var(--accent-primary);
-    color: var(--surface-base);
-    border-color: var(--accent-primary);
-  }
-
-  .wizard-progress-complete & {
-    background: var(--surface-hover);
-    border-color: var(--border-accent);
-  }
-}
-
-.wizard-progress-label {
-  @media (max-width: 540px) {
-    display: none;
-  }
-}
-
 .wizard-panel {
   background: var(--surface-panel);
   border: 1px solid var(--border-primary);
@@ -189,6 +131,7 @@
 }
 
 .wizard-note {
+  display: none;
   margin-top: 12px;
   padding: 12px;
   background: var(--surface-elevated);
@@ -223,8 +166,7 @@
   }
 }
 
-.wizard-btn-primary,
-.wizard-btn-secondary {
+.wizard-anchor-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -233,34 +175,13 @@
   font-size: 0.9rem;
   font-weight: 600;
   border-radius: var(--radius);
-  border: 1px solid transparent;
-  cursor: pointer;
-  text-decoration: none;
-  transition: background 0.15s ease, border-color 0.15s ease;
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-}
-
-.wizard-btn-primary {
   background: var(--accent-primary);
   color: var(--surface-base);
+  text-decoration: none;
+  transition: background 0.15s ease;
 
-  &:hover:not(:disabled) {
+  &:hover {
     background: var(--accent-hover);
-  }
-}
-
-.wizard-btn-secondary {
-  background: var(--surface-elevated);
-  color: var(--text-primary);
-  border-color: var(--border-primary);
-
-  &:hover:not(:disabled) {
-    background: var(--surface-hover);
-    border-color: var(--border-accent);
   }
 }
 
@@ -288,6 +209,35 @@
   text-transform: uppercase;
   color: var(--accent-primary);
   letter-spacing: 0.05em;
+}
+
+.wizard-summary-toggle {
+  > summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &::before {
+      content: '';
+      width: 0;
+      height: 0;
+      border-left: 5px solid var(--accent-primary);
+      border-top: 4px solid transparent;
+      border-bottom: 4px solid transparent;
+      transition: transform 0.15s ease;
+      flex-shrink: 0;
+    }
+  }
+
+  &[open] > summary::before {
+    transform: rotate(90deg);
+  }
 }
 
 .wizard-summary-value {

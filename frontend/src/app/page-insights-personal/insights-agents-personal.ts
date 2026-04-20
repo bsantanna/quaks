@@ -1,13 +1,16 @@
-import {computed, Component, inject, PLATFORM_ID, signal} from '@angular/core';
+import {computed, Component, effect, inject, PLATFORM_ID, signal} from '@angular/core';
 import {isPlatformBrowser} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {forkJoin, Observable, of} from 'rxjs';
 import {AgentProfile} from '../shared/models/insights.model';
 import {InsightsAgentProfileService} from '../shared/services/insights-agent-profile.service';
 import {AuthService} from '../shared/services/auth.service';
 import {FeedbackMessageService, SeoService} from '../shared';
 import {LoginRequiredMessage} from '../shared/components/login-required-message/login-required-message';
+import {ConfirmationDialog} from '../shared/components/confirmation-dialog/confirmation-dialog';
+import {WizardButton} from '../shared/components/wizard-button/wizard-button';
+import {WizardStepper} from '../shared/components/wizard-stepper/wizard-stepper';
 import {PersonalAgentService} from '../shared/services/personal-agent.service';
 import {PersonalAgent, PersonalAgentExpanded} from '../shared/models/personal-agent.models';
 
@@ -32,13 +35,14 @@ interface SummaryRow {
 
 @Component({
   selector: 'app-insights-agents-personal',
-  imports: [FormsModule, LoginRequiredMessage],
+  imports: [FormsModule, LoginRequiredMessage, ConfirmationDialog, WizardButton, WizardStepper],
   templateUrl: './insights-agents-personal.html',
   styleUrl: './insights-agents-personal.scss',
 })
 export class InsightsAgentsPersonal {
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly profileService = inject(InsightsAgentProfileService);
   private readonly agentService = inject(PersonalAgentService);
   private readonly authService = inject(AuthService);
@@ -52,17 +56,27 @@ export class InsightsAgentsPersonal {
   readonly currentStep = signal<WizardStep>(1);
   readonly existingAgent = signal<PersonalAgentExpanded | null>(null);
   readonly submitting = signal(false);
+  readonly mode = signal<'create' | 'edit'>('create');
+  readonly showResetConfirmation = signal(false);
+  readonly showDeleteConfirmation = signal(false);
 
   readonly createName = signal('');
   readonly createNameError = signal<string | null>(null);
   readonly editDraft = signal<EditDraft>({agent_name: '', agent_summary: '', settings: []});
 
-  readonly steps: readonly {id: WizardStep; label: string}[] = [
+  private readonly allSteps: readonly {id: WizardStep; label: string}[] = [
     {id: 1, label: 'Create'},
     {id: 2, label: 'Configure'},
     {id: 3, label: 'Review'},
     {id: 4, label: 'Done'},
   ];
+
+  readonly visibleSteps = computed(() => {
+    const steps = this.mode() === 'edit'
+      ? this.allSteps.filter(s => s.id !== 1)
+      : this.allSteps;
+    return steps.map((s, i) => ({id: s.id, displayId: i + 1, label: s.label}));
+  });
 
   readonly reviewSummary = computed<SummaryRow[]>(() => {
     const draft = this.editDraft();
@@ -76,10 +90,16 @@ export class InsightsAgentsPersonal {
   });
 
   constructor() {
-    inject(SeoService).update({
-      title: 'Setup Personal Agent',
-      description: 'Configure your personal Quaks AI agent.',
-      path: '/insights/agents/personal',
+    const seo = inject(SeoService);
+    effect(() => {
+      const isEdit = this.mode() === 'edit';
+      seo.update({
+        title: isEdit ? 'Configure Personal Agent' : 'Create Personal Agent',
+        description: isEdit
+          ? 'Configure your personal Quaks AI agent.'
+          : 'Create your personal Quaks AI agent.',
+        path: '/insights/agents/personal',
+      });
     });
     if (this.isBrowser) {
       this.initialize();
@@ -114,6 +134,7 @@ export class InsightsAgentsPersonal {
       next: expanded => {
         this.existingAgent.set(expanded);
         this.seedEditDraft(expanded);
+        this.mode.set('edit');
         this.currentStep.set(2);
         this.loadState.set('ready');
       },
@@ -197,6 +218,55 @@ export class InsightsAgentsPersonal {
 
   proceedFromEdit(): void {
     this.currentStep.set(3);
+  }
+
+  requestResetToFactory(): void {
+    if (this.submitting()) return;
+    this.showResetConfirmation.set(true);
+  }
+
+  confirmResetToFactory(): void {
+    this.showResetConfirmation.set(false);
+    this.resetToFactory();
+  }
+
+  cancelResetToFactory(): void {
+    this.showResetConfirmation.set(false);
+  }
+
+  requestDeleteAgent(): void {
+    if (this.submitting() || !this.existingAgent()) return;
+    this.showDeleteConfirmation.set(true);
+  }
+
+  cancelDeleteAgent(): void {
+    this.showDeleteConfirmation.set(false);
+  }
+
+  confirmDeleteAgent(): void {
+    const agent = this.existingAgent();
+    if (!agent || this.submitting()) return;
+    this.showDeleteConfirmation.set(false);
+    this.submitting.set(true);
+    this.agentService.delete(agent.id).subscribe({
+      next: () => {
+        this.submitting.set(false);
+        this.feedback.update({
+          message: 'Agent deleted.',
+          type: 'success',
+          timeout: 3000,
+        });
+        this.router.navigate(['/insights/agents']);
+      },
+      error: (err: {error?: {detail?: string}}) => {
+        this.submitting.set(false);
+        this.feedback.update({
+          message: err?.error?.detail ?? 'Failed to delete agent. Please try again.',
+          type: 'error',
+          timeout: 3000,
+        });
+      },
+    });
   }
 
   resetToFactory(): void {

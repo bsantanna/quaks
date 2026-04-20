@@ -1,7 +1,7 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {provideHttpClient} from '@angular/common/http';
 import {provideHttpClientTesting} from '@angular/common/http/testing';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {signal} from '@angular/core';
 import {of, throwError} from 'rxjs';
 
@@ -30,6 +30,7 @@ describe('InsightsAgentsPersonal wizard', () => {
     resetSettings?: any;
     update?: any;
     updateSetting?: any;
+    deleteError?: boolean;
   } = {}) {
     const authService = {
       isLoggedIn: signal(options.isLoggedIn ?? true),
@@ -64,6 +65,11 @@ describe('InsightsAgentsPersonal wizard', () => {
       })),
       update: jest.fn().mockReturnValue(of(options.update ?? {id: 'a1'})),
       updateSetting: jest.fn().mockReturnValue(of(options.updateSetting ?? {})),
+      delete: jest.fn().mockReturnValue(
+        options.deleteError
+          ? throwError(() => ({error: {detail: 'delete failed'}}))
+          : of(undefined),
+      ),
       resetSettings: jest.fn().mockReturnValue(of(options.resetSettings ?? {
         id: 'a1',
         is_active: true,
@@ -78,6 +84,7 @@ describe('InsightsAgentsPersonal wizard', () => {
 
     const feedback = {update: jest.fn()};
     const seo = {update: jest.fn()};
+    const router = {navigate: jest.fn()};
 
     TestBed.configureTestingModule({
       imports: [InsightsAgentsPersonal],
@@ -89,6 +96,7 @@ describe('InsightsAgentsPersonal wizard', () => {
         {provide: PersonalAgentService, useValue: agentService},
         {provide: FeedbackMessageService, useValue: feedback},
         {provide: SeoService, useValue: seo},
+        {provide: Router, useValue: router},
         {
           provide: ActivatedRoute,
           useValue: {snapshot: {paramMap: {get: () => options.slug ?? 'quaks-news-analyst'}}},
@@ -96,7 +104,7 @@ describe('InsightsAgentsPersonal wizard', () => {
       ],
     });
 
-    return {authService, profileService, agentService, feedback};
+    return {authService, profileService, agentService, feedback, router};
   }
 
   async function createFixture(
@@ -130,6 +138,24 @@ describe('InsightsAgentsPersonal wizard', () => {
     expect(mocks.agentService.getById).toHaveBeenCalledWith('a1');
     expect(component.existingAgent()?.agent_name).toBe('existing-agent');
     expect(component.editDraft().settings).toEqual([{key: 'prompt', value: 'before'}]);
+  });
+
+  it('renumbers progress steps when resuming an existing agent', async () => {
+    const {component} = await createFixture({
+      existingAgents: [{id: 'a1', agent_type: mockProfile.type, agent_name: 'existing-agent'}],
+    });
+    expect(component.mode()).toBe('edit');
+    expect(component.visibleSteps().map(s => ({id: s.id, displayId: s.displayId}))).toEqual([
+      {id: 2, displayId: 1},
+      {id: 3, displayId: 2},
+      {id: 4, displayId: 3},
+    ]);
+  });
+
+  it('keeps all 4 progress steps in create mode', async () => {
+    const {component} = await createFixture();
+    expect(component.mode()).toBe('create');
+    expect(component.visibleSteps().map(s => s.displayId)).toEqual([1, 2, 3, 4]);
   });
 
   it('rejects invalid name on create', async () => {
@@ -173,6 +199,35 @@ describe('InsightsAgentsPersonal wizard', () => {
     expect(component.editDraft().settings).toEqual([{key: 'prompt', value: 'factory-default'}]);
   });
 
+  it('requestResetToFactory opens the confirmation dialog without calling the service', async () => {
+    const {component, mocks} = await createFixture({
+      existingAgents: [{id: 'a1', agent_type: mockProfile.type, agent_name: 'existing-agent'}],
+    });
+    component.requestResetToFactory();
+    expect(component.showResetConfirmation()).toBe(true);
+    expect(mocks.agentService.resetSettings).not.toHaveBeenCalled();
+  });
+
+  it('cancelResetToFactory closes the dialog without resetting', async () => {
+    const {component, mocks} = await createFixture({
+      existingAgents: [{id: 'a1', agent_type: mockProfile.type, agent_name: 'existing-agent'}],
+    });
+    component.requestResetToFactory();
+    component.cancelResetToFactory();
+    expect(component.showResetConfirmation()).toBe(false);
+    expect(mocks.agentService.resetSettings).not.toHaveBeenCalled();
+  });
+
+  it('confirmResetToFactory closes the dialog and triggers the reset', async () => {
+    const {component, mocks} = await createFixture({
+      existingAgents: [{id: 'a1', agent_type: mockProfile.type, agent_name: 'existing-agent'}],
+    });
+    component.requestResetToFactory();
+    component.confirmResetToFactory();
+    expect(component.showResetConfirmation()).toBe(false);
+    expect(mocks.agentService.resetSettings).toHaveBeenCalledWith('a1');
+  });
+
   it('submit persists only changed settings and moves to step 4', async () => {
     const {component, mocks} = await createFixture({
       existingAgents: [{id: 'a1', agent_type: mockProfile.type, agent_name: 'existing-agent'}],
@@ -203,5 +258,60 @@ describe('InsightsAgentsPersonal wizard', () => {
     fixture.detectChanges();
     await fixture.whenStable();
     expect(fixture.componentInstance.loadState()).toBe('error');
+  });
+
+  it('requestDeleteAgent opens the confirmation dialog without calling the service', async () => {
+    const {component, mocks} = await createFixture({
+      existingAgents: [{id: 'a1', agent_type: mockProfile.type, agent_name: 'existing-agent'}],
+    });
+    component.requestDeleteAgent();
+    expect(component.showDeleteConfirmation()).toBe(true);
+    expect(mocks.agentService.delete).not.toHaveBeenCalled();
+  });
+
+  it('requestDeleteAgent is a no-op when there is no existing agent', async () => {
+    const {component} = await createFixture();
+    component.requestDeleteAgent();
+    expect(component.showDeleteConfirmation()).toBe(false);
+  });
+
+  it('cancelDeleteAgent closes the dialog without deleting', async () => {
+    const {component, mocks} = await createFixture({
+      existingAgents: [{id: 'a1', agent_type: mockProfile.type, agent_name: 'existing-agent'}],
+    });
+    component.requestDeleteAgent();
+    component.cancelDeleteAgent();
+    expect(component.showDeleteConfirmation()).toBe(false);
+    expect(mocks.agentService.delete).not.toHaveBeenCalled();
+  });
+
+  it('confirmDeleteAgent deletes, shows success feedback, and navigates to /insights/agents', async () => {
+    const {component, mocks} = await createFixture({
+      existingAgents: [{id: 'a1', agent_type: mockProfile.type, agent_name: 'existing-agent'}],
+    });
+    component.requestDeleteAgent();
+    component.confirmDeleteAgent();
+    expect(mocks.agentService.delete).toHaveBeenCalledWith('a1');
+    expect(component.showDeleteConfirmation()).toBe(false);
+    expect(component.submitting()).toBe(false);
+    expect(mocks.feedback.update).toHaveBeenCalledWith(
+      expect.objectContaining({type: 'success', message: 'Agent deleted.'}),
+    );
+    expect(mocks.router.navigate).toHaveBeenCalledWith(['/insights/agents']);
+  });
+
+  it('confirmDeleteAgent shows error feedback and does not navigate on failure', async () => {
+    const {component, mocks} = await createFixture({
+      existingAgents: [{id: 'a1', agent_type: mockProfile.type, agent_name: 'existing-agent'}],
+      deleteError: true,
+    });
+    component.requestDeleteAgent();
+    component.confirmDeleteAgent();
+    expect(mocks.agentService.delete).toHaveBeenCalledWith('a1');
+    expect(component.submitting()).toBe(false);
+    expect(mocks.feedback.update).toHaveBeenCalledWith(
+      expect.objectContaining({type: 'error', message: 'delete failed'}),
+    );
+    expect(mocks.router.navigate).not.toHaveBeenCalled();
   });
 });

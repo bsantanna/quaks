@@ -1,0 +1,10 @@
+<ol class="wizard-stepper" [attr.aria-label]="ariaLabel()">
+  @for (step of steps(); track step.id) {
+    <li class="wizard-stepper-item"
+        [class.wizard-stepper-active]="step.id === currentStep()"
+        [class.wizard-stepper-complete]="step.id < currentStep()">
+      <span class="wizard-stepper-badge">{{ step.displayId }}</span>
+      <span class="wizard-stepper-label">{{ step.label }}</span>
+    </li>
+  }
+</ol>

@@ -23,16 +23,10 @@
                 <img [src]="profile.avatar" [alt]="profile.name" class="wizard-avatar" />
             </header>
 
-            <ol class="wizard-progress" aria-label="Setup progress">
-                @for (step of steps; track step.id) {
-                    <li class="wizard-progress-item"
-                        [class.wizard-progress-active]="step.id === currentStep()"
-                        [class.wizard-progress-complete]="step.id < currentStep()">
-                        <span class="wizard-progress-badge">{{ step.id }}</span>
-                        <span class="wizard-progress-label">{{ step.label }}</span>
-                    </li>
-                }
-            </ol>
+            <app-wizard-stepper
+              [steps]="visibleSteps()"
+              [currentStep]="currentStep()"
+              ariaLabel="Setup progress" />
 
             <section class="wizard-panel">
                 @switch (currentStep()) {
@@ -50,7 +44,7 @@
                                    [ngModel]="createName()"
                                    (ngModelChange)="createName.set($event)"
                                    name="create-name"
-                                   placeholder="my-news-analyst"
+                                   placeholder="my-quaks-agent"
                                    autocomplete="off"
                                    required />
                             @if (createNameError(); as err) {
@@ -62,9 +56,9 @@
                                 </p>
                             }
                             <div class="wizard-actions">
-                                <button type="submit" class="wizard-btn-primary" [disabled]="submitting()">
+                                <app-wizard-button type="submit" [disabled]="submitting()">
                                     {{ submitting() ? 'Creating...' : 'Create agent' }}
-                                </button>
+                                </app-wizard-button>
                             </div>
                         </form>
                     }
@@ -103,18 +97,19 @@
                             </div>
 
                             <div class="wizard-actions">
-                                <button type="button"
-                                        class="wizard-btn-secondary"
-                                        (click)="resetToFactory()"
-                                        [disabled]="submitting()">
+                                <app-wizard-button variant="danger"
+                                                   [disabled]="submitting()"
+                                                   (pressed)="requestDeleteAgent()">
+                                    Delete agent
+                                </app-wizard-button>
+                                <app-wizard-button variant="secondary"
+                                                   [disabled]="submitting()"
+                                                   (pressed)="requestResetToFactory()">
                                     {{ submitting() ? 'Resetting...' : 'Reset to defaults' }}
-                                </button>
-                                <button type="button"
-                                        class="wizard-btn-primary"
-                                        (click)="proceedFromEdit()"
-                                        [disabled]="submitting()">
+                                </app-wizard-button>
+                                <app-wizard-button [disabled]="submitting()" (pressed)="proceedFromEdit()">
                                     Review changes
-                                </button>
+                                </app-wizard-button>
                             </div>
                         }
                     }
@@ -125,26 +120,28 @@
                             Review the current configuration before saving.
                         </p>
                         <ul class="wizard-summary">
-                            @for (row of reviewSummary(); track row.label) {
+                            <li class="wizard-summary-row">
+                                <span class="wizard-summary-label">Description</span>
+                                <pre class="wizard-summary-value">{{ editDraft().agent_summary || '—' }}</pre>
+                            </li>
+                            @for (setting of editDraft().settings; track setting.key) {
                                 <li class="wizard-summary-row">
-                                    <span class="wizard-summary-label">{{ row.label }}</span>
-                                    <pre class="wizard-summary-value">{{ row.value || '—' }}</pre>
+                                    <details class="wizard-summary-toggle">
+                                        <summary class="wizard-summary-label">{{ setting.key }}</summary>
+                                        <pre class="wizard-summary-value">{{ setting.value || '—' }}</pre>
+                                    </details>
                                 </li>
                             }
                         </ul>
                         <div class="wizard-actions">
-                            <button type="button"
-                                    class="wizard-btn-secondary"
-                                    (click)="cancelConfirmation()"
-                                    [disabled]="submitting()">
+                            <app-wizard-button variant="secondary"
+                                               [disabled]="submitting()"
+                                               (pressed)="cancelConfirmation()">
                                 Back to edit
-                            </button>
-                            <button type="button"
-                                    class="wizard-btn-primary"
-                                    (click)="submitConfirmation()"
-                                    [disabled]="submitting()">
+                            </app-wizard-button>
+                            <app-wizard-button [disabled]="submitting()" (pressed)="submitConfirmation()">
                                 {{ submitting() ? 'Saving...' : 'Save agent' }}
-                            </button>
+                            </app-wizard-button>
                         </div>
                     }
 
@@ -160,7 +157,7 @@
                                 <ol class="wizard-howto-steps">
                                     <li>
                                         Install the Quaks Claude plugin from the marketplace:
-                                        <code class="wizard-code">/plugin install quaks-ai@quaks</code>
+                                        <code class="wizard-code">/plugin install quaks-agents@quaks</code>
                                     </li>
                                     <li>
                                         Authenticate in Claude:
@@ -176,10 +173,10 @@
                         }
 
                         <div class="wizard-actions">
-                            <button type="button" class="wizard-btn-secondary" (click)="editAgain()">
+                            <app-wizard-button variant="secondary" (pressed)="editAgain()">
                                 Edit again
-                            </button>
-                            <a href="/insights/agents" class="wizard-btn-primary">Back to agents</a>
+                            </app-wizard-button>
+                            <a href="/insights/agents" class="wizard-anchor-primary">Back to agents</a>
                         </div>
                     }
                 }
@@ -187,3 +184,23 @@
         }
     </div>
 }
+
+<app-confirmation-dialog
+  [open]="showResetConfirmation()"
+  title="Reset to defaults?"
+  message="This will discard all your custom settings and restore factory values. This cannot be undone."
+  okLabel="Reset"
+  cancelLabel="Cancel"
+  (confirmed)="confirmResetToFactory()"
+  (cancelled)="cancelResetToFactory()" />
+
+<app-confirmation-dialog
+  [open]="showDeleteConfirmation()"
+  title="Delete agent?"
+  message="This permanently removes your agent and all its settings. This cannot be undone."
+  okLabel="Delete"
+  cancelLabel="Cancel"
+  variant="danger"
+  (confirmed)="confirmDeleteAgent()"
+  (cancelled)="cancelDeleteAgent()" />
+

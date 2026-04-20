@@ -41,4 +41,8 @@ export class PersonalAgentService {
   resetSettings(agentId: string): Observable<PersonalAgentExpanded> {
     return this.httpClient.post<PersonalAgentExpanded>(`${this.baseUrl}/${agentId}/reset_settings`, {});
   }
+
+  delete(agentId: string): Observable<void> {
+    return this.httpClient.delete<void>(`${this.baseUrl}/delete/${agentId}`);
+  }
 }
