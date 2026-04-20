@@ -1,7 +1,189 @@
-@if (isLoggedIn()) {
-    @if (agentProfile(); as agent) {
-        <p>{{ agent.name }}</p>
-    }
-} @else {
+@if (!isLoggedIn()) {
     <app-login-required-message notice="Please log in to set up a personal agent." />
+} @else {
+    <div class="wizard-page mx-auto sm:px-6 lg:px-8 py-8">
+
+        @if (loadState() === 'loading') {
+            <p class="wizard-placeholder">Loading agent configuration...</p>
+        }
+
+        @if (loadState() === 'error') {
+            <p class="wizard-placeholder wizard-placeholder-error">
+                Could not load this agent. Please refresh and try again.
+            </p>
+        }
+
+        @if (loadState() === 'ready' && agentProfile(); as profile) {
+            <header class="wizard-header">
+                <div class="wizard-header-copy">
+                    <p class="wizard-eyebrow">Personal agent</p>
+                    <h1 class="wizard-title">{{ profile.name }}</h1>
+                    <p class="wizard-subtitle">{{ profile.role }}</p>
+                </div>
+                <img [src]="profile.avatar" [alt]="profile.name" class="wizard-avatar" />
+            </header>
+
+            <ol class="wizard-progress" aria-label="Setup progress">
+                @for (step of steps; track step.id) {
+                    <li class="wizard-progress-item"
+                        [class.wizard-progress-active]="step.id === currentStep()"
+                        [class.wizard-progress-complete]="step.id < currentStep()">
+                        <span class="wizard-progress-badge">{{ step.id }}</span>
+                        <span class="wizard-progress-label">{{ step.label }}</span>
+                    </li>
+                }
+            </ol>
+
+            <section class="wizard-panel">
+                @switch (currentStep()) {
+
+                    @case (1) {
+                        <h2 class="wizard-step-title">Name your agent</h2>
+                        <p class="wizard-step-copy">
+                            You don't have a <strong>{{ profile.name }}</strong> yet. Pick a name to create one.
+                        </p>
+                        <form class="wizard-form" (ngSubmit)="submitCreate()">
+                            <label class="wizard-label" for="create-name">Agent name</label>
+                            <input id="create-name"
+                                   type="text"
+                                   class="wizard-input"
+                                   [ngModel]="createName()"
+                                   (ngModelChange)="createName.set($event)"
+                                   name="create-name"
+                                   placeholder="my-news-analyst"
+                                   autocomplete="off"
+                                   required />
+                            @if (createNameError(); as err) {
+                                <p class="wizard-field-error">{{ err }}</p>
+                            }
+                            @if (subscriptionTier() === 'free') {
+                                <p class="wizard-note">
+                                    Free tier runs locally via the Claude MCP integration — no language model setup required.
+                                </p>
+                            }
+                            <div class="wizard-actions">
+                                <button type="submit" class="wizard-btn-primary" [disabled]="submitting()">
+                                    {{ submitting() ? 'Creating...' : 'Create agent' }}
+                                </button>
+                            </div>
+                        </form>
+                    }
+
+                    @case (2) {
+                        @if (existingAgent(); as agent) {
+                            <h2 class="wizard-step-title">Configure {{ agent.agent_name }}</h2>
+                            <p class="wizard-step-copy">
+                                Tune your agent's description and prompts.
+                            </p>
+
+                            <div class="wizard-form">
+                                <label class="wizard-label" for="edit-summary">Description</label>
+                                <textarea id="edit-summary"
+                                          class="wizard-textarea"
+                                          rows="3"
+                                          placeholder="(Optional description)"
+                                          [ngModel]="editDraft().agent_summary"
+                                          (ngModelChange)="updateEditSummary($event)"
+                                          name="edit-summary"></textarea>
+
+                                @if (editDraft().settings.length > 0) {
+                                    <h3 class="wizard-settings-heading">Prompts & settings</h3>
+                                    @for (setting of editDraft().settings; track setting.key) {
+                                        <label class="wizard-label" [attr.for]="'setting-' + setting.key">
+                                            {{ setting.key }}
+                                        </label>
+                                        <textarea [id]="'setting-' + setting.key"
+                                                  class="wizard-textarea wizard-textarea-code"
+                                                  rows="5"
+                                                  [ngModel]="setting.value"
+                                                  (ngModelChange)="updateSettingValue(setting.key, $event)"
+                                                  [name]="'setting-' + setting.key"></textarea>
+                                    }
+                                }
+                            </div>
+
+                            <div class="wizard-actions">
+                                <button type="button"
+                                        class="wizard-btn-secondary"
+                                        (click)="resetToFactory()"
+                                        [disabled]="submitting()">
+                                    {{ submitting() ? 'Resetting...' : 'Reset to defaults' }}
+                                </button>
+                                <button type="button"
+                                        class="wizard-btn-primary"
+                                        (click)="proceedFromEdit()"
+                                        [disabled]="submitting()">
+                                    Review changes
+                                </button>
+                            </div>
+                        }
+                    }
+
+                    @case (3) {
+                        <h2 class="wizard-step-title">Review</h2>
+                        <p class="wizard-step-copy">
+                            Review the current configuration before saving.
+                        </p>
+                        <ul class="wizard-summary">
+                            @for (row of reviewSummary(); track row.label) {
+                                <li class="wizard-summary-row">
+                                    <span class="wizard-summary-label">{{ row.label }}</span>
+                                    <pre class="wizard-summary-value">{{ row.value || '—' }}</pre>
+                                </li>
+                            }
+                        </ul>
+                        <div class="wizard-actions">
+                            <button type="button"
+                                    class="wizard-btn-secondary"
+                                    (click)="cancelConfirmation()"
+                                    [disabled]="submitting()">
+                                Back to edit
+                            </button>
+                            <button type="button"
+                                    class="wizard-btn-primary"
+                                    (click)="submitConfirmation()"
+                                    [disabled]="submitting()">
+                                {{ submitting() ? 'Saving...' : 'Save agent' }}
+                            </button>
+                        </div>
+                    }
+
+                    @case (4) {
+                        <h2 class="wizard-step-title">Agent saved</h2>
+                        <p class="wizard-step-copy">
+                            Your personal <strong>{{ profile.name }}</strong> is live.
+                        </p>
+
+                        @if (subscriptionTier() === 'free') {
+                            <div class="wizard-howto">
+                                <h3 class="wizard-settings-heading">How to use with Claude</h3>
+                                <ol class="wizard-howto-steps">
+                                    <li>
+                                        Install the Quaks Claude plugin from the marketplace:
+                                        <code class="wizard-code">/plugin install quaks-ai@quaks</code>
+                                    </li>
+                                    <li>
+                                        Authenticate in Claude:
+                                        <code class="wizard-code">/quaks-ai:authenticate</code>
+                                        then complete the flow with
+                                        <code class="wizard-code">/quaks-ai:complete-authentication</code>.
+                                    </li>
+                                    <li>
+                                        Your personal agent is now reachable via Claude's MCP tools and prompts.
+                                    </li>
+                                </ol>
+                            </div>
+                        }
+
+                        <div class="wizard-actions">
+                            <button type="button" class="wizard-btn-secondary" (click)="editAgain()">
+                                Edit again
+                            </button>
+                            <a href="/insights/agents" class="wizard-btn-primary">Back to agents</a>
+                        </div>
+                    }
+                }
+            </section>
+        }
+    </div>
 }

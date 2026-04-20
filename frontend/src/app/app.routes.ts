@@ -44,7 +44,7 @@ export const routes: Routes = [
       },
       {
         title: 'Setup Personal Agent',
-        path: 'agents/personal/:agentType',
+        path: 'agents/personal/:agentSlug',
         component: InsightsAgentsPersonal
       },
       {
