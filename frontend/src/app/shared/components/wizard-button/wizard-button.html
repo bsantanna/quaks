@@ -1,0 +1,11 @@
+<button
+  [type]="type()"
+  class="wizard-button"
+  [class.wizard-button-primary]="variant() === 'primary'"
+  [class.wizard-button-secondary]="variant() === 'secondary'"
+  [class.wizard-button-danger]="variant() === 'danger'"
+  [disabled]="disabled()"
+  (click)="onClick()"
+>
+  <ng-content />
+</button>

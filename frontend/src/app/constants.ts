@@ -29,6 +29,9 @@ export const IFRAME_STYLE = `
   .embPanel__hoverActions {
     display: none !important;
   }
+  .euiPanel {
+    display: none !important;
+  }
   .kbnGrid {
     margin-top: 3vh;
   }

@@ -1,6 +1,6 @@
 <div class="agents-page mx-auto sm:px-6 lg:px-8 py-8">
 
-    <h2 class="agents-section-title">Meet our Agents</h2>
+    <h2 class="agents-section-title">Meet Quaks Agents<sup>©</sup></h2>
     <div class="agents-header mb-10">
         <p class="agents-subtitle">AI-powered analysts providing stock research, market insights, and data-driven recommendations.</p>
     </div>
@@ -8,6 +8,9 @@
     <div class="agents-grid">
         @for (agent of agents(); track agent.type) {
             <a [href]="'/insights/profile/' + agentSlug(agent)" class="agent-card">
+                @if (hasPersonal(agent)) {
+                    <span class="agent-badge">Configured</span>
+                }
                 <img [src]="agent.avatar" [alt]="agent.name" class="agent-avatar" />
                 <span class="agent-name">{{ agent.name }}</span>
                 <span class="agent-role">{{ agent.role }}</span>

@@ -1,0 +1,32 @@
+@if (open()) {
+  <div
+    class="confirmation-backdrop"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-label]="title()"
+    (click)="onBackdropClick($event)"
+  >
+    <div class="confirmation-panel">
+      <p class="confirmation-title">{{ title() }}</p>
+      <p class="confirmation-message">{{ message() }}</p>
+      <div class="confirmation-actions flex items-center justify-end gap-2">
+        <button
+          type="button"
+          class="confirmation-btn confirmation-btn-secondary"
+          (click)="onCancel()"
+        >
+          {{ cancelLabel() }}
+        </button>
+        <button
+          type="button"
+          class="confirmation-btn"
+          [class.confirmation-btn-primary]="variant() === 'primary'"
+          [class.confirmation-btn-danger]="variant() === 'danger'"
+          (click)="onConfirm()"
+        >
+          {{ okLabel() }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
