@@ -19,6 +19,7 @@ import {PageWaitlist} from './page-waitlist';
 import {AccountProfile} from './page-account-profile/account-profile';
 import {authGuard} from './shared/guards/auth.guard';
 import {Privacy} from './page-privacy/privacy';
+import {McpServerSupported} from './page-mcp-server-supported/mcp-server-supported';
 
 export const routes: Routes = [
   {
@@ -30,6 +31,17 @@ export const routes: Routes = [
         path: 'profile',
         component: AccountProfile,
         canActivate: [authGuard]
+      }
+    ]
+  },
+  {
+    title: 'MCP Server',
+    path: 'mcp-server',
+    children: [
+      {
+        title: 'MCP Server Supported Integrations',
+        path: 'supported',
+        component: McpServerSupported
       }
     ]
   },
