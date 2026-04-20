@@ -2,6 +2,35 @@
 
 <!-- version list -->
 
+## v1.5.19 (2026-04-20)
+
+### Bug Fixes
+
+- CRUD agent ([#128](https://github.com/bsantanna/quaks/pull/128),
+  [`8cdf828`](https://github.com/bsantanna/quaks/commit/8cdf8288a0147bce4fe2564ef823b63fd8349c07))
+
+- CRUD agent (1) ([#128](https://github.com/bsantanna/quaks/pull/128),
+  [`8cdf828`](https://github.com/bsantanna/quaks/commit/8cdf8288a0147bce4fe2564ef823b63fd8349c07))
+
+- CRUD agent (2) ([#128](https://github.com/bsantanna/quaks/pull/128),
+  [`8cdf828`](https://github.com/bsantanna/quaks/commit/8cdf8288a0147bce4fe2564ef823b63fd8349c07))
+
+- CRUD agent (3) ([#128](https://github.com/bsantanna/quaks/pull/128),
+  [`8cdf828`](https://github.com/bsantanna/quaks/commit/8cdf8288a0147bce4fe2564ef823b63fd8349c07))
+
+- CRUD agent (4) ([#128](https://github.com/bsantanna/quaks/pull/128),
+  [`8cdf828`](https://github.com/bsantanna/quaks/commit/8cdf8288a0147bce4fe2564ef823b63fd8349c07))
+
+- CRUD agent (5) ([#128](https://github.com/bsantanna/quaks/pull/128),
+  [`8cdf828`](https://github.com/bsantanna/quaks/commit/8cdf8288a0147bce4fe2564ef823b63fd8349c07))
+
+- Tech debt attack (16) ([#128](https://github.com/bsantanna/quaks/pull/128),
+  [`8cdf828`](https://github.com/bsantanna/quaks/commit/8cdf8288a0147bce4fe2564ef823b63fd8349c07))
+
+- Tech debt attack (17) ([#128](https://github.com/bsantanna/quaks/pull/128),
+  [`8cdf828`](https://github.com/bsantanna/quaks/commit/8cdf8288a0147bce4fe2564ef823b63fd8349c07))
+
+
 ## v1.5.18 (2026-04-19)
 
 ### Bug Fixes
