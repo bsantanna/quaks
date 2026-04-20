@@ -417,6 +417,18 @@ Note: `uv lock` resolves the latest compatible version within each `~=` range, s
 
 ---
 
+## Pre-Commit Verification
+
+Before suggesting a commit for any code change, always verify the build passes — not just tests. The frontend TypeScript build (`npm run build`) catches type errors and compatibility issues that Jest tests won't (e.g., using `toSorted()` when the TS lib target doesn't include ES2023). The verification order is:
+
+1. **Run tests** — `npx jest` (frontend) or `make test` (backend)
+2. **Run the build** — `npm run build` (frontend) or `docker compose build app` (backend)
+3. **Only then suggest committing**
+
+If the build fails, fix the issue and re-verify before proposing a commit. Build failures from API incompatibilities (e.g., newer JS APIs unavailable in the configured TS target) are common and won't be caught by test suites alone.
+
+---
+
 ## Code Conventions
 
 - **Linting**: flake8 (ignores E203, E501, W201, W503) + ruff (auto-fix + format). Both run as pre-commit hooks.
