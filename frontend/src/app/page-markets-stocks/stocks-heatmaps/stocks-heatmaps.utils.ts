@@ -120,7 +120,7 @@ export function buildHeatmapTiles(
 
   const dates = tiles.map(tile => tile.mostRecentDate).filter(Boolean);
   const sortedDates = [...dates].sort((a, b) => a.localeCompare(b));
-  const mostRecentDate = dates.length > 0 ? sortedDates[sortedDates.length - 1] : '';
+  const mostRecentDate = dates.length > 0 ? sortedDates.at(sortedDates.length - 1) ?? '' : '';
 
   return {tiles, mostRecentDate};
 }
