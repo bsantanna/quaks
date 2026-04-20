@@ -120,10 +120,16 @@
                             Review the current configuration before saving.
                         </p>
                         <ul class="wizard-summary">
-                            @for (row of reviewSummary(); track row.label) {
+                            <li class="wizard-summary-row">
+                                <span class="wizard-summary-label">Description</span>
+                                <pre class="wizard-summary-value">{{ editDraft().agent_summary || '—' }}</pre>
+                            </li>
+                            @for (setting of editDraft().settings; track setting.key) {
                                 <li class="wizard-summary-row">
-                                    <span class="wizard-summary-label">{{ row.label }}</span>
-                                    <pre class="wizard-summary-value">{{ row.value || '—' }}</pre>
+                                    <details class="wizard-summary-toggle">
+                                        <summary class="wizard-summary-label">{{ setting.key }}</summary>
+                                        <pre class="wizard-summary-value">{{ setting.value || '—' }}</pre>
+                                    </details>
                                 </li>
                             }
                         </ul>
