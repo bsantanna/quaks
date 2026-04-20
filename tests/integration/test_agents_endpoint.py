@@ -144,6 +144,66 @@ class TestAgentsCRUD:
         assert setting is not None
         assert setting["setting_value"] == "updated_value"
 
+    def test_update_setting_with_freeform_text(self, client):
+        assert TestAgentsCRUD.created_id is not None
+        freeform = (
+            "You are a helpful assistant.\n"
+            "Rules:\n"
+            "  - Answer concisely.\n"
+            "  - Cite sources when possible (e.g. https://example.com)."
+        )
+        response = client.post(
+            "/agents/update_setting",
+            headers=auth_headers(),
+            json={
+                "agent_id": TestAgentsCRUD.created_id,
+                "setting_key": "dummy_setting",
+                "setting_value": freeform,
+            },
+        )
+        assert response.status_code == 200
+        settings = response.json()["ag_settings"]
+        setting = next(
+            (s for s in settings if s["setting_key"] == "dummy_setting"), None
+        )
+        assert setting is not None
+        assert setting["setting_value"] == freeform
+
+    def test_reset_settings_restores_defaults(self, client):
+        assert TestAgentsCRUD.created_id is not None
+        response = client.post(
+            f"/agents/{TestAgentsCRUD.created_id}/reset_settings",
+            headers=auth_headers(),
+        )
+        assert response.status_code == 200
+        settings = response.json()["ag_settings"]
+        setting = next(
+            (s for s in settings if s["setting_key"] == "dummy_setting"), None
+        )
+        assert setting is not None
+        assert setting["setting_value"] != "updated_value"
+
+    def test_reset_settings_missing_agent_returns_404(self, client):
+        response = client.post(
+            "/agents/nonexistent-id/reset_settings",
+            headers=auth_headers(),
+        )
+        assert response.status_code == 404
+
+    def test_update_setting_rejects_oversized_value(self, client):
+        assert TestAgentsCRUD.created_id is not None
+        response = client.post(
+            "/agents/update_setting",
+            headers=auth_headers(),
+            json={
+                "agent_id": TestAgentsCRUD.created_id,
+                "setting_key": "dummy_setting",
+                "setting_value": "x" * 16001,
+            },
+        )
+        assert response.status_code == 400
+        assert "maximum length" in response.json()["detail"]
+
     def test_delete_agent(self, client):
         assert TestAgentsCRUD.created_id is not None
         response = client.delete(
@@ -163,3 +223,55 @@ class TestAgentsCRUD:
                 f"/integrations/delete/{TestAgentsCRUD.integration_id}",
                 headers=auth_headers(),
             )
+
+
+class TestAgentWithoutLanguageModel:
+    created_id: str = None
+
+    def test_create_without_language_model(self, client):
+        response = client.post(
+            "/agents/create",
+            headers=auth_headers(),
+            json={
+                "agent_name": "free-tier-agent",
+                "agent_type": "test_echo",
+            },
+        )
+        assert response.status_code == 201
+        data = response.json()
+        assert data["agent_name"] == "free-tier-agent"
+        assert data["language_model_id"] is None
+        TestAgentWithoutLanguageModel.created_id = data["id"]
+
+    def test_get_by_id_returns_null_language_model(self, client):
+        assert TestAgentWithoutLanguageModel.created_id is not None
+        response = client.get(
+            f"/agents/{TestAgentWithoutLanguageModel.created_id}",
+            headers=auth_headers(),
+        )
+        assert response.status_code == 200
+        assert response.json()["language_model_id"] is None
+
+    def test_update_without_language_model(self, client):
+        assert TestAgentWithoutLanguageModel.created_id is not None
+        response = client.post(
+            "/agents/update",
+            headers=auth_headers(),
+            json={
+                "agent_id": TestAgentWithoutLanguageModel.created_id,
+                "agent_name": "free-tier-agent-renamed",
+                "agent_summary": "Free tier summary",
+            },
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["agent_name"] == "free-tier-agent-renamed"
+        assert data["language_model_id"] is None
+
+    def test_delete(self, client):
+        assert TestAgentWithoutLanguageModel.created_id is not None
+        response = client.delete(
+            f"/agents/delete/{TestAgentWithoutLanguageModel.created_id}",
+            headers=auth_headers(),
+        )
+        assert response.status_code == 204
