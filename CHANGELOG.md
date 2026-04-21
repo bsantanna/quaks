@@ -2,6 +2,20 @@
 
 <!-- version list -->
 
+## v1.5.23 (2026-04-21)
+
+### Bug Fixes
+
+- MCP tenant based prompt (1) ([#132](https://github.com/bsantanna/quaks/pull/132),
+  [`fa933d4`](https://github.com/bsantanna/quaks/commit/fa933d4404856abe196c3ba4ed236774176297e3))
+
+- MCP tenant based prompt (2) ([#132](https://github.com/bsantanna/quaks/pull/132),
+  [`fa933d4`](https://github.com/bsantanna/quaks/commit/fa933d4404856abe196c3ba4ed236774176297e3))
+
+- Mcp tenant based prompts and resources ([#132](https://github.com/bsantanna/quaks/pull/132),
+  [`fa933d4`](https://github.com/bsantanna/quaks/commit/fa933d4404856abe196c3ba4ed236774176297e3))
+
+
 ## v1.5.22 (2026-04-21)
 
 ### Bug Fixes
