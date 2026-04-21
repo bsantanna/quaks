@@ -18,6 +18,7 @@ from app.infrastructure.database.vectors import DocumentRepository
 from app.infrastructure.metrics.tracer import Tracer
 from app.interface.mcp.default_tool_registrar import DefaultToolRegistrar
 from app.interface.mcp.news_tool_registrar import NewsToolRegistrar
+from app.interface.mcp.user_prompt_resolver import UserPromptResolver
 from app.services.agent_settings import AgentSettingService
 from app.services.agent_types.base import AgentUtils
 from app.services.agent_types.registry import AgentRegistry
@@ -272,8 +273,17 @@ class Container(containers.DeclarativeContainer):
         quaks_financial_analyst_v1_agent=quaks_financial_analyst_v1_agent,
     )
 
+    user_prompt_resolver = providers.Singleton(
+        UserPromptResolver,
+        agent_service=agent_service,
+        agent_setting_service=agent_setting_service,
+    )
+
     default_tool_registrar = providers.Singleton(DefaultToolRegistrar)
-    news_tool_registrar = providers.Singleton(NewsToolRegistrar)
+    news_tool_registrar = providers.Singleton(
+        NewsToolRegistrar,
+        user_prompt_resolver=user_prompt_resolver,
+    )
 
     mcp_registrars = providers.List(default_tool_registrar, news_tool_registrar)
 
