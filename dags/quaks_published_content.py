@@ -74,6 +74,7 @@ def process_published_content():
         return {
             "key_author_username": src["key_author_username"],
             "key_skill_name": src["key_skill_name"],
+            "key_language_model_name": src["key_language_model_name"],
             "date_reference": src["date_timestamp"][:10],
             "text_executive_summary": src["text_executive_summary"],
             "text_report_html": src["text_report_html"],

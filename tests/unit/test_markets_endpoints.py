@@ -208,6 +208,7 @@ class TestGetInsightsNews:
                         "text_report_html": "<p>Report</p>",
                         "key_skill_name": "/news_analyst",
                         "key_author_username": "agent",
+                        "key_language_model_name": "claude-opus-4-7",
                     },
                 }
             ],
@@ -217,6 +218,7 @@ class TestGetInsightsNews:
         result = await _get_insights_news("insights-news", mock_service, request)
         assert len(result.items) == 1
         assert result.items[0].executive_summary == "Market summary"
+        assert result.items[0].language_model_name == "claude-opus-4-7"
 
 
 class TestGetPublishedContentPreview:
