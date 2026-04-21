@@ -2,6 +2,20 @@
 
 <!-- version list -->
 
+## v1.5.20 (2026-04-20)
+
+### Bug Fixes
+
+- CRUD agent (6) ([#129](https://github.com/bsantanna/quaks/pull/129),
+  [`585cb7a`](https://github.com/bsantanna/quaks/commit/585cb7a4bd12f2b775d41739e18c29afd931fdba))
+
+- CRUD agent (7) ([#129](https://github.com/bsantanna/quaks/pull/129),
+  [`585cb7a`](https://github.com/bsantanna/quaks/commit/585cb7a4bd12f2b775d41739e18c29afd931fdba))
+
+- CRUD agent (8) ([#129](https://github.com/bsantanna/quaks/pull/129),
+  [`585cb7a`](https://github.com/bsantanna/quaks/commit/585cb7a4bd12f2b775d41739e18c29afd931fdba))
+
+
 ## v1.5.19 (2026-04-20)
 
 ### Bug Fixes
