@@ -5,7 +5,7 @@ from html import unescape
 from typing import TYPE_CHECKING, Annotated, Optional
 
 from fastmcp import FastMCP
-from jinja2 import Template
+from jinja2.sandbox import SandboxedEnvironment
 from pydantic import Field
 
 from app.interface.mcp.registrar import McpRegistrar
@@ -15,6 +15,7 @@ from app.interface.mcp.schema import (
     NewsItem,
     NewsList,
 )
+from app.interface.mcp.user_prompt_resolver import UserPromptResolver
 from app.services.agent_types.quaks.insights.news.prompts import (
     AGGREGATOR_SYSTEM_PROMPT,
     COORDINATOR_SYSTEM_PROMPT,
@@ -31,11 +32,28 @@ _EXECUTION_PLAN = (
     "3. reporter: Group articles by topic, write 4-paragraph summaries, and produce the final briefing"
 )
 
+_AGENT_TYPE = "quaks_news_analyst"
+
+_ROLE_SETTING_KEYS = {
+    "coordinator": "coordinator_system_prompt",
+    "aggregator": "aggregator_system_prompt",
+    "reporter": "reporter_system_prompt",
+}
+
+_DEFAULT_TEMPLATES = {
+    "coordinator": COORDINATOR_SYSTEM_PROMPT,
+    "aggregator": AGGREGATOR_SYSTEM_PROMPT,
+    "reporter": REPORTER_SYSTEM_PROMPT,
+}
+
+
+_JINJA_ENV = SandboxedEnvironment()
+
 
 def _render_prompt(template_str: str, current_time: str | None = None) -> str:
     if current_time is not None and not current_time.strip():
         raise ValueError("current_time must be a non-empty string when provided")
-    template = Template(template_str)
+    template = _JINJA_ENV.from_string(template_str)
     resolved_time = current_time or datetime.now().strftime("%a %b %d %Y %H:%M:%S %z")
     return template.render(
         CURRENT_TIME=resolved_time,
@@ -45,6 +63,17 @@ def _render_prompt(template_str: str, current_time: str | None = None) -> str:
 
 class NewsToolRegistrar(McpRegistrar):
     """Registers news-related MCP tools, prompts, and resources."""
+
+    def __init__(self, user_prompt_resolver: UserPromptResolver) -> None:
+        self._user_prompt_resolver = user_prompt_resolver
+
+    def _resolve_prompt(self, role: str, current_time: str | None = None) -> str:
+        return self._user_prompt_resolver.resolve(
+            agent_type=_AGENT_TYPE,
+            setting_key=_ROLE_SETTING_KEYS[role],
+            default_template=_DEFAULT_TEMPLATES[role],
+            render=lambda t: _render_prompt(t, current_time=current_time),
+        )
 
     def register_tools(self, mcp: FastMCP, container: Container) -> None:
         @mcp.tool(
@@ -239,7 +268,7 @@ class NewsToolRegistrar(McpRegistrar):
                 ),
             ] = None,
         ) -> str:
-            return _render_prompt(COORDINATOR_SYSTEM_PROMPT, current_time=current_time)
+            return self._resolve_prompt("coordinator", current_time=current_time)
 
         @mcp.prompt(
             name="news_analyst_aggregator",
@@ -256,7 +285,7 @@ class NewsToolRegistrar(McpRegistrar):
                 ),
             ] = None,
         ) -> str:
-            return _render_prompt(AGGREGATOR_SYSTEM_PROMPT, current_time=current_time)
+            return self._resolve_prompt("aggregator", current_time=current_time)
 
         @mcp.prompt(
             name="news_analyst_reporter",
@@ -274,7 +303,7 @@ class NewsToolRegistrar(McpRegistrar):
                 ),
             ] = None,
         ) -> str:
-            return _render_prompt(REPORTER_SYSTEM_PROMPT, current_time=current_time)
+            return self._resolve_prompt("reporter", current_time=current_time)
 
     def register_resources(self, mcp: FastMCP) -> None:
         @mcp.resource(
@@ -283,7 +312,7 @@ class NewsToolRegistrar(McpRegistrar):
             description="System prompt for the News Analyst coordinator step.",
         )
         def resource_coordinator() -> str:
-            return _render_prompt(COORDINATOR_SYSTEM_PROMPT)
+            return self._resolve_prompt("coordinator")
 
         @mcp.resource(
             uri="prompt://news_analyst_aggregator",
@@ -291,7 +320,7 @@ class NewsToolRegistrar(McpRegistrar):
             description="System prompt for the News Analyst aggregator step.",
         )
         def resource_aggregator() -> str:
-            return _render_prompt(AGGREGATOR_SYSTEM_PROMPT)
+            return self._resolve_prompt("aggregator")
 
         @mcp.resource(
             uri="prompt://news_analyst_reporter",
@@ -299,4 +328,4 @@ class NewsToolRegistrar(McpRegistrar):
             description="System prompt for the News Analyst reporter step.",
         )
         def resource_reporter() -> str:
-            return _render_prompt(REPORTER_SYSTEM_PROMPT)
+            return self._resolve_prompt("reporter")
