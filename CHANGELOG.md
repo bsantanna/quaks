@@ -2,6 +2,38 @@
 
 <!-- version list -->
 
+## v1.5.22 (2026-04-21)
+
+### Bug Fixes
+
+- CRUD agent (10) ([#131](https://github.com/bsantanna/quaks/pull/131),
+  [`03f33e8`](https://github.com/bsantanna/quaks/commit/03f33e8fd9f7d7cd3a151c64603bb2c158c1cce4))
+
+- CRUD agent (6) ([#131](https://github.com/bsantanna/quaks/pull/131),
+  [`03f33e8`](https://github.com/bsantanna/quaks/commit/03f33e8fd9f7d7cd3a151c64603bb2c158c1cce4))
+
+- CRUD agent (7) ([#131](https://github.com/bsantanna/quaks/pull/131),
+  [`03f33e8`](https://github.com/bsantanna/quaks/commit/03f33e8fd9f7d7cd3a151c64603bb2c158c1cce4))
+
+- CRUD agent (8) ([#131](https://github.com/bsantanna/quaks/pull/131),
+  [`03f33e8`](https://github.com/bsantanna/quaks/commit/03f33e8fd9f7d7cd3a151c64603bb2c158c1cce4))
+
+- CRUD agent (9) ([#131](https://github.com/bsantanna/quaks/pull/131),
+  [`03f33e8`](https://github.com/bsantanna/quaks/commit/03f33e8fd9f7d7cd3a151c64603bb2c158c1cce4))
+
+- MCP llm field () ([#131](https://github.com/bsantanna/quaks/pull/131),
+  [`03f33e8`](https://github.com/bsantanna/quaks/commit/03f33e8fd9f7d7cd3a151c64603bb2c158c1cce4))
+
+- Mcp llm field (1) ([#131](https://github.com/bsantanna/quaks/pull/131),
+  [`03f33e8`](https://github.com/bsantanna/quaks/commit/03f33e8fd9f7d7cd3a151c64603bb2c158c1cce4))
+
+- MCP llm field (2) ([#131](https://github.com/bsantanna/quaks/pull/131),
+  [`03f33e8`](https://github.com/bsantanna/quaks/commit/03f33e8fd9f7d7cd3a151c64603bb2c158c1cce4))
+
+- MCP llm field (3) ([#131](https://github.com/bsantanna/quaks/pull/131),
+  [`03f33e8`](https://github.com/bsantanna/quaks/commit/03f33e8fd9f7d7cd3a151c64603bb2c158c1cce4))
+
+
 ## v1.5.21 (2026-04-21)
 
 ### Bug Fixes
