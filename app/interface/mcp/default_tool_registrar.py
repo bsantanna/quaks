@@ -6,7 +6,7 @@ from fastmcp import FastMCP
 from fastmcp.server.dependencies import get_access_token
 from pydantic import Field
 
-from app.domain.exceptions.base import DuplicateEntryError
+from app.domain.exceptions.base import DuplicateEntryError, UnauthorizedSkillError
 from app.interface.mcp.registrar import McpRegistrar
 from app.interface.mcp.schema import (
     AgentItem,
@@ -52,8 +52,10 @@ class DefaultToolRegistrar(McpRegistrar):
             "to the Quaks platform. The content is queued for validation and "
             "then routed to the appropriate index based on the skill that "
             "produced it. Requires authentication — the author is identified "
-            "from the access token. IMPORTANT: Convert any Markdown content "
-            "to well-formed HTML before calling this tool.",
+            "from the access token. Only a curated set of skills is allowed "
+            "to publish; calls from unknown skills are rejected. IMPORTANT: "
+            "Convert any Markdown content to well-formed HTML before calling "
+            "this tool.",
             annotations={"readOnlyHint": False, "openWorldHint": False},
         )
         async def publish_content_mcp(
@@ -72,7 +74,17 @@ class DefaultToolRegistrar(McpRegistrar):
                 str,
                 Field(
                     description="Name of the skill that generated this content "
-                    "(e.g. '/news_analyst')"
+                    "(e.g. '/news_analyst'). Calls from skills not in the "
+                    "allowlist are rejected."
+                ),
+            ],
+            language_model_name: Annotated[
+                str,
+                Field(
+                    description="Name of the language model that generated this "
+                    "content (e.g. 'claude-opus-4-7', 'gpt-5'). Persisted with "
+                    "the published document for provenance and displayed to end "
+                    "users."
                 ),
             ],
         ) -> PublishContentResult:
@@ -92,11 +104,18 @@ class DefaultToolRegistrar(McpRegistrar):
                     report_html=text_report_html,
                     skill_name=key_skill_name,
                     author_username=author_username,
+                    language_model_name=language_model_name,
                 )
             except DuplicateEntryError:
                 return PublishContentResult(
                     status="duplicate",
                     message="Content with this summary from this author already exists.",
+                )
+            except UnauthorizedSkillError:
+                return PublishContentResult(
+                    status="rejected",
+                    message=f"Skill '{key_skill_name}' is not authorized to "
+                    "publish content.",
                 )
 
             return PublishContentResult(

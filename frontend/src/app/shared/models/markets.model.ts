@@ -121,6 +121,7 @@ export interface InsightsNewsItem {
   report_html: string | null
   skill_name?: string | null
   author_username?: string | null
+  language_model_name?: string | null
 }
 
 export interface InsightsNewsList {
@@ -138,4 +139,5 @@ export interface InsightsPreviewItem {
   author_username: string;
   date_timestamp: string;
   status: InsightsPreviewStatus;
+  language_model_name?: string | null;
 }

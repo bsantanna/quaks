@@ -57,6 +57,13 @@
   font-weight: 700;
 }
 
+.briefing-agent-model {
+  font-family: var(--font-data);
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.65rem;
+}
+
 // ── Status badge ──────────────────────────────────────
 
 .status-badge {

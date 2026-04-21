@@ -81,6 +81,7 @@ class InsightsNewsItem(BaseModel):
     report_html: Optional[str]
     skill_name: Optional[str] = None
     author_username: Optional[str] = None
+    language_model_name: Optional[str] = None
 
 
 class InsightsNewsList(BaseModel):
@@ -284,6 +285,7 @@ class PublishedContentPreview(BaseModel):
     skill_name: str
     author_username: str
     date_timestamp: str
+    language_model_name: Optional[str] = None
 
 
 class CancelPublishingResponse(BaseModel):

@@ -67,10 +67,18 @@
                       <strong class="briefing-agent-author">{{ item.author_username }}</strong>
                       <br>
                       <strong class="briefing-agent-skill">{{ item.skill_name }}</strong>
+                      @if (item.language_model_name) {
+                        <br>
+                        <strong class="briefing-agent-model">{{ item.language_model_name }}</strong>
+                      }
                     </span>
                   } @else {
                     <span class="briefing-agent-meta mt-1.5">
                       <strong class="briefing-agent-author">quaks</strong>
+                      @if (item.language_model_name) {
+                        <br>
+                        <strong class="briefing-agent-model">{{ item.language_model_name }}</strong>
+                      }
                     </span>
                   }
                   <time class="briefing-date-label">{{ formatDate(item.date) }}</time>

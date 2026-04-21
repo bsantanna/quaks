@@ -4,11 +4,16 @@ from datetime import datetime, timezone
 from elasticsearch import ConflictError, Elasticsearch
 from elasticsearch import NotFoundError as ESNotFoundError
 
-from app.domain.exceptions.base import DuplicateEntryError, PublishedContentNotFoundError
+from app.domain.exceptions.base import (
+    DuplicateEntryError,
+    PublishedContentNotFoundError,
+    UnauthorizedSkillError,
+)
 
 
 class PublishedContentService:
     INDEX_ALIAS = "quaks_published-content_latest"
+    ALLOWED_SKILLS = frozenset({"/news_analyst"})
 
     def __init__(self, es: Elasticsearch) -> None:
         self.es = es
@@ -22,7 +27,10 @@ class PublishedContentService:
         report_html: str,
         skill_name: str,
         author_username: str,
+        language_model_name: str,
     ) -> str:
+        if skill_name not in self.ALLOWED_SKILLS:
+            raise UnauthorizedSkillError(skill_name)
         doc_id = hashlib.sha256(
             (executive_summary + author_username + skill_name).encode()
         ).hexdigest()
@@ -31,6 +39,7 @@ class PublishedContentService:
             "text_report_html": report_html,
             "key_skill_name": skill_name,
             "key_author_username": author_username,
+            "key_language_model_name": language_model_name,
             "date_timestamp": datetime.now(timezone.utc).isoformat(),
             "flag_processed": False,
         }

@@ -61,5 +61,13 @@ class DuplicateEntryError(HTTPException):
         )
 
 
+class UnauthorizedSkillError(HTTPException):
+    def __init__(self, skill_name):
+        super().__init__(
+            status_code=403,
+            detail=f"Skill '{skill_name}' is not authorized to publish content",
+        )
+
+
 class PublishedContentNotFoundError(NotFoundError):
     entity_name = "PublishedContent"
