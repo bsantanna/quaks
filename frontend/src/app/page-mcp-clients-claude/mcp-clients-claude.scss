@@ -1,0 +1,76 @@
+.claude-page {
+  max-width: 960px;
+  color: var(--text-primary);
+}
+
+.claude-header {
+  margin-bottom: 32px;
+}
+
+.claude-eyebrow {
+  font-family: var(--font-data);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.claude-title {
+  margin-top: 4px;
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 700;
+  font-style: italic;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+.claude-subtitle {
+  margin-top: 8px;
+  font-family: var(--font-body);
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.claude-panel {
+  background: var(--surface-panel);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+  padding: 32px;
+
+  @media (max-width: 640px) {
+    padding: 20px;
+  }
+}
+
+.claude-section-title {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.claude-steps {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: var(--font-body);
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.claude-code {
+  display: inline-block;
+  padding: 2px 6px;
+  margin: 0 2px;
+  font-family: var(--font-data);
+  font-size: 0.85rem;
+  color: var(--accent-primary);
+  background: var(--surface-base);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+}

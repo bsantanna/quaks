@@ -19,7 +19,9 @@ import {PageWaitlist} from './page-waitlist';
 import {AccountProfile} from './page-account-profile/account-profile';
 import {authGuard} from './shared/guards/auth.guard';
 import {Privacy} from './page-privacy/privacy';
-import {McpServerSupported} from './page-mcp-server-supported/mcp-server-supported';
+import {McpClientsSupported} from './page-mcp-clients-supported/mcp-clients-supported';
+import {McpClientsClaude} from './page-mcp-clients-claude/mcp-clients-claude';
+import {McpClientsHowTo} from './page-mcp-clients-how-to/mcp-clients-how-to';
 
 export const routes: Routes = [
   {
@@ -35,13 +37,23 @@ export const routes: Routes = [
     ]
   },
   {
-    title: 'MCP Server',
-    path: 'mcp-server',
+    title: 'MCP Clients',
+    path: 'mcp-clients',
     children: [
       {
-        title: 'MCP Server Supported Integrations',
+        title: 'MCP Clients: How to use',
+        path: 'how-to',
+        component: McpClientsHowTo
+      },
+      {
+        title: 'MCP Clients Supported',
         path: 'supported',
-        component: McpServerSupported
+        component: McpClientsSupported
+      },
+      {
+        title: 'Claude',
+        path: 'claude',
+        component: McpClientsClaude
       }
     ]
   },
@@ -55,7 +67,7 @@ export const routes: Routes = [
         component: InsightsAgents
       },
       {
-        title: 'Configure Personal Agent',
+        title: 'Configure Agent',
         path: 'agents/personal/:agentSlug',
         component: InsightsAgentsPersonal
       },
