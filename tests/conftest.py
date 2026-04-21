@@ -246,6 +246,7 @@ def setup_elasticsearch():
                 "date_reference": {"type": "date", "format": "yyyy-MM-dd"},
                 "text_executive_summary": {"type": "text"},
                 "text_report_html": {"type": "text"},
+                "key_language_model_name": {"type": "keyword"},
             },
         }
     }
@@ -284,6 +285,7 @@ def setup_elasticsearch():
         "properties": {
             "key_skill_name": {"type": "keyword"},
             "key_author_username": {"type": "keyword"},
+            "key_language_model_name": {"type": "keyword"},
             "text_executive_summary": {"type": "text"},
             "text_report_html": {"type": "text"},
             "date_timestamp": {"type": "date", "format": "strict_date_optional_time"},
