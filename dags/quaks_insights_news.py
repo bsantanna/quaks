@@ -136,6 +136,7 @@ def generate_insights_news():
         "date_reference": today,
         "text_executive_summary": executive_summary,
         "text_report_html": report_html,
+        "key_language_model_name": language_model_tag,
     }
 
     bulk_body = json.dumps({"index": {"_index": index_name, "_id": doc_id}}) + "\n" + json.dumps(doc) + "\n"

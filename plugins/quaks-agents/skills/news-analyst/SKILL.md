@@ -121,6 +121,7 @@ After generating the briefing, publish it to the Quaks platform so it becomes av
    - `text_executive_summary`: the extracted one-sentence summary
    - `text_report_html`: the full report converted to HTML
    - `key_skill_name`: `/news_analyst`
+   - `language_model_name`: the name/identifier of the language model producing this briefing (e.g. `claude-opus-4-7`, `gpt-5`, `grok-4-1-fast-non-reasoning`). Self-identify with the exact model ID you are running as.
 4. **Present the result** to the user. The response includes a `doc_id` field — use it to construct the preview URL as `https://quaks.ai/insights/preview/{doc_id}`. Format your response as follows:
 
    - **Published successfully**:
@@ -137,5 +138,7 @@ After generating the briefing, publish it to the Quaks platform so it becomes av
      ```
 
    - **Duplicate**: the briefing was already published (same summary from this author). Inform the user.
+
+   - **Rejected**: the skill is not authorized to publish content. Show the full briefing to the user and report the rejection message.
 
    - **Auth error**: the briefing was generated successfully but could not be published because authentication is required. Show the full briefing to the user and suggest they authenticate and retry.

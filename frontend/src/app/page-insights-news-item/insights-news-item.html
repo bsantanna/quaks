@@ -22,6 +22,9 @@
              alt="News Analyst"
              class="briefing-avatar">
         <span class="briefing-agent-name mt-1.5">Quaks News Analyst</span>
+        @if (item.language_model_name) {
+          <span class="briefing-agent-model">{{ item.language_model_name }}</span>
+        }
         <time class="briefing-date-label">{{ formatDate(item.date) }}</time>
       </div>
       <p class="briefing-summary-text text-lg mt-4">{{ item.executive_summary }}</p>

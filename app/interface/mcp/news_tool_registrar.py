@@ -50,14 +50,25 @@ class NewsToolRegistrar(McpRegistrar):
         @mcp.tool(
             name="get_markets_news_mcp",
             description="Search and retrieve recent market news articles. "
-            "Articles include headline, summary, full content, source, "
-            "date, and related ticker symbols. Results are optimized for "
-            "LLM consumption. Supports filtering by ticker symbol, "
-            "free-text search, and date range. Returns up to 15 articles "
-            "per page with cursor-based pagination.",
+            "Articles include headline, summary, source, date, and related "
+            "ticker symbols. Results are optimized for LLM consumption. "
+            "Supports filtering by ticker symbol, free-text search, and "
+            "date range. Returns up to 15 articles per page with cursor-based "
+            "pagination. Full article text is omitted by default to keep "
+            "listings lean — pass `id` to fetch a single article in full, "
+            "or set `include_content=true` to force full content in batch "
+            "responses. When `id` is provided, all other filters are ignored.",
             annotations={"readOnlyHint": True, "openWorldHint": False},
         )
         async def get_markets_news_mcp(
+            id: Annotated[
+                Optional[str],
+                Field(
+                    description="Fetch a single article by its document id. "
+                    "When set, all other filters are ignored and full content "
+                    "is always returned."
+                ),
+            ] = None,
             search_term: Annotated[
                 Optional[str],
                 Field(
@@ -92,29 +103,45 @@ class NewsToolRegistrar(McpRegistrar):
                 int,
                 Field(description="Number of articles to return (1-15)", ge=1, le=15),
             ] = 3,
+            include_content: Annotated[
+                bool,
+                Field(
+                    description="Set to true to include full article text in each result. "
+                    "Off by default because article text is bulky. Automatically enabled "
+                    "when fetching a single article by id."
+                ),
+            ] = False,
         ) -> NewsList:
             svc = container.markets_news_service()
-            resolved_from = date_from or (datetime.now() - timedelta(days=1)).strftime(
-                "%Y-%m-%d"
+            resolved_from = (
+                None
+                if id
+                else date_from
+                or (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
             )
+            content_requested = include_content or id is not None
 
             results, sort = svc.get_news(
                 index_name="quaks_markets-news_latest",
+                id=id,
                 search_term=search_term,
                 key_ticker=key_ticker,
                 date_from=resolved_from,
                 date_to=date_to,
                 size=min(max(size, 1), 15),
                 cursor=cursor,
-                include_text_content=True,
+                include_text_content=content_requested,
                 include_key_ticker=True,
             )
 
             items = [
                 NewsItem(
+                    id=h.get("_id"),
                     headline=unescape(h["_source"].get("text_headline") or ""),
                     summary=unescape(h["_source"].get("text_summary") or ""),
-                    content=unescape(h["_source"].get("text_content") or ""),
+                    content=unescape(h["_source"].get("text_content") or "")
+                    if content_requested
+                    else None,
                     source=h["_source"].get("key_source", ""),
                     date=h["_source"].get("date_reference", ""),
                     tickers=h["_source"].get("key_ticker"),
@@ -129,10 +156,18 @@ class NewsToolRegistrar(McpRegistrar):
             "Quaks analyst agents. Each briefing contains an executive summary "
             "and optionally the full HTML report. Use this to get synthesized "
             "market intelligence and analysis. Returns up to 15 briefings "
-            "per page with cursor-based pagination.",
+            "per page with cursor-based pagination. When `id` is provided, "
+            "fetches that single briefing and ignores all other filters.",
             annotations={"readOnlyHint": True, "openWorldHint": False},
         )
         async def get_insights_news_mcp(
+            id: Annotated[
+                Optional[str],
+                Field(
+                    description="Fetch a single briefing by its document id. "
+                    "When set, all other filters are ignored."
+                ),
+            ] = None,
             date_from: Annotated[
                 Optional[str],
                 Field(description="Start date filter in yyyy-mm-dd format"),
@@ -163,6 +198,7 @@ class NewsToolRegistrar(McpRegistrar):
 
             results, sort = svc.get_insights_news(
                 index_name="quaks_insights-news_latest",
+                id=id,
                 date_from=date_from,
                 date_to=date_to,
                 size=min(max(size, 1), 15),
@@ -172,6 +208,7 @@ class NewsToolRegistrar(McpRegistrar):
 
             items = [
                 InsightsNewsItem(
+                    id=h.get("_id"),
                     date=h["_source"].get("date_reference", ""),
                     executive_summary=unescape(
                         h["_source"].get("text_executive_summary") or ""
@@ -179,6 +216,7 @@ class NewsToolRegistrar(McpRegistrar):
                     report_html=unescape(h["_source"].get("text_report_html") or "")
                     if include_report_html
                     else None,
+                    language_model_name=h["_source"].get("key_language_model_name"),
                 )
                 for h in results
             ]

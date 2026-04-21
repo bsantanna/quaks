@@ -1,8 +1,11 @@
 from unittest.mock import MagicMock
 import pytest
-from elasticsearch import ConflictError, NotFoundError as ESNotFoundError
+from elasticsearch import NotFoundError as ESNotFoundError
 from app.services.published_content import PublishedContentService
-from app.domain.exceptions.base import DuplicateEntryError, PublishedContentNotFoundError
+from app.domain.exceptions.base import (
+    PublishedContentNotFoundError,
+    UnauthorizedSkillError,
+)
 
 @pytest.fixture
 def mock_es():
@@ -14,12 +17,24 @@ def service(mock_es):
 
 def test_publish_success(service, mock_es):
     mock_es.indices.exists_alias.return_value = False
-    
-    doc_id = service.publish("summary", "html", "skill", "author")
-    
+
+    doc_id = service.publish(
+        "summary", "html", "/news_analyst", "author", "claude-opus-4-7"
+    )
+
     assert doc_id is not None
     mock_es.index.assert_called_once()
+    indexed_doc = mock_es.index.call_args[1]["document"]
+    assert indexed_doc["key_language_model_name"] == "claude-opus-4-7"
+    assert indexed_doc["key_skill_name"] == "/news_analyst"
     mock_es.indices.update_aliases.assert_called_once()
+
+def test_publish_rejects_unauthorized_skill(service, mock_es):
+    with pytest.raises(UnauthorizedSkillError):
+        service.publish(
+            "summary", "html", "/quant_analyst", "author", "claude-opus-4-7"
+        )
+    mock_es.index.assert_not_called()
 
 def test_get_by_id_success(service, mock_es):
     mock_es.get.return_value = {"_source": {"content": "data"}}

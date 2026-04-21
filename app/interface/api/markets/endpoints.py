@@ -415,6 +415,7 @@ async def get_insights_news(
                 report_html=source.get("text_report_html"),
                 skill_name=source.get("key_skill_name"),
                 author_username=source.get("key_author_username"),
+                language_model_name=source.get("key_language_model_name"),
             )
         )
 
@@ -459,6 +460,7 @@ async def get_published_content_preview(
         skill_name=src.get("key_skill_name", ""),
         author_username=src.get("key_author_username", ""),
         date_timestamp=src.get("date_timestamp", ""),
+        language_model_name=src.get("key_language_model_name"),
     )
 
 

@@ -579,11 +579,12 @@ resource "elasticstack_elasticsearch_index_template" "quaks_insights-news_templa
     mappings = jsonencode({
       dynamic = "strict"
       properties = {
-        key_author_username    = { type = "keyword" }
-        key_skill_name         = { type = "keyword" }
-        date_reference         = { type = "date", format = "yyyy-MM-dd" }
-        text_executive_summary = { type = "text" }
-        text_report_html       = { type = "text" }
+        key_author_username     = { type = "keyword" }
+        key_skill_name          = { type = "keyword" }
+        key_language_model_name = { type = "keyword" }
+        date_reference          = { type = "date", format = "yyyy-MM-dd" }
+        text_executive_summary  = { type = "text" }
+        text_report_html        = { type = "text" }
       }
     })
 
@@ -606,11 +607,12 @@ resource "elasticstack_elasticsearch_index" "insights_news_usa" {
   mappings = jsonencode({
     dynamic = "strict"
     properties = {
-      key_author_username    = { type = "keyword" }
-      key_skill_name         = { type = "keyword" }
-      date_reference         = { type = "date", format = "yyyy-MM-dd" }
-      text_executive_summary = { type = "text" }
-      text_report_html       = { type = "text" }
+      key_author_username     = { type = "keyword" }
+      key_skill_name          = { type = "keyword" }
+      key_language_model_name = { type = "keyword" }
+      date_reference          = { type = "date", format = "yyyy-MM-dd" }
+      text_executive_summary  = { type = "text" }
+      text_report_html        = { type = "text" }
     }
   })
   deletion_protection = false
@@ -664,13 +666,14 @@ resource "elasticstack_elasticsearch_index_template" "quaks_published-content_te
     mappings = jsonencode({
       dynamic = "strict"
       properties = {
-        key_skill_name         = { type = "keyword" }
-        key_author_username    = { type = "keyword" }
-        text_executive_summary = { type = "text" }
-        text_report_html       = { type = "text" }
-        date_timestamp         = { type = "date", format = "strict_date_optional_time" }
-        flag_processed         = { type = "boolean" }
-        flag_cancelled         = { type = "boolean" }
+        key_skill_name          = { type = "keyword" }
+        key_author_username     = { type = "keyword" }
+        key_language_model_name = { type = "keyword" }
+        text_executive_summary  = { type = "text" }
+        text_report_html        = { type = "text" }
+        date_timestamp          = { type = "date", format = "strict_date_optional_time" }
+        flag_processed          = { type = "boolean" }
+        flag_cancelled          = { type = "boolean" }
       }
     })
 

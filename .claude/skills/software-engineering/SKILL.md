@@ -266,12 +266,14 @@ uv remove <package>
 
 ### Local Development
 
-The project uses conda for Python version management. Install dependencies with uv:
+Dependencies live in uv's own `.venv` at the project root. `uv sync` populates it from `uv.lock`; `uv run <cmd>` executes inside it:
 
 ```bash
-conda activate agent-lab
 uv sync --group dev --group test
+uv run pytest tests/unit/
 ```
+
+`uv` manages the Python toolchain (interpreter + venv) itself via `pyproject.toml` — no separate Python version manager is needed. Always use `uv run` to invoke Python tools that need project deps; invoking `pytest`/`ruff`/`flake8` from another shell will hit system Python and fail with `ModuleNotFoundError`.
 
 ### Docker
 
@@ -287,7 +289,7 @@ CI uses `uv sync --frozen --group dev --group test` to install all dependency gr
 
 ### Backend
 
-**Important:** All Python commands must use the `agent-lab` conda environment: `conda run -n agent-lab <command>`
+**Important:** Run Python tools through uv — `uv run <command>` — so they resolve against the project's `.venv`. `make` targets already wrap their commands with uv.
 
 ```bash
 # Run the app locally (requires Postgres, Redis, Vault running)
@@ -297,17 +299,17 @@ make run
 make test
 
 # Run a single test file
-pytest tests/integration/test_status_endpoint.py
+uv run pytest tests/integration/test_status_endpoint.py
 
 # Run a single test by name
-pytest tests/integration/test_status_endpoint.py -k "test_name"
+uv run pytest tests/integration/test_status_endpoint.py -k "test_name"
 
 # Lint
 make lint
 
 # Format (via ruff)
-ruff format .
-ruff check --fix .
+uv run ruff format .
+uv run ruff check --fix .
 ```
 
 ### Backend Debugging
@@ -405,11 +407,11 @@ Dependabot opens PRs for outdated Python dependencies. These PRs often fail CI b
 
 3. **Regenerate the lock file and sync:**
    ```bash
-   conda run -n agent-lab uv lock
-   conda run -n agent-lab uv sync --group dev --group test
+   uv lock
+   uv sync --group dev --group test
    ```
 
-4. **Verify** — run `ruff check app/` and `npx jest` (frontend) to catch regressions.
+4. **Verify** — run `uv run ruff check app/` and `npx jest` (frontend) to catch regressions.
 
 5. **After merging**, close the superseded dependabot PRs (they're no longer needed).
 

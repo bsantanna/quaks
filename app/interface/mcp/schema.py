@@ -17,8 +17,10 @@ class AgentItem(BaseModel):
     agent_summary: str = Field(
         description="Brief description of the agent's purpose and capabilities"
     )
-    language_model_id: str = Field(
-        description="ID of the language model powering this agent"
+    language_model_id: Optional[str] = Field(
+        default=None,
+        description="ID of the language model powering this agent. "
+        "Null when no model has been assigned yet.",
     )
     is_active: bool = Field(description="Whether the agent is currently active")
 
@@ -26,9 +28,18 @@ class AgentItem(BaseModel):
 class NewsItem(BaseModel):
     """A single market news article."""
 
+    id: Optional[str] = Field(
+        default=None,
+        description="Document identifier, usable with the id parameter to fetch this article directly",
+    )
     headline: str = Field(description="Article headline")
     summary: str = Field(description="Short summary of the article")
-    content: str = Field(description="Full article text content")
+    content: Optional[str] = Field(
+        default=None,
+        description="Full article text content. Only included when fetching a single article by id "
+        "or when include_content=true is passed, since content is large and bulk responses "
+        "should stay lean.",
+    )
     source: str = Field(description="News source name (e.g. Reuters, Bloomberg)")
     date: str = Field(description="Publication date in yyyy-mm-dd format")
     tickers: Optional[list[str]] = Field(
@@ -51,6 +62,10 @@ class NewsList(BaseModel):
 class InsightsNewsItem(BaseModel):
     """An AI-generated investor briefing produced by Quaks analyst agents."""
 
+    id: Optional[str] = Field(
+        default=None,
+        description="Document identifier, usable with the id parameter to fetch this briefing directly",
+    )
     date: str = Field(description="Briefing date in yyyy-mm-dd format")
     executive_summary: str = Field(
         description="Concise executive summary of the briefing"
@@ -58,6 +73,12 @@ class InsightsNewsItem(BaseModel):
     report_html: Optional[str] = Field(
         default=None,
         description="Full HTML report content. Only included when include_report_html=true.",
+    )
+    language_model_name: Optional[str] = Field(
+        default=None,
+        description="Name of the language model that produced this briefing "
+        "(e.g. 'claude-opus-4-7'). Null for briefings published before model "
+        "provenance was tracked.",
     )
 
 
