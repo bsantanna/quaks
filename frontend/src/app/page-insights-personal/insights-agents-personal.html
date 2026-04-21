@@ -146,37 +146,22 @@
                     }
 
                     @case (4) {
-                        <h2 class="wizard-step-title">Agent saved</h2>
-                        <p class="wizard-step-copy">
-                            Your personal <strong>{{ profile.name }}</strong> is live.
-                        </p>
-
-                        @if (subscriptionTier() === 'free') {
-                            <div class="wizard-howto">
-                                <h3 class="wizard-settings-heading">How to use with Claude</h3>
-                                <ol class="wizard-howto-steps">
-                                    <li>
-                                        Install the Quaks Claude plugin from the marketplace:
-                                        <code class="wizard-code">/plugin install quaks-agents@quaks</code>
-                                    </li>
-                                    <li>
-                                        Authenticate in Claude:
-                                        <code class="wizard-code">/quaks-ai:authenticate</code>
-                                        then complete the flow with
-                                        <code class="wizard-code">/quaks-ai:complete-authentication</code>.
-                                    </li>
-                                    <li>
-                                        Your personal agent is now reachable via Claude's MCP tools and prompts.
-                                    </li>
-                                </ol>
-                            </div>
-                        }
+                        <div class="wizard-success">
+                            <img [src]="profile.avatar" [alt]="profile.name" class="wizard-success-avatar" />
+                            <p class="wizard-success-title">Agent saved</p>
+                            <p class="wizard-success-notice">
+                                Your personal <strong>{{ profile.name }}</strong> is live.
+                            </p>
+                            <a href="/mcp-clients/how-to" class="wizard-success-link">
+                                See the instructions how to use this agent
+                                <span class="wizard-success-arrow" aria-hidden="true">&rarr;</span>
+                            </a>
+                        </div>
 
                         <div class="wizard-actions">
                             <app-wizard-button variant="secondary" (pressed)="editAgain()">
                                 Edit again
                             </app-wizard-button>
-                            <a href="/insights/agents" class="wizard-anchor-primary">Back to agents</a>
                         </div>
                     }
                 }
