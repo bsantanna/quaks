@@ -17,6 +17,9 @@ from app.infrastructure.database.sql import Database
 from app.infrastructure.database.vectors import DocumentRepository
 from app.infrastructure.metrics.tracer import Tracer
 from app.interface.mcp.default_tool_registrar import DefaultToolRegistrar
+from app.interface.mcp.financial_analyst_v1_tool_registrar import (
+    FinancialAnalystV1ToolRegistrar,
+)
 from app.interface.mcp.news_tool_registrar import NewsToolRegistrar
 from app.interface.mcp.user_prompt_resolver import UserPromptResolver
 from app.services.agent_settings import AgentSettingService
@@ -284,7 +287,15 @@ class Container(containers.DeclarativeContainer):
         NewsToolRegistrar,
         user_prompt_resolver=user_prompt_resolver,
     )
+    financial_analyst_v1_tool_registrar = providers.Singleton(
+        FinancialAnalystV1ToolRegistrar,
+        user_prompt_resolver=user_prompt_resolver,
+    )
 
-    mcp_registrars = providers.List(default_tool_registrar, news_tool_registrar)
+    mcp_registrars = providers.List(
+        default_tool_registrar,
+        news_tool_registrar,
+        financial_analyst_v1_tool_registrar,
+    )
 
     tracer = providers.Singleton(Tracer)

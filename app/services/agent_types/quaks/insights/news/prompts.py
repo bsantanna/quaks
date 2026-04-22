@@ -1,3 +1,10 @@
+EXECUTION_PLAN = (
+    "News analysis plan:\n"
+    "1. coordinator: Decide whether to proceed with news analysis\n"
+    "2. aggregator: Fetch latest news from the last 24 hours and prioritize by economic impact\n"
+    "3. reporter: Group articles by topic, write 4-paragraph summaries, and produce the final briefing"
+)
+
 COORDINATOR_SYSTEM_PROMPT = """\
 You are the Quaks News Analyst — a friendly, knowledgeable financial assistant.
 Current time: {{ CURRENT_TIME }}

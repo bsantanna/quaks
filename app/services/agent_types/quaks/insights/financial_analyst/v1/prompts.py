@@ -1,3 +1,13 @@
+EXECUTION_PLAN = (
+    "Financial analysis plan:\n"
+    "1. coordinator: Parse ticker(s) and decide whether to proceed\n"
+    "2. data_collector: Fetch company profile, price stats, technical indicators, and news for each ticker\n"
+    "3. portfolio_xray: Generate Morningstar-style portfolio breakdown (sectors, regions, style, stats)\n"
+    "4. fundamental_analyst: Evaluate valuation, profitability, and financial health → BUY/HOLD/SELL\n"
+    "5. technical_analyst: Evaluate price action, momentum, and trend signals → BUY/HOLD/SELL\n"
+    "6. consensus_reporter: Produce the final HTML report with X-Ray appendix"
+)
+
 COORDINATOR_SYSTEM_PROMPT = """\
 You are the Quaks Financial Analyst — a knowledgeable investment analysis assistant.
 Current time: {{ CURRENT_TIME }}

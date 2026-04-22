@@ -19,16 +19,35 @@ Available tools:
 - get_markets_news_mcp: Search and retrieve market news articles filtered by ticker, topic, or date range.
 - get_insights_news_mcp: Retrieve AI-generated investor briefings with executive summaries.
 - publish_content_mcp: Publish AI-generated content (reports, briefings) to the platform. Requires authentication. Content must be in HTML format.
+- fetch_company_profile_mcp: Fetch company metadata, valuation multiples, profitability, growth, analyst ratings, and ownership data for a single ticker.
+- fetch_stats_close_mcp: Fetch latest OHLCV price stats and percent variance for a single ticker over a date range.
+- fetch_technical_indicators_mcp: Fetch RSI, MACD, EMA crossover, and ADX indicators for a single ticker over a date range.
+- fetch_portfolio_xray_mcp: Generate a Morningstar-style Portfolio X-Ray for a list of tickers (style box, sectors, regions, weighted-average stats).
 
 Available prompts (news_analyst workflow):
 - news_analyst_coordinator: System prompt for the coordinator step — answers user questions directly (QA mode) or routes to the aggregator for briefing generation.
 - news_analyst_aggregator: System prompt for the aggregator step — collects and prioritizes market news by economic impact. Use with get_markets_news_mcp tool.
 - news_analyst_reporter: System prompt for the reporter step — groups articles, writes summaries, and produces the final HTML briefing.
 
+Available prompts (financial_analyst_v1 workflow):
+- financial_analyst_v1_coordinator: System prompt for the coordinator step — answers investment questions directly, or routes batch requests (prefixed 'BATCH_ETL') to the data collector.
+- financial_analyst_v1_data_collector: System prompt for the data collector step — fetches company profile, price stats, technical indicators, and news for each ticker. Use with fetch_company_profile_mcp, fetch_stats_close_mcp, fetch_technical_indicators_mcp, and get_markets_news_mcp.
+- financial_analyst_v1_fundamental_analyst: System prompt for the fundamental analyst step — produces a BUY/HOLD/SELL recommendation per ticker from valuation, profitability, growth, and risk analysis.
+- financial_analyst_v1_technical_analyst: System prompt for the technical analyst step — produces a BUY/HOLD/SELL recommendation per ticker from ADX, EMA, RSI, and MACD signals.
+- financial_analyst_v1_consensus_reporter: System prompt for the consensus reporter step — merges both recommendations, allocates USD 10,000 across tickers, and produces the final HTML report with an ALLOCATION: line.
+
 To replicate the full News Analyst workflow:
 1. Use news_analyst_coordinator prompt with user's question. If the user wants a briefing, proceed to step 2.
 2. Use news_analyst_aggregator prompt + get_markets_news_mcp tool to collect and prioritize news.
 3. Use news_analyst_reporter prompt with the aggregated news to produce the final HTML briefing.
+
+To replicate the full Financial Analyst workflow (pass tickers to each prompt):
+1. Use financial_analyst_v1_coordinator with the user's question. If the user wants full analysis, proceed to step 2.
+2. Use financial_analyst_v1_data_collector + fetch_company_profile_mcp, fetch_stats_close_mcp, fetch_technical_indicators_mcp, and get_markets_news_mcp to collect data per ticker.
+3. Call fetch_portfolio_xray_mcp to get a Morningstar-style portfolio breakdown.
+4. Use financial_analyst_v1_fundamental_analyst with the collected data to produce fundamental recommendations.
+5. Use financial_analyst_v1_technical_analyst with the indicator data to produce technical recommendations.
+6. Use financial_analyst_v1_consensus_reporter to merge both views into the final HTML report.
 
 Pagination: The news tools return a `cursor` field. To get the next page, pass the cursor value back in the next call. When cursor is null, there are no more results.
 

@@ -1,11 +1,10 @@
-from app.services.agent_types.quaks.insights.financial_analyst.v1.agent import (
-    QuaksFinancialAnalystV1Agent,
+from app.services.agent_types.quaks.insights.financial_analyst.v1.portfolio_xray import (
     _NOT_CLASSIFIED,
-    _normalize_sector,
-    _build_sector_table,
     _build_region_table,
-    SUPERSECTOR_SECTORS,
-    REGION_SUBREGIONS,
+    _build_sector_table,
+    _format_style_text,
+    _format_weighted_groups_text,
+    _normalize_sector,
 )
 
 
@@ -22,25 +21,33 @@ def test_normalize_sector_known():
 
 
 def test_format_style_text():
-    grid = {(s, v): 0.0 for s in ("Large", "Mid", "Small") for v in ("Value", "Blend", "Growth")}
+    grid = {
+        (s, v): 0.0
+        for s in ("Large", "Mid", "Small")
+        for v in ("Value", "Blend", "Growth")
+    }
     grid[("Large", "Growth")] = 60.0
     grid[("Mid", "Value")] = 40.0
-    result = QuaksFinancialAnalystV1Agent._format_style_text(grid)
+    result = _format_style_text(grid)
     assert "Large/Growth: 60%" in result
     assert "Mid/Value: 40%" in result
     assert "Small" not in result
 
 
 def test_format_style_text_empty():
-    grid = {(s, v): 0.0 for s in ("Large", "Mid", "Small") for v in ("Value", "Blend", "Growth")}
-    result = QuaksFinancialAnalystV1Agent._format_style_text(grid)
+    grid = {
+        (s, v): 0.0
+        for s in ("Large", "Mid", "Small")
+        for v in ("Value", "Blend", "Growth")
+    }
+    result = _format_style_text(grid)
     assert result == "Style: "
 
 
 def test_format_weighted_groups_text():
     groups = {"GroupA": ["X", "Y"], "GroupB": ["Z"]}
     weights = {"X": 30.0, "Y": 20.0, "Z": 50.0}
-    result = QuaksFinancialAnalystV1Agent._format_weighted_groups_text("Test", groups, weights)
+    result = _format_weighted_groups_text("Test", groups, weights)
     assert "GroupA 50%" in result
     assert "X 30%" in result
     assert "GroupB 50%" in result
@@ -49,7 +56,7 @@ def test_format_weighted_groups_text():
 def test_format_weighted_groups_text_empty():
     groups = {"GroupA": ["X"]}
     weights = {}
-    result = QuaksFinancialAnalystV1Agent._format_weighted_groups_text("Label", groups, weights)
+    result = _format_weighted_groups_text("Label", groups, weights)
     assert result == "Label: "
 
 
