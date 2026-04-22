@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.5.25 (2026-04-22)
+
+### Bug Fixes
+
+- MCP financial analyst v1 (3) ([#134](https://github.com/bsantanna/quaks/pull/134),
+  [`bec45ac`](https://github.com/bsantanna/quaks/commit/bec45acb9e4ba1ed19cd70f1d2909ace85e9cd37))
+
+
 ## v1.5.24 (2026-04-22)
 
 ### Bug Fixes
