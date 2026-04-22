@@ -20,26 +20,28 @@ from app.services.agent_types.quaks.insights.news import (
     NEWS_AGENT_CONFIGURATION,
 )
 from app.services.agent_types.quaks.insights.news.prompts import (
-    COORDINATOR_SYSTEM_PROMPT,
     AGGREGATOR_SYSTEM_PROMPT,
+    COORDINATOR_SYSTEM_PROMPT,
+    EXECUTION_PLAN,
     REPORTER_SYSTEM_PROMPT,
 )
 from app.services.agent_types.quaks.insights.news.state import NewsAnalystState
-from app.services.agent_types.quaks.insights.tools import build_get_insights_news_tool, build_get_markets_news_tool
+from app.services.agent_types.quaks.insights.tools import (
+    build_get_insights_news_tool,
+    build_get_markets_news_tool,
+)
 from app.services.markets_insights import MarketsInsightsService
 from app.services.markets_news import MarketsNewsService
 from app.services.tasks import TaskProgress
 
-EXECUTION_PLAN = (
-    "News analysis plan:\n"
-    "1. coordinator: Decide whether to proceed with news analysis\n"
-    "2. aggregator: Fetch latest news from the last 24 hours and prioritize by economic impact\n"
-    "3. reporter: Group articles by topic, write 4-paragraph summaries, and produce the final briefing"
-)
-
 
 class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
-    def __init__(self, agent_utils: AgentUtils, markets_news_service: MarketsNewsService, markets_insights_service: MarketsInsightsService):
+    def __init__(
+        self,
+        agent_utils: AgentUtils,
+        markets_news_service: MarketsNewsService,
+        markets_insights_service: MarketsInsightsService,
+    ):
         super().__init__(agent_utils)
         self.markets_news_service = markets_news_service
         self.markets_insights_service = markets_insights_service
@@ -115,8 +117,16 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
         return response
 
     _BRIEFING_KEYWORDS = {
-        "briefing", "brief", "report", "summary", "recap",
-        "digest", "overview", "roundup", "round-up", "rundown",
+        "briefing",
+        "brief",
+        "report",
+        "summary",
+        "recap",
+        "digest",
+        "overview",
+        "roundup",
+        "round-up",
+        "rundown",
     }
 
     def _is_briefing_request(self, query: str) -> bool:
@@ -140,7 +150,9 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
         )
 
         if query.strip() == "BATCH_ETL" or self._is_briefing_request(query):
-            self.logger.info(f"Agent[{agent_id}] -> Coordinator -> Full report -> aggregator")
+            self.logger.info(
+                f"Agent[{agent_id}] -> Coordinator -> Full report -> aggregator"
+            )
             return Command(goto="aggregator")
 
         # QA mode: answer the user's question using insights news tool
@@ -222,7 +234,9 @@ class QuaksNewsAnalystAgent(SupervisedWorkflowAgentBase):
             task_progress=TaskProgress(
                 agent_id=agent_id,
                 status="in_progress",
-                message_content=executive_summary[:200] if executive_summary else report_html[:200],
+                message_content=executive_summary[:200]
+                if executive_summary
+                else report_html[:200],
             )
         )
         return {

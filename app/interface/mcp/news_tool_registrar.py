@@ -19,18 +19,12 @@ from app.interface.mcp.user_prompt_resolver import UserPromptResolver
 from app.services.agent_types.quaks.insights.news.prompts import (
     AGGREGATOR_SYSTEM_PROMPT,
     COORDINATOR_SYSTEM_PROMPT,
+    EXECUTION_PLAN,
     REPORTER_SYSTEM_PROMPT,
 )
 
 if TYPE_CHECKING:
     from app.core.container import Container
-
-_EXECUTION_PLAN = (
-    "News analysis plan:\n"
-    "1. coordinator: Decide whether to proceed with news analysis\n"
-    "2. aggregator: Fetch latest news from the last 24 hours and prioritize by economic impact\n"
-    "3. reporter: Group articles by topic, write 4-paragraph summaries, and produce the final briefing"
-)
 
 _AGENT_TYPE = "quaks_news_analyst"
 
@@ -57,7 +51,7 @@ def _render_prompt(template_str: str, current_time: str | None = None) -> str:
     resolved_time = current_time or datetime.now().strftime("%a %b %d %Y %H:%M:%S %z")
     return template.render(
         CURRENT_TIME=resolved_time,
-        EXECUTION_PLAN=_EXECUTION_PLAN,
+        EXECUTION_PLAN=EXECUTION_PLAN,
     )
 
 
