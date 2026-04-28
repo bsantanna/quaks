@@ -13,7 +13,7 @@ from app.domain.exceptions.base import (
 
 class PublishedContentService:
     INDEX_ALIAS = "quaks_published-content_latest"
-    ALLOWED_SKILLS = frozenset({"/news_analyst"})
+    ALLOWED_SKILLS = frozenset({"/news_analyst", "/financial_analyst_v1"})
 
     def __init__(self, es: Elasticsearch) -> None:
         self.es = es
