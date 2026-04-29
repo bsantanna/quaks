@@ -18,9 +18,6 @@ ${t.map((r,i)=>`${i+1}) ${r.toString()}`).join(`
   .embPanel__hoverActions {
     display: none !important;
   }
-  .euiPanel {
-    display: none !important;
-  }
   .kbnGrid {
     margin-top: 3vh;
   }
