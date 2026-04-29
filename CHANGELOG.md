@@ -2,6 +2,23 @@
 
 <!-- version list -->
 
+## v1.5.26 (2026-04-29)
+
+### Bug Fixes
+
+- Adjust sMCP financial analyst (1) ([#140](https://github.com/bsantanna/quaks/pull/140),
+  [`3288b97`](https://github.com/bsantanna/quaks/commit/3288b9725ac39b015756bc3731546937989f11c0))
+
+- Adjusts frontend charts bug (1) ([#140](https://github.com/bsantanna/quaks/pull/140),
+  [`3288b97`](https://github.com/bsantanna/quaks/commit/3288b9725ac39b015756bc3731546937989f11c0))
+
+- Frontend build (1) ([#140](https://github.com/bsantanna/quaks/pull/140),
+  [`3288b97`](https://github.com/bsantanna/quaks/commit/3288b9725ac39b015756bc3731546937989f11c0))
+
+- Release adjusts ([#140](https://github.com/bsantanna/quaks/pull/140),
+  [`3288b97`](https://github.com/bsantanna/quaks/commit/3288b9725ac39b015756bc3731546937989f11c0))
+
+
 ## v1.5.25 (2026-04-22)
 
 ### Bug Fixes
