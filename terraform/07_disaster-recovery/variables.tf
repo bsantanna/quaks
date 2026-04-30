@@ -38,10 +38,9 @@ variable "prod_ssh_host" {
   type        = string
 }
 
-variable "prod_ssh_private_key" {
-  description = "SSH private key (PEM) authorized to log into the production host"
+variable "prod_ssh_private_key_path" {
+  description = "Path on the DR host to an existing SSH private key (PEM) authorized to log into the production host"
   type        = string
-  sensitive   = true
 }
 
 variable "prod_namespace" {

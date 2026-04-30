@@ -125,14 +125,10 @@ log "All credentials fetched"
 
 section "Writing tfvars to $TFVARS_FILE"
 
-PROD_SSH_PRIVATE_KEY="$(cat "$SSH_KEY")"
-
 cat > "$TFVARS_FILE" <<EOF
 prod_ssh_user                       = "${PROD_SSH_USER}"
 prod_ssh_host                       = "${PROD_SSH_HOST}"
-prod_ssh_private_key                = <<KEY
-${PROD_SSH_PRIVATE_KEY}
-KEY
+prod_ssh_private_key_path           = "${SSH_KEY}"
 
 prod_pg_quaks_app_password         = "${PROD_PG_QUAKS_APP_PASSWORD}"
 prod_pg_quaks_vectors_password     = "${PROD_PG_QUAKS_VECTORS_PASSWORD}"

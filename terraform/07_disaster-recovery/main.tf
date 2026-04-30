@@ -316,7 +316,7 @@ resource "kubernetes_secret_v1" "ssh" {
     namespace = var.dr_cron_namespace
   }
   data = {
-    id_rsa = var.prod_ssh_private_key
+    id_rsa = file(var.prod_ssh_private_key_path)
   }
   type = "Opaque"
 
